@@ -154,6 +154,91 @@ FOREVER DIGITAL MEMORIAL PLATFORM — MEMORIAL WEBSITE BACKUP
     });
     zip.file('ebooks.csv', ebooksCsv);
 
+    // G. Download and pack images, audio, documents, and book PDFs (Phase 3 spec)
+    const medias = await db.media.findMany({
+      where: { websiteId, isDeleted: false },
+    });
+
+    const videoLinks: string[] = [];
+
+    // 1. Pack standard site Media files
+    for (const m of medias) {
+      if (m.mimeType.startsWith('video/')) {
+        videoLinks.push(`คลังวีดีโอ - ${m.fileName}: ${m.filePath}`);
+        continue;
+      }
+
+      if (m.mimeType.startsWith('image/') || m.mimeType.startsWith('audio/') || m.mimeType === 'application/pdf') {
+        try {
+          let url = m.filePath;
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            const origin = new URL(request.url).origin;
+            url = `${origin}${url.startsWith('/') ? '' : '/'}${url}`;
+          }
+          const fileRes = await fetch(url);
+          if (fileRes.ok) {
+            const arrayBuffer = await fileRes.arrayBuffer();
+            let folder = 'media/others/';
+            if (m.mimeType.startsWith('image/')) folder = 'media/images/';
+            else if (m.mimeType.startsWith('audio/')) folder = 'media/audio/';
+            else if (m.mimeType === 'application/pdf') folder = 'media/documents/';
+
+            zip.file(`${folder}${m.fileName}`, arrayBuffer);
+          }
+        } catch (fetchErr) {
+          console.error(`Failed to fetch media file ${m.fileName}:`, fetchErr);
+        }
+      }
+    }
+
+    // 2. Pack Ebook PDFs
+    for (const ebook of ebooks) {
+      if (ebook.pdfUrl) {
+        try {
+          let url = ebook.pdfUrl;
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            const origin = new URL(request.url).origin;
+            url = `${origin}${url.startsWith('/') ? '' : '/'}${url}`;
+          }
+          const fileRes = await fetch(url);
+          if (fileRes.ok) {
+            const arrayBuffer = await fileRes.arrayBuffer();
+            const safeTitle = ebook.title.replace(/[/\\?%*:|"<>]/g, '-');
+            zip.file(`media/ebooks/${safeTitle}.pdf`, arrayBuffer);
+          }
+        } catch (fetchErr) {
+          console.error(`Failed to fetch ebook PDF ${ebook.title}:`, fetchErr);
+        }
+      }
+    }
+
+    // 3. Pack Memory Wall post media
+    for (const post of memoryPosts) {
+      if (post.mediaUrl && post.mediaType === 'IMAGE') {
+        try {
+          let url = post.mediaUrl;
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            const origin = new URL(request.url).origin;
+            url = `${origin}${url.startsWith('/') ? '' : '/'}${url}`;
+          }
+          const fileRes = await fetch(url);
+          if (fileRes.ok) {
+            const arrayBuffer = await fileRes.arrayBuffer();
+            zip.file(`media/memories/post-${post.id}-${post.senderName}.jpg`, arrayBuffer);
+          }
+        } catch (fetchErr) {
+          console.error(`Failed to fetch memory post image for post ${post.id}:`, fetchErr);
+        }
+      } else if (post.mediaUrl && post.mediaType === 'VIDEO') {
+        videoLinks.push(`โพสต์ความทรงจำ - Post by ${post.senderName}: ${post.mediaUrl}`);
+      }
+    }
+
+    // 4. Save video link records index if any
+    if (videoLinks.length > 0) {
+      zip.file('media/videos/links.txt', `วิดีโอเหล่านี้มีขนาดใหญ่และต้องใช้แบนด์วิดท์สูง เพื่อหลีกเลี่ยงความล่าช้า/ปัญหา Timeout ในการบีบอัดไฟล์ ZIP คุณสามารถเปิดเข้าดูและดาวน์โหลดได้โดยตรงจากลิงก์ด้านล่างนี้:\n\n` + videoLinks.join('\n'));
+    }
+
     // 5. Generate ZIP content as buffer
     const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
 
