@@ -104,6 +104,7 @@ export default function WebmasterDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [userPhone, setUserPhone] = useState('');
@@ -193,6 +194,22 @@ export default function WebmasterDashboard() {
       }
     } catch (err) {
       console.error('Error fetching ebooks:', err);
+    }
+  };
+
+  const handleExportZip = async () => {
+    if (!activeSite) return;
+    setExportLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      window.location.href = `/api/media/export?websiteId=${activeSite.id}`;
+      setSuccess('ระบบกำลังดำเนินการบีบอัดไฟล์ ZIP... ข้อมูลความทรงจำทั้งหมดจะถูกดาวน์โหลดโดยอัตโนมัติในไม่ช้า');
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการดาวน์โหลดข้อมูล');
+    } finally {
+      setTimeout(() => setExportLoading(false), 4000);
     }
   };
 
@@ -957,6 +974,22 @@ export default function WebmasterDashboard() {
                   </div>
                 </label>
               </div>
+            </section>
+
+            {/* Export data (Task 8.4 Export ZIP) */}
+            <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
+              <h3 className="text-base font-bold text-white">📦 ส่งออกข้อมูลความทรงจำ</h3>
+              <p className="text-[10px] text-slate-400 leading-normal">
+                ดาวน์โหลดรวบรวมข้อมูลทั้งหมดของเว็บไซต์ รวมถึงประวัติผู้ล่วงลับ คำไว้อาลัย ผังครอบครัว และหนังสือที่ระลึก บีบอัดเป็นไฟล์ ZIP เพื่อเก็บสำรองไว้แบบออฟไลน์
+              </p>
+              <button 
+                type="button"
+                onClick={handleExportZip}
+                disabled={exportLoading}
+                className="w-full py-2.5 bg-slate-900 border border-slate-800 hover:bg-slate-850 rounded-xl text-xs text-emerald-400 font-bold transition flex items-center justify-center gap-2"
+              >
+                {exportLoading ? '📦 กำลังส่งออกไฟล์...' : '📥 ดาวน์โหลดข้อมูลทั้งหมด (ZIP)'}
+              </button>
             </section>
           </div>
         </div>

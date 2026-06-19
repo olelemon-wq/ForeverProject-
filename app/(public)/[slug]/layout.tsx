@@ -1,6 +1,40 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { db } from '@/lib/db';
+import { Metadata } from 'next';
+
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await props.params;
+  const tenant = await db.tenant.findUnique({
+    where: { slug: slug.toLowerCase() },
+  });
+
+  if (!tenant) {
+    return {};
+  }
+
+  const title = `รำลึกถึง ${tenant.name} - ${tenant.category} | FOREVER`;
+  const description = `ร่วมรำลึก ร่วมจุดเทียน และเขียนคำไว้อาลัยแด่ ${tenant.name} เพื่อบันทึกความทรงจำอันทรงคุณค่าให้อยู่ตลอดไป`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `https://forever.co.th/${slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://forever.co.th/${slug}`,
+      siteName: 'FOREVER Memorial',
+      locale: 'th_TH',
+      type: 'website',
+    },
+  };
+}
+
 
 async function getTenantData(slug: string) {
   const tenant = await db.tenant.findUnique({
@@ -38,6 +72,20 @@ export default async function PublicMemorialLayout(props: {
 
   return (
     <div style={themeStyles} className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+      {/* Dynamic Person JSON-LD Schema (schema.org) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": tenant.name,
+            "description": `เว็บไซต์ความทรงจำและร่วมรำลึกถึง ${tenant.name} (${tenant.category})`,
+            "url": `https://forever.co.th/${slug}`,
+          }),
+        }}
+      />
+
       {/* Header */}
       <header className="relative py-16 text-center bg-slate-950 border-b border-slate-800/80 overflow-hidden">
         <div 
