@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 export async function POST(request: Request) {
   try {
@@ -72,9 +74,52 @@ export async function POST(request: Request) {
       );
     }
 
-    // 5. Generate simulated object storage key and path (e.g. Cloudflare R2 / AWS S3)
+    // 5. Generate storage key
     const fileKey = `uploads/${websiteId}/${Date.now()}-${fileName}`;
-    const fileUrl = `https://storage.forever.co.th/${fileKey}`;
+    
+    // Determine upload URL strategy (Real S3/R2 or Mock fallback)
+    let uploadUrl = '';
+    let fileUrl = '';
+
+    const hasS3Config = 
+      process.env.S3_ACCESS_KEY_ID && 
+      process.env.S3_SECRET_ACCESS_KEY && 
+      process.env.S3_ENDPOINT && 
+      process.env.S3_BUCKET_NAME;
+
+    if (hasS3Config) {
+      try {
+        const s3Client = new S3Client({
+          region: 'auto',
+          endpoint: process.env.S3_ENDPOINT,
+          credentials: {
+            accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+          },
+        });
+
+        const command = new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME,
+          Key: fileKey,
+          ContentType: fileType,
+        });
+
+        uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+        
+        // Extract public URL prefix (or fallback to custom domain if configured)
+        const bucketDomain = process.env.S3_PUBLIC_DOMAIN || process.env.S3_ENDPOINT;
+        fileUrl = `${bucketDomain}/${process.env.S3_BUCKET_NAME}/${fileKey}`;
+      } catch (s3Err) {
+        console.error('Error generating real S3 presigned URL:', s3Err);
+        // Fallback to mock on error
+        uploadUrl = `https://storage.forever.co.th/api/upload-mock?key=${fileKey}`;
+        fileUrl = `https://storage.forever.co.th/${fileKey}`;
+      }
+    } else {
+      // Standard local simulation mock fallback
+      uploadUrl = `https://storage.forever.co.th/api/upload-mock?key=${fileKey}`;
+      fileUrl = `https://storage.forever.co.th/${fileKey}`;
+    }
 
     // 6. Record metadata in Media DB and update AuditLog (BR036)
     const media = await db.media.create({
@@ -106,7 +151,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      uploadUrl: `https://storage.forever.co.th/api/upload-mock?key=${fileKey}`,
+      uploadUrl,
       filePath: media.filePath,
       mediaId: media.id,
     });
