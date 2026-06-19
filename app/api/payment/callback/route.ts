@@ -68,14 +68,16 @@ export async function POST(request: Request) {
 
       // Calculate subscription dates
       const startDate = new Date();
-      const endDate = new Date(startDate.getTime() + 365 * 24 * 60 * 60 * 1000); // 1 year (BR011)
+      const currentExpiry = payment.website.expiredAt ? new Date(payment.website.expiredAt) : new Date();
+      const baseDate = currentExpiry.getTime() > startDate.getTime() ? currentExpiry : startDate;
+      const endDate = new Date(baseDate.getTime() + 365 * 24 * 60 * 60 * 1000); // 1 year extension (BR011)
       const defaultStorageQuota = BigInt(1073741824); // 1 GB initial storage (BR011, BR013)
 
       // Create Active Subscription record (BR010: created ONLY after payment success)
       const subscription = await tx.subscription.create({
         data: {
           websiteId: payment.websiteId,
-          plan: 'FIRST_YEAR',
+          plan: payment.type === 'RENEWAL' ? 'RENEWAL' : 'FIRST_YEAR',
           storageQuota: defaultStorageQuota,
           status: 'ACTIVE',
           startDate,

@@ -94,6 +94,12 @@ export default function WebmasterDashboard() {
   const [ebookFile, setEbookFile] = useState<File | null>(null);
   const [ebookFormOpen, setEbookFormOpen] = useState(false);
 
+  // Renewal states (Phase 2 Expiration Banner alignment)
+  const [renewModalOpen, setRenewModalOpen] = useState(false);
+  const [renewRefId, setRenewRefId] = useState('');
+  const [renewAmount, setRenewAmount] = useState(2000);
+  const [renewLoading, setRenewLoading] = useState(false);
+
   // UI states
   const [isLoading, setIsLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -530,6 +536,68 @@ export default function WebmasterDashboard() {
     setEbookFormOpen(false);
   };
 
+  // 9. Renewal Handler (Phase 2 Expiration Banner alignment)
+  const handleRequestRenewal = async () => {
+    if (!selectedSite) return;
+    setRenewLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('/api/payment/create-renew', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ websiteId: selectedSite.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setRenewRefId(data.refId);
+      setRenewAmount(data.amount);
+      setRenewModalOpen(true);
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการขอต่ออายุบริการ');
+    } finally {
+      setRenewLoading(false);
+    }
+  };
+
+  const handleSimulateRenewSuccess = async () => {
+    if (!selectedSite || !renewRefId) return;
+    setRenewLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('/api/payment/callback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          refId: renewRefId,
+          amount: renewAmount,
+          status: 'SUCCESS',
+          signature: 'MOCK_SIGNATURE_OK_2026',
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess('ต่ออายุบริการเว็บไซต์สำเร็จ! ขยายเวลาการใช้งานเรียบร้อยแล้วค่ะ');
+      setRenewModalOpen(false);
+
+      // Reload website details to refresh expiry date
+      const meRes = await fetch('/api/tenant/list-mine');
+      const meData = await meRes.json();
+      if (meRes.ok && meData.websites) {
+        setWebsites(meData.websites);
+        const updated = meData.websites.find((w: any) => w.id === selectedSite.id);
+        if (updated) selectWebsite(updated);
+      }
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการจำลองการชำระเงินต่ออายุ');
+    } finally {
+      setRenewLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-955 flex items-center justify-center text-white">
@@ -624,6 +692,90 @@ export default function WebmasterDashboard() {
         
         {success && <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 rounded-2xl font-semibold">✓ {success}</div>}
         {error && <div className="p-4 bg-red-500/10 border border-red-500/20 text-xs text-red-400 rounded-2xl font-semibold">⚠️ {error}</div>}
+
+        {/* Expiration warning banner (Phase 2 Expiration Banner alignment) */}
+        {(() => {
+          const getRemainingDays = (expiredAtStr: string) => {
+            const expiredAt = new Date(expiredAtStr);
+            const now = new Date();
+            const diffTime = expiredAt.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+          };
+          const remainingDays = selectedSite.expiredAt ? getRemainingDays(selectedSite.expiredAt) : 999;
+          const isExpiringSoon = remainingDays <= 30;
+
+          if (!isExpiringSoon) return null;
+
+          return (
+            <div className="p-5 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs font-semibold text-amber-400">
+              <div className="space-y-1">
+                <p className="font-bold text-sm text-white">⚠️ บริการใกล้หมดอายุ (Expired Warning)</p>
+                <p className="text-[11px] text-amber-400/80">
+                  เว็บไซต์รำลึก /{selectedSite.slug} จะหมดอายุลงในอีก {remainingDays} วัน (ในวันที่ {new Date(selectedSite.expiredAt).toLocaleDateString('th-TH')}) กรุณาต่ออายุเพื่อหลีกเลี่ยงการระงับบริการชั่วคราว
+                </p>
+              </div>
+              <button 
+                type="button"
+                onClick={handleRequestRenewal}
+                disabled={renewLoading}
+                className="px-4 py-2.5 bg-amber-500 hover:brightness-110 active:scale-95 text-slate-950 font-bold rounded-xl transition flex-shrink-0 text-[10px]"
+              >
+                🌸 ต่ออายุบริการ 1 ปี (2,000 บาท)
+              </button>
+            </div>
+          );
+        })()}
+
+        {/* Renewal Checkout Modal */}
+        {renewModalOpen && (
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-sm w-full space-y-6 text-center animate-fade-in">
+              <header className="space-y-1 text-left border-b border-slate-850 pb-3">
+                <h3 className="text-sm font-bold text-white">🌸 ต่ออายุบริการเว็บไซต์ (Subscription Renewal)</h3>
+                <p className="text-[10px] text-slate-500 font-semibold">ต่ออายุหน้ารำลึก /{selectedSite.slug} เพิ่มเติม 1 ปี (365 วัน)</p>
+              </header>
+
+              <div className="p-5 rounded-2xl bg-white text-slate-900 shadow-lg space-y-4 max-w-[240px] mx-auto border border-slate-100">
+                <div className="text-center font-bold text-[9px] tracking-wider border-b pb-1 text-slate-500 uppercase">PROMPTPAY QR</div>
+                
+                <div className="w-36 h-36 bg-slate-100 rounded-lg mx-auto flex flex-col items-center justify-center gap-1 border border-slate-200 p-2">
+                  <span className="text-xl">🕯️</span>
+                  <span className="text-[7px] font-black text-slate-700">RENEWAL PAYMENT</span>
+                  <span className="text-[8px] font-mono text-slate-500 break-all px-1">{renewRefId}</span>
+                </div>
+
+                <div className="space-y-0.5 text-left text-[11px]">
+                  <p className="font-bold text-slate-500">ยอดชำระ: {renewAmount.toLocaleString()} บาท</p>
+                  <p className="text-[9px] text-slate-400">อ้างอิง: {renewRefId.substring(0, 16)}...</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-950/40 rounded-xl border border-slate-850 text-[10px] text-slate-400 text-left leading-normal">
+                * คิวอาร์โค้ดสำหรับจ่ายเงินต่ออายุนี้มีอายุการใช้งาน 15 นาทีตามมาตรฐานความปลอดภัย (Grill Decision)
+              </div>
+
+              <div className="flex gap-2">
+                <button 
+                  type="button"
+                  onClick={handleSimulateRenewSuccess}
+                  disabled={renewLoading}
+                  className="flex-1 py-2.5 bg-emerald-500 hover:brightness-110 text-slate-950 font-bold rounded-xl text-xs transition"
+                >
+                  {renewLoading ? 'กำลังจำลอง...' : '✓ จำลองต่ออายุสำเร็จ'}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setRenewModalOpen(false)}
+                  disabled={renewLoading}
+                  className="px-4 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold rounded-xl text-xs transition border border-slate-700"
+                >
+                  ปิด
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-800">
           <div>
