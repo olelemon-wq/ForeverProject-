@@ -8,17 +8,20 @@ generator client {
 }
 
 model Tenant {
-  id           String             @id @default(uuid())
-  slug         String             @unique
-  name         String
-  category     String             // e.g. "Memorial", "Family Legacy", "Couple", "Wedding", "Friends", "Pet Memorial"
-  ownerPhone   String
-  themeConfig  Json               // e.g. { primaryColor: "#Hex", secondaryColor: "#Hex", font: "Inter", heroStyle: "Classic" }
-  visibility   String             // "PUBLIC", "PRIVATE", "PASSWORD_PROTECTED" (BR035)
-  status       String             // "ACTIVE", "READ_ONLY", "SUSPENDED", "ARCHIVED" (BR021)
-  expiredAt    DateTime
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  id                  String             @id @default(uuid())
+  slug                String             @unique
+  name                String
+  category            String             // e.g. "Memorial", "Family Legacy", "Couple", "Wedding", "Friends", "Pet Memorial"
+  ownerPhone          String
+  themeConfig         Json               // e.g. { primaryColor: "#Hex", secondaryColor: "#Hex", font: "Inter", heroStyle: "Classic" }
+  visibility          String             // "PUBLIC", "PRIVATE", "PASSWORD_PROTECTED" (BR035)
+  status              String             // "ACTIVE", "READ_ONLY", "SUSPENDED", "ARCHIVED" (BR021)
+  expiredAt           DateTime
+  donationPromptPay   String?
+  donationAccountName String?
+  donationActive      Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 
   webmasters    WebsiteWebmaster[]
   subscriptions Subscription[]
@@ -27,6 +30,7 @@ model Tenant {
   condolences   Condolence[]
   menus         Menu[]
   auditLogs     AuditLog[]
+  memoryPosts   MemoryPost[]
 }
 
 model Webmaster {
@@ -154,4 +158,19 @@ model OtpRequest {
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
+
+model MemoryPost {
+  id         String   @id @default(uuid())
+  websiteId  String
+  title      String?
+  content    String?
+  mediaUrl   String?  // Image or video URL
+  mediaType  String?  // "IMAGE", "VIDEO", "NONE"
+  senderName String
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
 

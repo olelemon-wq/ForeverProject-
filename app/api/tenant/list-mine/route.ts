@@ -41,6 +41,9 @@ export async function GET() {
       category: relation.website.category,
       status: relation.website.status,
       expiredAt: relation.website.expiredAt,
+      donationPromptPay: relation.website.donationPromptPay,
+      donationAccountName: relation.website.donationAccountName,
+      donationActive: relation.website.donationActive,
       role: relation.role,
     }));
 

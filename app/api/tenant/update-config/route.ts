@@ -18,8 +18,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่อีกครั้ง' }, { status: 401 });
     }
 
-    // 2. Parse variables
-    const { websiteId, name, category, themeConfig, visibility } = await request.json();
+    // 2. Parse variables including new donation parameters
+    const { 
+      websiteId, 
+      name, 
+      category, 
+      themeConfig, 
+      visibility, 
+      donationPromptPay, 
+      donationAccountName, 
+      donationActive 
+    } = await request.json();
 
     if (!websiteId) {
       return NextResponse.json({ error: 'กรุณาระบุรหัสเว็บไซต์ความทรงจำ' }, { status: 400 });
@@ -55,6 +64,9 @@ export async function POST(request: Request) {
         ...(category && { category }),
         ...(themeConfig && { themeConfig }),
         ...(visibility && { visibility }),
+        ...(donationPromptPay !== undefined && { donationPromptPay }),
+        ...(donationAccountName !== undefined && { donationAccountName }),
+        ...(donationActive !== undefined && { donationActive }),
       },
     });
 
@@ -64,7 +76,7 @@ export async function POST(request: Request) {
         websiteId,
         webmasterId: webmaster.id,
         action: 'PUBLISH',
-        details: `ปรับแต่งการตั้งค่าเว็บไซต์และบันทึกข้อมูลสำเร็จ`,
+        details: `ปรับแต่งการตั้งค่าเว็บไซต์และตารางทำบุญ Donation QR สำหรับ /${updatedTenant.slug}`,
       },
     });
 

@@ -10,6 +10,9 @@ interface Website {
   category: string;
   status: string;
   expiredAt: string;
+  donationPromptPay: string | null;
+  donationAccountName: string | null;
+  donationActive: boolean;
   role: string;
 }
 
@@ -21,10 +24,20 @@ interface Condolence {
   createdAt: string;
 }
 
+interface MemoryPost {
+  id: string;
+  title: string | null;
+  content: string | null;
+  mediaUrl: string | null;
+  senderName: string;
+  createdAt: string;
+}
+
 export default function WebmasterDashboard() {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [activeSite, setActiveSite] = useState<Website | null>(null);
   const [condolences, setCondolences] = useState<Condolence[]>([]);
+  const [pendingPosts, setPendingPosts] = useState<MemoryPost[]>([]);
   
   // Active site editable configs
   const [siteName, setSiteName] = useState('');
@@ -34,6 +47,11 @@ export default function WebmasterDashboard() {
   const [fontFamily, setFontFamily] = useState('Inter');
   const [visibility, setVisibility] = useState('PUBLIC');
   
+  // Donation states
+  const [donationPromptPay, setDonationPromptPay] = useState('');
+  const [donationAccountName, setDonationAccountName] = useState('');
+  const [donationActive, setDonationActive] = useState(false);
+
   // Storage states
   const [storageUsedBytes, setStorageUsedBytes] = useState(256 * 1024 * 1024); // mock start 256MB
   const [storageQuotaBytes, setStorageQuotaBytes] = useState(1073741824); // 1GB
@@ -46,11 +64,10 @@ export default function WebmasterDashboard() {
   const [success, setSuccess] = useState('');
   const [userPhone, setUserPhone] = useState('');
 
-  // 1. Initial Load: Fetch User Managed Websites
+  // 1. Initial Load: Fetch User Managed Websites and Phone Identity
   useEffect(() => {
     async function loadWebsites() {
       try {
-        // Fetch current webmaster identity
         const meRes = await fetch('/api/auth/me');
         const meData = await meRes.json();
         if (meData.authenticated) {
@@ -81,6 +98,11 @@ export default function WebmasterDashboard() {
     setSiteName(site.name);
     setSiteCategory(site.category);
     
+    // Set donation fields from DB
+    setDonationPromptPay(site.donationPromptPay || '');
+    setDonationAccountName(site.donationAccountName || '');
+    setDonationActive(site.donationActive || false);
+
     // Reset status flags
     setError('');
     setSuccess('');
@@ -95,9 +117,20 @@ export default function WebmasterDashboard() {
     } catch (err) {
       console.error('Error fetching condolences:', err);
     }
+
+    // Fetch pending memory posts for this site (Memory Wall)
+    try {
+      const res = await fetch(`/api/memory/pending?websiteId=${site.id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setPendingPosts(data.posts || []);
+      }
+    } catch (err) {
+      console.error('Error fetching memory posts:', err);
+    }
   };
 
-  // 3. Save Website Configuration (BR025, BR026, Step 7 Theme Save)
+  // 3. Save Website Configuration (BR025, BR026, Step 7 Theme Save, Donation fields update)
   const handleSaveConfig = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeSite) return;
@@ -115,6 +148,9 @@ export default function WebmasterDashboard() {
           name: siteName,
           category: siteCategory,
           visibility,
+          donationPromptPay,
+          donationAccountName,
+          donationActive,
           themeConfig: {
             primaryColor,
             secondaryColor,
@@ -130,7 +166,14 @@ export default function WebmasterDashboard() {
       setSuccess('บันทึกการปรับแต่งเว็บไซต์ความทรงจำสำเร็จ');
       
       // Update local websites list state
-      setWebsites(websites.map(w => w.id === activeSite.id ? { ...w, name: siteName, category: siteCategory } : w));
+      setWebsites(websites.map(w => w.id === activeSite.id ? { 
+        ...w, 
+        name: siteName, 
+        category: siteCategory,
+        donationPromptPay,
+        donationAccountName,
+        donationActive
+      } : w));
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     } finally {
@@ -139,7 +182,7 @@ export default function WebmasterDashboard() {
   };
 
   // 4. Moderate Condolence (Approve / Delete - BR027)
-  const handleModerate = async (id: string, action: 'APPROVE' | 'DELETE') => {
+  const handleModerateCondolence = async (id: string, action: 'APPROVE' | 'DELETE') => {
     if (!activeSite) return;
     setError('');
     setSuccess('');
@@ -158,15 +201,41 @@ export default function WebmasterDashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess(action === 'APPROVE' ? 'อนุมัติข้อความออกเผยแพร่สำเร็จ' : 'ลบคำไว้อาลัยสำเร็จ');
-      // Update local condolences list
+      setSuccess(action === 'APPROVE' ? 'อนุมัติคำไว้อาลัยออกเผยแพร่สำเร็จ' : 'ลบคำไว้อาลัยสำเร็จ');
       setCondolences(condolences.filter(c => c.id !== id));
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการคัดกรองข้อมูล');
     }
   };
 
-  // 5. Mock Media Upload with Quota Checks (BR014, BR016, Step 8)
+  // 5. Moderate Memory Post (Approve / Delete)
+  const handleModerateMemoryPost = async (id: string, action: 'APPROVE' | 'DELETE') => {
+    if (!activeSite) return;
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await fetch('/api/memory/moderate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postId: id,
+          action,
+          websiteId: activeSite.id,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess(action === 'APPROVE' ? 'อนุมัติโพสต์ขึ้นบอร์ดความทรงจำสำเร็จ' : 'ลบโพสต์สำเร็จ');
+      setPendingPosts(pendingPosts.filter(p => p.id !== id));
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการคัดกรองเรื่องราว');
+    }
+  };
+
+  // 6. Mock Media Upload with Quota Checks (BR014, BR016, Step 8 uploader)
   const handleMockUpload = async (sizeMB: number) => {
     if (!activeSite) return;
     setUploadLoading(true);
@@ -192,8 +261,6 @@ export default function WebmasterDashboard() {
       if (!res.ok) throw new Error(data.error);
 
       setSuccess(`อัปโหลดไฟล์ "${fileName}" (${sizeMB} MB) สำเร็จ! บันทึกในคลังภาพ R2 สำเร็จ`);
-      
-      // Update local progress bar
       setStorageUsedBytes(prev => prev + sizeBytes);
     } catch (err: any) {
       setError(err.message || 'การอัปโหลดไฟล์ขัดข้อง');
@@ -210,7 +277,6 @@ export default function WebmasterDashboard() {
     );
   }
 
-  // IF NO WEBSITE FOUND: SHOW CTA
   if (websites.length === 0) {
     return (
       <main className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6 text-center space-y-6">
@@ -232,9 +298,9 @@ export default function WebmasterDashboard() {
   const storagePercentage = Math.min((storageUsedBytes / storageQuotaBytes) * 100, 100);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row">
-      {/* Sidebar navigation */}
-      <aside className="w-full md:w-64 bg-slate-950 border-r border-slate-800 p-6 flex flex-col justify-between">
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row font-sans">
+      {/* Sidebar */}
+      <aside className="w-full md:w-64 bg-slate-955 border-r border-slate-800 p-6 flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-2 mb-8">
             <span className="text-xl font-bold tracking-wider bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
@@ -250,7 +316,6 @@ export default function WebmasterDashboard() {
             </Link>
           </nav>
 
-          {/* Website switcher dropdown list */}
           <div className="mt-8 space-y-2">
             <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">เลือกเว็บไซต์จัดการ</label>
             <select 
@@ -300,7 +365,7 @@ export default function WebmasterDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Settings Customizer */}
           <form onSubmit={handleSaveConfig} className="lg:col-span-2 p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-            <h3 className="text-lg font-bold text-white mb-2">🎨 ปรับแต่งธีมและข้อมูลหน้าแสดงผล</h3>
+            <h3 className="text-lg font-bold text-white mb-2">🎨 ปรับแต่งธีมและข้อมูลทั่วไป</h3>
             
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อหน้ารำลึก</label>
@@ -355,12 +420,50 @@ export default function WebmasterDashboard() {
               <select 
                 value={fontFamily} 
                 onChange={(e) => setFontFamily(e.target.value)} 
-                className="w-full px-4 py-2.5 text-sm bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
+                className="w-full px-4 py-2.5 text-sm bg-slate-900 border border-slate-800 rounded-xl text-white"
               >
                 <option value="Inter">Inter (เรียบหรูสากล)</option>
                 <option value="Sarabun">Sarabun (ไทยทางการ)</option>
                 <option value="Niramit">Niramit (ไทยร่วมสมัย)</option>
               </select>
+            </div>
+
+            {/* Donation Settings (Phase 2 integration) */}
+            <div className="border-t border-slate-850 pt-6 space-y-4">
+              <div className="flex justify-between items-center">
+                <h4 className="text-sm font-bold text-white">🌸 เปิดใช้บริการรับเงินทำบุญ (Donation QR Settings)</h4>
+                <input 
+                  type="checkbox" 
+                  checked={donationActive}
+                  onChange={() => setDonationActive(!donationActive)}
+                  className="w-5 h-5 accent-emerald-500 cursor-pointer"
+                />
+              </div>
+
+              {donationActive && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">หมายเลขพร้อมเพย์ (PromptPay)</label>
+                    <input 
+                      type="text" 
+                      value={donationPromptPay} 
+                      onChange={(e) => setDonationPromptPay(e.target.value)} 
+                      placeholder="เช่น 0812345678 หรือ 1234567890123"
+                      className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-mono"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อบัญชีรับเงินทำบุญ</label>
+                    <input 
+                      type="text" 
+                      value={donationAccountName} 
+                      onChange={(e) => setDonationAccountName(e.target.value)} 
+                      placeholder="เช่น นายสมชาย รักดี"
+                      className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <button 
@@ -372,12 +475,11 @@ export default function WebmasterDashboard() {
             </button>
           </form>
 
-          {/* Sidebar components */}
+          {/* Sidebar */}
           <div className="space-y-8">
-            
-            {/* Storage Quota Widget & Mock Uploader (Step 8) */}
+            {/* Storage Quota */}
             <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
-              <h3 className="text-base font-bold text-white">💾 พื้นที่จัดเก็บมีเดีย R2 Storage</h3>
+              <h3 className="text-base font-bold text-white">💾 พื้นที่จัดเก็บมีเดีย S3 / R2</h3>
               <div className="space-y-2">
                 <div className="flex justify-between text-xs text-slate-400 font-medium">
                   <span>ใช้งาน: {(storageUsedBytes / (1024 * 1024)).toFixed(1)} MB</span>
@@ -388,23 +490,22 @@ export default function WebmasterDashboard() {
                 </div>
               </div>
               
-              {/* Simulated direct S3 upload action with quota check (Step 8 uploader) */}
               <div className="border-t border-slate-850 pt-4 space-y-2">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">จำลองสุ่มอัปโหลดรูปภาพเพื่อเช็กความจุ</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">จำลองอัปโหลดไฟล์จริงเพื่อเช็ก Quota</p>
                 <div className="flex gap-2">
                   <button 
                     onClick={() => handleMockUpload(10)} 
                     disabled={uploadLoading}
                     className="flex-1 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-850 rounded-xl text-[10px] text-white font-bold transition"
                   >
-                    อัปโหลดรูป (10MB)
+                    รูปภาพ (10MB)
                   </button>
                   <button 
                     onClick={() => handleMockUpload(250)} 
                     disabled={uploadLoading}
                     className="flex-1 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-850 rounded-xl text-[10px] text-amber-500 font-bold transition"
                   >
-                    อัปโหลดรูปใหญ่ (250MB)
+                    วิดีโอใหญ่ (250MB)
                   </button>
                 </div>
               </div>
@@ -428,39 +529,21 @@ export default function WebmasterDashboard() {
                     <p className="text-[10px] text-slate-500">ทุกคนเข้าชมและส่งคำไว้อาลัยได้</p>
                   </div>
                 </label>
-
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input 
-                    type="radio" 
-                    name="visibility" 
-                    value="PRIVATE" 
-                    checked={visibility === 'PRIVATE'}
-                    onChange={() => setVisibility('PRIVATE')}
-                    className="accent-emerald-500 w-4 h-4"
-                  />
-                  <div>
-                    <p className="text-xs font-bold text-white">ลิมิเต็ดเฉพาะผู้มีลิงก์ (Private)</p>
-                    <p className="text-[10px] text-slate-500">เฉพาะคนสนิทในครอบครัวเท่านั้นที่เข้าชมได้</p>
-                  </div>
-                </label>
               </div>
             </section>
           </div>
         </div>
 
-        {/* Condolence moderation panel */}
+        {/* Condolence moderation */}
         <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-white">🕯️ คำไว้อาลัยรออนุมัติ ({condolences.length})</h3>
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">MEMBER MODERATION</span>
-          </div>
+          <h3 className="text-lg font-bold text-white">🕯️ คำไว้อาลัยรออนุมัติ ({condolences.length})</h3>
 
           {condolences.length === 0 ? (
             <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
               ไม่มีข้อความไว้อาลัยค้างอนุมัติในเวลานี้
             </div>
           ) : (
-            <div className="space-y-4 animate-fade-in">
+            <div className="space-y-4">
               {condolences.map(c => (
                 <div key={c.id} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/10 flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                   <div className="space-y-2">
@@ -469,21 +552,58 @@ export default function WebmasterDashboard() {
                       <span className="px-2 py-0.5 text-[9px] font-semibold bg-slate-850 text-slate-400 rounded">
                         ความสัมพันธ์: {c.relationship}
                       </span>
-                      <span className="text-[10px] text-slate-500 ml-auto font-mono">
-                        {new Date(c.createdAt).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.
-                      </span>
                     </div>
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">"{c.message}"</p>
                   </div>
                   <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
                     <button 
-                      onClick={() => handleModerate(c.id, 'APPROVE')}
+                      onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
                       className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
                     >
                       อนุมัติ
                     </button>
                     <button 
-                      onClick={() => handleModerate(c.id, 'DELETE')}
+                      onClick={() => handleModerateCondolence(c.id, 'DELETE')}
+                      className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold transition"
+                    >
+                      ลบออก
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Memory Wall Moderation Section (Phase 2 integration) */}
+        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
+          <h3 className="text-lg font-bold text-white">📸 เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</h3>
+
+          {pendingPosts.length === 0 ? (
+            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
+              ไม่มีเรื่องราวหรือรูปถ่ายค้างอนุมัติในเวลานี้
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {pendingPosts.map(p => (
+                <div key={p.id} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/10 flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-white">ส่งโดย: {p.senderName}</span>
+                      {p.title && <span className="text-xs font-semibold text-slate-300">| หัวข้อ: {p.title}</span>}
+                    </div>
+                    {p.mediaUrl && <p className="text-[10px] text-slate-500 font-mono">แนบไฟล์รูป: {p.mediaUrl}</p>}
+                    {p.content && <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">"{p.content}"</p>}
+                  </div>
+                  <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
+                    <button 
+                      onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
+                      className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
+                    >
+                      อนุมัติลงบอร์ด
+                    </button>
+                    <button 
+                      onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
                       className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold transition"
                     >
                       ลบออก
