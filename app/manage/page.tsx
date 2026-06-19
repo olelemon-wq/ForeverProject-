@@ -1,24 +1,235 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+
+interface Website {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  status: string;
+  expiredAt: string;
+  role: string;
+}
+
+interface Condolence {
+  id: string;
+  senderName: string;
+  relationship: string;
+  message: string;
+  createdAt: string;
+}
 
 export default function WebmasterDashboard() {
-  // Mock states for Webmaster options
+  const [websites, setWebsites] = useState<Website[]>([]);
+  const [activeSite, setActiveSite] = useState<Website | null>(null);
+  const [condolences, setCondolences] = useState<Condolence[]>([]);
+  
+  // Active site editable configs
+  const [siteName, setSiteName] = useState('');
+  const [siteCategory, setSiteCategory] = useState('');
   const [primaryColor, setPrimaryColor] = useState('#0d9488');
   const [secondaryColor, setSecondaryColor] = useState('#f59e0b');
   const [fontFamily, setFontFamily] = useState('Inter');
   const [visibility, setVisibility] = useState('PUBLIC');
-  const [commentsApproval, setCommentsApproval] = useState(true);
+  
+  // Storage states
+  const [storageUsedBytes, setStorageUsedBytes] = useState(256 * 1024 * 1024); // mock start 256MB
+  const [storageQuotaBytes, setStorageQuotaBytes] = useState(1073741824); // 1GB
+  
+  // UI states
+  const [isLoading, setIsLoading] = useState(true);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [userPhone, setUserPhone] = useState('');
 
-  // Mock list of condolences awaiting approval
-  const [condolences, setCondolences] = useState([
-    { id: 1, name: 'สมบัติ พูนพูน', relation: 'เพื่อนร่วมงาน', message: 'เสียใจอย่างยิ่งกับการจากไปของพี่สมศักดิ์ครับ ท่านเป็นหัวหน้าที่ดีเสมอมา', date: '10 นาทีที่แล้ว' },
-    { id: 2, name: 'ชลิดา รักสงบ', relation: 'หลาน', message: 'ขอให้คุณตาพักผ่อนให้สบายนะคะ หลานๆ จะระลึกถึงคุณตาเสมอค่ะ', date: '1 ชั่วโมงที่แล้ว' },
-  ]);
+  // 1. Initial Load: Fetch User Managed Websites
+  useEffect(() => {
+    async function loadWebsites() {
+      try {
+        // Fetch current webmaster identity
+        const meRes = await fetch('/api/auth/me');
+        const meData = await meRes.json();
+        if (meData.authenticated) {
+          setUserPhone(meData.phone);
+        }
 
-  const approveCondolence = (id: number) => {
-    setCondolences(condolences.filter(item => item.id !== id));
+        const res = await fetch('/api/tenant/list-mine');
+        const data = await res.json();
+        
+        if (!res.ok) throw new Error(data.error);
+        
+        setWebsites(data.websites || []);
+        if (data.websites && data.websites.length > 0) {
+          selectWebsite(data.websites[0]);
+        }
+      } catch (err: any) {
+        setError(err.message || 'เกิดข้อผิดพลาดในการโหลดข้อมูลเว็บไซต์');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadWebsites();
+  }, []);
+
+  // 2. Select Website & Load related details
+  const selectWebsite = async (site: Website) => {
+    setActiveSite(site);
+    setSiteName(site.name);
+    setSiteCategory(site.category);
+    
+    // Reset status flags
+    setError('');
+    setSuccess('');
+    
+    // Fetch pending condolences for this site
+    try {
+      const res = await fetch(`/api/condolence/pending?websiteId=${site.id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setCondolences(data.condolences || []);
+      }
+    } catch (err) {
+      console.error('Error fetching condolences:', err);
+    }
   };
+
+  // 3. Save Website Configuration (BR025, BR026, Step 7 Theme Save)
+  const handleSaveConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeSite) return;
+
+    setSaveLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await fetch('/api/tenant/update-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          websiteId: activeSite.id,
+          name: siteName,
+          category: siteCategory,
+          visibility,
+          themeConfig: {
+            primaryColor,
+            secondaryColor,
+            fontFamily,
+            heroStyle: 'Classic',
+          },
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess('บันทึกการปรับแต่งเว็บไซต์ความทรงจำสำเร็จ');
+      
+      // Update local websites list state
+      setWebsites(websites.map(w => w.id === activeSite.id ? { ...w, name: siteName, category: siteCategory } : w));
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  // 4. Moderate Condolence (Approve / Delete - BR027)
+  const handleModerate = async (id: string, action: 'APPROVE' | 'DELETE') => {
+    if (!activeSite) return;
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await fetch('/api/condolence/moderate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          condolenceId: id,
+          action,
+          websiteId: activeSite.id,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess(action === 'APPROVE' ? 'อนุมัติข้อความออกเผยแพร่สำเร็จ' : 'ลบคำไว้อาลัยสำเร็จ');
+      // Update local condolences list
+      setCondolences(condolences.filter(c => c.id !== id));
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการคัดกรองข้อมูล');
+    }
+  };
+
+  // 5. Mock Media Upload with Quota Checks (BR014, BR016, Step 8)
+  const handleMockUpload = async (sizeMB: number) => {
+    if (!activeSite) return;
+    setUploadLoading(true);
+    setError('');
+    setSuccess('');
+
+    const sizeBytes = sizeMB * 1024 * 1024;
+    const fileName = `memory-photo-${Date.now()}.png`;
+
+    try {
+      const res = await fetch('/api/media/upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          websiteId: activeSite.id,
+          fileName,
+          fileType: 'image/png',
+          fileSize: sizeBytes,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess(`อัปโหลดไฟล์ "${fileName}" (${sizeMB} MB) สำเร็จ! บันทึกในคลังภาพ R2 สำเร็จ`);
+      
+      // Update local progress bar
+      setStorageUsedBytes(prev => prev + sizeBytes);
+    } catch (err: any) {
+      setError(err.message || 'การอัปโหลดไฟล์ขัดข้อง');
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-955 flex items-center justify-center text-white">
+        <p className="text-sm font-semibold tracking-wider animate-pulse">กำลังโหลดแผงควบคุมหลังบ้าน...</p>
+      </div>
+    );
+  }
+
+  // IF NO WEBSITE FOUND: SHOW CTA
+  if (websites.length === 0) {
+    return (
+      <main className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6 text-center space-y-6">
+        <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center text-3xl">🕯️</div>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-black text-white">ยินดีต้อนรับสู่ FOREVER</h1>
+          <p className="text-slate-400 text-sm max-w-sm mx-auto">
+            คุณยังไม่มีเว็บไซต์ความทรงจำในระบบบัญชีของคุณในขณะนี้ มาสร้างหน้ารำลึกแด่ผู้ล่วงลับคนแรกของคุณกันเถอะ
+          </p>
+        </div>
+        <Link href="/manage/create" className="px-6 py-3.5 rounded-2xl bg-emerald-500 text-slate-950 font-bold text-sm hover:brightness-110 active:scale-95 transition">
+          สร้างเว็บไซต์แรกของคุณ
+        </Link>
+      </main>
+    );
+  }
+
+  const selectedSite = activeSite || websites[0];
+  const storagePercentage = Math.min((storageUsedBytes / storageQuotaBytes) * 100, 100);
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row">
@@ -31,29 +242,38 @@ export default function WebmasterDashboard() {
             </span>
           </div>
           <nav className="space-y-2">
-            <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-800 text-emerald-400 font-semibold text-sm transition">
+            <button className="w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-800 text-emerald-400 font-semibold text-sm transition">
               <span>📊</span> แผงควบคุม (Dashboard)
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 text-sm transition">
-              <span>🎨</span> ปรับแต่งธีมเว็บ
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 text-sm transition">
-              <span>📸</span> อัปโหลดรูปภาพ/วิดีโอ
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 text-sm transition">
-              <span>🕯️</span> จัดการคำไว้อาลัย
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 text-sm transition">
-              <span>💳</span> แพ็กเกจและสมาชิก
-            </a>
+            </button>
+            <Link href="/manage/create" className="w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 text-sm transition">
+              <span>➕</span> สร้างเว็บไซต์เพิ่ม
+            </Link>
           </nav>
+
+          {/* Website switcher dropdown list */}
+          <div className="mt-8 space-y-2">
+            <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">เลือกเว็บไซต์จัดการ</label>
+            <select 
+              value={selectedSite.id} 
+              onChange={(e) => {
+                const site = websites.find(w => w.id === e.target.value);
+                if (site) selectWebsite(site);
+              }}
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white"
+            >
+              {websites.map(w => (
+                <option key={w.id} value={w.id}>/{w.slug} ({w.name.substring(0, 10)})</option>
+              ))}
+            </select>
+          </div>
         </div>
-        <div className="mt-8 border-t border-slate-800 pt-6">
+        
+        <div className="mt-8 border-t border-slate-850 pt-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-sm">👤</div>
             <div>
-              <p className="text-xs font-semibold text-white">081-xxx-xxxx</p>
-              <p className="text-[10px] text-slate-500">สถานะ: Webmaster</p>
+              <p className="text-xs font-semibold text-white">ผู้ใช้งานบัญชี</p>
+              <p className="text-[10px] text-slate-500">{userPhone}</p>
             </div>
           </div>
         </div>
@@ -61,26 +281,37 @@ export default function WebmasterDashboard() {
 
       {/* Main dashboard content */}
       <main className="flex-1 p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full overflow-y-auto">
-        {/* Header Widget */}
+        
+        {success && <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 rounded-2xl font-semibold">✓ {success}</div>}
+        {error && <div className="p-4 bg-red-500/10 border border-red-500/20 text-xs text-red-400 rounded-2xl font-semibold">⚠️ {error}</div>}
+
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-800">
           <div>
-            <h1 className="text-2xl font-extrabold text-white">การจัดการเว็บไซต์</h1>
-            <p className="text-sm text-slate-400">ชื่อโดเมน: <a href="/somsakt" target="_blank" className="text-emerald-400 underline">forever.co.th/somsakt</a></p>
+            <h1 className="text-2xl font-extrabold text-white">{selectedSite.name}</h1>
+            <p className="text-sm text-slate-400">ลิงก์ความทรงจำ: <a href={`/${selectedSite.slug}`} target="_blank" className="text-emerald-400 underline">forever.co.th/{selectedSite.slug}</a></p>
           </div>
-          <div className="flex items-center gap-3">
+          <div>
             <span className="px-3.5 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              สถานะ: สมาชิกปกติ (Active)
+              สถานะบริการ: {selectedSite.status}
             </span>
           </div>
         </header>
 
-        {/* Dashboard Grid widgets */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Theme Customizer widget */}
-          <section className="lg:col-span-2 p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-            <h3 className="text-lg font-bold text-white mb-2">🎨 Theme Settings & Colors</h3>
+          {/* Settings Customizer */}
+          <form onSubmit={handleSaveConfig} className="lg:col-span-2 p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
+            <h3 className="text-lg font-bold text-white mb-2">🎨 ปรับแต่งธีมและข้อมูลหน้าแสดงผล</h3>
             
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อหน้ารำลึก</label>
+              <input 
+                type="text" 
+                value={siteName} 
+                onChange={(e) => setSiteName(e.target.value)} 
+                className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+              />
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Primary Color</label>
@@ -124,56 +355,64 @@ export default function WebmasterDashboard() {
               <select 
                 value={fontFamily} 
                 onChange={(e) => setFontFamily(e.target.value)} 
-                className="w-full px-4 py-2.5 text-sm bg-slate-900 border border-slate-800 rounded-xl text-white"
+                className="w-full px-4 py-2.5 text-sm bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
               >
-                <option value="Inter">Inter (เรียบหรู ทันสมัย)</option>
-                <option value="Sarabun">Sarabun (ไทยทางการ สุภาพ)</option>
-                <option value="Niramit">Niramit (ไทยวิจิตร งดงาม)</option>
+                <option value="Inter">Inter (เรียบหรูสากล)</option>
+                <option value="Sarabun">Sarabun (ไทยทางการ)</option>
+                <option value="Niramit">Niramit (ไทยร่วมสมัย)</option>
               </select>
             </div>
 
-            {/* Live Theme Preview Box */}
-            <div className="p-6 rounded-2xl border border-slate-800/80 bg-slate-900/50 space-y-4">
-              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">ตัวอย่างการแสดงผลฝั่งผู้ใช้</span>
-              <div className="text-center p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-                <div className="w-12 h-12 rounded-full border-2 mx-auto flex items-center justify-center text-sm" style={{ borderColor: primaryColor }}>🕯️</div>
-                <h4 className="text-sm font-bold text-white">คุณพ่อ สมศักดิ์ เจริญยิ่ง</h4>
-                <p className="text-xs text-slate-400" style={{ fontFamily }}>ตัวอย่างรูปแบบตัวอักษรของระบบความทรงจำ</p>
-                <button className="px-4 py-1.5 text-xs font-semibold rounded-full text-slate-950" style={{ backgroundColor: primaryColor }}>
-                  เขียนคำไว้อาลัย
-                </button>
-              </div>
-            </div>
-          </section>
+            <button 
+              type="submit" 
+              disabled={saveLoading}
+              className="px-6 py-3 bg-emerald-500 hover:brightness-110 active:scale-95 text-slate-950 font-bold text-xs rounded-xl transition"
+            >
+              {saveLoading ? 'กำลังบันทึกข้อมูล...' : '💾 บันทึกการตั้งค่าเว็บไซต์'}
+            </button>
+          </form>
 
-          {/* Sidebar Widgets */}
+          {/* Sidebar components */}
           <div className="space-y-8">
             
-            {/* Storage Usage Widget */}
+            {/* Storage Quota Widget & Mock Uploader (Step 8) */}
             <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
-              <h3 className="text-base font-bold text-white">💾 พื้นที่จัดเก็บมีเดีย</h3>
+              <h3 className="text-base font-bold text-white">💾 พื้นที่จัดเก็บมีเดีย R2 Storage</h3>
               <div className="space-y-2">
                 <div className="flex justify-between text-xs text-slate-400 font-medium">
-                  <span>ใช้งานไป 245 MB</span>
-                  <span>จากทั้งหมด 1.0 GB</span>
+                  <span>ใช้งาน: {(storageUsedBytes / (1024 * 1024)).toFixed(1)} MB</span>
+                  <span>จาก: {(storageQuotaBytes / (1024 * 1024 * 1024)).toFixed(1)} GB</span>
                 </div>
-                {/* Progress bar */}
-                <div className="w-full h-2 bg-slate-850 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full" style={{ width: '24.5%' }} />
+                <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${storagePercentage}%` }} />
                 </div>
               </div>
-              <p className="text-[11px] text-slate-500 leading-normal">
-                * ขนาดนับเฉพาะไฟล์ออริจินัล (รูปถ่าย วิดีโอ เสียง เอกสาร PDF) ไม่นับรูปย่อ Thumbnail (BR014)
-              </p>
-              <button className="w-full py-2.5 rounded-xl bg-slate-850 hover:bg-slate-800 text-xs font-bold text-emerald-400 border border-slate-800 hover:border-slate-700 transition">
-                ⚡ อัปเกรดความจุเพิ่ม
-              </button>
+              
+              {/* Simulated direct S3 upload action with quota check (Step 8 uploader) */}
+              <div className="border-t border-slate-850 pt-4 space-y-2">
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">จำลองสุ่มอัปโหลดรูปภาพเพื่อเช็กความจุ</p>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => handleMockUpload(10)} 
+                    disabled={uploadLoading}
+                    className="flex-1 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-850 rounded-xl text-[10px] text-white font-bold transition"
+                  >
+                    อัปโหลดรูป (10MB)
+                  </button>
+                  <button 
+                    onClick={() => handleMockUpload(250)} 
+                    disabled={uploadLoading}
+                    className="flex-1 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-850 rounded-xl text-[10px] text-amber-500 font-bold transition"
+                  >
+                    อัปโหลดรูปใหญ่ (250MB)
+                  </button>
+                </div>
+              </div>
             </section>
 
-            {/* Visibility Settings Widget */}
+            {/* Privacy settings */}
             <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
-              <h3 className="text-base font-bold text-white">🔒 ความเป็นส่วนตัวของเว็บ</h3>
-              
+              <h3 className="text-base font-bold text-white">🔒 ความเป็นส่วนตัว</h3>
               <div className="space-y-3">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input 
@@ -185,8 +424,8 @@ export default function WebmasterDashboard() {
                     className="accent-emerald-500 w-4 h-4"
                   />
                   <div>
-                    <p className="text-xs font-bold text-white">สาธารณะ (Public)</p>
-                    <p className="text-[10px] text-slate-500">ทุกคนเข้าชมและร่วมพิมพ์คำไว้อาลัยได้</p>
+                    <p className="text-xs font-bold text-white">เปิดสาธารณะ (Public)</p>
+                    <p className="text-[10px] text-slate-500">ทุกคนเข้าชมและส่งคำไว้อาลัยได้</p>
                   </div>
                 </label>
 
@@ -200,65 +439,54 @@ export default function WebmasterDashboard() {
                     className="accent-emerald-500 w-4 h-4"
                   />
                   <div>
-                    <p className="text-xs font-bold text-white">ส่วนตัวเฉพาะครอบครัว (Private)</p>
-                    <p className="text-[10px] text-slate-500">เฉพาะผู้ที่มีลิงก์เข้าดูเท่านั้นที่เข้าถึงหน้าได้</p>
+                    <p className="text-xs font-bold text-white">ลิมิเต็ดเฉพาะผู้มีลิงก์ (Private)</p>
+                    <p className="text-[10px] text-slate-500">เฉพาะคนสนิทในครอบครัวเท่านั้นที่เข้าชมได้</p>
                   </div>
                 </label>
-              </div>
-
-              <div className="border-t border-slate-850 pt-4 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold text-white">กลั่นกรองคำไว้อาลัยก่อนลงเว็บ</p>
-                  <p className="text-[10px] text-slate-500">คำไว้อาลัยใหม่ต้องกดยืนยันก่อนเสมอ</p>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={commentsApproval} 
-                  onChange={() => setCommentsApproval(!commentsApproval)}
-                  className="accent-emerald-500 w-5 h-5 cursor-pointer"
-                />
               </div>
             </section>
           </div>
         </div>
 
-        {/* Condolence Moderation Section */}
+        {/* Condolence moderation panel */}
         <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-white">🕯️ คำไว้อาลัยรอการอนุมัติ ({condolences.length})</h3>
-            <span className="text-xs text-slate-400">ระบบคัดกรองคำหยาบคายเบื้องต้นเปิดทำงานอยู่</span>
+            <h3 className="text-lg font-bold text-white">🕯️ คำไว้อาลัยรออนุมัติ ({condolences.length})</h3>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">MEMBER MODERATION</span>
           </div>
 
           {condolences.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-sm">
-              ไม่มีข้อความรออนุมัติในขณะนี้
+            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
+              ไม่มีข้อความไว้อาลัยค้างอนุมัติในเวลานี้
             </div>
           ) : (
-            <div className="space-y-4">
-              {condolences.map(item => (
-                <div key={item.id} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/30 flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+            <div className="space-y-4 animate-fade-in">
+              {condolences.map(c => (
+                <div key={c.id} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/10 flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-sm font-bold text-white">{item.name}</span>
-                      <span className="px-2 py-0.5 text-[10px] font-semibold bg-slate-800 text-slate-400 rounded">
-                        ความสัมพันธ์: {item.relation}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-white">{c.senderName}</span>
+                      <span className="px-2 py-0.5 text-[9px] font-semibold bg-slate-850 text-slate-400 rounded">
+                        ความสัมพันธ์: {c.relationship}
                       </span>
-                      <span className="text-[10px] text-slate-500">{item.date}</span>
+                      <span className="text-[10px] text-slate-500 ml-auto font-mono">
+                        {new Date(c.createdAt).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.
+                      </span>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">"{item.message}"</p>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">"{c.message}"</p>
                   </div>
-                  <div className="flex gap-2 self-end sm:self-auto">
+                  <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
                     <button 
-                      onClick={() => approveCondolence(item.id)}
-                      className="px-4 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 hover:border-emerald-500/30 text-xs font-bold transition"
+                      onClick={() => handleModerate(c.id, 'APPROVE')}
+                      className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
                     >
                       อนุมัติ
                     </button>
                     <button 
-                      onClick={() => approveCondolence(item.id)}
-                      className="px-4 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 hover:border-red-500/30 text-xs font-bold transition"
+                      onClick={() => handleModerate(c.id, 'DELETE')}
+                      className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold transition"
                     >
-                      ลบ
+                      ลบออก
                     </button>
                   </div>
                 </div>
