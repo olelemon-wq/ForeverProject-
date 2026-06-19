@@ -39,10 +39,10 @@ function getDisplayUrl(filePath: string, mimeType: string, index: number) {
     // Curated high-quality, peaceful, respectful memory-themed images from Unsplash
     const placeholders = [
       'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80', // Sunset
-      'https://images.unsplash.com/photo-1517242082268-9a23debc679d?w=600&auto=format&fit=crop&q=80', // Warm Candle light
+      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&auto=format&fit=crop&q=80', // Warm Candle light (New Verified)
       'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80', // Peaceful Forest/Trees
       'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&auto=format&fit=crop&q=80', // Vintage Pen/Letters
-      'https://images.unsplash.com/photo-1490750967868-882361d1b00c?w=600&auto=format&fit=crop&q=80', // Soft Yellow Flowers
+      'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=600&auto=format&fit=crop&q=80', // Soft Yellow Flowers (New Verified)
       'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80', // Mountains
       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80', // Calm Ocean
     ];
