@@ -28,6 +28,29 @@ async function getGalleryMedia(websiteId: string) {
   }));
 }
 
+function getDisplayUrl(filePath: string, mimeType: string, index: number) {
+  if (filePath.startsWith('https://storage.forever.co.th')) {
+    const isVideo = mimeType.startsWith('video/');
+    if (isVideo) {
+      // Beautiful, peaceful nature video from Mixkit CDN
+      return 'https://assets.mixkit.co/videos/preview/mixkit-sunset-seen-through-the-branches-of-a-tree-42751-large.mp4';
+    }
+
+    // Curated high-quality, peaceful, respectful memory-themed images from Unsplash
+    const placeholders = [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80', // Sunset
+      'https://images.unsplash.com/photo-1517242082268-9a23debc679d?w=600&auto=format&fit=crop&q=80', // Warm Candle light
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80', // Peaceful Forest/Trees
+      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&auto=format&fit=crop&q=80', // Vintage Pen/Letters
+      'https://images.unsplash.com/photo-1490750967868-882361d1b00c?w=600&auto=format&fit=crop&q=80', // Soft Yellow Flowers
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80', // Mountains
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80', // Calm Ocean
+    ];
+    return placeholders[index % placeholders.length];
+  }
+  return filePath;
+}
+
 export default async function PublicGalleryPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
   const tenant = await getTenantData(slug);
@@ -58,21 +81,22 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {mediaList.map((media) => {
+            {mediaList.map((media, index) => {
               const isVideo = media.mimeType.startsWith('video/');
+              const displayUrl = getDisplayUrl(media.filePath, media.mimeType, index);
               return (
                 <div key={media.id} className="relative group aspect-square rounded-2xl overflow-hidden border border-stone-150 bg-stone-50 shadow-sm transition hover:scale-[1.02] hover:shadow-md">
                   {isVideo ? (
                     <video 
-                      src={media.filePath} 
+                      src={displayUrl} 
                       className="w-full h-full object-cover" 
                       controls 
                     />
                   ) : (
                     <img 
-                      src={media.filePath} 
+                      src={displayUrl} 
                       alt={media.fileName} 
-                      className="w-full h-full object-cover" 
+                      className="w-full h-full object-cover animate-fade-in" 
                       loading="lazy" 
                     />
                   )}
