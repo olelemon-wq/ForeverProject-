@@ -43,12 +43,12 @@ export default async function PublicMemoryWallPage(props: { params: Promise<{ sl
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/40 p-8 shadow-xl">
+      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <h2 className="text-xl font-bold mb-2 flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
           <span>📸</span> กระดานแชร์ความทรงจำร่วม
         </h2>
-        <p className="text-slate-400 text-xs leading-normal">
+        <p className="text-stone-500 text-xs leading-normal">
           ร่วมลงบันทึกภาพถ่ายโบราณ เรื่องเล่าประทับใจ หรือความทรงจำอันทรงคุณค่าที่ได้สัมผัสร่วมกัน แผงความทรงจำนี้รวบรวมเรื่องราวดีๆ ให้อยู่คู่ตราบนานเท่านาน
         </p>
       </div>

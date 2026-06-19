@@ -45,7 +45,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
   const [currentPage, setCurrentPage] = useState(1);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
-  const [theme, setTheme] = useState<'white' | 'sepia' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'white' | 'sepia' | 'dark'>('white');
 
   const openBook = (book: Booklet) => {
     setActiveBook(book);
@@ -81,22 +81,22 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
             <div 
               key={book.id}
               onClick={() => openBook(book)}
-              className="p-6 rounded-3xl border border-slate-850 hover:border-slate-700 bg-slate-950/40 cursor-pointer flex flex-col justify-between items-center text-center space-y-4 hover:scale-[1.02] transition shadow-lg"
+              className="p-6 rounded-3xl border border-stone-200 hover:border-stone-350 bg-white cursor-pointer flex flex-col justify-between items-center text-center space-y-4 hover:scale-[1.02] transition shadow-sm"
             >
-              <div className="w-24 h-32 bg-slate-900 border border-slate-850 rounded-lg shadow-inner flex flex-col items-center justify-center p-3 relative overflow-hidden">
+              <div className="w-24 h-32 bg-stone-50 border border-stone-200 rounded-lg shadow-inner flex flex-col items-center justify-center p-3 relative overflow-hidden">
                 {/* Book design spine line */}
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500" />
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-600" />
                 <span className="text-2xl mb-2">📖</span>
-                <span className="text-[8px] text-slate-500 font-bold text-center leading-tight line-clamp-2">{book.title}</span>
+                <span className="text-[8px] text-stone-500 font-bold text-center leading-tight line-clamp-2">{book.title}</span>
               </div>
 
               <div className="space-y-1">
-                <h4 className="text-sm font-bold text-white leading-normal">{book.title}</h4>
-                <p className="text-[10px] text-slate-500">ผู้เขียน: {book.author}</p>
-                <span className="text-[9px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-bold">{book.totalPages} หน้า</span>
+                <h4 className="text-sm font-bold text-stone-900 leading-normal">{book.title}</h4>
+                <p className="text-[10px] text-stone-500">ผู้เขียน: {book.author}</p>
+                <span className="text-[9px] px-2 py-0.5 rounded bg-stone-100 text-stone-600 font-bold">{book.totalPages} หน้า</span>
               </div>
 
-              <button className="px-4 py-2 bg-slate-850 text-[10px] font-bold text-emerald-400 hover:text-white rounded-xl transition border border-slate-800">
+              <button className="px-4 py-2 bg-emerald-50 text-[10px] font-bold text-emerald-800 hover:bg-emerald-100 hover:text-emerald-900 border border-emerald-100 rounded-xl transition">
                 📖 เปิดอ่านหนังสือออนไลน์
               </button>
             </div>
@@ -105,25 +105,25 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
       ) : (
         /* Render Premium Inline Web Ebook Reader (Step 9 Inline Page Swipe) */
         <div 
-          className={`rounded-3xl border border-slate-800 bg-slate-950/80 p-6 flex flex-col justify-between shadow-2xl animate-fade-in relative z-50 ${
-            isFullScreen ? 'fixed inset-0 w-screen h-screen rounded-none z-50 bg-slate-950/95 flex flex-col justify-between p-8' : 'max-w-xl mx-auto'
+          className={`rounded-3xl border border-stone-200 bg-white p-6 flex flex-col justify-between shadow-xl animate-fade-in relative z-50 ${
+            isFullScreen ? 'fixed inset-0 w-screen h-screen rounded-none z-50 bg-[#faf6f0] flex flex-col justify-between p-8' : 'max-w-xl mx-auto'
           }`}
         >
-          <header className="flex justify-between items-center border-b border-slate-850 pb-3 mb-4">
+          <header className="flex justify-between items-center border-b border-stone-200 pb-3 mb-4">
             <div>
-              <h3 className="text-sm font-bold text-white text-left">{activeBook.title}</h3>
-              <p className="text-[9px] text-slate-500 text-left">ผู้แต่ง: {activeBook.author}</p>
+              <h3 className="text-sm font-bold text-stone-900 text-left">{activeBook.title}</h3>
+              <p className="text-[9px] text-stone-500 text-left">ผู้แต่ง: {activeBook.author}</p>
             </div>
             <div className="flex gap-3">
               <button 
                 onClick={() => setIsFullScreen(!isFullScreen)}
-                className="text-[10px] text-slate-400 hover:text-white transition bg-slate-900 border border-slate-850 px-2 py-1 rounded"
+                className="text-[10px] text-stone-600 hover:text-stone-900 transition bg-stone-50 border border-stone-200 px-2 py-1 rounded"
               >
                 {isFullScreen ? 'ย่อหน้าจอ' : 'เต็มหน้าจอ'}
               </button>
               <button 
                 onClick={closeBook} 
-                className="text-[10px] text-red-400 font-bold hover:text-red-300 transition"
+                className="text-[10px] text-red-500 font-bold hover:text-red-650 transition"
               >
                 ปิด [x]
               </button>
@@ -131,13 +131,13 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
           </header>
 
           {/* Accessibility Settings Panel */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/40 p-3 rounded-2xl border border-slate-850 mb-4 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-stone-50/50 p-3 rounded-2xl border border-stone-200 mb-4 text-xs">
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-medium">ขนาดตัวอักษร:</span>
+              <span className="text-stone-500 font-medium">ขนาดตัวอักษร:</span>
               <button
                 onClick={() => setFontSize('small')}
                 className={`px-2.5 py-1 rounded-lg font-medium transition ${
-                  fontSize === 'small' ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-300 hover:bg-slate-850'
+                  fontSize === 'small' ? 'bg-emerald-600 text-white font-bold' : 'bg-stone-50 border border-stone-200 text-stone-600 hover:bg-stone-100'
                 }`}
               >
                 เล็ก
@@ -145,7 +145,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
               <button
                 onClick={() => setFontSize('medium')}
                 className={`px-2.5 py-1 rounded-lg font-medium transition ${
-                  fontSize === 'medium' ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-300 hover:bg-slate-850'
+                  fontSize === 'medium' ? 'bg-emerald-600 text-white font-bold' : 'bg-stone-50 border border-stone-200 text-stone-600 hover:bg-stone-100'
                 }`}
               >
                 กลาง
@@ -153,7 +153,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
               <button
                 onClick={() => setFontSize('large')}
                 className={`px-2.5 py-1 rounded-lg font-medium transition ${
-                  fontSize === 'large' ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-300 hover:bg-slate-850'
+                  fontSize === 'large' ? 'bg-emerald-600 text-white font-bold' : 'bg-stone-50 border border-stone-200 text-stone-600 hover:bg-stone-100'
                 }`}
               >
                 ใหญ่
@@ -161,11 +161,11 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
             </div>
             
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-medium">โทนสี:</span>
+              <span className="text-stone-550 font-medium">โทนสี:</span>
               <button
                 onClick={() => setTheme('white')}
                 className={`px-2.5 py-1 rounded-lg font-medium transition border ${
-                  theme === 'white' ? 'bg-white text-slate-900 border-emerald-500' : 'bg-white/80 text-slate-900 border-slate-300 hover:bg-white'
+                  theme === 'white' ? 'bg-white text-stone-900 border-emerald-600 font-bold' : 'bg-white/80 text-stone-900 border-stone-300 hover:bg-white'
                 }`}
               >
                 สว่าง
@@ -173,7 +173,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
               <button
                 onClick={() => setTheme('sepia')}
                 className={`px-2.5 py-1 rounded-lg font-medium transition border ${
-                  theme === 'sepia' ? 'bg-[#f4eedb] text-[#4f3824] border-emerald-500' : 'bg-[#f4eedb]/80 text-[#4f3824] border-[#e7dec3] hover:bg-[#f4eedb]'
+                  theme === 'sepia' ? 'bg-[#f4eedb] text-[#4f3824] border-emerald-600 font-bold' : 'bg-[#f4eedb]/80 text-[#4f3824] border-[#e7dec3] hover:bg-[#f4eedb]'
                 }`}
               >
                 ซีเปีย
@@ -181,7 +181,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
               <button
                 onClick={() => setTheme('dark')}
                 className={`px-2.5 py-1 rounded-lg font-medium transition border ${
-                  theme === 'dark' ? 'bg-slate-900 text-slate-100 border-emerald-500' : 'bg-slate-900/80 text-slate-100 border-slate-800 hover:bg-slate-850'
+                  theme === 'dark' ? 'bg-stone-900 text-white border-emerald-650' : 'bg-stone-100 text-stone-800 border-stone-300 hover:bg-stone-200'
                 }`}
               >
                 มืด
@@ -207,18 +207,18 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
           </div>
 
           {/* Paging controls */}
-          <footer className="flex justify-between items-center gap-4 mt-6 border-t border-slate-850 pt-4">
+          <footer className="flex justify-between items-center gap-4 mt-6 border-t border-stone-200 pt-4">
             <button 
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-850 text-slate-300 hover:text-white font-bold text-xs disabled:opacity-30 disabled:pointer-events-none transition active:scale-95"
+              className="px-4 py-2 rounded-xl bg-stone-50 border border-stone-200 text-stone-600 hover:text-stone-900 font-bold text-xs disabled:opacity-30 disabled:pointer-events-none transition active:scale-95"
             >
               ← หน้าก่อนหน้า
             </button>
             <button 
               onClick={handleNextPage}
               disabled={currentPage === activeBook.totalPages}
-              className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-850 text-slate-300 hover:text-white font-bold text-xs disabled:opacity-30 disabled:pointer-events-none transition active:scale-95"
+              className="px-4 py-2 rounded-xl bg-stone-50 border border-stone-200 text-stone-600 hover:text-stone-900 font-bold text-xs disabled:opacity-30 disabled:pointer-events-none transition active:scale-95"
             >
               หน้าถัดไป →
             </button>

@@ -112,93 +112,93 @@ export default function MemoryWallClient({
     <div className="space-y-8">
       {/* Write a Story Call to Action button */}
       {!isOpen ? (
-        <div className="p-8 rounded-3xl border border-dashed border-slate-850 bg-slate-950/10 text-center">
-          <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-2">
+        <div className="p-8 rounded-3xl border border-dashed border-stone-300 bg-white text-center shadow-sm">
+          <h3 className="text-base sm:text-lg font-semibold text-stone-850 mb-2">
             ร่วมแบ่งปันเรื่องราวความทรงจำอันงดงาม
           </h3>
-          <p className="text-slate-400 text-xs mb-6 max-w-md mx-auto leading-normal">
+          <p className="text-stone-500 text-xs mb-6 max-w-md mx-auto leading-normal">
             คุณสามารถโพสต์รูปถ่ายในอดีต บันทึกเรื่องเล่าสั้น หรือความประทับใจที่คุณมีต่อผู้ล่วงลับ เพื่อเก็บบันทึกความทรงจำร่วมกัน
           </p>
           <button 
             onClick={openForm}
-            className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-slate-950 hover:brightness-110 active:scale-95 transition bg-emerald-400 font-bold"
+            className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-white hover:brightness-105 active:scale-95 transition"
             style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
           >
             ✍️ ร่วมเขียนบอกเล่าเรื่องราว
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-slate-850 bg-slate-950/50 space-y-4 max-w-xl mx-auto shadow-2xl relative animate-fade-in text-left">
-          <header className="flex justify-between items-center border-b border-slate-800 pb-3">
-            <h3 className="text-base font-bold text-white">แชร์เรื่องราวกระดานความทรงจำ</h3>
+        <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-stone-200 bg-white space-y-4 max-w-xl mx-auto shadow-xl relative animate-fade-in text-left">
+          <header className="flex justify-between items-center border-b border-stone-200 pb-3">
+            <h3 className="text-base font-bold text-stone-900">แชร์เรื่องราวกระดานความทรงจำ</h3>
             <button 
               type="button" 
               onClick={() => setIsOpen(false)} 
-              className="text-xs text-slate-500 hover:text-white transition"
+              className="text-xs text-stone-400 hover:text-stone-700 transition"
             >
               ปิดฟอร์ม [x]
             </button>
           </header>
 
-          {error && <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400 font-medium">⚠️ {error}</div>}
-          {success && <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400 font-medium">✓ {success}</div>}
+          {error && <div className="p-3 bg-red-5 border border-red-200 rounded-xl text-xs text-red-700 font-medium">⚠️ {error}</div>}
+          {success && <div className="p-3 bg-emerald-5 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">✓ {success}</div>}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อผู้ร่วมรำลึก</label>
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ชื่อผู้ร่วมรำลึก</label>
               <input 
                 type="text" 
                 value={senderName} 
                 onChange={(e) => setSenderName(e.target.value)} 
                 placeholder="เช่น หลานสมฤดี"
-                className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-base focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
                 disabled={isLoading}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">หัวข้อเรื่องเล่า (ระบุหรือไม่ก็ได้)</label>
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">หัวข้อเรื่องเล่า (ระบุหรือไม่ก็ได้)</label>
               <input 
                 type="text" 
                 value={title} 
                 onChange={(e) => setTitle(e.target.value)} 
                 placeholder="เช่น ภาพความประทับใจสมัยเด็ก"
-                className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-base focus:border-emerald-500 focus:outline-none"
+                className="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
                 disabled={isLoading}
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ที่อยู่อ้างอิงลิงก์รูปถ่าย (ถ้ามี)</label>
+            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ที่อยู่อ้างอิงลิงก์รูปถ่าย (ถ้ามี)</label>
             <input 
               type="text" 
               value={mediaUrl} 
               onChange={(e) => setMediaUrl(e.target.value)} 
               placeholder="วางที่อยู่ลิงก์รูปภาพ เช่น https://..."
-              className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-base focus:border-emerald-500 focus:outline-none"
+              className="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
               disabled={isLoading}
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">เนื้อหาเรื่องเล่าบอกต่อความทรงจำ</label>
+            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">เนื้อหาเรื่องเล่าบอกต่อความทรงจำ</label>
             <textarea 
               value={content} 
               onChange={(e) => setContent(e.target.value)} 
               placeholder="ร่วมแบ่งปันความประทับใจหรือบรรยายรูปภาพนี้..."
               rows={4}
-              className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-base resize-none focus:border-emerald-500 focus:outline-none"
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs resize-none focus:bg-white focus:outline-none"
               disabled={isLoading}
             />
           </div>
 
           {/* Math Captcha Challenge for Bot Protection */}
-          <div className="space-y-2 p-4 bg-slate-900/60 border border-slate-800 rounded-2xl">
-            <label className="text-[10px] font-bold text-emerald-400 uppercase tracking-wide block">
+          <div className="space-y-2 p-4 bg-stone-50 border border-stone-200 rounded-2xl">
+            <label className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide block">
               🛡️ การป้องกันสแปมบอท (กรุณาคำนวณผลลัพธ์)
             </label>
             <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-white bg-slate-850 px-3 py-2 rounded-xl select-none">
+              <span className="text-sm font-bold text-stone-800 bg-white border border-stone-200 px-3 py-2 rounded-xl select-none">
                 {captchaQuestion.num1} + {captchaQuestion.num2} = ?
               </span>
               <input 
@@ -206,13 +206,13 @@ export default function MemoryWallClient({
                 value={userAnswer}
                 onChange={(e) => setUserAnswer(e.target.value)}
                 placeholder="คำตอบของคุณ"
-                className="flex-1 px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-base focus:border-emerald-500 focus:outline-none"
+                className="flex-1 px-4 py-2 bg-white border border-stone-200 rounded-xl text-stone-850 text-xs focus:outline-none"
                 disabled={isLoading}
               />
               <button
                 type="button"
                 onClick={generateCaptcha}
-                className="px-3 py-2 text-xs bg-slate-800 text-slate-400 hover:text-white rounded-xl transition hover:bg-slate-750"
+                className="px-3 py-2 text-xs bg-stone-100 text-stone-500 hover:text-stone-800 rounded-xl border border-stone-200 transition"
                 title="เปลี่ยนคำถาม"
               >
                 🔄
@@ -224,14 +224,14 @@ export default function MemoryWallClient({
             <button 
               type="button" 
               onClick={() => setIsOpen(false)} 
-              className="px-4 py-2 text-xs border border-slate-850 hover:bg-slate-900 rounded-xl text-slate-400 hover:text-white transition"
+              className="px-4 py-2 text-xs border border-stone-300 hover:bg-stone-100 rounded-xl text-stone-500 hover:text-stone-800 transition"
               disabled={isLoading}
             >
               ยกเลิก
             </button>
             <button 
               type="submit" 
-              className="px-5 py-2 text-xs font-bold rounded-xl text-slate-950 bg-emerald-400 hover:brightness-110 transition"
+              className="px-5 py-2 text-xs font-bold rounded-xl text-white hover:brightness-105 transition"
               style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
               disabled={isLoading}
             >
@@ -244,16 +244,16 @@ export default function MemoryWallClient({
       {/* Memory posts board grid list */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {posts.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-slate-500 text-sm border border-dashed border-slate-850 rounded-3xl">
+          <div className="col-span-full text-center py-12 text-stone-500 text-sm border border-dashed border-stone-250 rounded-3xl">
             ยังไม่มีผู้ร่วมแชร์เรื่องราวกระดานความทรงจำในขณะนี้
           </div>
         ) : (
           posts.map(p => (
-            <div key={p.id} className="rounded-3xl border border-slate-800 bg-slate-950/40 p-6 flex flex-col justify-between shadow-xl">
+            <div key={p.id} className="rounded-3xl border border-stone-200/80 bg-white p-6 flex flex-col justify-between shadow-sm">
               <div className="space-y-4">
                 {p.mediaUrl && (
-                  <div className="w-full h-48 bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 relative flex items-center justify-center">
-                    <span className="text-4xl text-slate-500">📸</span>
+                  <div className="w-full h-48 bg-stone-50 rounded-2xl overflow-hidden border border-stone-200 relative flex items-center justify-center">
+                    <span className="text-4xl text-stone-400">📸</span>
                     {/* Placeholder visual link indicator */}
                     <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[8px] bg-black/60 text-white font-mono">{p.mediaUrl.substring(0, 20)}...</span>
                   </div>
@@ -261,13 +261,13 @@ export default function MemoryWallClient({
                 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center gap-2">
-                    <span className="text-xs font-bold text-white">โพสต์โดย: {p.senderName}</span>
-                    <span className="text-[10px] text-slate-500 font-mono">
+                    <span className="text-xs font-bold text-stone-900">โพสต์โดย: {p.senderName}</span>
+                    <span className="text-[10px] text-stone-450 font-semibold font-mono">
                       {new Date(p.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </span>
                   </div>
-                  {p.title && <h4 className="text-sm font-bold text-white" style={{ color: 'var(--theme-primary)' }}>{p.title}</h4>}
-                  {p.content && <p className="text-xs text-slate-300 leading-relaxed leading-normal">{p.content}</p>}
+                  {p.title && <h4 className="text-sm font-bold text-stone-900" style={{ color: 'var(--theme-primary)' }}>{p.title}</h4>}
+                  {p.content && <p className="text-xs text-stone-600 leading-relaxed">{p.content}</p>}
                 </div>
               </div>
             </div>

@@ -47,14 +47,14 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
       </div>
 
       {/* Visual Family Tree Flowchart Wrapper */}
-      <div className="max-w-xl mx-auto space-y-10 p-6 rounded-3xl border border-stone-200/80 bg-stone-50/50 shadow-inner relative">
+      <div className="max-w-xl mx-auto space-y-10 p-6 rounded-3xl border border-stone-205/60 bg-stone-50/30 shadow-sm relative">
         
         {/* GENERATION 1: PARENTS */}
         <div className="space-y-2">
           <span className="text-[9px] uppercase font-bold text-stone-500 tracking-wider">รุ่นบรรพบุรุษ (Parents)</span>
           <div className="flex justify-center gap-4">
             {parents.length === 0 ? (
-              <div className="px-4 py-2 border border-stone-200 bg-stone-100/50 rounded-xl text-xs text-stone-500 italic">ไม่ระบุข้อมูลบิดา/มารดา</div>
+              <div className="px-4 py-2 border border-stone-200 bg-stone-50/80 rounded-xl text-xs text-stone-600 italic">ไม่ระบุข้อมูลบิดา/มารดา</div>
             ) : (
               parents.map(p => (
                 <div key={p.id} className="px-4 py-3 rounded-2xl border border-stone-200 bg-white min-w-[120px] shadow-sm">
@@ -99,7 +99,7 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
 
             {/* Spouses on Right (if any) */}
             {spouses.length === 0 ? (
-              <div className="px-4 py-3 border border-dashed border-stone-300 rounded-2xl text-[10px] text-stone-500 italic">ไม่มีข้อมูลคู่สมรส</div>
+              <div className="px-4 py-3 border border-dashed border-stone-300 rounded-2xl text-[10px] text-stone-600 italic">ไม่มีข้อมูลคู่สมรส</div>
             ) : (
               spouses.map(sp => (
                 <div key={sp.id} className="px-4 py-3 rounded-2xl border border-stone-200 bg-white min-w-[120px] shadow-sm">
@@ -121,7 +121,7 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
           <span className="text-[9px] uppercase font-bold text-stone-500 tracking-wider">รุ่นผู้สืบทอดทายาท (Children)</span>
           <div className="flex flex-wrap justify-center gap-4">
             {children.length === 0 ? (
-              <div className="px-4 py-2 border border-stone-200 bg-stone-100/50 rounded-xl text-xs text-stone-500 italic">ไม่ระบุข้อมูลบุตร/ธิดา</div>
+              <div className="px-4 py-2 border border-stone-200 bg-stone-50/80 rounded-xl text-xs text-stone-600 italic">ไม่ระบุข้อมูลบุตร/ธิดา</div>
             ) : (
               children.map(c => (
                 <div key={c.id} className="px-4 py-3 rounded-2xl border border-stone-200 bg-white min-w-[120px] shadow-sm">

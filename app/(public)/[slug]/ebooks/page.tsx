@@ -67,12 +67,12 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
 
   return (
     <div className="space-y-8 animate-fade-in text-center font-sans">
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/40 p-8 shadow-xl">
+      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <h2 className="text-xl font-bold mb-2 flex items-center justify-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
           <span>📖</span> หนังสือของชำร่วยและธรรมทานรำลึก
         </h2>
-        <p className="text-slate-400 text-xs leading-normal max-w-md mx-auto">
+        <p className="text-stone-500 text-xs leading-normal max-w-md mx-auto">
           อ่านหนังสืองานศพ ของชำร่วย หรือหนังสือบทสวดมนต์แผ่เมตตาอุทิศส่วนกุศลออนไลน์ได้ทันทีผ่าน Web Reader
         </p>
       </div>
