@@ -10,10 +10,42 @@ interface Booklet {
   mockPages: string[];
 }
 
+const fontSizeClasses = {
+  small: 'text-sm sm:text-base',
+  medium: 'text-base sm:text-lg',
+  large: 'text-lg sm:text-2xl font-semibold',
+};
+
+const themeStyles = {
+  white: {
+    container: 'bg-white border-slate-200 text-slate-800',
+    metaText: 'text-slate-400',
+    pageText: 'text-slate-700',
+    headerText: 'text-slate-500',
+    footerText: 'text-slate-500',
+  },
+  sepia: {
+    container: 'bg-[#f4eedb] border-[#e7dec3] text-[#4f3824]',
+    metaText: 'text-[#8c745c]',
+    pageText: 'text-[#5c4531]',
+    headerText: 'text-[#7c654f]',
+    footerText: 'text-[#7c654f]',
+  },
+  dark: {
+    container: 'bg-slate-900/60 border-slate-850 text-slate-200',
+    metaText: 'text-slate-500',
+    pageText: 'text-slate-300',
+    headerText: 'text-slate-600',
+    footerText: 'text-slate-500',
+  }
+};
+
 export default function EbookReaderClient({ booklets }: { booklets: Booklet[] }) {
   const [activeBook, setActiveBook] = useState<Booklet | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [theme, setTheme] = useState<'white' | 'sepia' | 'dark'>('dark');
 
   const openBook = (book: Booklet) => {
     setActiveBook(book);
@@ -37,6 +69,8 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
       setCurrentPage(prev => prev - 1);
     }
   };
+
+  const currentTheme = themeStyles[theme];
 
   return (
     <div className="space-y-8 text-center font-sans">
@@ -96,17 +130,78 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
             </div>
           </header>
 
+          {/* Accessibility Settings Panel */}
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/40 p-3 rounded-2xl border border-slate-850 mb-4 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 font-medium">ขนาดตัวอักษร:</span>
+              <button
+                onClick={() => setFontSize('small')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition ${
+                  fontSize === 'small' ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-300 hover:bg-slate-850'
+                }`}
+              >
+                เล็ก
+              </button>
+              <button
+                onClick={() => setFontSize('medium')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition ${
+                  fontSize === 'medium' ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-300 hover:bg-slate-850'
+                }`}
+              >
+                กลาง
+              </button>
+              <button
+                onClick={() => setFontSize('large')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition ${
+                  fontSize === 'large' ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-300 hover:bg-slate-850'
+                }`}
+              >
+                ใหญ่
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 font-medium">โทนสี:</span>
+              <button
+                onClick={() => setTheme('white')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition border ${
+                  theme === 'white' ? 'bg-white text-slate-900 border-emerald-500' : 'bg-white/80 text-slate-900 border-slate-300 hover:bg-white'
+                }`}
+              >
+                สว่าง
+              </button>
+              <button
+                onClick={() => setTheme('sepia')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition border ${
+                  theme === 'sepia' ? 'bg-[#f4eedb] text-[#4f3824] border-emerald-500' : 'bg-[#f4eedb]/80 text-[#4f3824] border-[#e7dec3] hover:bg-[#f4eedb]'
+                }`}
+              >
+                ซีเปีย
+              </button>
+              <button
+                onClick={() => setTheme('dark')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition border ${
+                  theme === 'dark' ? 'bg-slate-900 text-slate-100 border-emerald-500' : 'bg-slate-900/80 text-slate-100 border-slate-800 hover:bg-slate-850'
+                }`}
+              >
+                มืด
+              </button>
+            </div>
+          </div>
+
           {/* Book Page Content Display (lightweight page-swipe viewer) */}
-          <div className="flex-1 py-12 px-6 bg-slate-900/60 border border-slate-850 rounded-2xl flex flex-col justify-between min-h-[300px] sm:min-h-[400px] shadow-inner relative select-none">
-            <span className="text-[8px] text-slate-600 font-bold absolute top-3 left-1/2 -translate-x-1/2 uppercase tracking-widest">Forever Commemorative Web Reader</span>
+          <div className={`flex-1 py-12 px-6 border rounded-2xl flex flex-col justify-between min-h-[300px] sm:min-h-[400px] shadow-inner relative transition-colors duration-300 ${currentTheme.container}`}>
+            <span className={`text-[8px] font-bold absolute top-3 left-1/2 -translate-x-1/2 uppercase tracking-widest ${currentTheme.headerText}`}>
+              Forever Commemorative Web Reader
+            </span>
             
             <div className="my-auto space-y-4 px-4 text-center">
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-serif italic text-justify leading-normal whitespace-pre-wrap">
+              <p className={`leading-relaxed font-serif italic text-justify whitespace-pre-wrap transition-all duration-300 ${fontSizeClasses[fontSize]} ${currentTheme.pageText}`}>
                 {activeBook.mockPages[currentPage - 1]}
               </p>
             </div>
 
-            <div className="text-[10px] text-slate-500 font-bold">
+            <div className={`text-[10px] font-bold ${currentTheme.footerText}`}>
               หน้า {currentPage} / {activeBook.totalPages}
             </div>
           </div>

@@ -30,6 +30,22 @@ export default function MemoryWallClient({
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Math Captcha bot protection
+  const [captchaQuestion, setCaptchaQuestion] = useState({ num1: 0, num2: 0, answer: 0 });
+  const [userAnswer, setUserAnswer] = useState('');
+
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 9) + 1; // 1-9
+    const num2 = Math.floor(Math.random() * 9) + 1; // 1-9
+    setCaptchaQuestion({ num1, num2, answer: num1 + num2 });
+    setUserAnswer('');
+  };
+
+  const openForm = () => {
+    generateCaptcha();
+    setIsOpen(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -38,6 +54,19 @@ export default function MemoryWallClient({
 
     if (!senderName || (!content && !mediaUrl)) {
       setError('กรุณากรอกชื่อผู้ส่ง และระบุเนื้อหาเรื่องราวหรือป้อนที่อยู่รูปภาพ');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!userAnswer) {
+      setError('กรุณาตอบคำถามป้องกันบอท (คำนวณเลข)');
+      setIsLoading(false);
+      return;
+    }
+
+    if (parseInt(userAnswer) !== captchaQuestion.answer) {
+      setError('คำตอบคำนวณเลขไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+      generateCaptcha();
       setIsLoading(false);
       return;
     }
@@ -64,6 +93,7 @@ export default function MemoryWallClient({
       setTitle('');
       setContent('');
       setMediaUrl('');
+      setUserAnswer('');
       
       // Auto close after 3 seconds
       setTimeout(() => {
@@ -72,6 +102,7 @@ export default function MemoryWallClient({
       }, 3000);
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการแชร์เรื่องราว');
+      generateCaptcha();
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +120,7 @@ export default function MemoryWallClient({
             คุณสามารถโพสต์รูปถ่ายในอดีต บันทึกเรื่องเล่าสั้น หรือความประทับใจที่คุณมีต่อผู้ล่วงลับ เพื่อเก็บบันทึกความทรงจำร่วมกัน
           </p>
           <button 
-            onClick={() => setIsOpen(true)}
+            onClick={openForm}
             className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-slate-950 hover:brightness-110 active:scale-95 transition bg-emerald-400 font-bold"
             style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
           >
@@ -120,7 +151,7 @@ export default function MemoryWallClient({
                 value={senderName} 
                 onChange={(e) => setSenderName(e.target.value)} 
                 placeholder="เช่น หลานสมฤดี"
-                className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-base focus:border-emerald-500 focus:outline-none"
                 disabled={isLoading}
               />
             </div>
@@ -131,7 +162,7 @@ export default function MemoryWallClient({
                 value={title} 
                 onChange={(e) => setTitle(e.target.value)} 
                 placeholder="เช่น ภาพความประทับใจสมัยเด็ก"
-                className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-base focus:border-emerald-500 focus:outline-none"
                 disabled={isLoading}
               />
             </div>
@@ -144,7 +175,7 @@ export default function MemoryWallClient({
               value={mediaUrl} 
               onChange={(e) => setMediaUrl(e.target.value)} 
               placeholder="วางที่อยู่ลิงก์รูปภาพ เช่น https://..."
-              className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+              className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-base focus:border-emerald-500 focus:outline-none"
               disabled={isLoading}
             />
           </div>
@@ -156,9 +187,37 @@ export default function MemoryWallClient({
               onChange={(e) => setContent(e.target.value)} 
               placeholder="ร่วมแบ่งปันความประทับใจหรือบรรยายรูปภาพนี้..."
               rows={4}
-              className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs resize-none"
+              className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-base resize-none focus:border-emerald-500 focus:outline-none"
               disabled={isLoading}
             />
+          </div>
+
+          {/* Math Captcha Challenge for Bot Protection */}
+          <div className="space-y-2 p-4 bg-slate-900/60 border border-slate-800 rounded-2xl">
+            <label className="text-[10px] font-bold text-emerald-400 uppercase tracking-wide block">
+              🛡️ การป้องกันสแปมบอท (กรุณาคำนวณผลลัพธ์)
+            </label>
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-bold text-white bg-slate-850 px-3 py-2 rounded-xl select-none">
+                {captchaQuestion.num1} + {captchaQuestion.num2} = ?
+              </span>
+              <input 
+                type="number" 
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                placeholder="คำตอบของคุณ"
+                className="flex-1 px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-base focus:border-emerald-500 focus:outline-none"
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                onClick={generateCaptcha}
+                className="px-3 py-2 text-xs bg-slate-800 text-slate-400 hover:text-white rounded-xl transition hover:bg-slate-750"
+                title="เปลี่ยนคำถาม"
+              >
+                🔄
+              </button>
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
