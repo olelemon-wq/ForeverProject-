@@ -1,0 +1,147 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Tenant {
+  id           String             @id @default(uuid())
+  slug         String             @unique
+  name         String
+  category     String             // e.g. "Memorial", "Family Legacy", "Couple", "Wedding", "Friends", "Pet Memorial"
+  ownerPhone   String
+  themeConfig  Json               // e.g. { primaryColor: "#Hex", secondaryColor: "#Hex", font: "Inter", heroStyle: "Classic" }
+  visibility   String             // "PUBLIC", "PRIVATE", "PASSWORD_PROTECTED" (BR035)
+  status       String             // "ACTIVE", "READ_ONLY", "SUSPENDED", "ARCHIVED" (BR021)
+  expiredAt    DateTime
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  webmasters    WebsiteWebmaster[]
+  subscriptions Subscription[]
+  payments      Payment[]
+  medias        Media[]
+  condolences   Condolence[]
+  menus         Menu[]
+  auditLogs     AuditLog[]
+}
+
+model Webmaster {
+  id        String             @id @default(uuid())
+  phone     String             @unique
+  name      String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  websites WebsiteWebmaster[]
+  devices  TrustedDevice[]
+}
+
+model WebsiteWebmaster {
+  id          String   @id @default(uuid())
+  websiteId   String
+  webmasterId String
+  role        String   // "MAIN", "CO" (BR002, BR003)
+  createdAt   DateTime @default(now())
+
+  website   Tenant    @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  webmaster Webmaster @relation(fields: [webmasterId], references: [id], onDelete: Cascade)
+
+  @@unique([websiteId, webmasterId])
+}
+
+model TrustedDevice {
+  id                String    @id @default(uuid())
+  webmasterId       String
+  deviceFingerprint String
+  userAgent         String
+  ipAddress         String
+  lastLoginAt       DateTime  @default(now())
+
+  webmaster Webmaster @relation(fields: [webmasterId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id           String   @id @default(uuid())
+  websiteId    String
+  plan         String   // "FIRST_YEAR", "RENEWAL", "UPGRADE_S", "UPGRADE_M", "UPGRADE_L"
+  storageQuota BigInt   // storage quota in bytes (e.g. 1GB = 1,073,741,824 bytes - BR013)
+  status       String   // "ACTIVE", "EXPIRED", "SUSPENDED"
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  websiteId String
+  refId     String   @unique // Dynamic QR code reference or gateway transaction ID
+  type      String   // "NEW_WEBSITE", "RENEWAL", "STORAGE_UPGRADE"
+  amount    Float
+  status    String   // "PENDING", "SUCCESS", "FAILED"
+  receiptNo String?
+  invoiceNo String?
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+model Media {
+  id        String   @id @default(uuid())
+  websiteId String
+  filePath  String   // S3/R2 object storage path
+  fileName  String
+  fileSize  BigInt   // file size in bytes
+  mimeType  String
+  fileHash  String   // MD5/SHA hash of file for duplicate warning check (BR031)
+  album     String?  // e.g. "GALLERY", "VIDEO", "AUDIO", "DOCUMENT"
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+model Condolence {
+  id           String   @id @default(uuid())
+  websiteId    String
+  senderName   String
+  relationship String   // e.g. "Spouse", "Son", "Daughter", "Grandchild", "Relative", "Friend", "Colleague" (BR029)
+  message      String
+  type         String   // "FAMILY", "GENERAL" (BR028)
+  isApproved   Boolean  @default(false) // Default requires approval (BR027)
+  createdAt    DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+model Menu {
+  id        String   @id @default(uuid())
+  websiteId String
+  title     String
+  pageType  String   // e.g. "BIOGRAPHY", "TIMELINE", "GALLERY", "VIDEOS", "CONDOLENCE", "CONTACT"
+  isVisible Boolean  @default(true)
+  sortOrder Int
+  parentId  String?
+  createdAt DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  websiteId   String?
+  webmasterId String?
+  action      String   // "LOGIN", "PAYMENT", "PUBLISH", "DELETE", "STORAGE" (BR036)
+  details     String
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  website Tenant? @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
