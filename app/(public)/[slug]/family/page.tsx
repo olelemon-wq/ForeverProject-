@@ -89,8 +89,8 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
               className="px-5 py-4 rounded-3xl border bg-white min-w-[150px] shadow-md relative"
               style={{ borderColor: 'var(--theme-primary, #0d9488)', borderWidth: '2px' }}
             >
-              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-emerald-50 border border-emerald-250 text-emerald-800 text-[8px] font-bold px-2 py-0.5 rounded-full"
-                    style={{ color: 'var(--theme-primary, #0d9488)', borderColor: 'var(--theme-primary, #0d9488)', backgroundColor: 'rgba(16, 185, 129, 0.08)' }}>
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 border text-[8px] font-bold px-2.5 py-0.5 rounded-full bg-white z-10"
+                    style={{ color: 'var(--theme-primary, #0d9488)', borderColor: 'var(--theme-primary, #0d9488)' }}>
                 ผู้ล่วงลับ
               </span>
               <p className="text-sm font-black text-stone-900 mt-1">{tenant.name.replace('คุณพ่อ ', '').replace('คุณแม่ ', '')}</p>
