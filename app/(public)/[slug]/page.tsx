@@ -41,25 +41,25 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Biography Box */}
-      <div className="rounded-3xl border border-slate-800 bg-slate-950/40 p-8 shadow-xl">
+      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
           <span>📖</span> อาลัยและคำรำลึก
         </h2>
-        <p className="text-slate-300 leading-relaxed indent-8 text-sm sm:text-base">
+        <p className="text-stone-600 leading-relaxed indent-8 text-sm sm:text-base">
           คุณพ่อสมศักดิ์เป็นคนขยัน ซื่อสัตย์ และรักครอบครัวมาก ท่านเป็นผู้นำที่ดีและเสียสละเสมอเพื่อการศึกษาของลูกๆ ความดีงามและคำสั่งสอนของท่านจะคงอยู่ในการดำเนินชีวิตของพวกเราตลอดไป...
         </p>
       </div>
 
       {/* Condolences Board List */}
-      <section className="rounded-3xl border border-slate-800 bg-slate-950/40 p-8 shadow-xl space-y-6">
+      <section className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-6">
         <h2 className="text-xl font-bold flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
           <span>🕯️</span> สมุดลงนามแสดงความไว้อาลัย
         </h2>
 
         {condolences.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 text-sm border border-dashed border-slate-850 rounded-2xl">
+          <div className="text-center py-8 text-stone-500 text-sm border border-dashed border-stone-200 rounded-2xl">
             ยังไม่มีข้อความแสดงความไว้อาลัยปรากฏในสมุดเล่มนี้
           </div>
         ) : (
@@ -71,21 +71,21 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                   key={c.id} 
                   className={`p-5 rounded-2xl border transition ${
                     isFamily 
-                      ? 'border-amber-500/20 bg-amber-500/5 shadow-[0_0_15px_rgba(245,158,11,0.05)]' 
-                      : 'border-slate-850 bg-slate-900/10'
+                      ? 'border-amber-200 bg-amber-50/40 shadow-[0_2px_10px_rgba(245,158,11,0.03)]' 
+                      : 'border-stone-200 bg-stone-50/50'
                   }`}
                 >
                   <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="text-sm font-bold text-white">{c.senderName}</span>
-                    <span className="px-2 py-0.5 text-[10px] font-semibold bg-slate-800 text-slate-400 rounded">
+                    <span className="text-sm font-bold text-stone-850">{c.senderName}</span>
+                    <span className="px-2 py-0.5 text-[10px] font-semibold bg-stone-100 text-stone-600 rounded">
                       ความสัมพันธ์: {c.relationship}
                     </span>
                     {isFamily && (
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded">
+                      <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 rounded">
                         ครอบครัวใกล้ชิด (Family)
                       </span>
                     )}
-                    <span className="text-[10px] text-slate-500 ml-auto">
+                    <span className="text-[10px] text-stone-550 ml-auto">
                       {new Date(c.createdAt).toLocaleDateString('th-TH', {
                         day: 'numeric',
                         month: 'short',
@@ -93,7 +93,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                       })}
                     </span>
                   </div>
-                  <p className="text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                  <p className="text-stone-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
                     "{c.message}"
                   </p>
                 </div>

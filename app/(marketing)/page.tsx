@@ -2,26 +2,26 @@ import Link from 'next/link';
 
 export default function MarketingHome() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white selection:bg-emerald-500 selection:text-slate-900">
+    <main className="min-h-screen bg-[#faf8f5] text-stone-900 selection:bg-emerald-200 selection:text-stone-900">
       {/* Navbar */}
-      <nav className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+      <nav className="border-b border-stone-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold tracking-wider bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold tracking-wider bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent">
               FOREVER
             </span>
           </div>
           <div className="flex items-center gap-6">
-            <Link href="/features" className="text-sm font-medium text-slate-300 hover:text-white transition">
+            <Link href="/features" className="text-sm font-medium text-stone-600 hover:text-stone-900 transition">
               คุณสมบัติ
             </Link>
-            <Link href="/pricing" className="text-sm font-medium text-slate-300 hover:text-white transition">
+            <Link href="/pricing" className="text-sm font-medium text-stone-600 hover:text-stone-900 transition">
               ราคา
             </Link>
-            <Link href="/manage" className="text-sm font-medium text-slate-300 hover:text-white transition">
+            <Link href="/manage" className="text-sm font-medium text-stone-600 hover:text-stone-900 transition">
               จัดการเว็บ
             </Link>
-            <Link href="/login" className="px-4 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 hover:brightness-110 transition active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+            <Link href="/login" className="px-4 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:brightness-105 transition active:scale-95 shadow-[0_4px_12px_rgba(16,185,129,0.2)]">
               สร้างเว็บไซต์ฟรี
             </Link>
           </div>
@@ -31,56 +31,56 @@ export default function MarketingHome() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 text-center relative overflow-hidden">
         {/* Background glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-        <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight max-w-4xl mx-auto leading-[1.15]">
+        <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight max-w-4xl mx-auto leading-[1.15] text-stone-900">
           บันทึกเรื่องราวและ{' '}
-          <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent">
             ความทรงจำอันเป็นนิรันดร์
           </span>
         </h1>
-        <p className="mt-8 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-8 text-lg sm:text-xl text-stone-600 max-w-2xl mx-auto leading-relaxed">
           สร้างเว็บไซต์รำลึกถึงผู้ล่วงลับ ครอบครัว สัตว์เลี้ยง หรือเรื่องราวความรัก 
           แบบบริการตนเอง 100% เสร็จสิ้นได้ภายใน 3 นาที เพื่อให้เกียรติประวัติและมรดกชีวิตอยู่คู่กับครอบครัวตลอดไป
         </p>
         <div className="mt-10 flex flex-wrap gap-4 justify-center">
-          <Link href="/login" className="px-8 py-4 text-base font-bold rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-slate-950 hover:brightness-110 transition shadow-[0_0_30px_rgba(16,185,129,0.4)] active:scale-[0.98]">
+          <Link href="/login" className="px-8 py-4 text-base font-bold rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white hover:brightness-105 transition shadow-[0_6px_20px_rgba(16,185,129,0.3)] active:scale-[0.98]">
             เริ่มสร้างเว็บไซต์ความทรงจำ
           </Link>
-          <Link href="/examples" className="px-8 py-4 text-base font-semibold rounded-full border border-slate-700 bg-slate-900/50 text-slate-300 hover:text-white hover:bg-slate-900 hover:border-slate-600 transition active:scale-[0.98]">
+          <Link href="/examples" className="px-8 py-4 text-base font-semibold rounded-full border border-stone-300 bg-white text-stone-700 hover:text-stone-900 hover:bg-stone-50 transition active:scale-[0.98]">
             ดูตัวอย่างเว็บไซต์
           </Link>
         </div>
       </section>
 
       {/* Features Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-900">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-stone-200/60">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-8 rounded-3xl border border-slate-900 bg-slate-900/20 backdrop-blur-sm">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold text-xl mb-6">
+          <div className="p-8 rounded-3xl border border-stone-200 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 font-bold text-xl mb-6">
               1
             </div>
-            <h3 className="text-xl font-bold mb-3">สร้างง่ายใน 3 นาที</h3>
-            <p className="text-slate-400 leading-relaxed text-sm">
+            <h3 className="text-xl font-bold mb-3 text-stone-950">สร้างง่ายใน 3 นาที</h3>
+            <p className="text-stone-600 leading-relaxed text-sm">
               ออกแบบระบบแบบ Self-Service 100% ใช้งานง่ายด้วยมือถือ เหมาะกับผู้ใช้ทุกช่วงวัย 
               ไม่ต้องเขียนโค้ดหรือมีความรู้ไอทีก็สร้างเว็บได้ทันที
             </p>
           </div>
-          <div className="p-8 rounded-3xl border border-slate-900 bg-slate-900/20 backdrop-blur-sm">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold text-xl mb-6">
+          <div className="p-8 rounded-3xl border border-stone-200 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 font-bold text-xl mb-6">
               2
             </div>
-            <h3 className="text-xl font-bold mb-3">คลังมีเดียและคำไว้อาลัย</h3>
-            <p className="text-slate-400 leading-relaxed text-sm">
+            <h3 className="text-xl font-bold mb-3 text-stone-950">คลังมีเดียและคำไว้อาลัย</h3>
+            <p className="text-stone-600 leading-relaxed text-sm">
               อัปโหลดภาพประทับใจ วิดีโอ เพลง และบันทึกคำไว้อาลัยจากคนสนิท โดยมีการเรียงลำดับสมาชิกครอบครัวเป็นพิเศษ
             </p>
           </div>
-          <div className="p-8 rounded-3xl border border-slate-900 bg-slate-900/20 backdrop-blur-sm">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold text-xl mb-6">
+          <div className="p-8 rounded-3xl border border-stone-200 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 font-bold text-xl mb-6">
               3
             </div>
-            <h3 className="text-xl font-bold mb-3">QR Code ถาวรสำหรับพิมพ์</h3>
-            <p className="text-slate-400 leading-relaxed text-sm">
+            <h3 className="text-xl font-bold mb-3 text-stone-950">QR Code ถาวรสำหรับพิมพ์</h3>
+            <p className="text-stone-600 leading-relaxed text-sm">
               รับคิวอาร์โค้ดประจำเว็บไซต์แบบถาวร เพื่อดาวน์โหลดไปจัดพิมพ์ลงในการ์ด ของชำร่วย หรือหนังสืองานรำลึกได้อย่างสวยงาม
             </p>
           </div>
@@ -89,3 +89,4 @@ export default function MarketingHome() {
     </main>
   );
 }
+

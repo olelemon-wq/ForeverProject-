@@ -65,56 +65,56 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
   return (
     <div className="mt-8 text-center">
       {!isOpen ? (
-        <div className="p-8 rounded-3xl border border-dashed border-slate-850 bg-slate-950/10">
-          <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-2">
+        <div className="p-8 rounded-3xl border border-dashed border-stone-300 bg-white shadow-sm">
+          <h3 className="text-base sm:text-lg font-semibold text-stone-850 mb-2">
             ร่วมส่งคำไว้อาลัยและแสดงความระลึกถึง
           </h3>
-          <p className="text-slate-400 text-xs mb-6 max-w-md mx-auto leading-normal">
+          <p className="text-stone-500 text-xs mb-6 max-w-md mx-auto leading-normal">
             คุณสามารถร่วมจุดเทียนออนไลน์และเขียนคำไว้อาลัย เพื่อรวบรวมเป็นสมุดบันทึกส่งต่อให้ครอบครัวผู้ล่วงลับ
           </p>
           <button 
             onClick={() => setIsOpen(true)}
-            className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-slate-950 hover:brightness-110 active:scale-95 transition shadow-lg bg-emerald-400"
+            className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-white hover:brightness-105 active:scale-95 transition shadow-md"
             style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
           >
             🕯️ ร่วมแสดงความไว้อาลัย
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-slate-800 bg-slate-950/50 text-left space-y-5 max-w-xl mx-auto shadow-2xl relative animate-fade-in">
-          <header className="flex justify-between items-center border-b border-slate-800 pb-3">
-            <h3 className="text-base font-bold text-white">เขียนคำไว้อาลัย</h3>
+        <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-stone-200/80 bg-white text-left space-y-5 max-w-xl mx-auto shadow-xl relative animate-fade-in">
+          <header className="flex justify-between items-center border-b border-stone-200 pb-3">
+            <h3 className="text-base font-bold text-stone-900">เขียนคำไว้อาลัย</h3>
             <button 
               type="button" 
               onClick={() => setIsOpen(false)} 
-              className="text-xs text-slate-500 hover:text-white transition"
+              className="text-xs text-stone-400 hover:text-stone-700 transition"
             >
               ปิดฟอร์ม [x]
             </button>
           </header>
 
-          {error && <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400 font-medium">⚠️ {error}</div>}
-          {success && <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400 font-medium">✓ {success}</div>}
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-medium">⚠️ {error}</div>}
+          {success && <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">✓ {success}</div>}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อผู้ส่งคำไว้อาลัย</label>
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ชื่อผู้ส่งคำไว้อาลัย</label>
               <input 
                 type="text" 
                 value={senderName} 
                 onChange={(e) => setSenderName(e.target.value)} 
                 placeholder="เช่น สมพร รักดี"
-                className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
                 disabled={isLoading}
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ความสัมพันธ์</label>
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ความสัมพันธ์</label>
               <select 
                 value={relationship} 
                 onChange={(e) => setRelationship(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 text-xs"
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
                 disabled={isLoading}
               >
                 <option value="Spouse">คู่สมรส</option>
@@ -132,13 +132,13 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
           {/* Conditional custom relation input box (GRILL DECISION) */}
           {relationship === 'Other' && (
             <div className="space-y-1 animate-fade-in">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ระบุความสัมพันธ์เพิ่มเติม</label>
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ระบุความสัมพันธ์เพิ่มเติม</label>
               <input 
                 type="text" 
                 value={customRelation} 
                 onChange={(e) => setCustomRelation(e.target.value)} 
                 placeholder="เช่น เพื่อนสมัยประถม, เพื่อนบ้าน"
-                className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
                 disabled={isLoading}
               />
             </div>
@@ -146,41 +146,41 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
 
           {/* Comment Type: General or Family priority (BR028) */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">ประเภทกลุ่มข้อความ</label>
+            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block">ประเภทกลุ่มข้อความ</label>
             <div className="flex gap-4 mt-2">
-              <label className="flex items-center gap-2 cursor-pointer text-xs">
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-stone-700">
                 <input 
                   type="radio" 
                   name="type" 
                   value="GENERAL"
                   checked={type === 'GENERAL'}
                   onChange={() => setType('GENERAL')}
-                  className="accent-emerald-500"
+                  className="accent-emerald-600"
                 />
                 <span>คำไว้อาลัยทั่วไป (General)</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-xs">
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-stone-750">
                 <input 
                   type="radio" 
                   name="type" 
                   value="FAMILY"
                   checked={type === 'FAMILY'}
                   onChange={() => setType('FAMILY')}
-                  className="accent-emerald-500"
+                  className="accent-emerald-600"
                 />
-                <span className="text-amber-400 font-semibold">ข้อความจากครอบครัว (Family Priority)</span>
+                <span className="text-amber-800 font-semibold">ข้อความจากครอบครัว (Family Priority)</span>
               </label>
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ข้อความไว้อาลัย</label>
+            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ข้อความไว้อาลัย</label>
             <textarea 
               value={message} 
               onChange={(e) => setMessage(e.target.value)} 
               placeholder="เขียนคำรำลึกและแสดงความไว้อาลัยแด่ผู้ล่วงลับ..."
               rows={4}
-              className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs resize-none"
+              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs resize-none focus:bg-white focus:outline-none"
               disabled={isLoading}
             />
           </div>
@@ -189,14 +189,14 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
             <button 
               type="button" 
               onClick={() => setIsOpen(false)} 
-              className="px-4 py-2 text-xs border border-slate-850 hover:bg-slate-900 rounded-xl text-slate-400 hover:text-white transition"
+              className="px-4 py-2 text-xs border border-stone-300 hover:bg-stone-100 rounded-xl text-stone-500 hover:text-stone-800 transition"
               disabled={isLoading}
             >
               ยกเลิก
             </button>
             <button 
               type="submit" 
-              className="px-5 py-2 text-xs font-bold rounded-xl text-slate-950 bg-emerald-400 hover:brightness-110 transition"
+              className="px-5 py-2 text-xs font-bold rounded-xl text-white hover:brightness-105 transition"
               style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
               disabled={isLoading}
             >
