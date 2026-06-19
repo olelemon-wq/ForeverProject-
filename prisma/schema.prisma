@@ -33,6 +33,7 @@ model Tenant {
   memoryPosts   MemoryPost[]
   familyMembers FamilyMember[]
   ebooks        Ebook[]
+  donations     Donation[]
 }
 
 model Webmaster {
@@ -200,6 +201,22 @@ model Ebook {
 
   website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 }
+
+model Donation {
+  id          String   @id @default(uuid())
+  websiteId   String
+  donorName   String
+  amount      Float
+  message     String?
+  isAnonymous Boolean  @default(false)
+  hideAmount  Boolean  @default(false)
+  slipUrl     String?
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
 
 
 
