@@ -226,7 +226,7 @@ export default function WebsiteCreationWizard() {
 
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-600">
         <p className="text-sm font-semibold tracking-wider animate-pulse">กำลังดาวน์โหลดระบบรักษาความปลอดภัย...</p>
       </div>
     );
@@ -235,17 +235,17 @@ export default function WebsiteCreationWizard() {
   // RENDER LOGIN SCREEN (IF USER NOT AUTHENTICATED)
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
-        <div className="w-full max-w-md p-8 rounded-3xl border border-slate-900 bg-slate-900/40 backdrop-blur-md shadow-2xl space-y-8">
+      <main className="min-h-screen bg-stone-50 text-stone-850 flex items-center justify-center p-4">
+        <div className="w-full max-w-md p-8 rounded-3xl border border-stone-200 bg-white shadow-xl space-y-8 animate-fade-in">
           <header className="text-center space-y-2">
-            <span className="text-[10px] uppercase font-black text-emerald-400 tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full">
+            <span className="text-[10px] uppercase font-black text-emerald-800 tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
               WIZARD SIGN-IN
             </span>
-            <h1 className="text-xl font-black text-white pt-2">ยืนยันตัวตนก่อนสร้างเว็บไซต์</h1>
-            <p className="text-slate-400 text-xs">กรุณากรอกเบอร์มือถือของคุณเพื่อเข้าสู่กระบวนการสร้างเว็บไซต์แบบรวดเร็ว</p>
+            <h1 className="text-xl font-black text-stone-900 pt-2">ยืนยันตัวตนก่อนสร้างเว็บไซต์</h1>
+            <p className="text-stone-500 text-xs">กรุณากรอกเบอร์มือถือของคุณเพื่อเข้าสู่กระบวนการสร้างเว็บไซต์แบบรวดเร็ว</p>
           </header>
 
-          {error && <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 text-center font-medium">⚠️ {error}</div>}
+          {error && <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 text-center font-medium">⚠️ {error}</div>}
 
           {loginStep === 1 ? (
             <form onSubmit={handleRequestOtp} className="space-y-6">
@@ -254,9 +254,9 @@ export default function WebsiteCreationWizard() {
                 value={loginPhone} 
                 onChange={(e) => setLoginPhone(e.target.value)} 
                 placeholder="ป้อนเบอร์โทรศัพท์ 10 หลัก (เช่น 0812345678)"
-                className="w-full px-5 py-3.5 bg-slate-950 border border-slate-800 rounded-2xl text-white text-sm"
+                className="w-full px-5 py-3.5 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 text-sm focus:bg-white focus:outline-none"
               />
-              <button type="submit" disabled={isLoading} className="w-full py-3.5 rounded-2xl bg-emerald-500 text-slate-950 font-bold text-sm">
+              <button type="submit" disabled={isLoading} className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
                 {isLoading ? 'กำลังประมวลผล...' : 'ขอรหัส OTP'}
               </button>
             </form>
@@ -268,14 +268,14 @@ export default function WebsiteCreationWizard() {
                 value={loginOtp} 
                 onChange={(e) => setLoginOtp(e.target.value)} 
                 placeholder="ใส่รหัส OTP 6 หลัก"
-                className="w-full px-5 py-3.5 bg-slate-950 border border-slate-800 rounded-2xl text-white text-center tracking-[0.4em] text-lg"
+                className="w-full px-5 py-3.5 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 text-center tracking-[0.4em] text-lg focus:bg-white focus:outline-none"
               />
               {simulatedOtp && (
-                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center text-xs text-white">
+                <div className="p-3 bg-emerald-50 border border-emerald-250 rounded-xl text-center text-xs text-emerald-800 font-semibold">
                   รหัสทดสอบ: <span className="font-bold underline">{simulatedOtp}</span>
                 </div>
               )}
-              <button type="submit" disabled={isLoading} className="w-full py-3.5 rounded-2xl bg-emerald-500 text-slate-950 font-bold text-sm">
+              <button type="submit" disabled={isLoading} className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
                 {isLoading ? 'กำลังตรวจสอบ...' : 'ยืนยันรหัส OTP'}
               </button>
             </form>
@@ -300,44 +300,44 @@ export default function WebsiteCreationWizard() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 py-12 px-4 flex flex-col items-center">
+    <main className="min-h-screen bg-stone-50 text-stone-800 py-12 px-4 flex flex-col items-center">
       {/* Steps indicator */}
-      <div className="w-full max-w-2xl flex items-center justify-between text-xs text-slate-400 mb-12">
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 1 ? 'text-emerald-400 font-bold' : ''}`}>
-          <span className="w-8 h-8 rounded-full border border-slate-800 bg-slate-900 flex items-center justify-center">1</span>
+      <div className="w-full max-w-2xl flex items-center justify-between text-xs text-stone-400 mb-12 select-none">
+        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 1 ? 'text-emerald-700 font-bold' : ''}`}>
+          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 1 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>1</span>
           <span>ชื่อลิงก์ URL</span>
         </div>
-        <div className="flex-1 h-px bg-slate-800 mx-2" />
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 2 ? 'text-emerald-400 font-bold' : ''}`}>
-          <span className="w-8 h-8 rounded-full border border-slate-800 bg-slate-900 flex items-center justify-center">2</span>
+        <div className={`flex-1 h-px mx-2 transition ${wizardStep >= 2 ? 'bg-emerald-600/60' : 'bg-stone-200'}`} />
+        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 2 ? 'text-emerald-700 font-bold' : ''}`}>
+          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 2 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>2</span>
           <span>กรอกข้อมูล</span>
         </div>
-        <div className="flex-1 h-px bg-slate-800 mx-2" />
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 3 ? 'text-emerald-400 font-bold' : ''}`}>
-          <span className="w-8 h-8 rounded-full border border-slate-800 bg-slate-900 flex items-center justify-center">3</span>
+        <div className={`flex-1 h-px mx-2 transition ${wizardStep >= 3 ? 'bg-emerald-600/60' : 'bg-stone-200'}`} />
+        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 3 ? 'text-emerald-700 font-bold' : ''}`}>
+          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 3 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>3</span>
           <span>เลือกธีม</span>
         </div>
-        <div className="flex-1 h-px bg-slate-800 mx-2" />
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 4 ? 'text-emerald-400 font-bold' : ''}`}>
-          <span className="w-8 h-8 rounded-full border border-slate-800 bg-slate-900 flex items-center justify-center">4</span>
+        <div className={`flex-1 h-px mx-2 transition ${wizardStep >= 4 ? 'bg-emerald-600/60' : 'bg-stone-200'}`} />
+        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 4 ? 'text-emerald-700 font-bold' : ''}`}>
+          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 4 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>4</span>
           <span>ชำระเงิน</span>
         </div>
       </div>
 
-      <div className="w-full max-w-2xl p-8 rounded-3xl border border-slate-900 bg-slate-900/30 backdrop-blur-sm shadow-xl space-y-6">
-        {error && <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 font-medium">⚠️ {error}</div>}
+      <div className="w-full max-w-2xl p-8 rounded-3xl border border-stone-200 bg-white shadow-xl space-y-6">
+        {error && <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium">⚠️ {error}</div>}
 
         {/* STEP 1: URL SETUP */}
         {wizardStep === 1 && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-in">
             <header className="space-y-1">
-              <h2 className="text-xl font-bold text-white">ตั้งชื่อลิงก์สำหรับเว็บไซต์ความทรงจำ</h2>
-              <p className="text-xs text-slate-400">ใช้เป็น URL Path เพื่อให้คนทั่วไปสามารถพิมพ์เพื่อเข้าชมได้ทันที</p>
+              <h2 className="text-xl font-black text-stone-900">ตั้งชื่อลิงก์สำหรับเว็บไซต์ความทรงจำ</h2>
+              <p className="text-xs text-stone-500">ใช้เป็น URL Path เพื่อให้คนทั่วไปสามารถพิมพ์เพื่อเข้าชมได้ทันที</p>
             </header>
 
             <div className="space-y-4">
-              <div className="flex bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden focus-within:border-emerald-500 transition">
-                <span className="bg-slate-900 px-4 py-3.5 text-sm text-slate-500 font-mono flex items-center">
+              <div className="flex bg-stone-50 border border-stone-200 rounded-2xl overflow-hidden focus-within:border-emerald-600 transition">
+                <span className="bg-stone-100/80 px-4 py-3.5 text-sm text-stone-500 font-mono flex items-center border-r border-stone-200 select-none">
                   forever.co.th/
                 </span>
                 <input 
@@ -348,29 +348,29 @@ export default function WebsiteCreationWizard() {
                     setSlugValid(null);
                   }}
                   placeholder="somsak-family"
-                  className="flex-1 px-4 py-3.5 bg-slate-950 text-white font-mono text-sm focus:outline-none"
+                  className="flex-1 px-4 py-3.5 bg-stone-50 text-stone-900 font-mono text-sm focus:outline-none focus:bg-white"
                 />
               </div>
 
               <button 
                 onClick={checkSlug}
                 disabled={slugChecking}
-                className="px-6 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition"
+                className="px-5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-bold transition border border-stone-250 shadow-sm active:scale-95"
               >
                 {slugChecking ? 'กำลังตรวจสอบ...' : 'ตรวจสอบสิทธิ์ว่าง'}
               </button>
 
               {slugValid === true && (
-                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400 font-medium flex items-center gap-2">
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold flex items-center gap-2">
                   ✓ ชื่อลิงก์ "forever.co.th/{slug}" พร้อมใช้งาน
                 </div>
               )}
             </div>
 
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end pt-4 border-t border-stone-100">
               <button 
                 onClick={handleNextToInfo}
-                className="px-6 py-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
+                className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
               >
                 ถัดไป: กรอกข้อมูลเว็บ
               </button>
@@ -380,52 +380,52 @@ export default function WebsiteCreationWizard() {
 
         {/* STEP 2: INFO SETUP */}
         {wizardStep === 2 && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-in">
             <header className="space-y-1">
-              <h2 className="text-xl font-bold text-white">รายละเอียดเว็บไซต์ความทรงจำ</h2>
-              <p className="text-xs text-slate-400">กรอกรายละเอียดเพื่อสร้างโครงสร้างหน้ารำลึกเริ่มต้น</p>
+              <h2 className="text-xl font-black text-stone-900">รายละเอียดเว็บไซต์ความทรงจำ</h2>
+              <p className="text-xs text-stone-500">กรอกรายละเอียดเพื่อสร้างโครงสร้างหน้ารำลึกเริ่มต้น</p>
             </header>
 
             <div className="space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อเว็บไซต์ (เช่น รำลึกรักแด่คุณพ่อสมศักดิ์)</label>
+                <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">ชื่อเว็บไซต์ (เช่น รำลึกรักแด่คุณพ่อสมศักดิ์)</label>
                 <input 
                   type="text" 
                   value={name} 
                   onChange={(e) => setName(e.target.value)} 
                   placeholder="เช่น ความทรงจำแด่คุณยายมาลี"
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อ-นามสกุล ผู้ล่วงลับ</label>
+                <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">ชื่อ-นามสกุล ผู้ล่วงลับ</label>
                 <input 
                   type="text" 
                   value={deceasedName} 
                   onChange={(e) => setDeceasedName(e.target.value)} 
                   placeholder="เช่น คุณยาย มาลี อบอุ่นยิ่ง"
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ช่วงชีวิตวันเกิด – วันเสียชีวิต (Lifespan)</label>
+                <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">ช่วงชีวิตวันเกิด – วันเสียชีวิต (Lifespan)</label>
                 <input 
                   type="text" 
                   value={lifespan} 
                   onChange={(e) => setLifespan(e.target.value)} 
                   placeholder="เช่น 1 มกราคม 2490 – 15 มิถุนายน 2569"
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">หมวดหมู่กลุ่มเป้าหมาย (Category Selection)</label>
+                <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">หมวดหมู่กลุ่มเป้าหมาย (Category Selection)</label>
                 <select 
                   value={category} 
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-300 text-sm"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-750 text-xs sm:text-sm focus:bg-white focus:outline-none"
                 >
                   <option value="Memorial">Memorial (รำลึกบุคคลทั่วไป)</option>
                   <option value="Family Legacy">Family Legacy (มรดกวงศ์ตระกูล)</option>
@@ -437,19 +437,19 @@ export default function WebsiteCreationWizard() {
               </div>
             </div>
 
-            <div className="flex justify-between pt-4">
-              <button onClick={() => setWizardStep(1)} className="px-6 py-3 rounded-xl border border-slate-800 text-slate-400 hover:text-white text-xs">ย้อนกลับ</button>
-              <button onClick={handleNextToTheme} className="px-6 py-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">ถัดไป: เลือกธีมการจัดแสดง</button>
+            <div className="flex justify-between pt-4 border-t border-stone-100">
+              <button onClick={() => setWizardStep(1)} className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold">ย้อนกลับ</button>
+              <button onClick={handleNextToTheme} className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm">ถัดไป: เลือกธีมการจัดแสดง</button>
             </div>
           </div>
         )}
 
         {/* STEP 3: THEME SETUP */}
         {wizardStep === 3 && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-in">
             <header className="space-y-1">
-              <h2 className="text-xl font-bold text-white">เลือกธีมความทรงจำ V1 (10 ตัวเลือก)</h2>
-              <p className="text-xs text-slate-400">เลือกแนวโทนสีและอารมณ์ของหน้าเว็บความทรงจำของคุณ</p>
+              <h2 className="text-xl font-black text-stone-900">เลือกธีมความทรงจำ V1 (10 ตัวเลือก)</h2>
+              <p className="text-xs text-stone-500">เลือกแนวโทนสีและอารมณ์ของหน้าเว็บความทรงจำของคุณ</p>
             </header>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-2">
@@ -458,21 +458,21 @@ export default function WebsiteCreationWizard() {
                   key={t.name}
                   onClick={() => setSelectedTheme(t.name)}
                   className={`p-4 rounded-2xl border cursor-pointer flex items-center justify-between gap-4 transition ${
-                    selectedTheme === t.name ? 'border-emerald-500 bg-emerald-500/5' : 'border-slate-850 hover:border-slate-700 bg-slate-900/10'
+                    selectedTheme === t.name ? 'border-emerald-600 bg-emerald-50/40 shadow-sm' : 'border-stone-200 hover:border-stone-300 bg-stone-50/40'
                   }`}
                 >
                   <div className="space-y-1">
-                    <p className="text-sm font-bold text-white">{t.name}</p>
-                    <p className="text-[10px] text-slate-500 leading-normal">{t.desc}</p>
+                    <p className="text-sm font-bold text-stone-900">{t.name}</p>
+                    <p className="text-[10px] text-stone-500 leading-normal">{t.desc}</p>
                   </div>
                   <div className="w-8 h-8 rounded-full shadow-inner flex-shrink-0" style={{ backgroundColor: t.color }} />
                 </div>
               ))}
             </div>
 
-            <div className="flex justify-between pt-4">
-              <button onClick={() => setWizardStep(2)} className="px-6 py-3 rounded-xl border border-slate-800 text-slate-400 hover:text-white text-xs">ย้อนกลับ</button>
-              <button onClick={handleNextToPayment} disabled={isLoading} className="px-6 py-3 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">
+            <div className="flex justify-between pt-4 border-t border-stone-100">
+              <button onClick={() => setWizardStep(2)} className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold">ย้อนกลับ</button>
+              <button onClick={handleNextToPayment} disabled={isLoading} className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm">
                 {isLoading ? 'กำลังสร้างร่างเว็บไซต์...' : 'ถัดไป: ขั้นตอนชำระเงิน'}
               </button>
             </div>
@@ -481,38 +481,38 @@ export default function WebsiteCreationWizard() {
 
         {/* STEP 4: PAYMENT (PROMPTPAY QR) */}
         {wizardStep === 4 && (
-          <div className="space-y-8 text-center">
+          <div className="space-y-8 text-center animate-fade-in">
             <header className="space-y-1">
-              <h2 className="text-xl font-bold text-white">ชำระเงินเพื่อเปิดบริการอัตโนมัติ</h2>
-              <p className="text-xs text-slate-400">สแกนจ่ายเงิน 2,000 บาท (ค่าบริการรายปีแรกเริ่มต้น + พื้นที่ 1 GB)</p>
+              <h2 className="text-xl font-black text-stone-900">ชำระเงินเพื่อเปิดบริการอัตโนมัติ</h2>
+              <p className="text-xs text-stone-500">สแกนจ่ายเงิน 2,000 บาท (ค่าบริการรายปีแรกเริ่มต้น + พื้นที่ 1 GB)</p>
             </header>
 
-            <div className="max-w-xs mx-auto p-6 rounded-2xl bg-white text-slate-900 shadow-lg space-y-4">
-              <div className="text-center font-bold text-sm tracking-wide border-b pb-3">PROMPTPAY QR</div>
+            <div className="max-w-xs mx-auto p-6 rounded-2xl bg-white text-stone-900 border border-stone-200 shadow-md space-y-4">
+              <div className="text-center font-bold text-sm tracking-wide border-b border-stone-100 pb-3">PROMPTPAY QR</div>
               {/* Simulated QR Code Area */}
-              <div className="w-48 h-48 bg-slate-200 border-4 border-slate-100 rounded-lg mx-auto flex flex-col items-center justify-center gap-2 p-2">
+              <div className="w-48 h-48 bg-stone-50 border border-stone-150 rounded-lg mx-auto flex flex-col items-center justify-center gap-2 p-2 shadow-inner">
                 <span className="text-3xl">📱</span>
-                <span className="text-[10px] font-black text-slate-800">MOCK DYNAMIC QR</span>
-                <span className="text-[9px] font-mono text-slate-500 break-all px-2">{paymentRef}</span>
+                <span className="text-[10px] font-black text-stone-850">MOCK DYNAMIC QR</span>
+                <span className="text-[9px] font-mono text-stone-500 break-all px-2 select-all">{paymentRef}</span>
               </div>
-              <div className="text-center font-black text-lg border-t pt-3">2,000.00 THB</div>
+              <div className="text-center font-black text-lg border-t border-stone-100 pt-3 text-emerald-800">2,000.00 THB</div>
             </div>
 
-            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-400 max-w-sm mx-auto leading-normal">
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 max-w-sm mx-auto leading-normal font-semibold">
               📲 สแกน QR Code แล้วระบบจะเปิดใช้งานให้คุณโดยอัตโนมัติเมื่อได้รับการกดยืนยัน Webhook callback จากธนาคาร
             </div>
 
-            <div className="pt-4 border-t border-slate-850 max-w-xs mx-auto space-y-3">
+            <div className="pt-4 border-t border-stone-100 max-w-xs mx-auto space-y-3">
               <button 
                 onClick={handleSimulatePaymentSuccess}
                 disabled={isLoading}
-                className="w-full py-3.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:brightness-110 transition shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-md active:scale-95"
               >
                 {isLoading ? 'กำลังตรวจเช็กยอดเงิน...' : 'จำลองการชำระเงินสำเร็จ (Callback Simulator)'}
               </button>
               <button 
                 onClick={() => setWizardStep(3)}
-                className="w-full py-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white text-xs font-semibold"
+                className="w-full py-2.5 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs font-semibold transition"
               >
                 ย้อนกลับไปแก้ไข
               </button>

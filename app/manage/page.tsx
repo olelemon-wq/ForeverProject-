@@ -617,7 +617,7 @@ export default function WebmasterDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-955 flex items-center justify-center text-white">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-600">
         <p className="text-sm font-semibold tracking-wider animate-pulse">กำลังโหลดแผงควบคุมหลังบ้าน...</p>
       </div>
     );
@@ -625,15 +625,15 @@ export default function WebmasterDashboard() {
 
   if (websites.length === 0) {
     return (
-      <main className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center text-3xl">🕯️</div>
+      <main className="min-h-screen bg-stone-50 text-stone-850 flex flex-col items-center justify-center p-6 text-center space-y-6">
+        <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center text-3xl border border-emerald-100">🕯️</div>
         <div className="space-y-2">
-          <h1 className="text-2xl font-black text-white">ยินดีต้อนรับสู่ FOREVER</h1>
-          <p className="text-slate-400 text-sm max-w-sm mx-auto">
+          <h1 className="text-2xl font-black text-stone-900">ยินดีต้อนรับสู่ FOREVER</h1>
+          <p className="text-stone-500 text-sm max-w-sm mx-auto">
             คุณยังไม่มีเว็บไซต์ความทรงจำในระบบบัญชีของคุณในขณะนี้ มาสร้างหน้ารำลึกแด่ผู้ล่วงลับคนแรกของคุณกันเถอะ
           </p>
         </div>
-        <Link href="/manage/create" className="px-6 py-3.5 rounded-2xl bg-emerald-500 text-slate-950 font-bold text-sm hover:brightness-110 active:scale-95 transition">
+        <Link href="/manage/create" className="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
           สร้างเว็บไซต์แรกของคุณ
         </Link>
       </main>
@@ -651,40 +651,40 @@ export default function WebmasterDashboard() {
       amount: '2,000.00 บาท',
       status: 'SUCCESS',
       date: selectedSite.expiredAt 
-        ? new Date(new Date(selectedSite.expiredAt).getTime() - 365 * 24 * 60 * 60 * 1000).toLocaleDateString('th-TH')
+         ? new Date(new Date(selectedSite.expiredAt).getTime() - 365 * 24 * 60 * 60 * 1000).toLocaleDateString('th-TH')
         : new Date().toLocaleDateString('th-TH'),
       desc: 'ค่าธรรมเนียมจดทะเบียนและดูแลรักษาระบบรายปี (First Year + ความจุ 1GB)'
     }
   ];
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-stone-50 text-stone-850 flex flex-col md:flex-row font-sans">
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-slate-955 border-r border-slate-800 p-6 flex flex-col justify-between">
+      <aside className="w-full md:w-64 bg-stone-100/60 border-r border-stone-200/80 p-6 flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-2 mb-8">
-            <span className="text-xl font-bold tracking-wider bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+            <span className="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               FOREVER MANAGE
             </span>
           </div>
           <nav className="space-y-2">
-            <button className="w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-800 text-emerald-400 font-semibold text-sm transition">
+            <button className="w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white shadow-sm border border-stone-200 text-emerald-700 font-semibold text-sm transition">
               <span>📊</span> แผงควบคุม (Dashboard)
             </button>
-            <Link href="/manage/create" className="w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 text-sm transition">
+            <Link href="/manage/create" className="w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-stone-200/40 text-sm transition font-semibold">
               <span>➕</span> สร้างเว็บไซต์เพิ่ม
             </Link>
           </nav>
 
           <div className="mt-8 space-y-2">
-            <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">เลือกเว็บไซต์จัดการ</label>
+            <label className="text-[9px] font-bold text-stone-500 uppercase tracking-wider block">เลือกเว็บไซต์จัดการ</label>
             <select 
               value={selectedSite.id} 
               onChange={(e) => {
                 const site = websites.find(w => w.id === e.target.value);
                 if (site) selectWebsite(site);
               }}
-              className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white"
+              className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-xs text-stone-800 focus:outline-none focus:border-emerald-500"
             >
               {websites.map(w => (
                 <option key={w.id} value={w.id}>/{w.slug} ({w.name.substring(0, 10)})</option>
@@ -693,12 +693,12 @@ export default function WebmasterDashboard() {
           </div>
         </div>
         
-        <div className="mt-8 border-t border-slate-850 pt-6">
+        <div className="mt-8 border-t border-stone-200 pt-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-sm">👤</div>
+            <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-sm text-stone-600">👤</div>
             <div>
-              <p className="text-xs font-semibold text-white">ผู้ใช้งานบัญชี</p>
-              <p className="text-[10px] text-slate-500">{userPhone}</p>
+              <p className="text-xs font-bold text-stone-900">ผู้ใช้งานบัญชี</p>
+              <p className="text-[10px] text-stone-500 font-medium">{userPhone}</p>
             </div>
           </div>
         </div>
@@ -707,8 +707,8 @@ export default function WebmasterDashboard() {
       {/* Main dashboard content */}
       <main className="flex-1 p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full overflow-y-auto">
         
-        {success && <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 rounded-2xl font-semibold">✓ {success}</div>}
-        {error && <div className="p-4 bg-red-500/10 border border-red-500/20 text-xs text-red-400 rounded-2xl font-semibold">⚠️ {error}</div>}
+        {success && <div className="p-4 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 rounded-2xl font-semibold animate-fade-in">✓ {success}</div>}
+        {error && <div className="p-4 bg-red-50 border border-red-200 text-xs text-red-700 rounded-2xl font-semibold animate-fade-in">⚠️ {error}</div>}
 
         {/* Expiration warning banner (Phase 2 Expiration Banner alignment) */}
         {(() => {
@@ -725,10 +725,10 @@ export default function WebmasterDashboard() {
           if (!isExpiringSoon) return null;
 
           return (
-            <div className="p-5 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs font-semibold text-amber-400">
+            <div className="p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs font-semibold text-amber-800">
               <div className="space-y-1">
-                <p className="font-bold text-sm text-white">⚠️ บริการใกล้หมดอายุ (Expired Warning)</p>
-                <p className="text-[11px] text-amber-400/80">
+                <p className="font-bold text-sm text-amber-900">⚠️ บริการใกล้หมดอายุ (Subscription Expiring Soon)</p>
+                <p className="text-[11px] text-amber-700">
                   เว็บไซต์รำลึก /{selectedSite.slug} จะหมดอายุลงในอีก {remainingDays} วัน (ในวันที่ {new Date(selectedSite.expiredAt).toLocaleDateString('th-TH')}) กรุณาต่ออายุเพื่อหลีกเลี่ยงการระงับบริการชั่วคราว
                 </p>
               </div>
@@ -736,7 +736,7 @@ export default function WebmasterDashboard() {
                 type="button"
                 onClick={handleRequestRenewal}
                 disabled={renewLoading}
-                className="px-4 py-2.5 bg-amber-500 hover:brightness-110 active:scale-95 text-slate-950 font-bold rounded-xl transition flex-shrink-0 text-[10px]"
+                className="px-4 py-2.5 bg-amber-650 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-xl transition flex-shrink-0 text-[10px] shadow-sm"
               >
                 🌸 ต่ออายุบริการ 1 ปี (2,000 บาท)
               </button>
@@ -746,29 +746,29 @@ export default function WebmasterDashboard() {
 
         {/* Renewal Checkout Modal */}
         {renewModalOpen && (
-          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-sm w-full space-y-6 text-center animate-fade-in">
-              <header className="space-y-1 text-left border-b border-slate-850 pb-3">
-                <h3 className="text-sm font-bold text-white">🌸 ต่ออายุบริการเว็บไซต์ (Subscription Renewal)</h3>
-                <p className="text-[10px] text-slate-500 font-semibold">ต่ออายุหน้ารำลึก /{selectedSite.slug} เพิ่มเติม 1 ปี (365 วัน)</p>
+          <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 max-w-sm w-full space-y-6 text-center animate-fade-in shadow-2xl">
+              <header className="space-y-1 text-left border-b border-stone-100 pb-3">
+                <h3 className="text-sm font-bold text-stone-900">🌸 ต่ออายุบริการเว็บไซต์ (Subscription Renewal)</h3>
+                <p className="text-[10px] text-stone-500 font-semibold">ต่ออายุหน้ารำลึก /{selectedSite.slug} เพิ่มเติม 1 ปี (365 วัน)</p>
               </header>
 
-              <div className="p-5 rounded-2xl bg-white text-slate-900 shadow-lg space-y-4 max-w-[240px] mx-auto border border-slate-100">
-                <div className="text-center font-bold text-[9px] tracking-wider border-b pb-1 text-slate-500 uppercase">PROMPTPAY QR</div>
+              <div className="p-5 rounded-2xl bg-white text-stone-900 shadow-md space-y-4 max-w-[240px] mx-auto border border-stone-200">
+                <div className="text-center font-bold text-[9px] tracking-wider border-b border-stone-100 pb-1 text-stone-500 uppercase">PROMPTPAY QR</div>
                 
-                <div className="w-36 h-36 bg-slate-100 rounded-lg mx-auto flex flex-col items-center justify-center gap-1 border border-slate-200 p-2">
+                <div className="w-36 h-36 bg-stone-50 rounded-lg mx-auto flex flex-col items-center justify-center gap-1 border border-stone-150 p-2 shadow-inner">
                   <span className="text-xl">🕯️</span>
-                  <span className="text-[7px] font-black text-slate-700">RENEWAL PAYMENT</span>
-                  <span className="text-[8px] font-mono text-slate-500 break-all px-1">{renewRefId}</span>
+                  <span className="text-[7px] font-black text-stone-700">RENEWAL PAYMENT</span>
+                  <span className="text-[8px] font-mono text-stone-500 break-all px-1 select-all">{renewRefId}</span>
                 </div>
 
                 <div className="space-y-0.5 text-left text-[11px]">
-                  <p className="font-bold text-slate-500">ยอดชำระ: {renewAmount.toLocaleString()} บาท</p>
-                  <p className="text-[9px] text-slate-400">อ้างอิง: {renewRefId.substring(0, 16)}...</p>
+                  <p className="font-bold text-stone-600">ยอดชำระ: <span className="text-emerald-800 font-black">{renewAmount.toLocaleString()} บาท</span></p>
+                  <p className="text-[9px] text-stone-400">อ้างอิง: {renewRefId.substring(0, 16)}...</p>
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-950/40 rounded-xl border border-slate-850 text-[10px] text-slate-400 text-left leading-normal">
+              <div className="p-3 bg-stone-50 rounded-xl border border-stone-150 text-[10px] text-stone-605 text-left leading-normal">
                 * คิวอาร์โค้ดสำหรับจ่ายเงินต่ออายุนี้มีอายุการใช้งาน 15 นาทีตามมาตรฐานความปลอดภัย (Grill Decision)
               </div>
 
@@ -777,7 +777,7 @@ export default function WebmasterDashboard() {
                   type="button"
                   onClick={handleSimulateRenewSuccess}
                   disabled={renewLoading}
-                  className="flex-1 py-2.5 bg-emerald-500 hover:brightness-110 text-slate-950 font-bold rounded-xl text-xs transition"
+                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-sm active:scale-95"
                 >
                   {renewLoading ? 'กำลังจำลอง...' : '✓ จำลองต่ออายุสำเร็จ'}
                 </button>
@@ -785,7 +785,7 @@ export default function WebmasterDashboard() {
                   type="button"
                   onClick={() => setRenewModalOpen(false)}
                   disabled={renewLoading}
-                  className="px-4 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold rounded-xl text-xs transition border border-slate-700"
+                  className="px-4 py-2.5 border border-stone-300 text-stone-600 hover:bg-stone-50 font-bold rounded-xl text-xs transition"
                 >
                   ปิด
                 </button>
@@ -794,13 +794,13 @@ export default function WebmasterDashboard() {
           </div>
         )}
 
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-800">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-stone-200">
           <div>
-            <h1 className="text-2xl font-extrabold text-white">{selectedSite.name}</h1>
-            <p className="text-sm text-slate-400">ลิงก์ความทรงจำ: <a href={`/${selectedSite.slug}`} target="_blank" className="text-emerald-400 underline">forever.co.th/{selectedSite.slug}</a></p>
+            <h1 className="text-2xl font-black text-stone-900">{selectedSite.name}</h1>
+            <p className="text-sm text-stone-500">ลิงก์ความทรงจำ: <a href={`/${selectedSite.slug}`} target="_blank" className="text-emerald-700 font-semibold hover:text-emerald-800 underline">forever.co.th/{selectedSite.slug}</a></p>
           </div>
           <div>
-            <span className="px-3.5 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="px-3.5 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
               สถานะบริการ: {selectedSite.status}
             </span>
           </div>
@@ -808,63 +808,63 @@ export default function WebmasterDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Settings Customizer */}
-          <form onSubmit={handleSaveConfig} className="lg:col-span-2 p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-            <h3 className="text-lg font-bold text-white mb-2">🎨 ปรับแต่งธีมและข้อมูลทั่วไป</h3>
+          <form onSubmit={handleSaveConfig} className="lg:col-span-2 p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+            <h3 className="text-lg font-black text-stone-900 mb-2">🎨 ปรับแต่งธีมและข้อมูลทั่วไป</h3>
             
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อหน้ารำลึก</label>
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ชื่อหน้ารำลึก</label>
               <input 
                 type="text" 
                 value={siteName} 
                 onChange={(e) => setSiteName(e.target.value)} 
-                className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Primary Color</label>
+                <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">Primary Color</label>
                 <div className="flex gap-3 items-center">
                   <input 
                     type="color" 
                     value={primaryColor} 
                     onChange={(e) => setPrimaryColor(e.target.value)} 
-                    className="w-10 h-10 rounded-xl border border-slate-800 cursor-pointer"
+                    className="w-10 h-10 rounded-xl border border-stone-200 cursor-pointer"
                   />
                   <input 
                     type="text" 
                     value={primaryColor} 
                     onChange={(e) => setPrimaryColor(e.target.value)} 
-                    className="flex-1 px-4 py-2 text-sm bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
+                    className="flex-1 px-4 py-2 text-sm bg-stone-50/50 border border-stone-200 rounded-xl text-stone-905 font-mono focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Secondary Color</label>
+                <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">Secondary Color</label>
                 <div className="flex gap-3 items-center">
                   <input 
                     type="color" 
                     value={secondaryColor} 
                     onChange={(e) => setSecondaryColor(e.target.value)} 
-                    className="w-10 h-10 rounded-xl border border-slate-800 cursor-pointer"
+                    className="w-10 h-10 rounded-xl border border-stone-200 cursor-pointer"
                   />
                   <input 
                     type="text" 
                     value={secondaryColor} 
                     onChange={(e) => setSecondaryColor(e.target.value)} 
-                    className="flex-1 px-4 py-2 text-sm bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
+                    className="flex-1 px-4 py-2 text-sm bg-stone-50/50 border border-stone-200 rounded-xl text-stone-905 font-mono focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Font Style (Family)</label>
+              <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">Font Style (Family)</label>
               <select 
                 value={fontFamily} 
                 onChange={(e) => setFontFamily(e.target.value)} 
-                className="w-full px-4 py-2.5 text-sm bg-slate-900 border border-slate-800 rounded-xl text-white"
+                className="w-full px-4 py-2.5 text-sm bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
               >
                 <option value="Inter">Inter (เรียบหรูสากล)</option>
                 <option value="Sarabun">Sarabun (ไทยทางการ)</option>
@@ -873,37 +873,37 @@ export default function WebmasterDashboard() {
             </div>
 
             {/* Donation Settings (Phase 2 integration) */}
-            <div className="border-t border-slate-850 pt-6 space-y-4">
+            <div className="border-t border-stone-100 pt-6 space-y-4">
               <div className="flex justify-between items-center">
-                <h4 className="text-sm font-bold text-white">🌸 เปิดใช้บริการรับเงินทำบุญ (Donation QR Settings)</h4>
+                <h4 className="text-sm font-bold text-stone-900">🌸 เปิดใช้บริการรับเงินทำบุญ (Donation QR Settings)</h4>
                 <input 
                   type="checkbox" 
                   checked={donationActive}
                   onChange={() => setDonationActive(!donationActive)}
-                  className="w-5 h-5 accent-emerald-500 cursor-pointer"
+                  className="w-5 h-5 accent-emerald-650 cursor-pointer"
                 />
               </div>
 
               {donationActive && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">หมายเลขพร้อมเพย์ (PromptPay)</label>
+                    <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">หมายเลขพร้อมเพย์ (PromptPay)</label>
                     <input 
                       type="text" 
                       value={donationPromptPay} 
                       onChange={(e) => setDonationPromptPay(e.target.value)} 
                       placeholder="เช่น 0812345678 หรือ 1234567890123"
-                      className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-mono"
+                      className="w-full px-4 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs font-mono focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ชื่อบัญชีรับเงินทำบุญ</label>
+                    <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ชื่อบัญชีรับเงินทำบุญ</label>
                     <input 
                       type="text" 
                       value={donationAccountName} 
                       onChange={(e) => setDonationAccountName(e.target.value)} 
                       placeholder="เช่น นายสมชาย รักดี"
-                      className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                      className="w-full px-4 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                     />
                   </div>
                 </div>
@@ -913,41 +913,41 @@ export default function WebmasterDashboard() {
             <button 
               type="submit" 
               disabled={saveLoading}
-              className="px-6 py-3 bg-emerald-500 hover:brightness-110 active:scale-95 text-slate-950 font-bold text-xs rounded-xl transition"
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl transition shadow-sm"
             >
               {saveLoading ? 'กำลังบันทึกข้อมูล...' : '💾 บันทึกการตั้งค่าเว็บไซต์'}
             </button>
           </form>
 
-          {/* Sidebar */}
+          {/* Sidebar Panel Options */}
           <div className="space-y-8">
             {/* Storage Quota */}
-            <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
-              <h3 className="text-base font-bold text-white">💾 พื้นที่จัดเก็บมีเดีย S3 / R2</h3>
+            <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-4">
+              <h3 className="text-base font-bold text-stone-900">💾 พื้นที่จัดเก็บมีเดีย S3 / R2</h3>
               <div className="space-y-2">
-                <div className="flex justify-between text-xs text-slate-400 font-medium">
+                <div className="flex justify-between text-xs text-stone-500 font-semibold">
                   <span>ใช้งาน: {(storageUsedBytes / (1024 * 1024)).toFixed(1)} MB</span>
                   <span>จาก: {(storageQuotaBytes / (1024 * 1024 * 1024)).toFixed(1)} GB</span>
                 </div>
-                <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${storagePercentage}%` }} />
+                <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-600 rounded-full transition-all" style={{ width: `${storagePercentage}%` }} />
                 </div>
               </div>
               
-              <div className="border-t border-slate-850 pt-4 space-y-2">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">จำลองอัปโหลดไฟล์จริงเพื่อเช็ก Quota</p>
+              <div className="border-t border-stone-100 pt-4 space-y-2">
+                <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">จำลองอัปโหลดไฟล์จริงเพื่อเช็ก Quota</p>
                 <div className="flex gap-2">
                   <button 
                     onClick={() => handleMockUpload(10)} 
                     disabled={uploadLoading}
-                    className="flex-1 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-850 rounded-xl text-[10px] text-white font-bold transition"
+                    className="flex-1 py-2 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-[10px] text-stone-705 font-bold transition"
                   >
                     รูปภาพ (10MB)
                   </button>
                   <button 
                     onClick={() => handleMockUpload(250)} 
                     disabled={uploadLoading}
-                    className="flex-1 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-850 rounded-xl text-[10px] text-amber-500 font-bold transition"
+                    className="flex-1 py-2 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-[10px] text-amber-800 font-bold transition"
                   >
                     วิดีโอใหญ่ (250MB)
                   </button>
@@ -956,8 +956,8 @@ export default function WebmasterDashboard() {
             </section>
 
             {/* Privacy settings */}
-            <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
-              <h3 className="text-base font-bold text-white">🔒 ความเป็นส่วนตัว</h3>
+            <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-4">
+              <h3 className="text-base font-bold text-stone-900">🔒 ความเป็นส่วนตัว</h3>
               <div className="space-y-3">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input 
@@ -966,27 +966,27 @@ export default function WebmasterDashboard() {
                     value="PUBLIC" 
                     checked={visibility === 'PUBLIC'}
                     onChange={() => setVisibility('PUBLIC')}
-                    className="accent-emerald-500 w-4 h-4"
+                    className="accent-emerald-600 w-4 h-4"
                   />
                   <div>
-                    <p className="text-xs font-bold text-white">เปิดสาธารณะ (Public)</p>
-                    <p className="text-[10px] text-slate-500">ทุกคนเข้าชมและส่งคำไว้อาลัยได้</p>
+                    <p className="text-xs font-bold text-stone-900">เปิดสาธารณะ (Public)</p>
+                    <p className="text-[10px] text-stone-500">ทุกคนเข้าชมและส่งคำไว้อาลัยได้</p>
                   </div>
                 </label>
               </div>
             </section>
 
-            {/* Export data (Task 8.4 Export ZIP) */}
-            <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
-              <h3 className="text-base font-bold text-white">📦 ส่งออกข้อมูลความทรงจำ</h3>
-              <p className="text-[10px] text-slate-400 leading-normal">
+            {/* Export data */}
+            <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-4">
+              <h3 className="text-base font-bold text-stone-900">📦 ส่งออกข้อมูลความทรงจำ</h3>
+              <p className="text-[10px] text-stone-500 leading-normal">
                 ดาวน์โหลดรวบรวมข้อมูลทั้งหมดของเว็บไซต์ รวมถึงประวัติผู้ล่วงลับ คำไว้อาลัย ผังครอบครัว และหนังสือที่ระลึก บีบอัดเป็นไฟล์ ZIP เพื่อเก็บสำรองไว้แบบออฟไลน์
               </p>
               <button 
                 type="button"
                 onClick={handleExportZip}
                 disabled={exportLoading}
-                className="w-full py-2.5 bg-slate-900 border border-slate-800 hover:bg-slate-850 rounded-xl text-xs text-emerald-400 font-bold transition flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs text-emerald-800 font-bold transition flex items-center justify-center gap-2"
               >
                 {exportLoading ? '📦 กำลังส่งออกไฟล์...' : '📥 ดาวน์โหลดข้อมูลทั้งหมด (ZIP)'}
               </button>
@@ -995,43 +995,43 @@ export default function WebmasterDashboard() {
         </div>
 
         {/* Family Tree Manager Section */}
-        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-          <div className="flex justify-between items-center border-b border-slate-850 pb-4">
+        <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+          <div className="flex justify-between items-center border-b border-stone-100 pb-4">
             <div>
-              <h3 className="text-lg font-bold text-white">🌳 ผังครอบครัวและเครือญาติ 3 รุ่น ({familyMembers.length})</h3>
-              <p className="text-xs text-slate-400">เพิ่มรายละเอียดของบิดา มารดา คู่สมรส พี่น้อง และบุตรธิดาของผู้ล่วงลับ</p>
+              <h3 className="text-lg font-black text-stone-900 font-sans">🌳 ผังครอบครัวและเครือญาติ 3 รุ่น ({familyMembers.length})</h3>
+              <p className="text-xs text-stone-500">เพิ่มรายละเอียดของบิดา มารดา คู่สมรส พี่น้อง และบุตรธิดาของผู้ล่วงลับ</p>
             </div>
             <button 
               onClick={() => { resetFamilyForm(); setFamilyFormOpen(!familyFormOpen); }}
-              className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
+              className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition"
             >
               {familyFormOpen ? 'ปิดหน้าต่าง' : '➕ เพิ่มสมาชิกครอบครัว'}
             </button>
           </div>
 
           {familyFormOpen && (
-            <form onSubmit={handleSaveFamilyMember} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/20 space-y-4 max-w-xl">
-              <h4 className="text-xs font-black uppercase text-emerald-400">{familyId ? '📝 แก้ไขสมาชิกญาติ' : '🌳 เพิ่มสมาชิกญาติใหม่'}</h4>
+            <form onSubmit={handleSaveFamilyMember} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 max-w-xl animate-fade-in">
+              <h4 className="text-xs font-black uppercase text-emerald-800">{familyId ? '📝 แก้ไขสมาชิกญาติ' : '🌳 เพิ่มสมาชิกญาติใหม่'}</h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ชื่อ-นามสกุล</label>
+                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ชื่อ-นามสกุล</label>
                   <input 
                     type="text" 
                     value={familyName} 
                     onChange={(e) => setFamilyName(e.target.value)}
                     required
                     placeholder="เช่น นายสมจิตร์ รักสงบ"
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ความสัมพันธ์</label>
+                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ความสัมพันธ์</label>
                   <select
                     value={familyRelationship}
                     onChange={(e) => setFamilyRelationship(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
                   >
                     <option value="PARENT_1">บิดา (Father)</option>
                     <option value="PARENT_2">มารดา (Mother)</option>
@@ -1044,19 +1044,19 @@ export default function WebmasterDashboard() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ปีเกิด (พ.ศ.)</label>
+                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ปีเกิด (พ.ศ.)</label>
                   <input 
                     type="text" 
                     value={familyBirthYear} 
                     onChange={(e) => setFamilyBirthYear(e.target.value)}
                     placeholder="เช่น 2490"
                     maxLength={4}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-mono"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs font-mono focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ปีที่ล่วงลับ (พ.ศ.)</label>
+                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ปีที่ล่วงลับ (พ.ศ.)</label>
                   <input 
                     type="text" 
                     value={familyDeathYear} 
@@ -1064,7 +1064,7 @@ export default function WebmasterDashboard() {
                     disabled={!familyIsDeceased}
                     placeholder="เช่น 2565"
                     maxLength={4}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-mono disabled:opacity-40"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs font-mono disabled:opacity-40 focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
@@ -1074,9 +1074,9 @@ export default function WebmasterDashboard() {
                     id="isDeceased"
                     checked={familyIsDeceased}
                     onChange={(e) => setFamilyIsDeceased(e.target.checked)}
-                    className="w-4 h-4 accent-emerald-500 cursor-pointer"
+                    className="w-4 h-4 accent-emerald-600 cursor-pointer"
                   />
-                  <label htmlFor="isDeceased" className="text-xs text-slate-300 font-bold cursor-pointer">เสียชีวิตแล้ว (Deceased)</label>
+                  <label htmlFor="isDeceased" className="text-xs text-stone-750 font-bold cursor-pointer select-none">เสียชีวิตแล้ว (Deceased)</label>
                 </div>
               </div>
 
@@ -1084,14 +1084,14 @@ export default function WebmasterDashboard() {
                 <button 
                   type="submit" 
                   disabled={saveLoading}
-                  className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:brightness-110 transition"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
                 >
                   {saveLoading ? 'กำลังบันทึก...' : '💾 บันทึกข้อมูลญาติ'}
                 </button>
                 <button 
                   type="button" 
                   onClick={resetFamilyForm}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs transition border border-slate-700"
+                  className="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition"
                 >
                   ยกเลิก
                 </button>
@@ -1100,7 +1100,7 @@ export default function WebmasterDashboard() {
           )}
 
           {familyMembers.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
+            <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
               ยังไม่มีการระบุข้อมูลสมาชิกครอบครัว
             </div>
           ) : (
@@ -1112,27 +1112,27 @@ export default function WebmasterDashboard() {
                   m.relationship === 'SPOUSE' ? 'คู่สมรส' : 
                   m.relationship === 'SIBLING' ? 'พี่น้อง' : 'บุตร/ธิดา';
                 return (
-                  <div key={m.id} className="p-4 rounded-2xl border border-slate-850 bg-slate-900/30 flex justify-between items-start">
+                  <div key={m.id} className="p-4 rounded-2xl border border-stone-200 bg-stone-50/40 flex justify-between items-start hover:border-stone-300 transition">
                     <div>
-                      <p className="text-xs font-bold text-white">{m.name}</p>
-                      <span className="inline-block px-1.5 py-0.5 text-[8px] font-bold bg-slate-800 text-slate-400 rounded mt-1">
+                      <p className="text-xs font-bold text-stone-900">{m.name}</p>
+                      <span className="inline-block px-1.5 py-0.5 text-[8px] font-bold bg-stone-200/50 text-stone-605 rounded mt-1">
                         ความสัมพันธ์: {relLabel}
                       </span>
-                      <p className="text-[10px] text-slate-500 font-semibold mt-1">
+                      <p className="text-[10px] text-stone-500 font-semibold mt-1">
                         อายุขัย: {m.birthYear || 'N/A'} - {m.deathYear || 'N/A'} {m.isDeceased && '🕯️'}
                       </p>
                     </div>
                     <div className="flex gap-1.5">
                       <button 
                         onClick={() => editFamilyMember(m)}
-                        className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition"
+                        className="p-1.5 rounded-lg bg-white border border-stone-250 text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition"
                         title="แก้ไข"
                       >
                         ✏️
                       </button>
                       <button 
                         onClick={() => handleDeleteFamilyMember(m.id)}
-                        className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition"
+                        className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition"
                         title="ลบ"
                       >
                         🗑️
@@ -1146,82 +1146,82 @@ export default function WebmasterDashboard() {
         </section>
 
         {/* E-Books Manager Section */}
-        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-          <div className="flex justify-between items-center border-b border-slate-850 pb-4">
+        <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+          <div className="flex justify-between items-center border-b border-stone-100 pb-4">
             <div>
-              <h3 className="text-lg font-bold text-white">📖 หนังสือของชำร่วยและธรรมทาน ({ebooks.length})</h3>
-              <p className="text-xs text-slate-400">อัปโหลดหนังสือธรรมะ บทสวดมนต์ หรือหนังสือชีวประวัติ (PDF) พร้อมระบบอ่านในเว็บ</p>
+              <h3 className="text-lg font-black text-stone-900">📖 หนังสือของชำร่วยและธรรมทาน ({ebooks.length})</h3>
+              <p className="text-xs text-stone-500">อัปโหลดหนังสือธรรมะ บทสวดมนต์ หรือหนังสือชีวประวัติ (PDF) พร้อมระบบอ่านในเว็บ</p>
             </div>
             <button 
               onClick={() => { resetEbookForm(); setEbookFormOpen(!ebookFormOpen); }}
-              className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
+              className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition"
             >
               {ebookFormOpen ? 'ปิดหน้าต่าง' : '➕ อัปโหลดหนังสือใหม่'}
             </button>
           </div>
 
           {ebookFormOpen && (
-            <form onSubmit={handleSaveEbook} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/20 space-y-4 max-w-xl">
-              <h4 className="text-xs font-black uppercase text-emerald-400">{ebookId ? '📝 แก้ไขข้อมูลหนังสือ' : '📖 อัปโหลดหนังสือธรรมทานใหม่'}</h4>
+            <form onSubmit={handleSaveEbook} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 max-w-xl animate-fade-in">
+              <h4 className="text-xs font-black uppercase text-emerald-800">{ebookId ? '📝 แก้ไขข้อมูลหนังสือ' : '📖 อัปโหลดหนังสือธรรมทานใหม่'}</h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ชื่อหนังสือ</label>
+                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ชื่อหนังสือ</label>
                   <input 
                     type="text" 
                     value={ebookTitle} 
                     onChange={(e) => setEbookTitle(e.target.value)}
                     required
                     placeholder="เช่น หนังสือบทสวดมนต์และธรรมสติ"
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ผู้แต่ง / คณะผู้จัดทำ</label>
+                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ผู้แต่ง / คณะผู้จัดทำ</label>
                   <input 
                     type="text" 
                     value={ebookAuthor} 
                     onChange={(e) => setEbookAuthor(e.target.value)}
                     required
                     placeholder="เช่น คณะครอบครัวเจริญยิ่ง"
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block">จำนวนหน้าทั้งหมด</label>
+                  <label className="text-[10px] text-stone-500 font-bold uppercase block">จำนวนหน้าทั้งหมด</label>
                   <input 
                     type="number" 
                     min={1}
                     value={ebookTotalPages} 
                     onChange={(e) => setEbookTotalPages(e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400 font-bold uppercase block">เลือกไฟล์หนังสือ PDF</label>
+                  <label className="text-[10px] text-stone-500 font-bold uppercase block">เลือกไฟล์หนังสือ PDF</label>
                   <input 
                     type="file" 
                     accept="application/pdf"
                     onChange={(e) => setEbookFile(e.target.files ? e.target.files[0] : null)}
-                    className="w-full text-slate-400 text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-750"
+                    className="w-full text-stone-600 text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border file:border-stone-200 file:text-[10px] file:font-semibold file:bg-stone-50 file:text-stone-705 hover:file:bg-stone-100 transition"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] text-slate-400 font-bold uppercase block">ข้อความเนื้อหาในแต่ละหน้า (แยกหน้าโดยใช้เครื่องหมาย `[PAGE]`)</label>
+                <label className="text-[10px] text-stone-500 font-bold uppercase block">ข้อความเนื้อหาในแต่ละหน้า (แยกหน้าโดยใช้เครื่องหมาย `[PAGE]`)</label>
                 <textarea 
                   value={ebookPagesText} 
                   onChange={(e) => setEbookPagesText(e.target.value)}
                   rows={6}
                   placeholder="บทนำ...&#10;[PAGE]&#10;หน้าที่ 2...&#10;[PAGE]&#10;หน้าที่ 3..."
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-serif leading-relaxed"
+                  className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs font-serif leading-relaxed focus:outline-none focus:border-emerald-500/80 transition"
                 />
               </div>
 
@@ -1229,14 +1229,14 @@ export default function WebmasterDashboard() {
                 <button 
                   type="submit" 
                   disabled={saveLoading}
-                  className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:brightness-110 transition"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
                 >
                   {saveLoading ? 'กำลังบันทึกและอัปโหลด...' : '💾 บันทึกและออกบริการ'}
                 </button>
                 <button 
                   type="button" 
                   onClick={resetEbookForm}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs transition border border-slate-700"
+                  className="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition"
                 >
                   ยกเลิก
                 </button>
@@ -1245,35 +1245,35 @@ export default function WebmasterDashboard() {
           )}
 
           {ebooks.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
+            <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
               ยังไม่มีการอัปโหลดหนังสือที่ระลึกธรรมทาน
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {ebooks.map(b => (
-                <div key={b.id} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/30 flex gap-4 items-center">
-                  <div className="w-16 h-20 bg-slate-900 border border-slate-800 rounded-lg shadow flex flex-col items-center justify-center p-2 relative overflow-hidden flex-shrink-0">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
-                    <span className="text-xl">📖</span>
+                <div key={b.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 hover:border-stone-300 transition flex gap-4 items-center">
+                  <div className="w-16 h-20 bg-white border border-stone-200 rounded-lg shadow-sm flex flex-col items-center justify-center p-2 relative overflow-hidden flex-shrink-0">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-emerald-600" />
+                    <span className="text-xl animate-fade-in">📖</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{b.title}</p>
-                    <p className="text-[10px] text-slate-500">โดย: {b.author}</p>
-                    <span className="inline-block mt-2 px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-[8px] font-bold">
+                    <p className="text-xs font-bold text-stone-900 truncate">{b.title}</p>
+                    <p className="text-[10px] text-stone-500">โดย: {b.author}</p>
+                    <span className="inline-block mt-2 px-2 py-0.5 rounded bg-stone-200/50 text-stone-600 text-[8px] font-bold">
                       {b.totalPages} หน้า
                     </span>
                   </div>
                   <div className="flex gap-1">
                     <button 
                       onClick={() => editEbook(b)}
-                      className="p-2 rounded-xl bg-slate-850 text-slate-400 hover:text-white border border-slate-800 transition text-[10px]"
+                      className="p-2 rounded-xl bg-white border border-stone-250 text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition text-[10px]"
                       title="แก้ไข"
                     >
                       ✏️
                     </button>
                     <button 
                       onClick={() => handleDeleteEbook(b.id)}
-                      className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition text-[10px]"
+                      className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition text-[10px]"
                       title="ลบ"
                     >
                       🗑️
@@ -1286,16 +1286,16 @@ export default function WebmasterDashboard() {
         </section>
 
         {/* Billing & Invoice History Section */}
-        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-          <div className="border-b border-slate-850 pb-4">
-            <h3 className="text-lg font-bold text-white">💳 ประวัติการชำระเงินและดาวน์โหลดใบกำกับภาษี</h3>
-            <p className="text-xs text-slate-400">ตรวจสอบประวัติการทำรายการชำระค่าบริการ และดาวน์โหลดใบเสร็จ/ใบกำกับภาษีเต็มรูปแบบ (ตามกฎหมายไทย)</p>
+        <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+          <div className="border-b border-stone-100 pb-4">
+            <h3 className="text-lg font-black text-stone-900">💳 ประวัติการชำระเงินและดาวน์โหลดใบกำกับภาษี</h3>
+            <p className="text-xs text-stone-500">ตรวจสอบประวัติการทำรายการชำระค่าบริการ และดาวน์โหลดใบเสร็จ/ใบกำกับภาษีเต็มรูปแบบ (ตามกฎหมายไทย)</p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider">
+                <tr className="border-b border-stone-200 text-stone-500 font-bold uppercase tracking-wider">
                   <th className="pb-3 pl-2">เลขที่ใบกำกับภาษี</th>
                   <th className="pb-3">วันที่ชำระเงิน</th>
                   <th className="pb-3">รายละเอียดสินค้า</th>
@@ -1304,15 +1304,15 @@ export default function WebmasterDashboard() {
                   <th className="pb-3 pr-2 text-right">ใบกำกับภาษี</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-850">
+              <tbody className="divide-y divide-stone-100">
                 {invoiceLogs.map(log => (
-                  <tr key={log.id} className="hover:bg-slate-900/10">
-                    <td className="py-4 pl-2 font-mono font-bold text-slate-300">{log.id}</td>
-                    <td className="py-4 text-slate-400">{log.date}</td>
-                    <td className="py-4 text-slate-300 max-w-[280px] truncate">{log.desc}</td>
-                    <td className="py-4 text-white font-semibold">{log.amount}</td>
+                  <tr key={log.id} className="hover:bg-stone-50/80 transition">
+                    <td className="py-4 pl-2 font-mono font-bold text-stone-700">{log.id}</td>
+                    <td className="py-4 text-stone-500">{log.date}</td>
+                    <td className="py-4 text-stone-650 max-w-[280px] truncate">{log.desc}</td>
+                    <td className="py-4 text-stone-900 font-bold">{log.amount}</td>
                     <td className="py-4">
-                      <span className="px-2.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <span className="px-2.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-250">
                         {log.status}
                       </span>
                     </td>
@@ -1320,7 +1320,7 @@ export default function WebmasterDashboard() {
                       <a 
                         href={`/api/payment/invoice?refId=${log.refId}`}
                         download
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold transition active:scale-95"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-[10px] font-bold transition active:scale-95 shadow-sm"
                       >
                         <span>📥</span> ดาวน์โหลด PDF
                       </a>
@@ -1333,36 +1333,36 @@ export default function WebmasterDashboard() {
         </section>
 
         {/* Condolence moderation */}
-        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-          <h3 className="text-lg font-bold text-white">🕯️ คำไว้อาลัยรออนุมัติ ({condolences.length})</h3>
+        <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+          <h3 className="text-lg font-black text-stone-900">🕯️ คำไว้อาลัยรออนุมัติ ({condolences.length})</h3>
 
           {condolences.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
+            <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
               ไม่มีข้อความไว้อาลัยค้างอนุมัติในเวลานี้
             </div>
           ) : (
             <div className="space-y-4">
               {condolences.map(c => (
-                <div key={c.id} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/10 flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                <div key={c.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-white">{c.senderName}</span>
-                      <span className="px-2 py-0.5 text-[9px] font-semibold bg-slate-850 text-slate-400 rounded">
+                      <span className="text-sm font-bold text-stone-900">{c.senderName}</span>
+                      <span className="px-2 py-0.5 text-[9px] font-semibold bg-stone-200/50 text-stone-600 rounded">
                         ความสัมพันธ์: {c.relationship}
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">"{c.message}"</p>
+                    <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{c.message}"</p>
                   </div>
                   <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
                     <button 
                       onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
-                      className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
                     >
                       อนุมัติ
                     </button>
                     <button 
                       onClick={() => handleModerateCondolence(c.id, 'DELETE')}
-                      className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold transition"
+                      className="px-4 py-2 rounded-xl border border-red-300 text-red-750 hover:bg-red-50 text-xs font-bold transition active:scale-95"
                     >
                       ลบออก
                     </button>
@@ -1374,35 +1374,35 @@ export default function WebmasterDashboard() {
         </section>
 
         {/* Memory Wall Moderation Section (Phase 2 integration) */}
-        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
-          <h3 className="text-lg font-bold text-white">📸 เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</h3>
+        <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+          <h3 className="text-lg font-black text-stone-900">📸 เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</h3>
 
           {pendingPosts.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
+            <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
               ไม่มีเรื่องราวหรือรูปถ่ายค้างอนุมัติในเวลานี้
             </div>
           ) : (
             <div className="space-y-4">
               {pendingPosts.map(p => (
-                <div key={p.id} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/10 flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                <div key={p.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-white">ส่งโดย: {p.senderName}</span>
-                      {p.title && <span className="text-xs font-semibold text-slate-300">| หัวข้อ: {p.title}</span>}
+                      <span className="text-sm font-bold text-stone-900">ส่งโดย: {p.senderName}</span>
+                      {p.title && <span className="text-xs font-semibold text-stone-600">| หัวข้อ: {p.title}</span>}
                     </div>
-                    {p.mediaUrl && <p className="text-[10px] text-slate-500 font-mono">แนบไฟล์รูป: {p.mediaUrl}</p>}
-                    {p.content && <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">"{p.content}"</p>}
+                    {p.mediaUrl && <p className="text-[10px] text-stone-500 font-mono">แนบไฟล์รูป: {p.mediaUrl}</p>}
+                    {p.content && <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{p.content}"</p>}
                   </div>
                   <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
                     <button 
                       onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
-                      className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
                     >
                       อนุมัติลงบอร์ด
                     </button>
                     <button 
                       onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
-                      className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold transition"
+                      className="px-4 py-2 rounded-xl border border-red-300 text-red-755 hover:bg-red-50 text-xs font-bold transition active:scale-95"
                     >
                       ลบออก
                     </button>
