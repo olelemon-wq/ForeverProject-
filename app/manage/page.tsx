@@ -33,6 +33,24 @@ interface MemoryPost {
   createdAt: string;
 }
 
+interface FamilyMember {
+  id: string;
+  name: string;
+  relationship: string;
+  birthYear: string | null;
+  deathYear: string | null;
+  isDeceased: boolean;
+}
+
+interface Ebook {
+  id: string;
+  title: string;
+  author: string;
+  pdfUrl: string;
+  totalPages: number;
+  pages: string[];
+}
+
 export default function WebmasterDashboard() {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [activeSite, setActiveSite] = useState<Website | null>(null);
@@ -56,6 +74,26 @@ export default function WebmasterDashboard() {
   const [storageUsedBytes, setStorageUsedBytes] = useState(256 * 1024 * 1024); // mock start 256MB
   const [storageQuotaBytes, setStorageQuotaBytes] = useState(1073741824); // 1GB
   
+  // Family Tree states
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [familyId, setFamilyId] = useState('');
+  const [familyName, setFamilyName] = useState('');
+  const [familyRelationship, setFamilyRelationship] = useState('CHILD');
+  const [familyBirthYear, setFamilyBirthYear] = useState('');
+  const [familyDeathYear, setFamilyDeathYear] = useState('');
+  const [familyIsDeceased, setFamilyIsDeceased] = useState(false);
+  const [familyFormOpen, setFamilyFormOpen] = useState(false);
+
+  // E-Book states
+  const [ebooks, setEbooks] = useState<Ebook[]>([]);
+  const [ebookId, setEbookId] = useState('');
+  const [ebookTitle, setEbookTitle] = useState('');
+  const [ebookAuthor, setEbookAuthor] = useState('');
+  const [ebookTotalPages, setEbookTotalPages] = useState('4');
+  const [ebookPagesText, setEbookPagesText] = useState('');
+  const [ebookFile, setEbookFile] = useState<File | null>(null);
+  const [ebookFormOpen, setEbookFormOpen] = useState(false);
+
   // UI states
   const [isLoading, setIsLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -127,6 +165,28 @@ export default function WebmasterDashboard() {
       }
     } catch (err) {
       console.error('Error fetching memory posts:', err);
+    }
+
+    // Fetch Family Members
+    try {
+      const res = await fetch(`/api/family/list?websiteId=${site.id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setFamilyMembers(data.members || []);
+      }
+    } catch (err) {
+      console.error('Error fetching family members:', err);
+    }
+
+    // Fetch E-Books
+    try {
+      const res = await fetch(`/api/ebook/list?websiteId=${site.id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setEbooks(data.ebooks || []);
+      }
+    } catch (err) {
+      console.error('Error fetching ebooks:', err);
     }
   };
 
@@ -269,6 +329,207 @@ export default function WebmasterDashboard() {
     }
   };
 
+  // 7. Family Tree Handlers
+  const handleSaveFamilyMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeSite) return;
+
+    setSaveLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await fetch('/api/family/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: familyId || undefined,
+          websiteId: activeSite.id,
+          name: familyName,
+          relationship: familyRelationship,
+          birthYear: familyBirthYear || null,
+          deathYear: familyDeathYear || null,
+          isDeceased: familyIsDeceased,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess('บันทึกข้อมูลสมาชิกเครือญาติสำเร็จ');
+      
+      // Reload family members
+      const listRes = await fetch(`/api/family/list?websiteId=${activeSite.id}`);
+      const listData = await listRes.json();
+      if (listRes.ok) setFamilyMembers(listData.members || []);
+
+      resetFamilyForm();
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูลเครือญาติ');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleDeleteFamilyMember = async (memberId: string) => {
+    if (!activeSite) return;
+    if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลญาติท่านนี้?')) return;
+
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await fetch('/api/family/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberId, websiteId: activeSite.id }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess('ลบข้อมูลสมาชิกเครือญาติสำเร็จ');
+      setFamilyMembers(familyMembers.filter(m => m.id !== memberId));
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการลบข้อมูลญาติ');
+    }
+  };
+
+  const editFamilyMember = (m: FamilyMember) => {
+    setFamilyId(m.id);
+    setFamilyName(m.name);
+    setFamilyRelationship(m.relationship);
+    setFamilyBirthYear(m.birthYear || '');
+    setFamilyDeathYear(m.deathYear || '');
+    setFamilyIsDeceased(m.isDeceased);
+    setFamilyFormOpen(true);
+  };
+
+  const resetFamilyForm = () => {
+    setFamilyId('');
+    setFamilyName('');
+    setFamilyRelationship('CHILD');
+    setFamilyBirthYear('');
+    setFamilyDeathYear('');
+    setFamilyIsDeceased(false);
+    setFamilyFormOpen(false);
+  };
+
+  // 8. E-Book Handlers
+  const handleSaveEbook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeSite) return;
+
+    setSaveLoading(true);
+    setError('');
+    setSuccess('');
+
+    // Simulate S3 quota check and file record registration
+    const fileSize = ebookFile ? ebookFile.size : 5 * 1024 * 1024; // Default mock 5MB
+    const fileName = ebookFile ? ebookFile.name : `ebook-booklet-${Date.now()}.pdf`;
+
+    try {
+      // 1. Quota check API
+      const quotaRes = await fetch('/api/media/upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          websiteId: activeSite.id,
+          fileName,
+          fileType: 'application/pdf',
+          fileSize,
+        }),
+      });
+
+      const quotaData = await quotaRes.json();
+      if (!quotaRes.ok) throw new Error(quotaData.error);
+
+      // 2. Submit Booklet metadata
+      const pagesArray = ebookPagesText.split('[PAGE]').map(p => p.trim()).filter(Boolean);
+      if (pagesArray.length === 0) {
+        // Fallback default pages if user did not provide pages
+        const pagesCount = parseInt(ebookTotalPages, 10) || 1;
+        for (let i = 1; i <= pagesCount; i++) {
+          pagesArray.push(`หน้า ${i}: ข้อความนำเสนอธรรมสติและคำกล่าวขอบคุณของผู้ล่วงลับ...`);
+        }
+      }
+
+      const res = await fetch('/api/ebook/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: ebookId || undefined,
+          websiteId: activeSite.id,
+          title: ebookTitle,
+          author: ebookAuthor,
+          pdfUrl: quotaData.filePath || `https://storage.forever.co.th/uploads/${activeSite.id}/${fileName}`,
+          totalPages: pagesArray.length,
+          pages: pagesArray,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess('อัปโหลดหนังสือที่ระลึกธรรมทานและสร้างระบบ Web Reader สำเร็จ!');
+      setStorageUsedBytes(prev => prev + fileSize);
+
+      // Reload ebooks
+      const listRes = await fetch(`/api/ebook/list?websiteId=${activeSite.id}`);
+      const listData = await listRes.json();
+      if (listRes.ok) setEbooks(listData.ebooks || []);
+
+      resetEbookForm();
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการจัดการข้อมูลหนังสือ');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleDeleteEbook = async (ebId: string) => {
+    if (!activeSite) return;
+    if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบหนังสือที่ระลึกนี้?')) return;
+
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await fetch('/api/ebook/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ebookId: ebId, websiteId: activeSite.id }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess('ลบหนังสือที่ระลึกสำเร็จ');
+      setEbooks(ebooks.filter(b => b.id !== ebId));
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการลบหนังสือ');
+    }
+  };
+
+  const editEbook = (b: Ebook) => {
+    setEbookId(b.id);
+    setEbookTitle(b.title);
+    setEbookAuthor(b.author);
+    setEbookTotalPages(String(b.totalPages));
+    setEbookPagesText(b.pages.join(' \n[PAGE]\n '));
+    setEbookFormOpen(true);
+  };
+
+  const resetEbookForm = () => {
+    setEbookId('');
+    setEbookTitle('');
+    setEbookAuthor('');
+    setEbookTotalPages('4');
+    setEbookPagesText('');
+    setEbookFile(null);
+    setEbookFormOpen(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-955 flex items-center justify-center text-white">
@@ -296,6 +557,20 @@ export default function WebmasterDashboard() {
 
   const selectedSite = activeSite || websites[0];
   const storagePercentage = Math.min((storageUsedBytes / storageQuotaBytes) * 100, 100);
+
+  // Dynamic invoice lists matching expiredAt dates (Thai receipt logs)
+  const invoiceLogs = [
+    {
+      id: `INV-2026-${Math.floor(10000 + selectedSite.slug.charCodeAt(0) * 123) % 90000}`,
+      refId: `QR-${selectedSite.slug}-9011`,
+      amount: '2,000.00 บาท',
+      status: 'SUCCESS',
+      date: selectedSite.expiredAt 
+        ? new Date(new Date(selectedSite.expiredAt).getTime() - 365 * 24 * 60 * 60 * 1000).toLocaleDateString('th-TH')
+        : new Date().toLocaleDateString('th-TH'),
+      desc: 'ค่าธรรมเนียมจดทะเบียนและดูแลรักษาระบบรายปี (First Year + ความจุ 1GB)'
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row font-sans">
@@ -533,6 +808,344 @@ export default function WebmasterDashboard() {
             </section>
           </div>
         </div>
+
+        {/* Family Tree Manager Section */}
+        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
+          <div className="flex justify-between items-center border-b border-slate-850 pb-4">
+            <div>
+              <h3 className="text-lg font-bold text-white">🌳 ผังครอบครัวและเครือญาติ 3 รุ่น ({familyMembers.length})</h3>
+              <p className="text-xs text-slate-400">เพิ่มรายละเอียดของบิดา มารดา คู่สมรส พี่น้อง และบุตรธิดาของผู้ล่วงลับ</p>
+            </div>
+            <button 
+              onClick={() => { resetFamilyForm(); setFamilyFormOpen(!familyFormOpen); }}
+              className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
+            >
+              {familyFormOpen ? 'ปิดหน้าต่าง' : '➕ เพิ่มสมาชิกครอบครัว'}
+            </button>
+          </div>
+
+          {familyFormOpen && (
+            <form onSubmit={handleSaveFamilyMember} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/20 space-y-4 max-w-xl">
+              <h4 className="text-xs font-black uppercase text-emerald-400">{familyId ? '📝 แก้ไขสมาชิกญาติ' : '🌳 เพิ่มสมาชิกญาติใหม่'}</h4>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ชื่อ-นามสกุล</label>
+                  <input 
+                    type="text" 
+                    value={familyName} 
+                    onChange={(e) => setFamilyName(e.target.value)}
+                    required
+                    placeholder="เช่น นายสมจิตร์ รักสงบ"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ความสัมพันธ์</label>
+                  <select
+                    value={familyRelationship}
+                    onChange={(e) => setFamilyRelationship(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                  >
+                    <option value="PARENT_1">บิดา (Father)</option>
+                    <option value="PARENT_2">มารดา (Mother)</option>
+                    <option value="SPOUSE">คู่สมรส (Spouse)</option>
+                    <option value="SIBLING">พี่น้อง (Sibling)</option>
+                    <option value="CHILD">บุตร/ธิดา (Child)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ปีเกิด (พ.ศ.)</label>
+                  <input 
+                    type="text" 
+                    value={familyBirthYear} 
+                    onChange={(e) => setFamilyBirthYear(e.target.value)}
+                    placeholder="เช่น 2490"
+                    maxLength={4}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ปีที่ล่วงลับ (พ.ศ.)</label>
+                  <input 
+                    type="text" 
+                    value={familyDeathYear} 
+                    onChange={(e) => setFamilyDeathYear(e.target.value)}
+                    disabled={!familyIsDeceased}
+                    placeholder="เช่น 2565"
+                    maxLength={4}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-mono disabled:opacity-40"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 pt-5">
+                  <input 
+                    type="checkbox" 
+                    id="isDeceased"
+                    checked={familyIsDeceased}
+                    onChange={(e) => setFamilyIsDeceased(e.target.checked)}
+                    className="w-4 h-4 accent-emerald-500 cursor-pointer"
+                  />
+                  <label htmlFor="isDeceased" className="text-xs text-slate-300 font-bold cursor-pointer">เสียชีวิตแล้ว (Deceased)</label>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button 
+                  type="submit" 
+                  disabled={saveLoading}
+                  className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:brightness-110 transition"
+                >
+                  {saveLoading ? 'กำลังบันทึก...' : '💾 บันทึกข้อมูลญาติ'}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={resetFamilyForm}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs transition border border-slate-700"
+                >
+                  ยกเลิก
+                </button>
+              </div>
+            </form>
+          )}
+
+          {familyMembers.length === 0 ? (
+            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
+              ยังไม่มีการระบุข้อมูลสมาชิกครอบครัว
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {familyMembers.map(m => {
+                const relLabel = 
+                  m.relationship === 'PARENT_1' ? 'บิดา' : 
+                  m.relationship === 'PARENT_2' ? 'มารดา' : 
+                  m.relationship === 'SPOUSE' ? 'คู่สมรส' : 
+                  m.relationship === 'SIBLING' ? 'พี่น้อง' : 'บุตร/ธิดา';
+                return (
+                  <div key={m.id} className="p-4 rounded-2xl border border-slate-850 bg-slate-900/30 flex justify-between items-start">
+                    <div>
+                      <p className="text-xs font-bold text-white">{m.name}</p>
+                      <span className="inline-block px-1.5 py-0.5 text-[8px] font-bold bg-slate-800 text-slate-400 rounded mt-1">
+                        ความสัมพันธ์: {relLabel}
+                      </span>
+                      <p className="text-[10px] text-slate-500 font-semibold mt-1">
+                        อายุขัย: {m.birthYear || 'N/A'} - {m.deathYear || 'N/A'} {m.isDeceased && '🕯️'}
+                      </p>
+                    </div>
+                    <div className="flex gap-1.5">
+                      <button 
+                        onClick={() => editFamilyMember(m)}
+                        className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition"
+                        title="แก้ไข"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteFamilyMember(m.id)}
+                        className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition"
+                        title="ลบ"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* E-Books Manager Section */}
+        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
+          <div className="flex justify-between items-center border-b border-slate-850 pb-4">
+            <div>
+              <h3 className="text-lg font-bold text-white">📖 หนังสือของชำร่วยและธรรมทาน ({ebooks.length})</h3>
+              <p className="text-xs text-slate-400">อัปโหลดหนังสือธรรมะ บทสวดมนต์ หรือหนังสือชีวประวัติ (PDF) พร้อมระบบอ่านในเว็บ</p>
+            </div>
+            <button 
+              onClick={() => { resetEbookForm(); setEbookFormOpen(!ebookFormOpen); }}
+              className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-bold transition"
+            >
+              {ebookFormOpen ? 'ปิดหน้าต่าง' : '➕ อัปโหลดหนังสือใหม่'}
+            </button>
+          </div>
+
+          {ebookFormOpen && (
+            <form onSubmit={handleSaveEbook} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/20 space-y-4 max-w-xl">
+              <h4 className="text-xs font-black uppercase text-emerald-400">{ebookId ? '📝 แก้ไขข้อมูลหนังสือ' : '📖 อัปโหลดหนังสือธรรมทานใหม่'}</h4>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ชื่อหนังสือ</label>
+                  <input 
+                    type="text" 
+                    value={ebookTitle} 
+                    onChange={(e) => setEbookTitle(e.target.value)}
+                    required
+                    placeholder="เช่น หนังสือบทสวดมนต์และธรรมสติ"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400 font-bold uppercase block">ผู้แต่ง / คณะผู้จัดทำ</label>
+                  <input 
+                    type="text" 
+                    value={ebookAuthor} 
+                    onChange={(e) => setEbookAuthor(e.target.value)}
+                    required
+                    placeholder="เช่น คณะครอบครัวเจริญยิ่ง"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400 font-bold uppercase block">จำนวนหน้าทั้งหมด</label>
+                  <input 
+                    type="number" 
+                    min={1}
+                    value={ebookTotalPages} 
+                    onChange={(e) => setEbookTotalPages(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400 font-bold uppercase block">เลือกไฟล์หนังสือ PDF</label>
+                  <input 
+                    type="file" 
+                    accept="application/pdf"
+                    onChange={(e) => setEbookFile(e.target.files ? e.target.files[0] : null)}
+                    className="w-full text-slate-400 text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-750"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] text-slate-400 font-bold uppercase block">ข้อความเนื้อหาในแต่ละหน้า (แยกหน้าโดยใช้เครื่องหมาย `[PAGE]`)</label>
+                <textarea 
+                  value={ebookPagesText} 
+                  onChange={(e) => setEbookPagesText(e.target.value)}
+                  rows={6}
+                  placeholder="บทนำ...&#10;[PAGE]&#10;หน้าที่ 2...&#10;[PAGE]&#10;หน้าที่ 3..."
+                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-serif leading-relaxed"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button 
+                  type="submit" 
+                  disabled={saveLoading}
+                  className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:brightness-110 transition"
+                >
+                  {saveLoading ? 'กำลังบันทึกและอัปโหลด...' : '💾 บันทึกและออกบริการ'}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={resetEbookForm}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs transition border border-slate-700"
+                >
+                  ยกเลิก
+                </button>
+              </div>
+            </form>
+          )}
+
+          {ebooks.length === 0 ? (
+            <div className="p-8 text-center border border-dashed border-slate-850 rounded-2xl text-slate-500 text-xs">
+              ยังไม่มีการอัปโหลดหนังสือที่ระลึกธรรมทาน
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {ebooks.map(b => (
+                <div key={b.id} className="p-5 rounded-2xl border border-slate-850 bg-slate-900/30 flex gap-4 items-center">
+                  <div className="w-16 h-20 bg-slate-900 border border-slate-800 rounded-lg shadow flex flex-col items-center justify-center p-2 relative overflow-hidden flex-shrink-0">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
+                    <span className="text-xl">📖</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-white truncate">{b.title}</p>
+                    <p className="text-[10px] text-slate-500">โดย: {b.author}</p>
+                    <span className="inline-block mt-2 px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-[8px] font-bold">
+                      {b.totalPages} หน้า
+                    </span>
+                  </div>
+                  <div className="flex gap-1">
+                    <button 
+                      onClick={() => editEbook(b)}
+                      className="p-2 rounded-xl bg-slate-850 text-slate-400 hover:text-white border border-slate-800 transition text-[10px]"
+                      title="แก้ไข"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteEbook(b.id)}
+                      className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition text-[10px]"
+                      title="ลบ"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Billing & Invoice History Section */}
+        <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">
+          <div className="border-b border-slate-850 pb-4">
+            <h3 className="text-lg font-bold text-white">💳 ประวัติการชำระเงินและดาวน์โหลดใบกำกับภาษี</h3>
+            <p className="text-xs text-slate-400">ตรวจสอบประวัติการทำรายการชำระค่าบริการ และดาวน์โหลดใบเสร็จ/ใบกำกับภาษีเต็มรูปแบบ (ตามกฎหมายไทย)</p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider">
+                  <th className="pb-3 pl-2">เลขที่ใบกำกับภาษี</th>
+                  <th className="pb-3">วันที่ชำระเงิน</th>
+                  <th className="pb-3">รายละเอียดสินค้า</th>
+                  <th className="pb-3">ยอดชำระ</th>
+                  <th className="pb-3">สถานะ</th>
+                  <th className="pb-3 pr-2 text-right">ใบกำกับภาษี</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-850">
+                {invoiceLogs.map(log => (
+                  <tr key={log.id} className="hover:bg-slate-900/10">
+                    <td className="py-4 pl-2 font-mono font-bold text-slate-300">{log.id}</td>
+                    <td className="py-4 text-slate-400">{log.date}</td>
+                    <td className="py-4 text-slate-300 max-w-[280px] truncate">{log.desc}</td>
+                    <td className="py-4 text-white font-semibold">{log.amount}</td>
+                    <td className="py-4">
+                      <span className="px-2.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        {log.status}
+                      </span>
+                    </td>
+                    <td className="py-4 pr-2 text-right">
+                      <a 
+                        href={`/api/payment/invoice?refId=${log.refId}`}
+                        download
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold transition active:scale-95"
+                      >
+                        <span>📥</span> ดาวน์โหลด PDF
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         {/* Condolence moderation */}
         <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-6">

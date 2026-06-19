@@ -31,6 +31,8 @@ model Tenant {
   menus         Menu[]
   auditLogs     AuditLog[]
   memoryPosts   MemoryPost[]
+  familyMembers FamilyMember[]
+  ebooks        Ebook[]
 }
 
 model Webmaster {
@@ -172,5 +174,33 @@ model MemoryPost {
 
   website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 }
+
+model FamilyMember {
+  id           String   @id @default(uuid())
+  websiteId    String
+  name         String
+  relationship String   // e.g. "PARENT_1", "PARENT_2", "SPOUSE", "SIBLING", "CHILD"
+  birthYear    String?
+  deathYear    String?
+  isDeceased   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+model Ebook {
+  id         String   @id @default(uuid())
+  websiteId  String
+  title      String
+  author     String
+  pdfUrl     String
+  totalPages Int
+  pages      Json     // Array of strings representing pages or chapter summaries
+  createdAt  DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+
 
 

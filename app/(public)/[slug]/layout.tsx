@@ -79,6 +79,22 @@ export default async function PublicMemorialLayout(props: {
             กระดานความทรงจำ
           </Link>
 
+          {/* Dynamic Family Tree Link (Phase 2) */}
+          <Link 
+            href={`/${slug}/family`} 
+            className="px-4 py-2 text-xs sm:text-sm font-semibold rounded-full text-slate-400 hover:text-slate-200 transition"
+          >
+            ผังครอบครัว
+          </Link>
+
+          {/* Dynamic Ebooks Link (Phase 2) */}
+          <Link 
+            href={`/${slug}/ebooks`} 
+            className="px-4 py-2 text-xs sm:text-sm font-semibold rounded-full text-slate-400 hover:text-slate-200 transition"
+          >
+            หนังสือที่ระลึก
+          </Link>
+
           {/* Dynamic Donation Link (Phase 2: BR015) */}
           {tenant.donationActive && (
             <Link 
