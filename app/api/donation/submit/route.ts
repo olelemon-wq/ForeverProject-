@@ -23,7 +23,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'ไม่พบเว็บไซต์รำลึกนี้ในระบบ หรือหน้าเว็บถูกระงับชั่วคราว' }, { status: 404 });
     }
 
-    // 2. Slip Verification simulation (integrating SlipOk concept from Grill-me)
+    // 2. Duplicate Slip Prevention check
+    if (slipUrl) {
+      const existingDonation = await db.donation.findFirst({
+        where: { websiteId, slipUrl },
+      });
+      if (existingDonation) {
+        return NextResponse.json(
+          { error: 'สลิปโอนเงินนี้ได้รับการส่งตรวจสอบไปแล้ว ห้ามอัปโหลดสลิปใบเดิมซ้ำเพื่อความปลอดภัยทางการเงิน' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 3. Slip Verification simulation (integrating SlipOk concept from Grill-me)
     const hasSlipOk = !!process.env.SLIPOK_API_KEY;
     let isVerified = true; // Default mock success
 

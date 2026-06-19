@@ -19,12 +19,54 @@ export default function AdminDashboard() {
     { id: 'TX9079', slug: 'little-catty', amount: '500', status: 'PENDING', method: 'PromptPay QR', time: '08:05 น.', callbackVerify: 'AWAITING' },
   ]);
 
+  // Admin Transfer states (BR037)
+  const [disputeSlug, setDisputeSlug] = useState('');
+  const [newOwnerPhone, setNewOwnerPhone] = useState('');
+  const [transferLoading, setTransferLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
   const forceApproveTransaction = (id: string) => {
     setTransactions(transactions.map(tx => tx.id === id ? { ...tx, status: 'SUCCESS', callbackVerify: 'VERIFIED' } : tx));
   };
 
+  const handleTransferOwnership = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setTransferLoading(true);
+
+    if (!disputeSlug || !newOwnerPhone) {
+      setError('กรุณากรอกข้อมูลเว็บไซต์และเบอร์โทรศัพท์เจ้าของใหม่ให้ครบถ้วน');
+      setTransferLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/transfer-ownership', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug: disputeSlug,
+          newOwnerPhone: newOwnerPhone,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess(data.message || 'โอนย้ายสิทธิ์ความเป็นเจ้าของหน้ารำลึกสำเร็จแล้ว');
+      setDisputeSlug('');
+      setNewOwnerPhone('');
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการโอนย้ายสิทธิ์การดูแล');
+    } finally {
+      setTransferLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
       {/* Top Navbar */}
       <nav className="bg-slate-950 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -42,6 +84,10 @@ export default function AdminDashboard() {
 
       {/* Main content grid */}
       <div className="flex-1 p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full">
+        
+        {success && <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 rounded-2xl font-semibold">✓ {success}</div>}
+        {error && <div className="p-4 bg-red-500/10 border border-red-500/20 text-xs text-red-400 rounded-2xl font-semibold">⚠️ {error}</div>}
+
         {/* Top summary cards widgets */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/40">
@@ -138,7 +184,7 @@ export default function AdminDashboard() {
           {/* Quick administrative tools */}
           <div className="space-y-8">
             {/* System Override / Disputes Resolver widget (BR037) */}
-            <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
+            <form onSubmit={handleTransferOwnership} className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
               <h3 className="text-base font-bold text-white">⚖️ เครื่องมือแอดมิน (Admin Override)</h3>
               <p className="text-xs text-slate-400 leading-normal">
                 กรณีเกิดข้อพิพาทสิทธิ์ความเป็นเจ้าของหน้าเว็บ (Ownership Dispute - BR037) 
@@ -148,19 +194,29 @@ export default function AdminDashboard() {
               <div className="space-y-3">
                 <input 
                   type="text" 
+                  value={disputeSlug}
+                  onChange={(e) => setDisputeSlug(e.target.value)}
                   placeholder="ค้นหา Slug เว็บไซต์ เช่น somsakt" 
+                  required
                   className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200"
                 />
                 <input 
                   type="text" 
+                  value={newOwnerPhone}
+                  onChange={(e) => setNewOwnerPhone(e.target.value)}
                   placeholder="เบอร์โทรศัพท์ใหม่ที่ต้องการโอนสิทธิ์" 
+                  required
                   className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200"
                 />
-                <button className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 text-xs font-bold hover:brightness-110 transition active:scale-[0.98]">
-                  โอนสิทธิ์ความเป็นเจ้าของ (Transfer Ownership)
+                <button 
+                  type="submit"
+                  disabled={transferLoading}
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 text-xs font-bold hover:brightness-110 transition active:scale-[0.98] disabled:opacity-40"
+                >
+                  {transferLoading ? 'กำลังโอนย้ายสิทธิ์...' : 'โอนสิทธิ์ความเป็นเจ้าของ (Transfer Ownership)'}
                 </button>
               </div>
-            </section>
+            </form>
 
             {/* Audit log snapshot widget */}
             <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
