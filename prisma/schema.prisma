@@ -145,3 +145,13 @@ model AuditLog {
 
   website Tenant? @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 }
+
+model OtpRequest {
+  id        String   @id @default(uuid())
+  phone     String   @unique
+  code      String
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
