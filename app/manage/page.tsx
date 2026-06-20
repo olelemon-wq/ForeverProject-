@@ -90,6 +90,7 @@ export default function WebmasterDashboard() {
   const [familyIsDeceased, setFamilyIsDeceased] = useState(false);
   const [familyAvatarUrl, setFamilyAvatarUrl] = useState('');
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [familyIsDragActive, setFamilyIsDragActive] = useState(false);
   const [familyFormOpen, setFamilyFormOpen] = useState(false);
 
   // E-Book states
@@ -361,6 +362,42 @@ export default function WebmasterDashboard() {
   };
 
   // 7. Family Tree Handlers
+  const uploadFamilyAvatar = async (file: File) => {
+    if (!activeSite) return;
+    setAvatarUploading(true);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('/api/media/upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          websiteId: activeSite.id,
+          fileName: `avatar-${Date.now()}-${file.name}`,
+          fileType: file.type,
+          fileSize: file.size,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      if (data.uploadUrl && !data.uploadUrl.includes('upload-mock')) {
+        await fetch(data.uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': file.type },
+          body: file,
+        });
+      }
+
+      setFamilyAvatarUrl(data.filePath);
+      setSuccess('อัปโหลดรูปภาพสำเร็จ');
+    } catch (err: any) {
+      setError(err.message || 'การอัปโหลดรูปภาพล้มเหลว');
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
   const handleSaveFamilyMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeSite) return;
@@ -439,14 +476,15 @@ export default function WebmasterDashboard() {
   };
 
   const resetFamilyForm = () => {
-    setFamilyId('');
-    setFamilyName('');
+    familyId && setFamilyId('');
+    familyName && setFamilyName('');
     setFamilyRelationship('CHILD');
-    setFamilyBirthYear('');
-    setFamilyDeathYear('');
-    setFamilyIsDeceased(false);
-    setFamilyAvatarUrl('');
-    setFamilyFormOpen(false);
+    familyBirthYear && setFamilyBirthYear('');
+    familyDeathYear && setFamilyDeathYear('');
+    familyIsDeceased && setFamilyIsDeceased(false);
+    familyAvatarUrl && setFamilyAvatarUrl('');
+    familyIsDragActive && setFamilyIsDragActive(false);
+    familyFormOpen && setFamilyFormOpen(false);
   };
 
   // 8. E-Book Handlers
@@ -1135,9 +1173,11 @@ export default function WebmasterDashboard() {
 
                 <div className="space-y-1 sm:col-span-3">
                   <label className="text-sm font-bold text-stone-600 block">รูปถ่ายประวัติเครือญาติ (แนะนำอัตราส่วน 1:1)</label>
-                  <div className="flex items-center gap-4">
-                    {familyAvatarUrl ? (
-                      <div className="relative w-14 h-14 rounded-full border border-stone-250 bg-stone-50 overflow-hidden flex-shrink-0">
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 items-center">
+                    {/* Thumbnail Preview */}
+                    {familyAvatarUrl && (
+                      <div className="relative w-20 h-20 rounded-full border border-stone-250 bg-stone-50 overflow-hidden flex-shrink-0 shadow-sm group">
                         <img 
                           src={familyAvatarUrl} 
                           alt="Avatar" 
@@ -1149,59 +1189,54 @@ export default function WebmasterDashboard() {
                         <button
                           type="button"
                           onClick={() => setFamilyAvatarUrl('')}
-                          className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition flex items-center justify-center text-white text-[9px] font-bold cursor-pointer border-0"
+                          className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10px] font-bold cursor-pointer border-0"
                         >
-                          ลบรูป
+                          ลบรูปภาพ
                         </button>
                       </div>
-                    ) : (
-                      <div className="w-14 h-14 rounded-full border border-dashed border-stone-300 bg-stone-50 flex items-center justify-center flex-shrink-0 text-stone-400">
-                        <User className="w-6 h-6" />
-                      </div>
                     )}
-                    <div className="flex-1">
+
+                    {/* Custom Dropzone */}
+                    <div
+                      onDragEnter={(e) => { e.preventDefault(); setFamilyIsDragActive(true); }}
+                      onDragOver={(e) => { e.preventDefault(); setFamilyIsDragActive(true); }}
+                      onDragLeave={(e) => { e.preventDefault(); setFamilyIsDragActive(false); }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setFamilyIsDragActive(false);
+                        const file = e.dataTransfer.files?.[0];
+                        if (file && file.type.startsWith('image/')) {
+                          uploadFamilyAvatar(file);
+                        }
+                      }}
+                      className={`flex-1 w-full border-2 border-dashed rounded-2xl p-6 text-center transition cursor-pointer relative ${
+                        familyIsDragActive 
+                          ? 'border-emerald-500 bg-emerald-50/50 scale-[1.01]' 
+                          : 'border-stone-300 hover:border-emerald-500 bg-stone-50/30 hover:bg-stone-50/60'
+                      }`}
+                    >
                       <input
                         type="file"
+                        id="avatar-file-input"
                         accept="image/*"
-                        onChange={async (e) => {
+                        onChange={(e) => {
                           const file = e.target.files?.[0];
-                          if (!file || !activeSite) return;
-                          setAvatarUploading(true);
-                          setError('');
-                          try {
-                            const res = await fetch('/api/media/upload-url', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                websiteId: activeSite.id,
-                                fileName: `avatar-${Date.now()}-${file.name}`,
-                                fileType: file.type,
-                                fileSize: file.size,
-                              }),
-                            });
-                            const data = await res.json();
-                            if (!res.ok) throw new Error(data.error);
-                            
-                            if (data.uploadUrl && !data.uploadUrl.includes('upload-mock')) {
-                              await fetch(data.uploadUrl, {
-                                method: 'PUT',
-                                headers: { 'Content-Type': file.type },
-                                body: file,
-                              });
-                            }
-                            
-                            setFamilyAvatarUrl(data.filePath);
-                            setSuccess('อัปโหลดรูปภาพสำเร็จ');
-                          } catch (err: any) {
-                            setError(err.message || 'การอัปโหลดรูปภาพล้มเหลว');
-                          } finally {
-                            setAvatarUploading(false);
-                          }
+                          if (file) uploadFamilyAvatar(file);
                         }}
                         disabled={avatarUploading}
-                        className="text-xs text-stone-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition cursor-pointer"
+                        className="hidden"
                       />
-                      <p className="text-[10px] text-stone-400 mt-1">อัปโหลดไฟล์ภาพ PNG, JPG หรือ WEBP (ขนาดไม่เกิน 5MB)</p>
+                      <label htmlFor="avatar-file-input" className="cursor-pointer flex flex-col items-center gap-1">
+                        <User className={`w-8 h-8 mb-1 ${familyIsDragActive ? 'text-emerald-600' : 'text-stone-400'}`} />
+                        <span className="text-xs font-bold text-stone-700">
+                          {avatarUploading 
+                            ? 'กำลังอัปโหลด...' 
+                            : familyIsDragActive 
+                            ? 'วางรูปภาพที่นี่ได้เลย' 
+                            : 'ลากรูปภาพมาวางที่นี่ หรือคลิกเพื่ออัปโหลด'}
+                        </span>
+                        <span className="text-[10px] text-stone-400">รองรับไฟล์ PNG, JPG หรือ WEBP (ไม่เกิน 5MB)</span>
+                      </label>
                     </div>
                   </div>
                 </div>
