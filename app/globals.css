@@ -37,3 +37,20 @@ body {
 .accessibility-large-text .text-2xl { font-size: 30px !important; }
 .accessibility-large-text .text-3xl { font-size: 36px !important; }
 
+/* Responsive text scaling for tablets and desktops */
+.accessibility-large-text .sm\:text-xs { font-size: 16px !important; }
+.accessibility-large-text .sm\:text-sm { font-size: 18px !important; }
+.accessibility-large-text .sm\:text-base { font-size: 20px !important; }
+.accessibility-large-text .sm\:text-lg { font-size: 22px !important; }
+.accessibility-large-text .sm\:text-xl { font-size: 26px !important; }
+.accessibility-large-text .sm\:text-2xl { font-size: 30px !important; }
+.accessibility-large-text .sm\:text-3xl { font-size: 36px !important; }
+
+.accessibility-large-text .md\:text-xs { font-size: 16px !important; }
+.accessibility-large-text .md\:text-sm { font-size: 18px !important; }
+.accessibility-large-text .md\:text-base { font-size: 20px !important; }
+.accessibility-large-text .md\:text-lg { font-size: 22px !important; }
+.accessibility-large-text .md\:text-xl { font-size: 26px !important; }
+.accessibility-large-text .md\:text-2xl { font-size: 30px !important; }
+.accessibility-large-text .md\:text-3xl { font-size: 36px !important; }
+
