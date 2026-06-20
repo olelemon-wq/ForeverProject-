@@ -184,6 +184,7 @@ model FamilyMember {
   birthYear    String?
   deathYear    String?
   isDeceased   Boolean  @default(false)
+  avatarUrl    String?
   createdAt    DateTime @default(now())
 
   website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)

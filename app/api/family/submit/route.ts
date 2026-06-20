@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Parse request variables
-    const { id, websiteId, name, relationship, birthYear, deathYear, isDeceased } = await request.json();
+    const { id, websiteId, name, relationship, birthYear, deathYear, isDeceased, avatarUrl } = await request.json();
 
     if (!websiteId || !name || !relationship) {
       return NextResponse.json({ error: 'กรุณาระบุรหัสเว็บไซต์ ชื่อญาติ และความสัมพันธ์' }, { status: 400 });
@@ -58,6 +58,7 @@ export async function POST(request: Request) {
           birthYear: birthYear || null,
           deathYear: deathYear || null,
           isDeceased: isDeceased || false,
+          avatarUrl: avatarUrl || null,
         },
       });
     } else {
@@ -69,6 +70,7 @@ export async function POST(request: Request) {
           birthYear: birthYear || null,
           deathYear: deathYear || null,
           isDeceased: isDeceased || false,
+          avatarUrl: avatarUrl || null,
         },
       });
     }

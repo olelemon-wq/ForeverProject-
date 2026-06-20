@@ -45,6 +45,7 @@ interface FamilyMember {
   birthYear: string | null;
   deathYear: string | null;
   isDeceased: boolean;
+  avatarUrl: string | null;
 }
 
 interface Ebook {
@@ -87,6 +88,8 @@ export default function WebmasterDashboard() {
   const [familyBirthYear, setFamilyBirthYear] = useState('');
   const [familyDeathYear, setFamilyDeathYear] = useState('');
   const [familyIsDeceased, setFamilyIsDeceased] = useState(false);
+  const [familyAvatarUrl, setFamilyAvatarUrl] = useState('');
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [familyFormOpen, setFamilyFormOpen] = useState(false);
 
   // E-Book states
@@ -378,6 +381,7 @@ export default function WebmasterDashboard() {
           birthYear: familyBirthYear || null,
           deathYear: familyDeathYear || null,
           isDeceased: familyIsDeceased,
+          avatarUrl: familyAvatarUrl || null,
         }),
       });
 
@@ -430,6 +434,7 @@ export default function WebmasterDashboard() {
     setFamilyBirthYear(m.birthYear || '');
     setFamilyDeathYear(m.deathYear || '');
     setFamilyIsDeceased(m.isDeceased);
+    setFamilyAvatarUrl(m.avatarUrl || '');
     setFamilyFormOpen(true);
   };
 
@@ -440,6 +445,7 @@ export default function WebmasterDashboard() {
     setFamilyBirthYear('');
     setFamilyDeathYear('');
     setFamilyIsDeceased(false);
+    setFamilyAvatarUrl('');
     setFamilyFormOpen(false);
   };
 
@@ -1126,6 +1132,79 @@ export default function WebmasterDashboard() {
                   />
                   <label htmlFor="isDeceased" className="text-xs text-stone-750 font-bold cursor-pointer select-none">เสียชีวิตแล้ว (Deceased)</label>
                 </div>
+
+                <div className="space-y-1 sm:col-span-3">
+                  <label className="text-sm font-bold text-stone-600 block">รูปถ่ายประวัติเครือญาติ (แนะนำอัตราส่วน 1:1)</label>
+                  <div className="flex items-center gap-4">
+                    {familyAvatarUrl ? (
+                      <div className="relative w-14 h-14 rounded-full border border-stone-250 bg-stone-50 overflow-hidden flex-shrink-0">
+                        <img 
+                          src={familyAvatarUrl} 
+                          alt="Avatar" 
+                          className="w-full h-full object-cover" 
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`;
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setFamilyAvatarUrl('')}
+                          className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition flex items-center justify-center text-white text-[9px] font-bold cursor-pointer border-0"
+                        >
+                          ลบรูป
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-14 h-14 rounded-full border border-dashed border-stone-300 bg-stone-50 flex items-center justify-center flex-shrink-0 text-stone-400">
+                        <User className="w-6 h-6" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file || !activeSite) return;
+                          setAvatarUploading(true);
+                          setError('');
+                          try {
+                            const res = await fetch('/api/media/upload-url', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                websiteId: activeSite.id,
+                                fileName: `avatar-${Date.now()}-${file.name}`,
+                                fileType: file.type,
+                                fileSize: file.size,
+                              }),
+                            });
+                            const data = await res.json();
+                            if (!res.ok) throw new Error(data.error);
+                            
+                            if (data.uploadUrl && !data.uploadUrl.includes('upload-mock')) {
+                              await fetch(data.uploadUrl, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': file.type },
+                                body: file,
+                              });
+                            }
+                            
+                            setFamilyAvatarUrl(data.filePath);
+                            setSuccess('อัปโหลดรูปภาพสำเร็จ');
+                          } catch (err: any) {
+                            setError(err.message || 'การอัปโหลดรูปภาพล้มเหลว');
+                          } finally {
+                            setAvatarUploading(false);
+                          }
+                        }}
+                        disabled={avatarUploading}
+                        className="text-xs text-stone-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition cursor-pointer"
+                      />
+                      <p className="text-[10px] text-stone-400 mt-1">อัปโหลดไฟล์ภาพ PNG, JPG หรือ WEBP (ขนาดไม่เกิน 5MB)</p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-2 pt-2">
@@ -1160,16 +1239,32 @@ export default function WebmasterDashboard() {
                   m.relationship === 'SPOUSE' ? 'คู่สมรส' : 
                   m.relationship === 'SIBLING' ? 'พี่น้อง' : 'บุตร/ธิดา';
                 return (
-                  <div key={m.id} className="p-4 rounded-2xl border border-stone-200 bg-stone-50/40 flex justify-between items-start hover:border-stone-300 transition">
-                    <div>
-                      <p className="text-xs font-bold text-stone-900">{m.name}</p>
-                      <span className="inline-block px-1.5 py-0.5 text-[8px] font-bold bg-stone-200/50 text-stone-605 rounded mt-1">
-                        ความสัมพันธ์: {relLabel}
-                      </span>
-                      <p className="text-[10px] text-stone-500 font-semibold mt-1 flex items-center gap-1">
-                        <span>อายุขัย: {m.birthYear || 'N/A'} - {m.deathYear || 'N/A'}</span>
-                        {m.isDeceased && <Flame className="w-3 h-3 text-stone-500 animate-pulse" />}
-                      </p>
+                  <div key={m.id} className="p-4 rounded-2xl border border-stone-200 bg-stone-50/40 flex justify-between items-start hover:border-stone-300 transition gap-3">
+                    <div className="flex items-center gap-3">
+                      {m.avatarUrl ? (
+                        <img 
+                          src={m.avatarUrl} 
+                          alt={m.name} 
+                          className="w-10 h-10 rounded-full object-cover border border-stone-200 flex-shrink-0"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`;
+                          }}
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center text-stone-650 font-bold text-xs flex-shrink-0 border border-stone-250">
+                          {m.name.charAt(0)}
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-xs font-bold text-stone-900">{m.name}</p>
+                        <span className="inline-block px-1.5 py-0.5 text-[8px] font-bold bg-stone-200/50 text-stone-605 rounded mt-1">
+                          ความสัมพันธ์: {relLabel}
+                        </span>
+                        <p className="text-[10px] text-stone-500 font-semibold mt-1 flex items-center gap-1">
+                          <span>อายุขัย: {m.birthYear || 'N/A'} - {m.deathYear || 'N/A'}</span>
+                          {m.isDeceased && <Flame className="w-3 h-3 text-stone-500 animate-pulse" />}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex gap-1.5">
                       <button 
