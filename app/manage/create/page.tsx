@@ -69,21 +69,21 @@ function CalendarPicker({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute left-0 bottom-full mb-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-4 w-[295px] sm:w-[330px] animate-fade-in text-left">
-            <div className="flex justify-between items-center mb-4 gap-1.5">
+          <div className="absolute left-0 bottom-full mb-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-4 w-[310px] sm:w-[350px] animate-fade-in text-left">
+            <div className="flex justify-between items-center mb-4 gap-2">
               <button
                 type="button"
                 onClick={handlePrevMonth}
-                className="p-2 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center border border-stone-200"
+                className="p-2.5 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center border border-stone-200"
               >
                 <ChevronLeft className="w-4 h-4 text-stone-500" />
               </button>
               
-              <div className="flex gap-1.5">
+              <div className="flex gap-2">
                 <select
                   value={month}
                   onChange={(e) => handleMonthChange(parseInt(e.target.value))}
-                  className="bg-stone-50 border border-stone-200 rounded-xl px-2 py-1.5 text-xs sm:text-sm font-semibold text-stone-850 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
+                  className="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm sm:text-base font-bold text-stone-900 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
                 >
                   {MONTHS_THAI.map((mName, idx) => (
                     <option key={idx} value={idx}>{mName}</option>
@@ -93,7 +93,7 @@ function CalendarPicker({
                 <select
                   value={year}
                   onChange={(e) => handleYearChange(parseInt(e.target.value))}
-                  className="bg-stone-50 border border-stone-200 rounded-xl px-2 py-1.5 text-xs sm:text-sm font-semibold text-stone-850 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
+                  className="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm sm:text-base font-bold text-stone-900 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
                 >
                   {years.map((yVal) => (
                     <option key={yVal} value={yVal}>
@@ -106,7 +106,7 @@ function CalendarPicker({
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-2 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center border border-stone-200"
+                className="p-2.5 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center border border-stone-200"
               >
                 <ChevronRight className="w-4 h-4 text-stone-500" />
               </button>
