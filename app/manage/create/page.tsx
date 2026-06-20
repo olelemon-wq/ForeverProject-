@@ -69,7 +69,7 @@ function CalendarPicker({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute left-0 mt-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-4 w-[295px] sm:w-[330px] animate-fade-in text-left">
+          <div className="absolute left-0 bottom-full mb-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-4 w-[295px] sm:w-[330px] animate-fade-in text-left">
             <div className="flex justify-between items-center mb-4 gap-1.5">
               <button
                 type="button"
