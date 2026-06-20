@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import EbookReaderClient from './EbookReaderClient';
+import { BookOpen } from 'lucide-react';
 
 async function getTenantData(slug: string) {
   return await db.tenant.findUnique({
@@ -70,7 +71,7 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
       <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <h2 className="text-xl font-bold mb-2 flex items-center justify-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <span>📖</span> หนังสือของชำร่วยและธรรมทานรำลึก
+          <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> หนังสือของชำร่วยและธรรมทานรำลึก
         </h2>
         <p className="text-stone-500 text-xs leading-normal max-w-md mx-auto">
           อ่านหนังสืองานศพ ของชำร่วย หรือหนังสือบทสวดมนต์แผ่เมตตาอุทิศส่วนกุศลออนไลน์ได้ทันทีผ่าน Web Reader

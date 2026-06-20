@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import CondolenceForm from './CondolenceForm';
+import { BookOpen, Flame } from 'lucide-react';
 
 async function getTenantData(slug: string) {
   const tenant = await db.tenant.findUnique({
@@ -44,7 +45,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
       <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <span>📖</span> อาลัยและคำรำลึก
+          <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> อาลัยและคำรำลึก
         </h2>
         <p className="text-stone-600 leading-relaxed indent-8 text-sm sm:text-base">
           คุณพ่อสมศักดิ์เป็นคนขยัน ซื่อสัตย์ และรักครอบครัวมาก ท่านเป็นผู้นำที่ดีและเสียสละเสมอเพื่อการศึกษาของลูกๆ ความดีงามและคำสั่งสอนของท่านจะคงอยู่ในการดำเนินชีวิตของพวกเราตลอดไป...
@@ -55,7 +56,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
       <section className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-6">
         <h2 className="text-xl font-bold flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <span>🕯️</span> สมุดลงนามแสดงความไว้อาลัย
+          <Flame className="w-5 h-5 animate-pulse" style={{ color: 'var(--theme-primary)' }} /> สมุดลงนามแสดงความไว้อาลัย
         </h2>
 
         {condolences.length === 0 ? (

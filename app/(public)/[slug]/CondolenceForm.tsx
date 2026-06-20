@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Flame } from 'lucide-react';
 
 export default function CondolenceForm({ websiteId }: { websiteId: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,10 +75,11 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
           </p>
           <button 
             onClick={() => setIsOpen(true)}
-            className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-white hover:brightness-105 active:scale-95 transition shadow-md"
+            className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-white hover:brightness-105 active:scale-95 transition shadow-md flex items-center gap-1.5 mx-auto"
             style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
           >
-            🕯️ ร่วมแสดงความไว้อาลัย
+            <Flame className="w-4 h-4 animate-pulse" />
+            <span>ร่วมแสดงความไว้อาลัย</span>
           </button>
         </div>
       ) : (
@@ -196,11 +198,12 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
             </button>
             <button 
               type="submit" 
-              className="px-5 py-2 text-xs font-bold rounded-xl text-white hover:brightness-105 transition"
+              className="px-5 py-2 text-xs font-bold rounded-xl text-white hover:brightness-105 transition flex items-center gap-1.5"
               style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
               disabled={isLoading}
             >
-              {isLoading ? 'กำลังส่ง...' : '🕯️ ส่งคำไว้อาลัย'}
+              <Flame className="w-4 h-4" />
+              <span>{isLoading ? 'กำลังส่ง...' : 'ส่งคำไว้อาลัย'}</span>
             </button>
           </div>
         </form>

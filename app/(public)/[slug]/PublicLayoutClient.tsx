@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Flame } from 'lucide-react';
 
 interface Menu {
   id: string;
@@ -79,7 +80,7 @@ export default function PublicLayoutClient({
         <div className="max-w-4xl mx-auto px-4 relative z-10">
           <div className="w-24 h-24 rounded-full border-4 bg-stone-50 mx-auto shadow-md overflow-hidden flex items-center justify-center mb-4 animate-fade-in"
                style={{ borderColor: 'var(--theme-primary)' }}>
-            <span className="text-3xl">🕯️</span>
+            <Flame className="w-10 h-10 animate-pulse" style={{ color: 'var(--theme-primary)' }} />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 mb-2">
             {tenant.name}

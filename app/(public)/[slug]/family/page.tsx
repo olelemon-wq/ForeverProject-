@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import Link from 'next/link';
+import { GitBranch, Flame } from 'lucide-react';
 
 async function getTenantData(slug: string) {
   return await db.tenant.findUnique({
@@ -39,7 +40,8 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
       <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <h2 className="text-xl font-bold mb-2 flex items-center justify-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <span>🌳</span> แผนผังครอบครัวและเครือญาติ (Family Tree)
+          <GitBranch className="w-5 h-5" />
+          <span>แผนผังครอบครัวและเครือญาติ (Family Tree)</span>
         </h2>
         <p className="text-stone-500 text-xs leading-normal max-w-md mx-auto">
           ผังลำดับเครือญาติ 3 รุ่นของผู้ล่วงลับ แสดงความสัมพันธ์ของบรรพบุรุษ คู่สมรส พี่น้อง และทายาทสืบตระกูล
@@ -59,7 +61,10 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
               parents.map(p => (
                 <div key={p.id} className="px-4 py-3 rounded-2xl border border-stone-200 bg-white min-w-[120px] shadow-sm">
                   <p className="text-xs font-bold text-stone-900">{p.name}</p>
-                  <p className="text-[10px] text-stone-500 font-semibold">{p.birthYear || 'N/A'} - {p.deathYear || 'N/A'} {p.isDeceased && '🕯️'}</p>
+                  <p className="text-[10px] text-stone-500 font-semibold flex items-center justify-center gap-1">
+                    <span>{p.birthYear || 'N/A'} - {p.deathYear || 'N/A'}</span>
+                    {p.isDeceased && <Flame className="w-3 h-3 text-stone-400 animate-pulse" />}
+                  </p>
                   <span className="text-[9px] text-stone-400 block mt-1">บิดา/มารดา</span>
                 </div>
               ))
@@ -79,7 +84,10 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
             {siblings.map(sib => (
               <div key={sib.id} className="px-4 py-3 rounded-2xl border border-stone-200 bg-white min-w-[110px] shadow-sm">
                 <p className="text-xs font-bold text-stone-800">{sib.name}</p>
-                <p className="text-[9px] text-stone-500">{sib.birthYear || 'N/A'} - {sib.deathYear || 'N/A'} {sib.isDeceased && '🕯️'}</p>
+                <p className="text-[9px] text-stone-500 flex items-center justify-center gap-1">
+                  <span>{sib.birthYear || 'N/A'} - {sib.deathYear || 'N/A'}</span>
+                  {sib.isDeceased && <Flame className="w-2.5 h-2.5 text-stone-400 animate-pulse" />}
+                </p>
                 <span className="text-[8px] text-stone-400 block mt-1">พี่น้อง</span>
               </div>
             ))}
@@ -94,7 +102,10 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
                 ผู้ล่วงลับ
               </span>
               <p className="text-sm font-black text-stone-900 mt-1">{tenant.name.replace('คุณพ่อ ', '').replace('คุณแม่ ', '')}</p>
-              <p className="text-[10px] text-stone-600 font-semibold mt-1">{deceasedBirthYear} - {deceasedDeathYear} 🕯️</p>
+              <p className="text-[10px] text-stone-600 font-semibold mt-1 flex items-center justify-center gap-1">
+                <span>{deceasedBirthYear} - {deceasedDeathYear}</span>
+                <Flame className="w-3 h-3 text-stone-500 animate-pulse" />
+              </p>
             </div>
 
             {/* Spouses on Right (if any) */}
@@ -104,7 +115,10 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
               spouses.map(sp => (
                 <div key={sp.id} className="px-4 py-3 rounded-2xl border border-stone-200 bg-white min-w-[120px] shadow-sm">
                   <p className="text-xs font-bold text-stone-900">{sp.name}</p>
-                  <p className="text-[10px] text-stone-500">{sp.birthYear || 'N/A'} - {sp.deathYear || 'N/A'} {sp.isDeceased && '🕯️'}</p>
+                  <p className="text-[10px] text-stone-500 flex items-center justify-center gap-1">
+                    <span>{sp.birthYear || 'N/A'} - {sp.deathYear || 'N/A'}</span>
+                    {sp.isDeceased && <Flame className="w-3 h-3 text-stone-400 animate-pulse" />}
+                  </p>
                   <span className="text-[9px] text-stone-400 block mt-1">คู่สมรส</span>
                 </div>
               ))
@@ -126,7 +140,10 @@ export default async function PublicFamilyTreePage(props: { params: Promise<{ sl
               children.map(c => (
                 <div key={c.id} className="px-4 py-3 rounded-2xl border border-stone-200 bg-white min-w-[120px] shadow-sm">
                   <p className="text-xs font-bold text-stone-900">{c.name}</p>
-                  <p className="text-[10px] text-stone-500 font-semibold">{c.birthYear || 'N/A'} - {c.deathYear || 'N/A'} {c.isDeceased && '🕯️'}</p>
+                  <p className="text-[10px] text-stone-500 font-semibold flex items-center justify-center gap-1">
+                    <span>{c.birthYear || 'N/A'} - {c.deathYear || 'N/A'}</span>
+                    {c.isDeceased && <Flame className="w-3 h-3 text-stone-400 animate-pulse" />}
+                  </p>
                   <span className="text-[9px] text-stone-400 block mt-1">บุตร/ธิดา</span>
                 </div>
               ))

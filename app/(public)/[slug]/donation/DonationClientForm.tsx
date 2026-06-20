@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Heart, Sparkles, AlertCircle, Check, Smartphone } from 'lucide-react';
 
 interface Donation {
   id: string;
@@ -150,7 +151,7 @@ export default function DonationClientForm({
           <div className="text-center font-bold text-[10px] tracking-wider border-b border-stone-200 pb-2 text-stone-500 uppercase">PROMPTPAY QR</div>
           
           <div className="w-40 h-40 bg-white rounded-lg mx-auto flex flex-col items-center justify-center gap-1 border border-stone-200 p-2">
-            <span className="text-2xl">🌸</span>
+            <Smartphone className="w-8 h-8 text-stone-500" />
             <span className="text-[8px] font-black text-stone-700">DONATION SCAN</span>
             <span className="text-[9px] font-mono text-stone-500 break-all px-2">{donationPromptPay}</span>
           </div>
@@ -164,10 +165,23 @@ export default function DonationClientForm({
 
         {/* Donation slip upload form */}
         <form onSubmit={handleSubmit} className="border-t border-stone-200 pt-6 text-left space-y-4">
-          <h3 className="text-sm font-bold text-stone-900">🌸 ส่งสลิปโอนเงินยืนยันการทำบุญ (Slip Verify)</h3>
+          <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
+            <Heart className="w-4 h-4 text-amber-600" />
+            <span>ส่งสลิปโอนเงินยืนยันการทำบุญ (Slip Verify)</span>
+          </h3>
           
-          {error && <div className="p-3 bg-red-50 border border-red-200 text-xs text-red-700 rounded-xl font-semibold">⚠️ {error}</div>}
-          {success && <div className="p-3 bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 rounded-xl font-semibold">✓ {success}</div>}
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 text-xs text-red-700 rounded-xl font-semibold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+          {success && (
+            <div className="p-3 bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 rounded-xl font-semibold flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <span>{success}</span>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
@@ -244,9 +258,10 @@ export default function DonationClientForm({
           <button 
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-stone-950 font-bold text-xs rounded-xl transition shadow-md"
+            className="w-full py-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-stone-950 font-bold text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5"
           >
-            {loading ? 'กำลังส่งและตรวจสอบสลิปอัตโนมัติ...' : '🌸 ยืนยันยอดและร่วมอนุโมทนาบุญ'}
+            <Heart className="w-4 h-4 text-stone-950" />
+            <span>{loading ? 'กำลังส่งและตรวจสอบสลิปอัตโนมัติ...' : 'ยืนยันยอดและร่วมอนุโมทนาบุญ'}</span>
           </button>
         </form>
       </div>
@@ -254,7 +269,10 @@ export default function DonationClientForm({
       {/* Merit Wall - Display board of verified donors */}
       <section className="rounded-3xl border border-stone-200/80 bg-white p-6 shadow-md space-y-6">
         <div className="text-center">
-          <h3 className="text-sm font-black text-stone-900 uppercase tracking-wider">🌿 กระดานรายนามผู้ร่วมอนุโมทนาบุญ (Merit Wall)</h3>
+          <h3 className="text-sm font-black text-stone-900 uppercase tracking-wider flex items-center justify-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            <span>กระดานรายนามผู้ร่วมอนุโมทนาบุญ (Merit Wall)</span>
+          </h3>
           <p className="text-[10px] text-stone-500 mt-1">รายนามแขกผู้มีเกียรติที่ร่วมทำบุญและได้รับการตรวจสอบสลิปเรียบร้อยแล้ว</p>
         </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { BookOpen } from 'lucide-react';
 
 interface Booklet {
   id: string;
@@ -86,7 +87,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
               <div className="w-24 h-32 bg-stone-50 border border-stone-200 rounded-lg shadow-inner flex flex-col items-center justify-center p-3 relative overflow-hidden">
                 {/* Book design spine line */}
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-600" />
-                <span className="text-2xl mb-2">📖</span>
+                <BookOpen className="w-6 h-6 text-emerald-700 mb-2" />
                 <span className="text-[8px] text-stone-500 font-bold text-center leading-tight line-clamp-2">{book.title}</span>
               </div>
 
@@ -96,8 +97,9 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
                 <span className="text-[9px] px-2 py-0.5 rounded bg-stone-100 text-stone-600 font-bold">{book.totalPages} หน้า</span>
               </div>
 
-              <button className="px-4 py-2 bg-emerald-50 text-[10px] font-bold text-emerald-800 hover:bg-emerald-100 hover:text-emerald-900 border border-emerald-100 rounded-xl transition">
-                📖 เปิดอ่านหนังสือออนไลน์
+              <button className="px-4 py-2 bg-emerald-50 text-[10px] font-bold text-emerald-800 hover:bg-emerald-100 hover:text-emerald-900 border border-emerald-100 rounded-xl transition flex items-center justify-center gap-1 mx-auto">
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>เปิดอ่านหนังสือออนไลน์</span>
               </button>
             </div>
           ))}

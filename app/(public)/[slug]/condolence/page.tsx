@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import CondolenceForm from '../CondolenceForm';
+import { Flame, PenTool } from 'lucide-react';
 
 async function getTenantData(slug: string) {
   const tenant = await db.tenant.findUnique({
@@ -43,7 +44,7 @@ export default async function PublicCondolencePage(props: { params: Promise<{ sl
       <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <h2 className="text-xl font-bold mb-2 flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <span>🕯️</span> สมุดลงนามแสดงความไว้อาลัย
+          <Flame className="w-5 h-5 animate-pulse" /> สมุดลงนามแสดงความไว้อาลัย
         </h2>
         <p className="text-stone-500 text-xs leading-normal">
           ร่วมลงนาม เขียนคำไว้อาลัย และแสดงความระลึกถึงผู้ล่วงลับ เพื่อเกียรติประวัติและความรักความผูกพันที่จะคงอยู่ตลอดไป
@@ -53,7 +54,7 @@ export default async function PublicCondolencePage(props: { params: Promise<{ sl
       {/* Condolences Board List */}
       <section className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-6">
         <h2 className="text-lg font-bold flex items-center gap-2 text-stone-800">
-          <span>✍️</span> ข้อความรำลึกทั้งหมด ({condolences.length})
+          <PenTool className="w-4 h-4 text-emerald-700" /> ข้อความรำลึกทั้งหมด ({condolences.length})
         </h2>
 
         {condolences.length === 0 ? (

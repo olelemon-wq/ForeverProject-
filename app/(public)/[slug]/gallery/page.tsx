@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
+import { Camera, Image } from 'lucide-react';
 
 async function getTenantData(slug: string) {
   return await db.tenant.findUnique({
@@ -66,7 +67,7 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
       <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <h2 className="text-xl font-bold mb-2 flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <span>📸</span> คลังภาพรำลึกแด่ผู้ล่วงลับ
+          <Camera className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> คลังภาพรำลึกแด่ผู้ล่วงลับ
         </h2>
         <p className="text-stone-500 text-xs leading-normal">
           คลังภาพถ่ายและวิดีโอเหตุการณ์สำคัญทางประวัติศาสตร์ของครอบครัว เพื่อระลึกถึงรอยยิ้ม ความอบอุ่น และช่วงเวลาที่มีคุณค่าร่วมกัน
@@ -76,7 +77,7 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
       <section className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         {mediaList.length === 0 ? (
           <div className="text-center py-16 text-stone-500 text-sm border border-dashed border-stone-200 rounded-2xl space-y-4">
-            <span className="text-4xl block">🖼️</span>
+            <Image className="w-12 h-12 text-stone-300 mx-auto block mb-2" />
             <p>ยังไม่มีรูปภาพหรือวิดีโออัปโหลดลงในคลังภาพรำลึก</p>
           </div>
         ) : (

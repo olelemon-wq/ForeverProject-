@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Calendar, ChevronLeft, ChevronRight, AlertCircle, Smartphone, Info, Check } from 'lucide-react';
 
 const MONTHS_THAI = [
   'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -62,27 +63,27 @@ function CalendarPicker({
         <span className={selectedDate ? 'text-stone-900 font-medium' : 'text-stone-400'}>
           {selectedDate ? formatThaiDateShort(selectedDate) : placeholder}
         </span>
-        <span className="text-stone-500 text-xs">📅</span>
+        <Calendar className="w-4 h-4 text-stone-400" />
       </button>
 
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute left-0 mt-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-4 w-[280px] sm:w-[320px] animate-fade-in text-left">
-            <div className="flex justify-between items-center mb-4 gap-1">
+          <div className="absolute left-0 mt-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-4 w-[295px] sm:w-[330px] animate-fade-in text-left">
+            <div className="flex justify-between items-center mb-4 gap-1.5">
               <button
                 type="button"
                 onClick={handlePrevMonth}
-                className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-600 transition cursor-pointer"
+                className="p-2 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center border border-stone-200"
               >
-                ◀
+                <ChevronLeft className="w-4 h-4 text-stone-500" />
               </button>
               
-              <div className="flex gap-1">
+              <div className="flex gap-1.5">
                 <select
                   value={month}
                   onChange={(e) => handleMonthChange(parseInt(e.target.value))}
-                  className="bg-stone-50 border border-stone-200 rounded-lg px-1.5 py-1 text-xs text-stone-850 focus:outline-none cursor-pointer"
+                  className="bg-stone-50 border border-stone-200 rounded-xl px-2 py-1.5 text-xs sm:text-sm font-semibold text-stone-850 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
                 >
                   {MONTHS_THAI.map((mName, idx) => (
                     <option key={idx} value={idx}>{mName}</option>
@@ -92,7 +93,7 @@ function CalendarPicker({
                 <select
                   value={year}
                   onChange={(e) => handleYearChange(parseInt(e.target.value))}
-                  className="bg-stone-50 border border-stone-200 rounded-lg px-1.5 py-1 text-xs text-stone-850 focus:outline-none cursor-pointer"
+                  className="bg-stone-50 border border-stone-200 rounded-xl px-2 py-1.5 text-xs sm:text-sm font-semibold text-stone-850 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
                 >
                   {years.map((yVal) => (
                     <option key={yVal} value={yVal}>
@@ -105,9 +106,9 @@ function CalendarPicker({
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-600 transition cursor-pointer"
+                className="p-2 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center border border-stone-200"
               >
-                ▶
+                <ChevronRight className="w-4 h-4 text-stone-500" />
               </button>
             </div>
 
@@ -422,7 +423,12 @@ export default function WebsiteCreationWizard() {
             <p className="text-stone-500 text-xs">กรุณากรอกเบอร์มือถือของคุณเพื่อเข้าสู่กระบวนการสร้างเว็บไซต์แบบรวดเร็ว</p>
           </header>
 
-          {error && <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 text-center font-medium">⚠️ {error}</div>}
+          {error && (
+            <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium flex items-center justify-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
 
           {loginStep === 1 ? (
             <form onSubmit={handleRequestOtp} className="space-y-6">
@@ -501,8 +507,13 @@ export default function WebsiteCreationWizard() {
         </div>
       </div>
 
-      <div className="w-full max-w-2xl p-8 rounded-3xl border border-stone-200 bg-white shadow-xl space-y-6">
-        {error && <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium">⚠️ {error}</div>}
+      <div className="w-full max-w-2xl p-8 rounded-3xl border border-stone-200 bg-white shadow-xl space-y-6 overflow-visible">
+        {error && (
+          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
         {/* STEP 1: URL SETUP */}
         {wizardStep === 1 && (
@@ -539,7 +550,8 @@ export default function WebsiteCreationWizard() {
 
               {slugValid === true && (
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold flex items-center gap-2">
-                  ✓ ชื่อลิงก์ "forever.co.th/{slug}" พร้อมใช้งาน
+                  <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>ชื่อลิงก์ "forever.co.th/{slug}" พร้อมใช้งาน</span>
                 </div>
               )}
             </div>
@@ -557,7 +569,7 @@ export default function WebsiteCreationWizard() {
 
         {/* STEP 2: INFO SETUP */}
         {wizardStep === 2 && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-6 animate-fade-in overflow-visible">
             <header className="space-y-1">
               <h2 className="text-xl font-black text-stone-900">รายละเอียดเว็บไซต์ความทรงจำ</h2>
               <p className="text-xs text-stone-500">กรอกรายละเอียดเพื่อสร้างโครงสร้างหน้ารำลึกเริ่มต้น</p>
@@ -684,15 +696,16 @@ export default function WebsiteCreationWizard() {
               <div className="text-center font-bold text-sm tracking-wide border-b border-stone-100 pb-3">PROMPTPAY QR</div>
               {/* Simulated QR Code Area */}
               <div className="w-48 h-48 bg-stone-50 border border-stone-150 rounded-lg mx-auto flex flex-col items-center justify-center gap-2 p-2 shadow-inner">
-                <span className="text-3xl">📱</span>
+                <Smartphone className="w-8 h-8 text-stone-600" />
                 <span className="text-[10px] font-black text-stone-850">MOCK DYNAMIC QR</span>
                 <span className="text-[9px] font-mono text-stone-500 break-all px-2 select-all">{paymentRef}</span>
               </div>
               <div className="text-center font-black text-lg border-t border-stone-100 pt-3 text-emerald-800">2,000.00 THB</div>
             </div>
 
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 max-w-sm mx-auto leading-normal font-semibold">
-              📲 สแกน QR Code แล้วระบบจะเปิดใช้งานให้คุณโดยอัตโนมัติเมื่อได้รับการกดยืนยัน Webhook callback จากธนาคาร
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 max-w-sm mx-auto leading-normal font-semibold flex items-start gap-2.5 text-left">
+              <Info className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+              <span>สแกน QR Code แล้วระบบจะเปิดใช้งานให้คุณโดยอัตโนมัติเมื่อได้รับการกดยืนยัน Webhook callback จากธนาคาร</span>
             </div>
 
             <div className="pt-4 border-t border-stone-100 max-w-xs mx-auto space-y-3">

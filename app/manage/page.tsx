@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { 
+  Flame, BookOpen, Camera, GitBranch, Settings, Plus, Trash2, Edit3, 
+  CreditCard, Smartphone, Check, AlertCircle, ArrowLeft, ArrowRight, 
+  LogOut, Upload, User, Calendar, Heart, Sparkles, DollarSign, Download, RotateCw
+} from 'lucide-react';
 
 interface Website {
   id: string;
@@ -626,7 +631,9 @@ export default function WebmasterDashboard() {
   if (websites.length === 0) {
     return (
       <main className="min-h-screen bg-stone-50 text-stone-850 flex flex-col items-center justify-center p-6 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center text-3xl border border-emerald-100">🕯️</div>
+        <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+          <Flame className="w-8 h-8 text-emerald-700 animate-pulse" />
+        </div>
         <div className="space-y-2">
           <h1 className="text-2xl font-black text-stone-900">ยินดีต้อนรับสู่ FOREVER</h1>
           <p className="text-stone-500 text-sm max-w-sm mx-auto">
@@ -736,9 +743,10 @@ export default function WebmasterDashboard() {
                 type="button"
                 onClick={handleRequestRenewal}
                 disabled={renewLoading}
-                className="px-4 py-2.5 bg-amber-650 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-xl transition flex-shrink-0 text-[10px] shadow-sm"
+                className="px-4 py-2.5 bg-amber-650 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-xl transition flex-shrink-0 text-[10px] shadow-sm flex items-center gap-1"
               >
-                🌸 ต่ออายุบริการ 1 ปี (2,000 บาท)
+                <CreditCard className="w-3.5 h-3.5" />
+                <span>ต่ออายุบริการ 1 ปี (2,000 บาท)</span>
               </button>
             </div>
           );
@@ -749,7 +757,10 @@ export default function WebmasterDashboard() {
           <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white border border-stone-200 rounded-3xl p-6 max-w-sm w-full space-y-6 text-center animate-fade-in shadow-2xl">
               <header className="space-y-1 text-left border-b border-stone-100 pb-3">
-                <h3 className="text-sm font-bold text-stone-900">🌸 ต่ออายุบริการเว็บไซต์ (Subscription Renewal)</h3>
+                <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
+                  <CreditCard className="w-4 h-4 text-emerald-700" />
+                  <span>ต่ออายุบริการเว็บไซต์ (Subscription Renewal)</span>
+                </h3>
                 <p className="text-[10px] text-stone-500 font-semibold">ต่ออายุหน้ารำลึก /{selectedSite.slug} เพิ่มเติม 1 ปี (365 วัน)</p>
               </header>
 
@@ -757,7 +768,7 @@ export default function WebmasterDashboard() {
                 <div className="text-center font-bold text-[9px] tracking-wider border-b border-stone-100 pb-1 text-stone-500 uppercase">PROMPTPAY QR</div>
                 
                 <div className="w-36 h-36 bg-stone-50 rounded-lg mx-auto flex flex-col items-center justify-center gap-1 border border-stone-150 p-2 shadow-inner">
-                  <span className="text-xl">🕯️</span>
+                  <Flame className="w-6 h-6 text-stone-500 animate-pulse" />
                   <span className="text-[7px] font-black text-stone-700">RENEWAL PAYMENT</span>
                   <span className="text-[8px] font-mono text-stone-500 break-all px-1 select-all">{renewRefId}</span>
                 </div>
@@ -875,7 +886,10 @@ export default function WebmasterDashboard() {
             {/* Donation Settings (Phase 2 integration) */}
             <div className="border-t border-stone-100 pt-6 space-y-4">
               <div className="flex justify-between items-center">
-                <h4 className="text-sm font-bold text-stone-900">🌸 เปิดใช้บริการรับเงินทำบุญ (Donation QR Settings)</h4>
+                <h4 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
+                  <DollarSign className="w-4 h-4 text-emerald-700" />
+                  <span>เปิดใช้บริการรับเงินทำบุญ (Donation QR Settings)</span>
+                </h4>
                 <input 
                   type="checkbox" 
                   checked={donationActive}
@@ -988,7 +1002,19 @@ export default function WebmasterDashboard() {
                 disabled={exportLoading}
                 className="w-full py-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs text-emerald-800 font-bold transition flex items-center justify-center gap-2"
               >
-                {exportLoading ? '📦 กำลังส่งออกไฟล์...' : '📥 ดาวน์โหลดข้อมูลทั้งหมด (ZIP)'}
+                <span className="flex items-center gap-1.5 justify-center">
+                  {exportLoading ? (
+                    <>
+                      <RotateCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>กำลังส่งออกไฟล์...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-3.5 h-3.5" />
+                      <span>ดาวน์โหลดข้อมูลทั้งหมด (ZIP)</span>
+                    </>
+                  )}
+                </span>
               </button>
             </section>
           </div>
@@ -998,20 +1024,42 @@ export default function WebmasterDashboard() {
         <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
           <div className="flex justify-between items-center border-b border-stone-100 pb-4">
             <div>
-              <h3 className="text-lg font-black text-stone-900 font-sans">🌳 ผังครอบครัวและเครือญาติ 3 รุ่น ({familyMembers.length})</h3>
+              <h3 className="text-lg font-black text-stone-900 font-sans flex items-center gap-1.5">
+                <GitBranch className="w-5 h-5 text-emerald-700" />
+                <span>ผังครอบครัวและเครือญาติ 3 รุ่น ({familyMembers.length})</span>
+              </h3>
               <p className="text-xs text-stone-500">เพิ่มรายละเอียดของบิดา มารดา คู่สมรส พี่น้อง และบุตรธิดาของผู้ล่วงลับ</p>
             </div>
             <button 
               onClick={() => { resetFamilyForm(); setFamilyFormOpen(!familyFormOpen); }}
-              className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition"
+              className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1"
             >
-              {familyFormOpen ? 'ปิดหน้าต่าง' : '➕ เพิ่มสมาชิกครอบครัว'}
+              {familyFormOpen ? (
+                'ปิดหน้าต่าง'
+              ) : (
+                <>
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>เพิ่มสมาชิกครอบครัว</span>
+                </>
+              )}
             </button>
           </div>
 
           {familyFormOpen && (
             <form onSubmit={handleSaveFamilyMember} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 max-w-xl animate-fade-in">
-              <h4 className="text-xs font-black uppercase text-emerald-800">{familyId ? '📝 แก้ไขสมาชิกญาติ' : '🌳 เพิ่มสมาชิกญาติใหม่'}</h4>
+              <h4 className="text-xs font-black uppercase text-emerald-800 flex items-center gap-1.5">
+                {familyId ? (
+                  <>
+                    <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>แก้ไขสมาชิกญาติ</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>เพิ่มสมาชิกญาติใหม่</span>
+                  </>
+                )}
+              </h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
@@ -1118,8 +1166,9 @@ export default function WebmasterDashboard() {
                       <span className="inline-block px-1.5 py-0.5 text-[8px] font-bold bg-stone-200/50 text-stone-605 rounded mt-1">
                         ความสัมพันธ์: {relLabel}
                       </span>
-                      <p className="text-[10px] text-stone-500 font-semibold mt-1">
-                        อายุขัย: {m.birthYear || 'N/A'} - {m.deathYear || 'N/A'} {m.isDeceased && '🕯️'}
+                      <p className="text-[10px] text-stone-500 font-semibold mt-1 flex items-center gap-1">
+                        <span>อายุขัย: {m.birthYear || 'N/A'} - {m.deathYear || 'N/A'}</span>
+                        {m.isDeceased && <Flame className="w-3 h-3 text-stone-500 animate-pulse" />}
                       </p>
                     </div>
                     <div className="flex gap-1.5">
@@ -1128,14 +1177,14 @@ export default function WebmasterDashboard() {
                         className="p-1.5 rounded-lg bg-white border border-stone-250 text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition"
                         title="แก้ไข"
                       >
-                        ✏️
+                        <Edit3 className="w-3.5 h-3.5" />
                       </button>
                       <button 
                         onClick={() => handleDeleteFamilyMember(m.id)}
-                        className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition"
+                        className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition flex items-center justify-center"
                         title="ลบ"
                       >
-                        🗑️
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -1149,20 +1198,42 @@ export default function WebmasterDashboard() {
         <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
           <div className="flex justify-between items-center border-b border-stone-100 pb-4">
             <div>
-              <h3 className="text-lg font-black text-stone-900">📖 หนังสือของชำร่วยและธรรมทาน ({ebooks.length})</h3>
+              <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
+                <BookOpen className="w-5 h-5 text-emerald-700" />
+                <span>หนังสือของชำร่วยและธรรมทาน ({ebooks.length})</span>
+              </h3>
               <p className="text-xs text-stone-500">อัปโหลดหนังสือธรรมะ บทสวดมนต์ หรือหนังสือชีวประวัติ (PDF) พร้อมระบบอ่านในเว็บ</p>
             </div>
             <button 
               onClick={() => { resetEbookForm(); setEbookFormOpen(!ebookFormOpen); }}
-              className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition"
+              className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1"
             >
-              {ebookFormOpen ? 'ปิดหน้าต่าง' : '➕ อัปโหลดหนังสือใหม่'}
+              {ebookFormOpen ? (
+                'ปิดหน้าต่าง'
+              ) : (
+                <>
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>อัปโหลดหนังสือใหม่</span>
+                </>
+              )}
             </button>
           </div>
 
           {ebookFormOpen && (
             <form onSubmit={handleSaveEbook} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 max-w-xl animate-fade-in">
-              <h4 className="text-xs font-black uppercase text-emerald-800">{ebookId ? '📝 แก้ไขข้อมูลหนังสือ' : '📖 อัปโหลดหนังสือธรรมทานใหม่'}</h4>
+              <h4 className="text-xs font-black uppercase text-emerald-800 flex items-center gap-1.5">
+                {ebookId ? (
+                  <>
+                    <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>แก้ไขข้อมูลหนังสือ</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>อัปโหลดหนังสือธรรมทานใหม่</span>
+                  </>
+                )}
+              </h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
@@ -1254,7 +1325,7 @@ export default function WebmasterDashboard() {
                 <div key={b.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 hover:border-stone-300 transition flex gap-4 items-center">
                   <div className="w-16 h-20 bg-white border border-stone-200 rounded-lg shadow-sm flex flex-col items-center justify-center p-2 relative overflow-hidden flex-shrink-0">
                     <div className="absolute top-0 left-0 w-1 h-full bg-emerald-600" />
-                    <span className="text-xl animate-fade-in">📖</span>
+                    <BookOpen className="w-6 h-6 text-emerald-700" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-stone-900 truncate">{b.title}</p>
@@ -1269,14 +1340,14 @@ export default function WebmasterDashboard() {
                       className="p-2 rounded-xl bg-white border border-stone-250 text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition text-[10px]"
                       title="แก้ไข"
                     >
-                      ✏️
+                      <Edit3 className="w-3.5 h-3.5" />
                     </button>
                     <button 
                       onClick={() => handleDeleteEbook(b.id)}
-                      className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition text-[10px]"
+                      className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition text-[10px] flex items-center justify-center"
                       title="ลบ"
                     >
-                      🗑️
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -1334,7 +1405,10 @@ export default function WebmasterDashboard() {
 
         {/* Condolence moderation */}
         <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-          <h3 className="text-lg font-black text-stone-900">🕯️ คำไว้อาลัยรออนุมัติ ({condolences.length})</h3>
+          <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
+            <Flame className="w-5 h-5 text-emerald-700 animate-pulse" />
+            <span>คำไว้อาลัยรออนุมัติ ({condolences.length})</span>
+          </h3>
 
           {condolences.length === 0 ? (
             <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
@@ -1375,7 +1449,10 @@ export default function WebmasterDashboard() {
 
         {/* Memory Wall Moderation Section (Phase 2 integration) */}
         <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-          <h3 className="text-lg font-black text-stone-900">📸 เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</h3>
+          <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
+            <Camera className="w-5 h-5 text-emerald-700" />
+            <span>เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</span>
+          </h3>
 
           {pendingPosts.length === 0 ? (
             <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">

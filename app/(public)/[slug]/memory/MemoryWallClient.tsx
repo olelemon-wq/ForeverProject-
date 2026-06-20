@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Camera } from 'lucide-react';
 
 interface MemoryPost {
   id: string;
@@ -253,7 +254,7 @@ export default function MemoryWallClient({
               <div className="space-y-4">
                 {p.mediaUrl && (
                   <div className="w-full h-48 bg-stone-50 rounded-2xl overflow-hidden border border-stone-200 relative flex items-center justify-center">
-                    <span className="text-4xl text-stone-400">📸</span>
+                    <Camera className="w-10 h-10 text-stone-400" />
                     {/* Placeholder visual link indicator */}
                     <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[8px] bg-black/60 text-white font-mono">{p.mediaUrl.substring(0, 20)}...</span>
                   </div>
