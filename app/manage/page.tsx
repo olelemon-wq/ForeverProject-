@@ -823,12 +823,12 @@ export default function WebmasterDashboard() {
             <h3 className="text-lg font-black text-stone-900 mb-2">🎨 ปรับแต่งธีมและข้อมูลทั่วไป</h3>
             
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ชื่อหน้ารำลึก</label>
+              <label className="text-sm font-bold text-stone-600 tracking-wide">ชื่อหน้ารำลึก</label>
               <input 
                 type="text" 
                 value={siteName} 
                 onChange={(e) => setSiteName(e.target.value)} 
-                className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
+                className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm sm:text-base focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
               />
             </div>
 
@@ -901,23 +901,23 @@ export default function WebmasterDashboard() {
               {donationActive && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">หมายเลขพร้อมเพย์ (PromptPay)</label>
+                    <label className="text-sm font-bold text-stone-600 tracking-wide">หมายเลขพร้อมเพย์ (PromptPay)</label>
                     <input 
                       type="text" 
                       value={donationPromptPay} 
                       onChange={(e) => setDonationPromptPay(e.target.value)} 
                       placeholder="เช่น 0812345678 หรือ 1234567890123"
-                      className="w-full px-4 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs font-mono focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
+                      className="w-full px-4 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm sm:text-base font-mono focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ชื่อบัญชีรับเงินทำบุญ</label>
+                    <label className="text-sm font-bold text-stone-600 tracking-wide">ชื่อบัญชีรับเงินทำบุญ</label>
                     <input 
                       type="text" 
                       value={donationAccountName} 
                       onChange={(e) => setDonationAccountName(e.target.value)} 
                       placeholder="เช่น นายสมชาย รักดี"
-                      className="w-full px-4 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
+                      className="w-full px-4 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm sm:text-base focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                     />
                   </div>
                 </div>
@@ -1063,23 +1063,23 @@ export default function WebmasterDashboard() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ชื่อ-นามสกุล</label>
+                  <label className="text-sm font-bold text-stone-600 block">ชื่อ-นามสกุล</label>
                   <input 
                     type="text" 
                     value={familyName} 
                     onChange={(e) => setFamilyName(e.target.value)}
                     required
                     placeholder="เช่น นายสมจิตร์ รักสงบ"
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ความสัมพันธ์</label>
+                  <label className="text-sm font-bold text-stone-600 block">ความสัมพันธ์</label>
                   <select
                     value={familyRelationship}
                     onChange={(e) => setFamilyRelationship(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
                   >
                     <option value="PARENT_1">บิดา (Father)</option>
                     <option value="PARENT_2">มารดา (Mother)</option>
@@ -1092,19 +1092,19 @@ export default function WebmasterDashboard() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ปีเกิด (พ.ศ.)</label>
+                  <label className="text-sm font-bold text-stone-600 block">ปีเกิด (พ.ศ.)</label>
                   <input 
                     type="text" 
                     value={familyBirthYear} 
                     onChange={(e) => setFamilyBirthYear(e.target.value)}
                     placeholder="เช่น 2490"
                     maxLength={4}
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs font-mono focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base font-mono focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ปีที่ล่วงลับ (พ.ศ.)</label>
+                  <label className="text-sm font-bold text-stone-600 block">ปีที่ล่วงลับ (พ.ศ.)</label>
                   <input 
                     type="text" 
                     value={familyDeathYear} 
@@ -1112,7 +1112,7 @@ export default function WebmasterDashboard() {
                     disabled={!familyIsDeceased}
                     placeholder="เช่น 2565"
                     maxLength={4}
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs font-mono disabled:opacity-40 focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base font-mono disabled:opacity-40 focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
@@ -1237,62 +1237,62 @@ export default function WebmasterDashboard() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ชื่อหนังสือ</label>
+                  <label className="text-sm font-bold text-stone-600 block">ชื่อหนังสือ</label>
                   <input 
                     type="text" 
                     value={ebookTitle} 
                     onChange={(e) => setEbookTitle(e.target.value)}
                     required
                     placeholder="เช่น หนังสือบทสวดมนต์และธรรมสติ"
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-stone-500 font-bold uppercase block">ผู้แต่ง / คณะผู้จัดทำ</label>
+                  <label className="text-sm font-bold text-stone-600 block">ผู้แต่ง / คณะผู้จัดทำ</label>
                   <input 
                     type="text" 
                     value={ebookAuthor} 
                     onChange={(e) => setEbookAuthor(e.target.value)}
                     required
                     placeholder="เช่น คณะครอบครัวเจริญยิ่ง"
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] text-stone-500 font-bold uppercase block">จำนวนหน้าทั้งหมด</label>
+                  <label className="text-sm font-bold text-stone-600 block">จำนวนหน้าทั้งหมด</label>
                   <input 
                     type="number" 
                     min={1}
                     value={ebookTotalPages} 
                     onChange={(e) => setEbookTotalPages(e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-stone-500 font-bold uppercase block">เลือกไฟล์หนังสือ PDF</label>
+                  <label className="text-sm font-bold text-stone-600 block">เลือกไฟล์หนังสือ PDF</label>
                   <input 
                     type="file" 
                     accept="application/pdf"
                     onChange={(e) => setEbookFile(e.target.files ? e.target.files[0] : null)}
-                    className="w-full text-stone-600 text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border file:border-stone-200 file:text-[10px] file:font-semibold file:bg-stone-50 file:text-stone-705 hover:file:bg-stone-100 transition"
+                    className="w-full text-stone-600 text-sm file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border file:border-stone-200 file:text-xs file:font-semibold file:bg-stone-50 file:text-stone-705 hover:file:bg-stone-100 transition"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] text-stone-500 font-bold uppercase block">ข้อความเนื้อหาในแต่ละหน้า (แยกหน้าโดยใช้เครื่องหมาย `[PAGE]`)</label>
+                <label className="text-sm font-bold text-stone-600 block">ข้อความเนื้อหาในแต่ละหน้า (แยกหน้าโดยใช้เครื่องหมาย `[PAGE]`)</label>
                 <textarea 
                   value={ebookPagesText} 
                   onChange={(e) => setEbookPagesText(e.target.value)}
                   rows={6}
                   placeholder="บทนำ...&#10;[PAGE]&#10;หน้าที่ 2...&#10;[PAGE]&#10;หน้าที่ 3..."
-                  className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-xs font-serif leading-relaxed focus:outline-none focus:border-emerald-500/80 transition"
+                  className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base font-serif leading-relaxed focus:outline-none focus:border-emerald-500/80 transition"
                 />
               </div>
 

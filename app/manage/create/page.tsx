@@ -577,29 +577,29 @@ export default function WebsiteCreationWizard() {
 
             <div className="space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">ชื่อเว็บไซต์ (เช่น รำลึกรักแด่คุณพ่อสมศักดิ์)</label>
+                <label className="text-sm font-bold text-stone-600 tracking-wide">ชื่อเว็บไซต์ (เช่น รำลึกรักแด่คุณพ่อสมศักดิ์)</label>
                 <input 
                   type="text" 
                   value={name} 
                   onChange={(e) => setName(e.target.value)} 
                   placeholder="เช่น ความทรงจำแด่คุณยายมาลี"
-                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:bg-white focus:outline-none"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-sm sm:text-base focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">ชื่อ-นามสกุล ผู้ล่วงลับ</label>
+                <label className="text-sm font-bold text-stone-600 tracking-wide">ชื่อ-นามสกุล ผู้ล่วงลับ</label>
                 <input 
                   type="text" 
                   value={deceasedName} 
                   onChange={(e) => setDeceasedName(e.target.value)} 
                   placeholder="เช่น คุณยาย มาลี อบอุ่นยิ่ง"
-                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:bg-white focus:outline-none"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-sm sm:text-base focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">ช่วงชีวิตวันเกิด – วันเสียชีวิต (Lifespan)</label>
+                <label className="text-sm font-bold text-stone-600 tracking-wide">ช่วงชีวิตวันเกิด – วันเสียชีวิต (Lifespan)</label>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <span className="text-[9px] text-stone-500 font-semibold block">วันเกิด</span>
@@ -626,11 +626,11 @@ export default function WebsiteCreationWizard() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">หมวดหมู่กลุ่มเป้าหมาย (Category Selection)</label>
+                <label className="text-sm font-bold text-stone-600 tracking-wide">หมวดหมู่กลุ่มเป้าหมาย (Category Selection)</label>
                 <select 
                   value={category} 
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-750 text-xs sm:text-sm focus:bg-white focus:outline-none"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-750 text-sm sm:text-base focus:bg-white focus:outline-none"
                 >
                   <option value="Memorial">Memorial (รำลึกบุคคลทั่วไป)</option>
                   <option value="Family Legacy">Family Legacy (มรดกวงศ์ตระกูล)</option>
