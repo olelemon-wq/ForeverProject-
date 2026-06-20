@@ -3,6 +3,163 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+const MONTHS_THAI = [
+  'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+  'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+];
+
+function CalendarPicker({
+  selectedDate,
+  onChange,
+  placeholder,
+}: {
+  selectedDate: Date | null;
+  onChange: (date: Date) => void;
+  placeholder: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayIndex = new Date(year, month, 1).getDay();
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(year, month - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(year, month + 1, 1));
+  };
+
+  const handleMonthChange = (newMonth: number) => {
+    setCurrentDate(new Date(year, newMonth, 1));
+  };
+
+  const handleYearChange = (newYear: number) => {
+    setCurrentDate(new Date(newYear, month, 1));
+  };
+
+  const currentCEYear = new Date().getFullYear();
+  const years = Array.from({ length: 150 }, (_, i) => currentCEYear + 10 - i);
+
+  const formatThaiDateShort = (date: Date) => {
+    const day = date.getDate();
+    const monthName = MONTHS_THAI[date.getMonth()];
+    const yearThai = date.getFullYear() + 543;
+    return `${day} ${monthName} ${yearThai}`;
+  };
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-left text-xs sm:text-sm flex justify-between items-center cursor-pointer hover:bg-stone-100/50 transition focus:outline-none"
+      >
+        <span className={selectedDate ? 'text-stone-900 font-medium' : 'text-stone-400'}>
+          {selectedDate ? formatThaiDateShort(selectedDate) : placeholder}
+        </span>
+        <span className="text-stone-500 text-xs">📅</span>
+      </button>
+
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="absolute left-0 mt-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-4 w-[280px] sm:w-[320px] animate-fade-in text-left">
+            <div className="flex justify-between items-center mb-4 gap-1">
+              <button
+                type="button"
+                onClick={handlePrevMonth}
+                className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-600 transition cursor-pointer"
+              >
+                ◀
+              </button>
+              
+              <div className="flex gap-1">
+                <select
+                  value={month}
+                  onChange={(e) => handleMonthChange(parseInt(e.target.value))}
+                  className="bg-stone-50 border border-stone-200 rounded-lg px-1.5 py-1 text-xs text-stone-850 focus:outline-none cursor-pointer"
+                >
+                  {MONTHS_THAI.map((mName, idx) => (
+                    <option key={idx} value={idx}>{mName}</option>
+                  ))}
+                </select>
+
+                <select
+                  value={year}
+                  onChange={(e) => handleYearChange(parseInt(e.target.value))}
+                  className="bg-stone-50 border border-stone-200 rounded-lg px-1.5 py-1 text-xs text-stone-850 focus:outline-none cursor-pointer"
+                >
+                  {years.map((yVal) => (
+                    <option key={yVal} value={yVal}>
+                      พ.ศ. {yVal + 543}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleNextMonth}
+                className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-600 transition cursor-pointer"
+              >
+                ▶
+              </button>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-stone-500 mb-2 border-b border-stone-100 pb-1">
+              <span>อา</span>
+              <span>จ</span>
+              <span>อ</span>
+              <span>พ</span>
+              <span>พฤ</span>
+              <span>ศ</span>
+              <span>ส</span>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 text-center text-xs">
+              {Array.from({ length: firstDayIndex }).map((_, i) => (
+                <div key={`empty-${i}`} className="p-2" />
+              ))}
+
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const dayNum = i + 1;
+                const thisDate = new Date(year, month, dayNum);
+                const isSelected = selectedDate && 
+                  selectedDate.getDate() === dayNum && 
+                  selectedDate.getMonth() === month && 
+                  selectedDate.getFullYear() === year;
+
+                return (
+                  <button
+                    key={dayNum}
+                    type="button"
+                    onClick={() => {
+                      onChange(thisDate);
+                      setIsOpen(false);
+                    }}
+                    className={`p-2 rounded-lg text-center cursor-pointer transition ${
+                      isSelected 
+                        ? 'bg-emerald-600 text-white font-bold' 
+                        : 'hover:bg-stone-100 text-stone-800'
+                    }`}
+                  >
+                    {dayNum}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function WebsiteCreationWizard() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -25,7 +182,27 @@ export default function WebsiteCreationWizard() {
   const [name, setName] = useState('');
   const [deceasedName, setDeceasedName] = useState('');
   const [lifespan, setLifespan] = useState('');
+  const [birthDate, setBirthDate] = useState<Date | null>(null);
+  const [deathDate, setDeathDate] = useState<Date | null>(null);
   const [category, setCategory] = useState('Memorial');
+
+  // Synchronize birthDate and deathDate to lifespan string
+  useEffect(() => {
+    const formatThaiDate = (date: Date) => {
+      const day = date.getDate();
+      const monthName = MONTHS_THAI[date.getMonth()];
+      const yearThai = date.getFullYear() + 543;
+      return `${day} ${monthName} ${yearThai}`;
+    };
+
+    if (birthDate && deathDate) {
+      setLifespan(`${formatThaiDate(birthDate)} – ${formatThaiDate(deathDate)}`);
+    } else if (birthDate) {
+      setLifespan(`${formatThaiDate(birthDate)} – (ยังไม่ระบุ)`);
+    } else {
+      setLifespan('');
+    }
+  }, [birthDate, deathDate]);
   
   const [selectedTheme, setSelectedTheme] = useState('Classic');
   const [primaryColor, setPrimaryColor] = useState('#0d9488');
@@ -411,13 +588,29 @@ export default function WebsiteCreationWizard() {
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-stone-550 uppercase tracking-wide">ช่วงชีวิตวันเกิด – วันเสียชีวิต (Lifespan)</label>
-                <input 
-                  type="text" 
-                  value={lifespan} 
-                  onChange={(e) => setLifespan(e.target.value)} 
-                  placeholder="เช่น 1 มกราคม 2490 – 15 มิถุนายน 2569"
-                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:bg-white focus:outline-none"
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <span className="text-[9px] text-stone-500 font-semibold block">วันเกิด</span>
+                    <CalendarPicker
+                      selectedDate={birthDate}
+                      onChange={setBirthDate}
+                      placeholder="เลือกวันเกิด"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] text-stone-500 font-semibold block">วันเสียชีวิต</span>
+                    <CalendarPicker
+                      selectedDate={deathDate}
+                      onChange={setDeathDate}
+                      placeholder="เลือกวันเสียชีวิต"
+                    />
+                  </div>
+                </div>
+                {lifespan && (
+                  <p className="text-[10px] text-emerald-800 font-semibold mt-2.5 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-1.5 inline-block">
+                    ช่วงชีวิต: {lifespan}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
