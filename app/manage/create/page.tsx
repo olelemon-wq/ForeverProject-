@@ -13,10 +13,12 @@ function CalendarPicker({
   selectedDate,
   onChange,
   placeholder,
+  align = 'left',
 }: {
   selectedDate: Date | null;
   onChange: (date: Date) => void;
   placeholder: string;
+  align?: 'left' | 'right';
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
@@ -69,21 +71,21 @@ function CalendarPicker({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute left-0 bottom-full mb-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-4 w-[310px] sm:w-[350px] animate-fade-in text-left">
-            <div className="flex justify-between items-center mb-4 gap-2">
+          <div className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} bottom-full mb-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-3 w-[315px] sm:w-[350px] animate-fade-in text-left`}>
+            <div className="flex justify-between items-center mb-4 gap-1">
               <button
                 type="button"
                 onClick={handlePrevMonth}
-                className="p-2.5 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center border border-stone-200"
+                className="p-1.5 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center"
               >
                 <ChevronLeft className="w-4 h-4 text-stone-500" />
               </button>
               
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <select
                   value={month}
                   onChange={(e) => handleMonthChange(parseInt(e.target.value))}
-                  className="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm sm:text-base font-bold text-stone-900 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
+                  className="bg-stone-50 border border-stone-200 rounded-xl px-2 py-1.5 text-sm sm:text-base font-bold text-stone-900 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
                 >
                   {MONTHS_THAI.map((mName, idx) => (
                     <option key={idx} value={idx}>{mName}</option>
@@ -93,7 +95,7 @@ function CalendarPicker({
                 <select
                   value={year}
                   onChange={(e) => handleYearChange(parseInt(e.target.value))}
-                  className="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm sm:text-base font-bold text-stone-900 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
+                  className="bg-stone-50 border border-stone-200 rounded-xl px-2 py-1.5 text-sm sm:text-base font-bold text-stone-900 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
                 >
                   {years.map((yVal) => (
                     <option key={yVal} value={yVal}>
@@ -106,7 +108,7 @@ function CalendarPicker({
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-2.5 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center border border-stone-200"
+                className="p-1.5 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center"
               >
                 <ChevronRight className="w-4 h-4 text-stone-500" />
               </button>
@@ -607,6 +609,7 @@ export default function WebsiteCreationWizard() {
                       selectedDate={birthDate}
                       onChange={setBirthDate}
                       placeholder="เลือกวันเกิด"
+                      align="left"
                     />
                   </div>
                   <div className="space-y-1">
@@ -615,6 +618,7 @@ export default function WebsiteCreationWizard() {
                       selectedDate={deathDate}
                       onChange={setDeathDate}
                       placeholder="เลือกวันเสียชีวิต"
+                      align="right"
                     />
                   </div>
                 </div>
