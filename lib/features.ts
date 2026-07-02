@@ -161,7 +161,7 @@ export function getEnabledFeatures(
   };
 
   return {
-    announcement: read('announcement', !!cfg.announcement?.active),
+    announcement: read('announcement', false) || !!cfg.announcement?.active,
     condolence: read('condolence', true),
     memory: read('memory', true),
     feed: read('feed', true),

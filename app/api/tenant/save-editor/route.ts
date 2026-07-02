@@ -83,6 +83,10 @@ export async function POST(request: Request) {
       ...currentConfig,
       // If font family was selected in properties panel, keep it updated
       fontFamily: currentConfig.fontFamily || 'LINE Seed Sans TH',
+      features: {
+        ...(currentConfig.features || {}),
+        announcement: announcementActive,
+      },
       announcement: {
         ...(currentConfig.announcement || {}),
         active: announcementActive,

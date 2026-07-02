@@ -513,6 +513,10 @@ export default function WebmasterDashboard() {
             coverRotate: deceasedCoverRotate,
             biography,
             features,
+            announcement: {
+              ...((activeSite as any).themeConfig?.announcement || {}),
+              active: features.announcement,
+            },
           },
         }),
       });
