@@ -101,8 +101,23 @@ export default function WebmasterDashboard() {
   const [galleryMedias, setGalleryMedias] = useState<any[]>([]);
   const [galleryLoading, setGalleryLoading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
-  const [galleryDragActive, setGalleryDragActive] = useState(false);
-  
+  const [annActive, setAnnActive] = useState(true);
+  const [annText, setAnnText] = useState('');
+  const [annStyle, setAnnStyle] = useState('ELEGANT_WHITE');
+  const [annFontFamily, setAnnFontFamily] = useState('LINE Seed Sans TH');
+  const [annWaterDate, setAnnWaterDate] = useState('');
+  const [annWaterTime, setAnnWaterTime] = useState('');
+  const [annAbhidhammaDateRange, setAnnAbhidhammaDateRange] = useState('');
+  const [annAbhidhammaTime, setAnnAbhidhammaTime] = useState('');
+  const [annCremationDate, setAnnCremationDate] = useState('');
+  const [annCremationTime, setAnnCremationTime] = useState('');
+  const [annTempleName, setAnnTempleName] = useState('');
+  const [annPavilion, setAnnPavilion] = useState('');
+  const [annMapLink, setAnnMapLink] = useState('');
+  const [annDressCode, setAnnDressCode] = useState('');
+  const [annWreathPolicy, setAnnWreathPolicy] = useState('NORMAL');
+  const [annContactPhone, setAnnContactPhone] = useState('');
+
   const [deceasedAvatarUrl, setDeceasedAvatarUrl] = useState('');
   const [deceasedAvatarScale, setDeceasedAvatarScale] = useState(1);
   const [deceasedAvatarX, setDeceasedAvatarX] = useState(0);
@@ -428,6 +443,25 @@ export default function WebmasterDashboard() {
       setDeceasedCoverX(config.coverX || 0);
       setDeceasedCoverY(config.coverY || 0);
       setDeceasedCoverRotate(config.coverRotate || 0);
+
+      const ann = config.announcement || {};
+      setAnnActive(ann.active !== false);
+      setAnnText(ann.text || '');
+      setAnnStyle(ann.style || 'ELEGANT_WHITE');
+      setAnnFontFamily(ann.fontFamily || 'LINE Seed Sans TH');
+      setAnnWaterDate(ann.waterDate || '');
+      setAnnWaterTime(ann.waterTime || '');
+      setAnnAbhidhammaDateRange(ann.abhidhammaDateRange || '');
+      setAnnAbhidhammaTime(ann.abhidhammaTime || '');
+      setAnnCremationDate(ann.cremationDate || '');
+      setAnnCremationTime(ann.cremationTime || '');
+      setAnnTempleName(ann.templeName || '');
+      setAnnPavilion(ann.pavilion || '');
+      setAnnMapLink(ann.mapLink || '');
+      setAnnDressCode(ann.dressCode || '');
+      setAnnWreathPolicy(ann.wreathPolicy || 'NORMAL');
+      setAnnContactPhone(ann.contactPhone || '');
+
       if (config.features) {
         setFeatures({
           family: config.features.family !== false,
@@ -514,8 +548,22 @@ export default function WebmasterDashboard() {
             biography,
             features,
             announcement: {
-              ...((activeSite as any).themeConfig?.announcement || {}),
-              active: features.announcement,
+              active: annActive,
+              text: annText,
+              style: annStyle,
+              fontFamily: annFontFamily,
+              waterDate: annWaterDate,
+              waterTime: annWaterTime,
+              abhidhammaDateRange: annAbhidhammaDateRange,
+              abhidhammaTime: annAbhidhammaTime,
+              cremationDate: annCremationDate,
+              cremationTime: annCremationTime,
+              templeName: annTempleName,
+              pavilion: annPavilion,
+              mapLink: annMapLink,
+              dressCode: annDressCode,
+              wreathPolicy: annWreathPolicy,
+              contactPhone: annContactPhone,
             },
           },
         }),
@@ -533,8 +581,10 @@ export default function WebmasterDashboard() {
         category: siteCategory,
         donationPromptPay,
         donationAccountName,
-        donationActive
+        donationActive,
+        themeConfig: data.tenant.themeConfig
       } : w));
+      setActiveSite(data.tenant);
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     } finally {
@@ -1548,47 +1598,347 @@ export default function WebmasterDashboard() {
 
                   {/* Announcement settings cards */}
                   {features.announcement && (
-                    <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 space-y-4">
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="text-left">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start border-t border-stone-150 pt-6">
+                      {/* Left: Inputs */}
+                      <div className="space-y-6 text-left bg-stone-50/20 p-5 rounded-2xl border border-stone-200">
+                        <div className="flex justify-between items-center border-b border-stone-150 pb-3">
                           <h4 className="text-sm font-bold text-stone-900 flex items-center gap-1.5 font-sans">
                             <Calendar className="w-4 h-4 text-emerald-700" />
-                            <span>การ์ดกำหนดการดิจิทัล (Digital Invitation Card)</span>
+                            <span>ข้อมูลการ์ดกำหนดการดิจิทัล</span>
                           </h4>
-                          <p className="text-xs text-stone-500 mt-1">
-                            แก้ไขข้อมูลกำหนดการ สถานที่จัดงาน และลวดลายธีมการ์ดในรูปแบบ Canvas ออนไลน์
-                          </p>
+                          <label className="flex items-center gap-2 text-xs font-bold text-stone-600 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={annActive}
+                              onChange={() => setAnnActive(!annActive)}
+                              className="w-4 h-4 accent-emerald-650 cursor-pointer"
+                            />
+                            <span>เปิดแสดงผลการ์ด</span>
+                          </label>
                         </div>
-                        <span className={`px-2 py-0.5 text-[9px] font-black rounded-lg ${
-                          (activeSite as any)?.themeConfig?.announcement?.active !== false 
-                            ? 'bg-emerald-100 text-emerald-800' 
-                            : 'bg-stone-200 text-stone-600'
-                        }`}>
-                          {(activeSite as any)?.themeConfig?.announcement?.active !== false ? 'เปิดแสดงผล' : 'ปิดอยู่'}
-                        </span>
+
+                        {annActive && (
+                          <div className="space-y-4 text-xs">
+                            {/* Theme and Font selection */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-1">
+                                <label className="font-bold text-stone-600">รูปแบบธีมการ์ด</label>
+                                <select
+                                  value={annStyle}
+                                  onChange={(e) => setAnnStyle(e.target.value)}
+                                  className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
+                                >
+                                  <option value="ELEGANT_WHITE">Classic White (สีขาวเรียบหรู)</option>
+                                  <option value="WARM_CREAM">Warm Cream (สีครีมวินเทจ)</option>
+                                  <option value="CHARCOAL_SLATE">Charcoal Gold (สีเข้มหรูหรา)</option>
+                                </select>
+                              </div>
+                              <div className="space-y-1">
+                                <label className="font-bold text-stone-600">แบบอักษร (Font)</label>
+                                <select
+                                  value={annFontFamily}
+                                  onChange={(e) => setAnnFontFamily(e.target.value)}
+                                  className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
+                                >
+                                  <option value="LINE Seed Sans TH">LINE Seed (ตัวหนา ทันสมัย)</option>
+                                  <option value="Charmonman">Charmonman (ตัวเขียนทางการ)</option>
+                                  <option value="Srisakdi">Srisakdi (ตัวอักษรไทยคลาสสิก)</option>
+                                  <option value="Charm">Charm (ตัวเขียนอ่อนช้อย)</option>
+                                  <option value="Thasadith">Thasadith (ตัวพิมพ์ทางการ)</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            {/* Header Text */}
+                            <div className="space-y-1">
+                              <label className="font-bold text-stone-600">คำเชิญชวนหลักด้านบน</label>
+                              <input
+                                type="text"
+                                value={annText}
+                                onChange={(e) => setAnnText(e.target.value)}
+                                placeholder="กราบเรียนเชิญด้วยความเคารพอย่างสูง"
+                                className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold"
+                              />
+                            </div>
+
+                            <div className="border-t border-stone-150 pt-3">
+                              <p className="font-bold text-stone-700 mb-2">กำหนดการพิธี</p>
+                              <div className="space-y-3">
+                                {/* 1. รดน้ำ */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
+                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">1. พิธีรดน้ำศพ</div>
+                                  <div className="space-y-1">
+                                    <label className="text-stone-500 font-medium">วันที่จัด</label>
+                                    <input
+                                      type="text"
+                                      value={annWaterDate}
+                                      onChange={(e) => setAnnWaterDate(e.target.value)}
+                                      placeholder="เช่น วันศุกร์ที่ 15 พ.ย. 67"
+                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-stone-500 font-medium">เวลาเริ่ม</label>
+                                    <input
+                                      type="text"
+                                      value={annWaterTime}
+                                      onChange={(e) => setAnnWaterTime(e.target.value)}
+                                      placeholder="เช่น 16:00 น."
+                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* 2. สวดพระอภิธรรม */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
+                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">2. พิธีสวดพระอภิธรรม</div>
+                                  <div className="space-y-1">
+                                    <label className="text-stone-500 font-medium">ช่วงวันที่สวด</label>
+                                    <input
+                                      type="text"
+                                      value={annAbhidhammaDateRange}
+                                      onChange={(e) => setAnnAbhidhammaDateRange(e.target.value)}
+                                      placeholder="เช่น 16-22 พ.ย. 67"
+                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-stone-500 font-medium">เวลาเริ่มสวด</label>
+                                    <input
+                                      type="text"
+                                      value={annAbhidhammaTime}
+                                      onChange={(e) => setAnnAbhidhammaTime(e.target.value)}
+                                      placeholder="เช่น 19:00 น."
+                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* 3. ฌาปนกิจ */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
+                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ</div>
+                                  <div className="space-y-1">
+                                    <label className="text-stone-500 font-medium">วันที่ฌาปนกิจ</label>
+                                    <input
+                                      type="text"
+                                      value={annCremationDate}
+                                      onChange={(e) => setAnnCremationDate(e.target.value)}
+                                      placeholder="เช่น วันเสาร์ที่ 23 พ.ย. 67"
+                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-stone-500 font-medium">เวลาเริ่มพิธี</label>
+                                    <input
+                                      type="text"
+                                      value={annCremationTime}
+                                      onChange={(e) => setAnnCremationTime(e.target.value)}
+                                      placeholder="เช่น 16:30 น."
+                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Location Details */}
+                            <div className="border-t border-stone-150 pt-3 space-y-3">
+                              <p className="font-bold text-stone-700">สถานที่จัดงาน (VENUE)</p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div className="space-y-1">
+                                  <label className="text-stone-600 font-semibold">ชื่อวัด</label>
+                                  <input
+                                    type="text"
+                                    value={annTempleName}
+                                    onChange={(e) => setAnnTempleName(e.target.value)}
+                                    placeholder="เช่น วัดมกุฏกษัตริยาราม"
+                                    className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-stone-600 font-semibold">ศาลาที่จัดงาน</label>
+                                  <input
+                                    type="text"
+                                    value={annPavilion}
+                                    onChange={(e) => setAnnPavilion(e.target.value)}
+                                    placeholder="เช่น ศาลา 10"
+                                    className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                  />
+                                </div>
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-stone-600 font-semibold">ลิงก์ Google Maps สำหรับนำทาง (ถ้ามี)</label>
+                                <input
+                                  type="text"
+                                  value={annMapLink}
+                                  onChange={(e) => setAnnMapLink(e.target.value)}
+                                  placeholder="เช่น https://goo.gl/maps/..."
+                                  className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Recommendations */}
+                            <div className="border-t border-stone-150 pt-3 space-y-3">
+                              <p className="font-bold text-stone-700">คำแนะนำการร่วมงาน</p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div className="space-y-1">
+                                  <label className="text-stone-600 font-semibold">การแต่งกาย</label>
+                                  <input
+                                    type="text"
+                                    value={annDressCode}
+                                    onChange={(e) => setAnnDressCode(e.target.value)}
+                                    placeholder="เช่น ชุดสุภาพสีขาว/ดำ"
+                                    className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-stone-600 font-semibold">เบอร์โทรติดต่อประสานงาน</label>
+                                  <input
+                                    type="text"
+                                    value={annContactPhone}
+                                    onChange={(e) => setAnnContactPhone(e.target.value)}
+                                    placeholder="เช่น 081-234-5678"
+                                    className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
+                                  />
+                                </div>
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-stone-600 font-semibold">นโยบายการรับพวงหรีด</label>
+                                <select
+                                  value={annWreathPolicy}
+                                  onChange={(e) => setAnnWreathPolicy(e.target.value)}
+                                  className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
+                                >
+                                  <option value="NORMAL">รับพวงหรีดตามปกติ</option>
+                                  <option value="NO_WREATH">งดรับพวงหรีดทุกประเภท</option>
+                                  <option value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Mini Preview Box */}
-                      <div className="p-4 rounded-xl bg-white border border-stone-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
-                        <div className="space-y-1 text-left">
-                          <p className="font-semibold text-stone-700">
-                            ธีมที่เลือก: <span className="font-bold text-stone-900">
-                              {((activeSite as any)?.themeConfig?.announcement?.style === 'CHARCOAL_SLATE') ? 'Charcoal Gold (สีเข้มหรูหรา)' : 
-                               ((activeSite as any)?.themeConfig?.announcement?.style === 'WARM_CREAM') ? 'Warm Cream (สีครีมวินเทจ)' : 'Classic White (สีขาวเรียบหรู)'}
-                            </span>
-                          </p>
-                          <p className="text-stone-500">
-                            ฟอนต์อักษร: <span className="font-bold text-stone-700">{(activeSite as any)?.themeConfig?.announcement?.fontFamily || 'LINE Seed Sans TH'}</span>
-                          </p>
-                        </div>
+                      {/* Right: Live Preview Card */}
+                      <div className="sticky top-6 space-y-4">
+                        <p className="text-xs font-bold text-stone-500 text-left uppercase tracking-wider">💡 ตัวอย่างแสดงผลการ์ดจริงบนหน้าเว็บ (Live Preview)</p>
+                        
+                        {!annActive ? (
+                          <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-xs bg-stone-50">
+                            การ์ดปิดการแสดงผลอยู่ จะไม่ถูกแสดงในหน้าแรกของเว็บไซต์สาธารณะ
+                          </div>
+                        ) : (
+                          <div 
+                            className={`w-full max-w-md mx-auto rounded-3xl border p-8 space-y-6 text-center shadow-lg relative overflow-hidden transition-all duration-300 ${
+                              annStyle === 'CHARCOAL_SLATE'
+                                ? 'bg-stone-950 border-stone-800 text-[#C2A878] shadow-[0_10px_30px_rgba(0,0,0,0.4)]'
+                                : annStyle === 'WARM_CREAM'
+                                ? 'bg-[#FAF6EE] border-[#EADFC9] text-[#4A3E29]'
+                                : 'bg-white border-stone-200 text-stone-900'
+                            }`}
+                            style={{
+                              fontFamily: annFontFamily,
+                              backgroundImage: annStyle === 'CHARCOAL_SLATE' ? 'url(/Template-cards/charcoal_gold.png)' : undefined,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                            }}
+                          >
+                            {/* Repositioned Deceased Image */}
+                            <div className="relative w-28 h-28 rounded-full border border-amber-600/40 overflow-hidden mx-auto bg-stone-100 flex items-center justify-center shadow-md">
+                              {deceasedAvatarUrl ? (
+                                <img
+                                  src={deceasedAvatarUrl.replace('https://storage.forever.co.th', '')}
+                                  alt="Avatar Preview"
+                                  className="pointer-events-none max-w-none origin-center"
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    transform: `translate(${deceasedAvatarX}px, ${deceasedAvatarY}px) rotate(${deceasedAvatarRotate}deg) scale(${deceasedAvatarScale})`,
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-stone-250 flex items-center justify-center text-xs font-bold text-stone-500">
+                                  รูปโปรไฟล์
+                                </div>
+                              )}
+                            </div>
 
-                        <Link
-                          href={`/manage/editor?slug=${activeSite?.slug}`}
-                          className="px-4 py-2 bg-stone-900 hover:bg-black text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
-                        >
-                          <Settings className="w-3.5 h-3.5" />
-                          <span>เปิดเครื่องมือแก้ไขการ์ด (Visual Editor)</span>
-                        </Link>
+                            {/* Header */}
+                            <div className="space-y-1.5">
+                              <p className="text-[10px] tracking-widest opacity-80 uppercase">{annText || 'กราบเรียนเชิญด้วยความเคารพอย่างสูง'}</p>
+                              <h2 className="text-xl font-bold tracking-normal">ด้วยรักและคิดถึง {siteName}</h2>
+                              <p className="text-[10px] opacity-75 font-semibold">กำหนดการพิธีสวดพระอภิธรรม และฌาปนกิจศพ</p>
+                            </div>
+
+                            {/* Timelines list */}
+                            <div className="space-y-3 text-xs text-left">
+                              {/* 1. Water */}
+                              {(annWaterDate || annWaterTime) && (
+                                <div className={`p-4 rounded-2xl border transition-all ${
+                                  annStyle === 'CHARCOAL_SLATE' ? 'bg-stone-900/60 border-[#C2A878]/25' : 
+                                  annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
+                                  'bg-stone-50 border-stone-200/80'
+                                }`}>
+                                  <p className="font-bold mb-1">1. พิธีรดน้ำศพ</p>
+                                  <p className="opacity-90">{annWaterDate || '-'} {annWaterTime ? `เวลา ${annWaterTime}` : ''}</p>
+                                </div>
+                              )}
+
+                              {/* 2. Abhidhamma */}
+                              {(annAbhidhammaDateRange || annAbhidhammaTime) && (
+                                <div className={`p-4 rounded-2xl border transition-all ${
+                                  annStyle === 'CHARCOAL_SLATE' ? 'bg-stone-900/60 border-[#C2A878]/25' : 
+                                  annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
+                                  'bg-stone-50 border-stone-200/80'
+                                }`}>
+                                  <p className="font-bold mb-1">2. พิธีสวดพระอภิธรรม</p>
+                                  <p className="opacity-90">ช่วงวันที่: {annAbhidhammaDateRange || '-'} {annAbhidhammaTime ? `เวลา ${annAbhidhammaTime}` : ''}</p>
+                                </div>
+                              )}
+
+                              {/* 3. Cremation */}
+                              {(annCremationDate || annCremationTime) && (
+                                <div className={`p-4 rounded-2xl border transition-all ${
+                                  annStyle === 'CHARCOAL_SLATE' ? 'bg-stone-900/60 border-[#C2A878]/25' : 
+                                  annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
+                                  'bg-stone-50 border-stone-200/80'
+                                }`}>
+                                  <p className="font-bold mb-1">3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ</p>
+                                  <p className="opacity-90">{annCremationDate || '-'} {annCremationTime ? `เวลา ${annCremationTime}` : ''}</p>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Venue & Guidelines */}
+                            {(annTempleName || annPavilion || annDressCode || annContactPhone) && (
+                              <div className="space-y-4 border-t border-dashed border-stone-300/30 pt-4 text-xs text-left">
+                                {annTempleName && (
+                                  <div>
+                                    <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">สถานที่จัดพิธี (VENUE)</p>
+                                    <p className="font-bold mt-0.5">{annTempleName} {annPavilion ? `(${annPavilion})` : ''}</p>
+                                    {annMapLink && (
+                                      <span className="inline-block text-[9px] text-emerald-600 underline font-bold mt-1">
+                                        คลิกลิงก์เพื่อนำทาง Google Maps
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+
+                                {(annDressCode || annContactPhone || annWreathPolicy !== 'NORMAL') && (
+                                  <div className="space-y-1">
+                                    <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">ข้อแนะนำการร่วมแสดงความอาลัย</p>
+                                    {annDressCode && <p className="opacity-90">👗 การแต่งกาย: {annDressCode}</p>}
+                                    {annContactPhone && <p className="opacity-90">📞 ติดต่อประสานงาน: {annContactPhone}</p>}
+                                    {annWreathPolicy === 'NO_WREATH' && <p className="text-red-600 font-bold">🚫 งดรับพวงหรีดทุกประเภท</p>}
+                                    {annWreathPolicy === 'DONATION_ONLY' && <p className="text-amber-800 font-bold">🎗️ งดรับพวงหรีด ร่วมทำบุญสมทบทุนแทน</p>}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
