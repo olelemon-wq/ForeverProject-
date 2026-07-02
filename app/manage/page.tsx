@@ -131,6 +131,7 @@ export default function WebmasterDashboard() {
   };
 
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [defaultFontSize, setDefaultFontSize] = useState<'NORMAL' | 'MEDIUM' | 'LARGE'>('NORMAL');
 
   const [deceasedAvatarUrl, setDeceasedAvatarUrl] = useState('');
   const [deceasedAvatarScale, setDeceasedAvatarScale] = useState(1);
@@ -518,6 +519,7 @@ export default function WebmasterDashboard() {
       const loadedFont = config.fontFamily || 'Inter';
       setFontFamily(scriptFonts.includes(loadedFont) ? 'LINE Seed Sans TH' : loadedFont);
       setBiography(config.biography || '');
+      setDefaultFontSize(config.defaultFontSize || 'NORMAL');
       setDeceasedAvatarUrl(config.avatarUrl || '');
       setDeceasedAvatarScale(config.avatarScale || 1);
       setDeceasedAvatarX(config.avatarX || 0);
@@ -619,6 +621,7 @@ export default function WebmasterDashboard() {
             primaryColor,
             secondaryColor,
             fontFamily,
+            defaultFontSize,
             heroStyle: 'Classic',
             avatarUrl: deceasedAvatarUrl,
             avatarScale: deceasedAvatarScale,
@@ -1746,6 +1749,20 @@ export default function WebmasterDashboard() {
                                   <option value="Thasadith">Thasadith (ตัวพิมพ์ทางการ)</option>
                                 </select>
                               </div>
+                            </div>
+
+                            {/* Default Font Size selector */}
+                            <div className="space-y-1">
+                              <label className="font-bold text-stone-600">ขนาดตัวอักษรเริ่มต้นของเว็บไซต์</label>
+                              <select
+                                value={defaultFontSize}
+                                onChange={(e) => setDefaultFontSize(e.target.value as any)}
+                                className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
+                              >
+                                <option value="NORMAL">ขนาดปกติ (100% - มาตรฐานทั่วไป)</option>
+                                <option value="MEDIUM">ขนาดค่อนข้างใหญ่ (112% - อ่านง่ายสบายตา)</option>
+                                <option value="LARGE">ขนาดใหญ่พิเศษ (125% - แนะนำสำหรับผู้สูงอายุ)</option>
+                              </select>
                             </div>
 
                             {/* Header Text */}

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Flame, Menu as MenuIcon, X, Eye } from 'lucide-react';
+import { Flame, Menu as MenuIcon, X, Eye, Type } from 'lucide-react';
 import { getEnabledFeatures } from '@/lib/features';
 import { getFeatureLabel } from '@/lib/categories';
 
@@ -36,10 +36,36 @@ export default function PublicLayoutClient({
   themeStyles: React.CSSProperties;
   hasContent?: any;
 }) {
-  const [textSize, setTextSize] = useState<'normal' | 'large'>('normal');
+  const [zoomLevel, setZoomLevel] = useState<number>(0);
+  const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const config = (tenant.themeConfig as any) || {};
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem(`forever-font-zoom-${slug}`);
+    if (saved) {
+      setZoomLevel(parseInt(saved, 10));
+    }
+  }, [slug]);
+
+  const changeZoom = (newZoom: number) => {
+    setZoomLevel(newZoom);
+    localStorage.setItem(`forever-font-zoom-${slug}`, newZoom.toString());
+  };
+
+  React.useEffect(() => {
+    let basePercent = 100;
+    if (config.defaultFontSize === 'MEDIUM') basePercent = 112.5;
+    else if (config.defaultFontSize === 'LARGE') basePercent = 125;
+
+    const finalPercent = basePercent + (zoomLevel * 12.5);
+    document.documentElement.style.fontSize = `${finalPercent}%`;
+
+    return () => {
+      document.documentElement.style.fontSize = '100%';
+    };
+  }, [config.defaultFontSize, zoomLevel]);
   const coverUrl = config.coverUrl || '';
   const coverScale = config.coverScale || 1;
   const coverX = config.coverX || 0;
@@ -99,42 +125,8 @@ export default function PublicLayoutClient({
   return (
     <div 
       style={themeStyles} 
-      className={`min-h-screen bg-[#faf6f0] text-stone-800 flex flex-col font-sans transition-all duration-200 ${
-        textSize === 'large' ? 'accessibility-large-text' : ''
-      }`}
+      className="min-h-screen bg-[#faf6f0] text-stone-800 flex flex-col font-sans transition-all duration-200"
     >
-      {/* Accessibility Toolbar */}
-      <div className="w-full h-9 bg-stone-100/90 border-b border-stone-200/50 px-4 flex sticky top-0 z-50 backdrop-blur-sm shadow-xs">
-        <div className="max-w-5xl mx-auto w-full flex justify-end items-center gap-3 text-[11px] font-semibold text-stone-600">
-          <span className="flex items-center gap-1">
-            <Eye className="w-3.5 h-3.5 text-stone-500" /> ปรับขนาดตัวอักษร:
-          </span>
-          <div className="flex gap-1 bg-white border border-stone-200 rounded-full p-0.5 shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setTextSize('normal')}
-              className={`px-3 py-0.5 rounded-full transition-all text-[10px] cursor-pointer ${
-                textSize === 'normal' 
-                  ? 'bg-stone-800 text-white font-bold' 
-                  : 'text-stone-650 hover:bg-stone-50'
-              }`}
-            >
-              ปกติ
-            </button>
-            <button
-              type="button"
-              onClick={() => setTextSize('large')}
-              className={`px-3 py-0.5 rounded-full transition-all text-[10px] cursor-pointer ${
-                textSize === 'large' 
-                  ? 'bg-emerald-700 text-white font-bold' 
-                  : 'text-stone-650 hover:bg-stone-50'
-              }`}
-            >
-              ใหญ่พิเศษ (A+)
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Header */}
       <header className={`relative py-16 text-center border-b border-stone-200/60 overflow-hidden transition-all duration-500 ${
@@ -244,6 +236,84 @@ export default function PublicLayoutClient({
       <footer className="py-8 text-center text-xs text-stone-500 border-t border-stone-200/60 bg-stone-100/30">
         <p>© 2026 FOREVER Digital Memorial Platform — {tenant.name}</p>
       </footer>
+
+      {/* Floating Accessibility Widget */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 font-sans select-none">
+        {/* Expanded Panel */}
+        {isAccessibilityOpen && (
+          <div className="w-64 bg-white border border-stone-200 rounded-2xl p-4 shadow-2xl flex flex-col gap-3 animate-fade-in text-left">
+            <div className="flex justify-between items-center border-b border-stone-100 pb-1.5">
+              <h4 className="text-xs font-bold text-stone-850 flex items-center gap-1.5">
+                <Type className="w-4 h-4 text-emerald-700" />
+                <span>ปรับขนาดตัวอักษร</span>
+              </h4>
+              <button
+                type="button"
+                onClick={() => setIsAccessibilityOpen(false)}
+                className="p-1 hover:bg-stone-100 text-stone-400 hover:text-stone-700 rounded-lg transition cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="flex bg-stone-50 border border-stone-200 rounded-xl p-0.5 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => changeZoom(Math.max(-1, zoomLevel - 1))}
+                disabled={zoomLevel <= -1}
+                className={`flex-1 py-1.5 rounded-lg text-center text-xs font-bold transition flex items-center justify-center cursor-pointer disabled:opacity-30 ${
+                  zoomLevel < 0 ? 'bg-stone-800 text-white shadow-xs' : 'text-stone-600 hover:bg-stone-100'
+                }`}
+              >
+                A-
+              </button>
+              <button
+                type="button"
+                onClick={() => changeZoom(0)}
+                className={`flex-1 py-1.5 rounded-lg text-center text-xs font-bold transition cursor-pointer ${
+                  zoomLevel === 0 ? 'bg-stone-800 text-white shadow-xs' : 'text-stone-600 hover:bg-stone-100'
+                }`}
+              >
+                ปกติ
+              </button>
+              <button
+                type="button"
+                onClick={() => changeZoom(Math.min(2, zoomLevel + 1))}
+                disabled={zoomLevel >= 2}
+                className={`flex-1 py-1.5 rounded-lg text-center text-xs font-bold transition flex items-center justify-center cursor-pointer disabled:opacity-30 ${
+                  zoomLevel > 0 ? 'bg-emerald-700 text-white shadow-xs' : 'text-stone-600 hover:bg-stone-100'
+                }`}
+              >
+                A+
+              </button>
+            </div>
+
+            <p className="text-[10px] text-stone-400 font-semibold leading-normal">
+              {config.defaultFontSize === 'LARGE'
+                ? 'เจ้าภาพตั้งค่าเริ่มต้นแบบใหญ่พิเศษ (สามารถปรับลด A- หรือเพิ่ม A+ ได้อีก)'
+                : config.defaultFontSize === 'MEDIUM'
+                ? 'เจ้าภาพตั้งค่าเริ่มต้นแบบอ่านง่ายสบายตา (สามารถปรับลด A- หรือเพิ่ม A+ ได้อีก)'
+                : 'ขนาดปกติของหน้าเว็บ (สามารถปรับเพิ่ม A+ ได้สูงสุด 2 ระดับ)'}
+            </p>
+          </div>
+        )}
+
+        {/* Floating Trigger Button */}
+        <button
+          type="button"
+          onClick={() => setIsAccessibilityOpen(!isAccessibilityOpen)}
+          className={`w-12 h-12 rounded-full border shadow-lg hover:shadow-xl active:scale-[0.93] transition flex items-center justify-center font-bold text-sm cursor-pointer select-none hover:bg-stone-50 ${
+            isAccessibilityOpen 
+              ? 'bg-stone-800 border-stone-700 text-white' 
+              : zoomLevel !== 0 
+              ? 'bg-emerald-700 border-emerald-600 text-white hover:bg-emerald-800' 
+              : 'bg-white border-stone-200 text-stone-700'
+          }`}
+          title="ปรับปรุงการเข้าถึงขนาดตัวอักษร"
+        >
+          {isAccessibilityOpen ? <X className="w-5 h-5" /> : <span className="font-serif">Aa</span>}
+        </button>
+      </div>
     </div>
   );
 }
