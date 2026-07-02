@@ -1547,7 +1547,51 @@ export default function WebmasterDashboard() {
                   </div>
 
                   {/* Announcement settings cards */}
-                  
+                  {features.announcement && (
+                    <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 space-y-4">
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="text-left">
+                          <h4 className="text-sm font-bold text-stone-900 flex items-center gap-1.5 font-sans">
+                            <Calendar className="w-4 h-4 text-emerald-700" />
+                            <span>การ์ดกำหนดการดิจิทัล (Digital Invitation Card)</span>
+                          </h4>
+                          <p className="text-xs text-stone-500 mt-1">
+                            แก้ไขข้อมูลกำหนดการ สถานที่จัดงาน และลวดลายธีมการ์ดในรูปแบบ Canvas ออนไลน์
+                          </p>
+                        </div>
+                        <span className={`px-2 py-0.5 text-[9px] font-black rounded-lg ${
+                          (activeSite as any)?.themeConfig?.announcement?.active !== false 
+                            ? 'bg-emerald-100 text-emerald-800' 
+                            : 'bg-stone-200 text-stone-600'
+                        }`}>
+                          {(activeSite as any)?.themeConfig?.announcement?.active !== false ? 'เปิดแสดงผล' : 'ปิดอยู่'}
+                        </span>
+                      </div>
+
+                      {/* Mini Preview Box */}
+                      <div className="p-4 rounded-xl bg-white border border-stone-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+                        <div className="space-y-1 text-left">
+                          <p className="font-semibold text-stone-700">
+                            ธีมที่เลือก: <span className="font-bold text-stone-900">
+                              {((activeSite as any)?.themeConfig?.announcement?.style === 'CHARCOAL_SLATE') ? 'Charcoal Gold (สีเข้มหรูหรา)' : 
+                               ((activeSite as any)?.themeConfig?.announcement?.style === 'WARM_CREAM') ? 'Warm Cream (สีครีมวินเทจ)' : 'Classic White (สีขาวเรียบหรู)'}
+                            </span>
+                          </p>
+                          <p className="text-stone-500">
+                            ฟอนต์อักษร: <span className="font-bold text-stone-700">{(activeSite as any)?.themeConfig?.announcement?.fontFamily || 'LINE Seed Sans TH'}</span>
+                          </p>
+                        </div>
+
+                        <Link
+                          href={`/manage/editor?slug=${activeSite?.slug}`}
+                          className="px-4 py-2 bg-stone-900 hover:bg-black text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+                        >
+                          <Settings className="w-3.5 h-3.5" />
+                          <span>เปิดเครื่องมือแก้ไขการ์ด (Visual Editor)</span>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Donation Settings Section */}
                   <div className="border-t border-stone-150 pt-6 space-y-4">
@@ -2064,7 +2108,182 @@ export default function WebmasterDashboard() {
               )}
             </form>
           </div>
-        )}        {/* Family Tree Manager Section */}
+        )}
+        {activeTab === 'gallery' && (
+          <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+            <div className="flex justify-between items-center border-b border-stone-100 pb-4">
+              <div>
+                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
+                  <Camera className="w-5 h-5 text-emerald-700" />
+                  <span>คลังภาพถ่ายความทรงจำ ({photoMedias.length})</span>
+                </h3>
+                <p className="text-xs text-stone-500">อัปโหลดและจัดการภาพถ่ายของแกลเลอรีความทรงจำ</p>
+              </div>
+              <label className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+                <Plus className="w-3.5 h-3.5" />
+                <span>อัปโหลดรูปภาพใหม่</span>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  multiple 
+                  className="hidden" 
+                  onChange={async (e) => {
+                    if (e.target.files) {
+                      for (let i = 0; i < e.target.files.length; i++) {
+                        await uploadGalleryMedia(e.target.files[i]);
+                      }
+                      // Refresh list
+                      if (!activeSite) return;
+                      const listRes = await fetch(`/api/media/list?websiteId=${activeSite.id}`);
+                      const listData = await listRes.json();
+                      if (listRes.ok) {
+                        setGalleryMedias(listData.mediaList || []);
+                      }
+                    }
+                  }}
+                />
+              </label>
+            </div>
+
+            {galleryUploading && (
+              <div className="p-4 bg-stone-50 border border-stone-200 text-xs text-stone-600 rounded-2xl font-semibold animate-pulse flex items-center gap-2">
+                <RotateCw className="w-4 h-4 animate-spin text-emerald-600" />
+                <span>กำลังอัปโหลดรูปภาพไปยังคลังเก็บข้อมูล...</span>
+              </div>
+            )}
+
+            {photoMedias.length === 0 ? (
+              <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-sm">
+                ยังไม่มีการอัปโหลดไฟล์รูปภาพความทรงจำ
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                {photoMedias.map((m) => (
+                  <div key={m.id} className="group relative aspect-square bg-stone-50 rounded-2xl overflow-hidden border border-stone-200 shadow-sm flex flex-col justify-between">
+                    <img 
+                      src={m.filePath} 
+                      alt={m.fileName} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                      <button
+                        onClick={async () => {
+                          if (confirm('คุณต้องการลบรูปภาพนี้หรือไม่?')) {
+                            try {
+                              const res = await fetch(`/api/media/delete?id=${m.id}`, { method: 'POST' });
+                              if (res.ok) {
+                                setGalleryMedias(galleryMedias.filter(g => g.id !== m.id));
+                                setSuccess('ลบรูปภาพสำเร็จ');
+                              }
+                            } catch (e) {
+                              console.error(e);
+                            }
+                          }
+                        }}
+                        className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer"
+                        title="ลบรูปภาพ"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {activeTab === 'videos' && (
+          <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+            <div className="flex justify-between items-center border-b border-stone-100 pb-4">
+              <div>
+                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
+                  <Video className="w-5 h-5 text-emerald-700" />
+                  <span>คลังวิดีโอ ({videoMedias.length})</span>
+                </h3>
+                <p className="text-xs text-stone-500">แนบลิงก์วิดีโอ YouTube หรืออัปโหลดคลิปวิดีโอ</p>
+              </div>
+            </div>
+
+            {/* YouTube Link Form */}
+            <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 text-left">
+              <h4 className="text-sm font-bold text-stone-900">แนบลิงก์วิดีโอจาก YouTube</h4>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  value={youtubeUrl}
+                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                  placeholder="วางลิงก์ เช่น https://www.youtube.com/watch?v=..."
+                  className="flex-1 px-4 py-2.5 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
+                />
+                <button
+                  onClick={handleSaveYoutubeLink}
+                  disabled={youtubeSaving}
+                  className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition active:scale-95 flex-shrink-0 cursor-pointer"
+                >
+                  {youtubeSaving ? 'กำลังบันทึก...' : 'บันทึกลิงก์'}
+                </button>
+              </div>
+            </div>
+
+            {videoMedias.length === 0 ? (
+              <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-sm">
+                ยังไม่มีการเพิ่มลิงก์วิดีโอความทรงจำ
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {videoMedias.map((m) => {
+                  const isYoutube = m.mimeType === 'video/youtube' || m.filePath.includes('youtube.com') || m.filePath.includes('youtu.be');
+                  let embedUrl = m.filePath;
+                  if (isYoutube) {
+                    const match = m.filePath.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+                    if (match) {
+                      embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+                    }
+                  }
+
+                  return (
+                    <div key={m.id} className="group relative rounded-2xl overflow-hidden border border-stone-200 bg-stone-50 flex flex-col justify-between shadow-sm aspect-video">
+                      {isYoutube ? (
+                        <iframe
+                          src={embedUrl}
+                          className="w-full h-full border-0"
+                          allowFullScreen
+                          title={m.fileName}
+                        />
+                      ) : (
+                        <video src={m.filePath} controls className="w-full h-full object-cover" />
+                      )}
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition">
+                        <button
+                          onClick={async () => {
+                            if (confirm('คุณต้องการลบวิดีโอนี้หรือไม่?')) {
+                              try {
+                                const res = await fetch(`/api/media/delete?id=${m.id}`, { method: 'POST' });
+                                if (res.ok) {
+                                  setGalleryMedias(galleryMedias.filter(g => g.id !== m.id));
+                                  setSuccess('ลบวิดีโอสำเร็จ');
+                                }
+                              } catch (e) {
+                                console.error(e);
+                              }
+                            }
+                          }}
+                          className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition shadow-md cursor-pointer"
+                          title="ลบวิดีโอ"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Family Tree Manager Section */}
         {activeTab === 'family' && (
           <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
           <div className="flex justify-between items-center border-b border-stone-100 pb-4">
