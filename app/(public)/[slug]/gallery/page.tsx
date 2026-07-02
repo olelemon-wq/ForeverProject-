@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import { Camera } from 'lucide-react';
 import GalleryClient from './GalleryClient';
 import { getFeatureLabel } from '@/lib/categories';
 import { getEnabledFeatures } from '@/lib/features';
+import CategoryOrnament from '@/components/public/CategoryOrnament';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,15 +39,14 @@ async function getGalleryMedia(websiteId: string) {
 
 function getDisplayUrl(filePath: string, mimeType: string, index: number) {
   if (filePath.startsWith('https://storage.forever.co.th')) {
-    // Curated high-quality, peaceful, respectful memory-themed images from Unsplash
     const placeholders = [
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80', // Sunset
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&auto=format&fit=crop&q=80', // Warm Candle light (New Verified)
-      'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80', // Peaceful Forest/Trees
-      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&auto=format&fit=crop&q=80', // Vintage Pen/Letters
-      'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=600&auto=format&fit=crop&q=80', // Soft Yellow Flowers (New Verified)
-      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80', // Mountains
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80', // Calm Ocean
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80',
     ];
     return placeholders[index % placeholders.length];
   }
@@ -70,25 +69,29 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
   const mediaList = await getGalleryMedia(tenant.id);
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="animate-fade-in">
       {(() => {
         const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'gallery');
         return (
-          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-            <h2 className="text-xl font-bold mb-2 flex items-center gap-2"
-                style={{ color: 'var(--theme-primary, #0d9488)' }}>
-              <Camera className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {fLabel}
-            </h2>
-            <p className="text-stone-500 text-xs leading-normal">
-              {fDesc}
-            </p>
+          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
+            {/* Page Header with CategoryOrnament */}
+            <div className="flex flex-col items-center text-center space-y-3 pb-6 border-b border-stone-100">
+              <CategoryOrnament category={tenant.category} />
+              <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
+                {fLabel}
+              </h2>
+              <p className="text-stone-500 text-xs max-w-lg leading-normal">
+                {fDesc}
+              </p>
+            </div>
+
+            {/* Gallery Grid */}
+            <div>
+              <GalleryClient mediaList={mediaList} slug={slug} />
+            </div>
           </div>
         );
       })()}
-
-      <section className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-        <GalleryClient mediaList={mediaList} slug={slug} />
-      </section>
     </div>
   );
 }

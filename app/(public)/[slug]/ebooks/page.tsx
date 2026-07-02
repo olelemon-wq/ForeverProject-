@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { getEnabledFeatures } from '@/lib/features';
 import EbookReaderClient from './EbookReaderClient';
 import { getFeatureLabel } from '@/lib/categories';
-import { BookOpen } from 'lucide-react';
+import CategoryOrnament from '@/components/public/CategoryOrnament';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,10 +32,8 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
     notFound();
   }
 
-  // 1. Fetch real ebooks from database
   const dbEbooks = await getEbooks(tenant.id);
 
-  // 2. Fallback Mock Commemorative booklets (matching F014) if none uploaded yet
   const mockBooklets = [
     {
       id: 'book-1',
@@ -62,7 +60,6 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
     },
   ];
 
-  // 3. Map database books to structure expected by client component
   const mappedDbEbooks = dbEbooks.map(eb => ({
     id: eb.id,
     title: eb.title,
@@ -71,28 +68,32 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
     mockPages: eb.pages as string[],
   }));
 
-  // Combine real books and default fallback books
   const finalBooklets = [...mappedDbEbooks, ...mockBooklets];
 
   return (
-    <div className="space-y-8 animate-fade-in text-center font-sans">
+    <div className="animate-fade-in text-center font-sans">
       {(() => {
         const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'ebooks');
         return (
-          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-            <h2 className="text-xl font-bold mb-2 flex items-center justify-center gap-2"
-                style={{ color: 'var(--theme-primary, #0d9488)' }}>
-              <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {fLabel}
-            </h2>
-            <p className="text-stone-500 text-xs leading-normal max-w-md mx-auto">
-              {fDesc}
-            </p>
+          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden text-left">
+            {/* Page Header with CategoryOrnament */}
+            <div className="flex flex-col items-center text-center space-y-3 pb-6 border-b border-stone-100">
+              <CategoryOrnament category={tenant.category} />
+              <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
+                {fLabel}
+              </h2>
+              <p className="text-stone-500 text-xs max-w-lg leading-normal">
+                {fDesc}
+              </p>
+            </div>
+
+            {/* Render the Client-side Ebook reader */}
+            <div>
+              <EbookReaderClient booklets={finalBooklets} />
+            </div>
           </div>
         );
       })()}
-
-      {/* Render the Client-side Ebook reader */}
-      <EbookReaderClient booklets={finalBooklets} />
     </div>
   );
 }

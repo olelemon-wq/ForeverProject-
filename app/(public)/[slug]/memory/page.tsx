@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { getEnabledFeatures } from '@/lib/features';
 import MemoryWallClient from './MemoryWallClient';
 import { getFeatureLabel } from '@/lib/categories';
-import { Camera } from 'lucide-react';
+import CategoryOrnament from '@/components/public/CategoryOrnament';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +24,6 @@ async function getApprovedPosts(websiteId: string) {
     },
   });
 
-  // Convert BigInt or Date types to serializable format for client-side React
   return posts.map(p => ({
     id: p.id,
     title: p.title,
@@ -51,19 +50,29 @@ export default async function PublicMemoryWallPage(props: { params: Promise<{ sl
   const posts = await getApprovedPosts(tenant.id);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-        <h2 className="text-xl font-bold mb-2 flex items-center gap-2"
-            style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <Camera className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> กระดานแชร์ความทรงจำร่วม
-        </h2>
-        <p className="text-stone-500 text-xs leading-normal">
-          ร่วมลงบันทึกภาพถ่ายโบราณ เรื่องเล่าประทับใจ หรือความทรงจำอันทรงคุณค่าที่ได้สัมผัสร่วมกัน แผงความทรงจำนี้รวบรวมเรื่องราวดีๆ ให้อยู่คู่ตราบนานเท่านาน
-        </p>
-      </div>
+    <div className="animate-fade-in space-y-8">
+      {(() => {
+        const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'memory');
+        return (
+          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
+            {/* Page Header with CategoryOrnament */}
+            <div className="flex flex-col items-center text-center space-y-3 pb-6 border-b border-stone-100">
+              <CategoryOrnament category={tenant.category} />
+              <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
+                {fLabel}
+              </h2>
+              <p className="text-stone-500 text-xs max-w-lg leading-normal">
+                {fDesc}
+              </p>
+            </div>
 
-      {/* Render Client-side interactive Memory Wall list and submit forms */}
-      <MemoryWallClient websiteId={tenant.id} initialPosts={posts} />
+            {/* Memory Wall Grid & Interactive Clients */}
+            <div>
+              <MemoryWallClient websiteId={tenant.id} initialPosts={posts} />
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

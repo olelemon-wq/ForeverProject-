@@ -19,6 +19,7 @@ import { Maximize2, Minimize2, GitBranch, X, Heart, RotateCw } from 'lucide-reac
 import { getInitialLetter } from '@/lib/utils';
 import Link from 'next/link';
 import { getFeatureLabel } from '@/lib/categories';
+import CategoryOrnament from '@/components/public/CategoryOrnament';
 
 interface FamilyMember {
   id: string;
@@ -613,108 +614,146 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
   };
 
   return (
-    <div className="space-y-10 animate-fade-in text-center font-sans">
-      
-      {/* Title block - Hidden in fullscreen mode */}
-      {!isFullscreen && (() => {
-        const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'family');
-        return (
-          <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.012)]">
-            <h2 className="text-xl font-bold mb-2 flex items-center justify-center gap-2"
-                style={{ color: 'var(--theme-primary, #0d9488)' }}>
-              <GitBranch className="w-5 h-5" />
-              <span>{fLabel}</span>
-            </h2>
-            <p className="text-stone-400 text-xs leading-normal max-w-md mx-auto font-medium">
-              {fDesc}
-            </p>
+    <div className="animate-fade-in text-center font-sans">
+      {isFullscreen ? (
+        <div 
+          ref={viewportRef}
+          className="fixed inset-0 z-50 p-6 w-screen h-screen select-none bg-stone-50"
+        >
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            nodeTypes={nodeTypes}
+            fitView
+            fitViewOptions={{ padding: 0.2 }}
+            minZoom={0.2}
+            maxZoom={2}
+            preventScrolling={true}
+            zoomOnScroll={true}
+            zoomOnPinch={true}
+            panOnDrag={true}
+            nodesConnectable={false}
+            nodesDraggable={true}
+            elementsSelectable={false}
+            className="w-full h-full"
+          >
+            <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#e7e5e4" />
+            <MiniMap 
+              position="bottom-left" 
+              nodeColor={(node) => {
+                if (node.type === 'unionNode') return '#f43f5e';
+                return '#e7e5e4';
+              }}
+              maskColor="rgba(245, 245, 244, 0.4)"
+              style={{ borderRadius: '12px', border: '1px solid #e7e5e4', width: 120, height: 80 }}
+            />
+            <Controls 
+              position="bottom-right" 
+              showInteractive={false}
+              style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e7e5e4' }}
+            />
+          </ReactFlow>
+
+          <button 
+            onClick={handleResetLayout}
+            title="จัดตำแหน่งกึ่งกลางและรีเซ็ตการลาก (Reset positions)"
+            className="absolute z-20 p-3 rounded-full shadow-md bg-white border border-stone-200 text-stone-500 hover:text-stone-900 hover:bg-stone-50 flex items-center justify-center cursor-pointer transition top-6 right-20"
+          >
+            <RotateCw className="w-4 h-4" />
+          </button>
+
+          <button 
+            onClick={toggleFullscreen}
+            title="ออกจากหน้าต่างเต็มจอ"
+            className="absolute z-20 p-3 rounded-full shadow-md bg-white border border-stone-200 text-stone-500 hover:text-stone-900 hover:bg-stone-50 flex items-center justify-center cursor-pointer transition top-6 right-6"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      ) : (
+        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
+          {/* Page Header with CategoryOrnament */}
+          {(() => {
+            const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category || 'Memorial', 'family');
+            return (
+              <div className="flex flex-col items-center text-center space-y-3 pb-6 border-b border-stone-100">
+                <CategoryOrnament category={tenant.category || 'Memorial'} />
+                <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
+                  {fLabel}
+                </h2>
+                <p className="text-stone-500 text-xs max-w-lg leading-normal">
+                  {fDesc}
+                </p>
+              </div>
+            );
+          })()}
+
+          {/* React Flow Viewport Container */}
+          <div 
+            ref={viewportRef}
+            className="w-full h-[550px] sm:h-[650px] rounded-2xl border border-stone-200 bg-stone-50 relative select-none overflow-hidden"
+          >
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              nodeTypes={nodeTypes}
+              fitView
+              fitViewOptions={{ padding: 0.2 }}
+              minZoom={0.2}
+              maxZoom={2}
+              preventScrolling={true}
+              zoomOnScroll={true}
+              zoomOnPinch={true}
+              panOnDrag={true}
+              nodesConnectable={false}
+              nodesDraggable={true}
+              elementsSelectable={false}
+              className="w-full h-full"
+            >
+              <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#e7e5e4" />
+              <MiniMap 
+                position="bottom-left" 
+                nodeColor={(node) => {
+                  if (node.type === 'unionNode') return '#f43f5e';
+                  return '#e7e5e4';
+                }}
+                maskColor="rgba(245, 245, 244, 0.4)"
+                style={{ borderRadius: '12px', border: '1px solid #e7e5e4', width: 120, height: 80 }}
+              />
+              <Controls 
+                position="bottom-right" 
+                showInteractive={false}
+                style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e7e5e4' }}
+              />
+            </ReactFlow>
+
+            <button 
+              onClick={handleResetLayout}
+              title="จัดตำแหน่งกึ่งกลางและรีเซ็ตการลาก (Reset positions)"
+              className="absolute z-20 p-2.5 rounded-lg bg-white border border-stone-200 text-stone-500 hover:text-stone-900 shadow-xs hover:bg-stone-50 flex items-center justify-center cursor-pointer transition bottom-4 right-28"
+            >
+              <RotateCw className="w-4 h-4" />
+            </button>
+
+            <button 
+              onClick={toggleFullscreen}
+              title="แสดงเต็มจอ (Fullscreen)"
+              className="absolute z-20 p-2.5 rounded-lg bg-white border border-stone-200 text-stone-500 hover:text-stone-900 shadow-xs hover:bg-stone-50 flex items-center justify-center cursor-pointer transition bottom-4 right-16"
+            >
+              <Maximize2 className="w-4 h-4" />
+            </button>
           </div>
-        );
-      })()}
 
-      {/* React Flow Viewport Container */}
-      <div 
-        ref={viewportRef}
-        className={`
-          relative select-none border border-stone-300 bg-stone-50 transition-all duration-200
-          ${isFullscreen 
-            ? 'fixed inset-0 z-50 p-6 w-screen h-screen' 
-            : 'w-full h-[550px] sm:h-[650px] rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.015)]'
-          }
-        `}
-      >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          nodeTypes={nodeTypes}
-          fitView
-          fitViewOptions={{ padding: 0.2 }}
-          minZoom={0.2}
-          maxZoom={2}
-          preventScrolling={true}
-          zoomOnScroll={true}
-          zoomOnPinch={true}
-          panOnDrag={true}
-          nodesConnectable={false}
-          nodesDraggable={true}
-          elementsSelectable={false}
-          className="w-full h-full"
-        >
-          {/* Background dot grid pattern */}
-          <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#e7e5e4" />
-          
-          {/* Miniature navigation map */}
-          <MiniMap 
-            position="bottom-left" 
-            nodeColor={(node) => {
-              if (node.type === 'unionNode') return '#f43f5e';
-              return '#e7e5e4';
-            }}
-            maskColor="rgba(245, 245, 244, 0.4)"
-            style={{ borderRadius: '12px', border: '1px solid #e7e5e4', width: 120, height: 80 }}
-          />
-          
-          {/* Zoom controls panel */}
-          <Controls 
-            position="bottom-right" 
-            showInteractive={false}
-            style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e7e5e4' }}
-          />
-        </ReactFlow>
-
-        {/* Reset Viewport & Node Positions Button */}
-        <button 
-          onClick={handleResetLayout}
-          title="จัดตำแหน่งกึ่งกลางและรีเซ็ตการลาก (Reset positions)"
-          className={`
-            absolute z-20 p-2.5 rounded-lg bg-white border border-stone-200 text-stone-500 hover:text-stone-900 shadow-xs hover:bg-stone-50 flex items-center justify-center cursor-pointer transition
-            ${isFullscreen ? 'top-6 right-20 p-3 rounded-full shadow-md' : 'bottom-4 right-28'}
-          `}
-        >
-          <RotateCw className="w-4 h-4" />
-        </button>
-
-        {/* Custom Fullscreen Overlay Controls */}
-        <button 
-          onClick={toggleFullscreen}
-          title={isFullscreen ? "ออกจากหน้าต่างเต็มจอ" : "แสดงเต็มจอ (Fullscreen)"}
-          className={`
-            absolute z-20 p-2.5 rounded-lg bg-white border border-stone-200 text-stone-500 hover:text-stone-900 shadow-xs hover:bg-stone-50 flex items-center justify-center cursor-pointer transition
-            ${isFullscreen ? 'top-6 right-6 p-3 rounded-full shadow-md' : 'bottom-4 right-16'}
-          `}
-        >
-          {isFullscreen ? <X className="w-5 h-5" /> : <Maximize2 className="w-4 h-4" />}
-        </button>
-      </div>
-
-      {/* Back button - Hidden in fullscreen mode */}
-      {!isFullscreen && (
-        <div className="pt-4">
-          <Link href={`/${tenant.slug}`} className="px-6 py-2.5 rounded-full border border-stone-300 text-stone-550 hover:text-stone-900 hover:bg-stone-100 text-xs font-semibold transition cursor-pointer">
-            ย้อนกลับหน้าแรก
-          </Link>
+          {/* Back button */}
+          <div className="pt-4 border-t border-stone-100">
+            <Link href={`/${tenant.slug}`} className="px-6 py-2.5 rounded-full border border-stone-300 text-stone-550 hover:text-stone-900 hover:bg-stone-100 text-xs font-semibold transition cursor-pointer">
+              ย้อนกลับหน้าแรก
+            </Link>
+          </div>
         </div>
       )}
     </div>

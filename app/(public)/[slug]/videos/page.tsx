@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import { Video } from 'lucide-react';
 import VideosClient from './VideosClient';
 import { getFeatureLabel } from '@/lib/categories';
 import { getEnabledFeatures } from '@/lib/features';
+import CategoryOrnament from '@/components/public/CategoryOrnament';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,7 +39,6 @@ async function getVideoMedia(websiteId: string) {
 
 function getDisplayUrl(filePath: string, mimeType: string, index: number) {
   if (filePath.startsWith('https://storage.forever.co.th')) {
-    // Beautiful, peaceful nature video from Mixkit CDN
     return 'https://assets.mixkit.co/videos/preview/mixkit-sunset-seen-through-the-branches-of-a-tree-42751-large.mp4';
   }
   return filePath;
@@ -61,25 +60,29 @@ export default async function PublicVideosPage(props: { params: Promise<{ slug: 
   const mediaList = await getVideoMedia(tenant.id);
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="animate-fade-in">
       {(() => {
         const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'videos');
         return (
-          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-            <h2 className="text-xl font-bold mb-2 flex items-center gap-2"
-                style={{ color: 'var(--theme-primary, #0d9488)' }}>
-              <Video className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {fLabel}
-            </h2>
-            <p className="text-stone-500 text-xs leading-normal">
-              {fDesc}
-            </p>
+          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
+            {/* Page Header with CategoryOrnament */}
+            <div className="flex flex-col items-center text-center space-y-3 pb-6 border-b border-stone-100">
+              <CategoryOrnament category={tenant.category} />
+              <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
+                {fLabel}
+              </h2>
+              <p className="text-stone-500 text-xs max-w-lg leading-normal">
+                {fDesc}
+              </p>
+            </div>
+
+            {/* Videos Grid */}
+            <div>
+              <VideosClient mediaList={mediaList} slug={slug} />
+            </div>
           </div>
         );
       })()}
-
-      <section className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-        <VideosClient mediaList={mediaList} slug={slug} />
-      </section>
     </div>
   );
 }

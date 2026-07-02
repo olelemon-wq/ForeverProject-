@@ -58,21 +58,12 @@ export default function CondolenceItem({ condolence }: CondolenceItemProps) {
 
   return (
     <div 
-      className={`relative overflow-hidden p-5 rounded-2xl border transition ${
+      className={`relative overflow-hidden py-6 transition ${
         isFamily 
-          ? 'border-amber-200/70 bg-white shadow-[0_6px_20px_rgba(245,158,11,0.06)]' 
-          : 'border-stone-200/80 bg-white shadow-[0_6px_20px_rgba(0,0,0,0.03)]'
+          ? 'border-l-4 border-amber-400 pl-5 ml-1 bg-amber-50/20 rounded-r-2xl' 
+          : 'pl-1'
       }`}
     >
-      {/* Background Thai Pattern (Seamless Repeat) */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-multiply"
-        style={{
-          backgroundImage: "url('/BG-card/slice1.png')",
-          backgroundRepeat: 'repeat',
-          backgroundSize: '100px 100px',
-        }}
-      />
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <span className="text-sm font-bold text-stone-850">{condolence.senderName}</span>
         {(() => {
