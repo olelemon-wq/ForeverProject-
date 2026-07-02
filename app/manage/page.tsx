@@ -1868,7 +1868,21 @@ export default function WebmasterDashboard() {
                             {/* Header */}
                             <div className="space-y-1.5">
                               <p className="text-[10px] tracking-widest opacity-80 uppercase">{annText || 'กราบเรียนเชิญด้วยความเคารพอย่างสูง'}</p>
-                              <h2 className="text-xl font-bold tracking-normal">ด้วยรักและคิดถึง {siteName}</h2>
+                              <h2 className="text-xl font-bold tracking-normal">
+                                {(() => {
+                                  const match = siteName.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
+                                  if (match) {
+                                    return (
+                                      <>
+                                        <span className="block sm:inline">{match[1]}</span>
+                                        <span className="hidden sm:inline"> </span>
+                                        <span className="block sm:inline">{match[2]}</span>
+                                      </>
+                                    );
+                                  }
+                                  return siteName;
+                                })()}
+                              </h2>
                               <p className="text-[10px] opacity-75 font-semibold">กำหนดการพิธีสวดพระอภิธรรม และฌาปนกิจศพ</p>
                             </div>
 
