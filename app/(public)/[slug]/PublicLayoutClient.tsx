@@ -105,7 +105,7 @@ export default function PublicLayoutClient({
     >
       {/* Accessibility Toolbar */}
       <div className="w-full h-9 bg-stone-100/90 border-b border-stone-200/50 px-4 flex sticky top-0 z-50 backdrop-blur-sm shadow-xs">
-        <div className="max-w-3xl mx-auto w-full flex justify-end items-center gap-3 text-[11px] font-semibold text-stone-600">
+        <div className="max-w-5xl mx-auto w-full flex justify-end items-center gap-3 text-[11px] font-semibold text-stone-600">
           <span className="flex items-center gap-1">
             <Eye className="w-3.5 h-3.5 text-stone-500" /> ปรับขนาดตัวอักษร:
           </span>
@@ -159,7 +159,7 @@ export default function PublicLayoutClient({
             style={{ backgroundColor: 'var(--theme-primary)' }}
           />
         )}
-        <div className="max-w-4xl mx-auto px-4 relative z-10">
+        <div className="max-w-5xl mx-auto px-4 relative z-10">
           <div className="w-24 h-24 rounded-full border-4 bg-stone-50 mx-auto shadow-md overflow-hidden flex items-center justify-center mb-4 animate-fade-in relative"
                style={{ borderColor: 'var(--theme-primary)' }}>
             {config.avatarUrl ? (
@@ -185,7 +185,7 @@ export default function PublicLayoutClient({
       {/* Dynamic Navigation Menu */}
       <nav className="border-b border-stone-200/60 bg-white/85 backdrop-blur-sm sticky top-9 z-40 shadow-xs">
         {/* Desktop Navigation Links */}
-        <div className="hidden sm:flex max-w-3xl mx-auto px-4 items-center justify-center gap-1 sm:gap-2 h-14">
+        <div className="hidden sm:flex max-w-5xl mx-auto px-4 items-center justify-center gap-1 sm:gap-2 h-14">
           {navItems.map((item, idx) => (
             <Link 
               key={idx} 
@@ -198,7 +198,7 @@ export default function PublicLayoutClient({
         </div>
 
         {/* Mobile Navigation Header */}
-        <div className="flex sm:hidden justify-between items-center h-14 px-4 max-w-3xl mx-auto">
+        <div className="flex sm:hidden justify-between items-center h-14 px-4 max-w-5xl mx-auto">
           <span className="text-xs font-bold text-stone-600 tracking-wide uppercase">
             เมนูนำทาง
           </span>
@@ -236,7 +236,7 @@ export default function PublicLayoutClient({
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-10">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-10">
         {children}
       </main>
 

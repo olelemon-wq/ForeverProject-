@@ -27,7 +27,7 @@ export default function GalleryClient({ mediaList, slug }: GalleryClientProps) {
           <p>ยังไม่มีการอัปโหลดไฟล์รูปภาพความทรงจำ</p>
         </div>
       ) : (
-        <div className="columns-2 md:columns-3 gap-4">
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
           {mediaList.map((media) => {
             return (
               <div 
