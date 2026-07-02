@@ -130,6 +130,8 @@ export default function WebmasterDashboard() {
     setConfirmOpen(true);
   };
 
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
   const [deceasedAvatarUrl, setDeceasedAvatarUrl] = useState('');
   const [deceasedAvatarScale, setDeceasedAvatarScale] = useState(1);
   const [deceasedAvatarX, setDeceasedAvatarX] = useState(0);
@@ -371,6 +373,68 @@ export default function WebmasterDashboard() {
     } catch (err: any) {
       setError(err.message || 'การลบไฟล์สื่อล้มเหลว');
     }
+  };
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex) return;
+
+    const site = activeSite || websites[0];
+    if (!site) return;
+
+    // Create a copy of the list and reorder items
+    const reorderedList = [...galleryMedias];
+    const [draggedItem] = reorderedList.splice(draggedIndex, 1);
+    reorderedList.splice(targetIndex, 0, draggedItem);
+
+    // Update local state immediately for snappy UX
+    setGalleryMedias(reorderedList);
+    setDraggedIndex(null);
+
+    // Call reorder API to persist
+    try {
+      const orderedIds = reorderedList.map(m => m.id);
+      const res = await fetch('/api/media/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          websiteId: site.id,
+          orderedIds,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      
+      setSuccess('จัดเรียงลำดับรูปภาพสำเร็จ');
+    } catch (err: any) {
+      setError(err.message || 'การจัดเรียงรูปภาพขัดข้อง');
+      
+      // Fallback: Re-fetch original list if API fails
+      try {
+        const listRes = await fetch(`/api/media/list?websiteId=${site.id}`);
+        const listData = await listRes.json();
+        if (listRes.ok) {
+          setGalleryMedias(listData.mediaList || []);
+        }
+      } catch (listErr) {
+        console.error('Error rolling back gallery reorder:', listErr);
+      }
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
   };
 
   // 2. Select Website & Load related details
@@ -2557,24 +2621,44 @@ export default function WebmasterDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                {photoMedias.map((m) => (
-                  <div key={m.id} className="group relative aspect-square bg-stone-50 rounded-2xl overflow-hidden border border-stone-200 shadow-sm flex flex-col justify-between">
-                    <img 
-                      src={m.filePath} 
-                      alt={m.fileName} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => deleteGalleryMedia(m.id)}
-                        className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer"
-                        title="ลบรูปภาพ"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                {photoMedias.map((m, index) => {
+                  const isDraggingItem = draggedIndex === index;
+                  return (
+                    <div 
+                      key={m.id} 
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, index)}
+                      onDragOver={(e) => handleDragOver(e, index)}
+                      onDrop={(e) => handleDrop(e, index)}
+                      onDragEnd={handleDragEnd}
+                      className={`
+                        group relative aspect-square bg-stone-50 rounded-2xl overflow-hidden border shadow-sm flex flex-col justify-between transition-all duration-200 cursor-grab active:cursor-grabbing
+                        ${isDraggingItem 
+                          ? 'opacity-40 border-emerald-500 scale-[0.97] ring-2 ring-emerald-500/20' 
+                          : 'border-stone-200 hover:scale-[1.02]'
+                        }
+                      `}
+                    >
+                      <img 
+                        src={m.filePath} 
+                        alt={m.fileName} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300 pointer-events-none"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteGalleryMedia(m.id);
+                          }}
+                          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer"
+                          title="ลบรูปภาพ"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </section>
