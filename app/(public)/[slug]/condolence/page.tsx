@@ -103,15 +103,22 @@ export default async function PublicCondolencePage(props: {
         const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'condolence');
         return (
           <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
-            {/* Page Header with CategoryOrnament */}
-            <div className="flex flex-col items-center text-center space-y-3 pb-6 border-b border-stone-100">
-              <CategoryOrnament category={tenant.category} />
+            {/* Page Header with CategoryOrnament and Wing lines */}
+            <div className="flex flex-col items-center text-center space-y-3">
               <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
                 {fLabel}
               </h2>
               <p className="text-stone-500 text-xs max-w-lg leading-normal">
                 {fDesc}
               </p>
+              {/* Centered Motif with Wing lines divider */}
+              <div className="w-full flex items-center justify-center gap-4 pt-4 select-none">
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-stone-200" />
+                <div className="flex-shrink-0">
+                  <CategoryOrnament category={tenant.category} />
+                </div>
+                <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-stone-200" />
+              </div>
             </div>
 
             {/* Condolences Board List */}

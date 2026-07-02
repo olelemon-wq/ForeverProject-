@@ -105,7 +105,7 @@ export default function CategoryOrnament({ category }: CategoryOrnamentProps) {
     default:
       return (
         <svg 
-          className="w-16 h-16 opacity-40 text-emerald-800" 
+          className="w-12 h-12 opacity-40 text-emerald-800" 
           viewBox="0 0 100 100" 
           fill="none" 
           stroke="currentColor" 
