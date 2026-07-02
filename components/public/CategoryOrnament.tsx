@@ -105,19 +105,34 @@ export default function CategoryOrnament({ category }: CategoryOrnamentProps) {
     default:
       return (
         <svg 
-          className="w-12 h-12 opacity-25 text-emerald-800" 
+          className="w-16 h-16 opacity-40 text-emerald-800" 
           viewBox="0 0 100 100" 
           fill="none" 
           stroke="currentColor" 
-          strokeWidth="2" 
           strokeLinecap="round" 
           strokeLinejoin="round"
           style={{ color: 'var(--theme-primary)' }}
         >
-          {/* Traditional Thai Lotus / Kanok flame motif */}
-          <path d="M50,15 C50,15 45,35 35,45 C25,55 15,65 15,75 C15,85 25,85 50,85 C75,85 85,85 85,75 C85,65 75,55 65,45 C55,35 50,15 50,15 Z" />
-          <path d="M50,30 C50,30 47,45 40,52 C33,59 27,65 27,72 C27,80 35,80 50,80 C65,80 73,80 73,72 C73,65 67,59 60,52 C53,45 50,30 50,30 Z" />
-          <path d="M50,45 C50,45 48,55 45,60 C42,65 38,70 38,75 C38,78 42,78 50,78 C58,78 62,78 62,75 C62,70 58,65 55,60 C52,55 50,45 50,45 Z" />
+          {/* Outer thin outline */}
+          <path 
+            d="M50,7 C56,16 64,24 68,32 C78,36 85,44 93,50 C85,56 78,64 68,68 C64,76 56,84 50,93 C44,84 36,76 32,68 C22,64 15,56 7,50 C15,44 22,36 32,32 C36,24 44,16 50,7 Z" 
+            strokeWidth="1" 
+          />
+          {/* Outer thick outline */}
+          <path 
+            d="M50,12 C55,20 62,26 66,34 C76,37 82,45 88,50 C82,55 76,63 66,66 C63,76 55,82 50,88 C45,82 37,76 34,66 C24,63 18,55 12,50 C18,45 24,37 34,34 C37,24 45,18 50,12 Z" 
+            strokeWidth="2.5" 
+          />
+          {/* Middle star outline */}
+          <path 
+            d="M50,24 C54,32 64,38 74,50 C64,52 54,58 50,74 C46,58 36,52 26,50 C36,38 46,32 50,24 Z" 
+            strokeWidth="1.2" 
+          />
+          {/* Center 4-lobed core */}
+          <path 
+            d="M50,44 C52,44 52,47 52,48 C52,47 55,47 56,50 C55,50 55,53 52,52 C52,53 52,55 50,56 C48,55 48,53 48,52 C48,53 45,53 44,50 C45,47 48,47 48,48 C48,47 48,44 50,44 Z" 
+            strokeWidth="1.2" 
+          />
         </svg>
       );
   }
