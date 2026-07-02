@@ -118,6 +118,18 @@ export default function WebmasterDashboard() {
   const [annWreathPolicy, setAnnWreathPolicy] = useState('NORMAL');
   const [annContactPhone, setAnnContactPhone] = useState('');
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void | Promise<void>;
+  } | null>(null);
+
+  const showConfirm = (title: string, message: string, onConfirm: () => void | Promise<void>) => {
+    setConfirmConfig({ title, message, onConfirm });
+    setConfirmOpen(true);
+  };
+
   const [deceasedAvatarUrl, setDeceasedAvatarUrl] = useState('');
   const [deceasedAvatarScale, setDeceasedAvatarScale] = useState(1);
   const [deceasedAvatarX, setDeceasedAvatarX] = useState(0);
@@ -329,12 +341,21 @@ export default function WebmasterDashboard() {
     }
   };
 
-  const deleteGalleryMedia = async (mediaId: string) => {
+  const deleteGalleryMedia = async (mediaId: string, force = false) => {
     if (!activeSite) return;
-    if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสื่อนี้?')) return;
+    if (!force) {
+      showConfirm(
+        'ยืนยันการลบไฟล์สื่อ',
+        'คุณแน่ใจหรือไม่ว่าต้องการลบสื่อนี้? การลบแล้วจะไม่สามารถกู้คืนกลับมาได้',
+        () => deleteGalleryMedia(mediaId, true)
+      );
+      return;
+    }
     try {
-      const res = await fetch(`/api/media/delete?mediaId=${mediaId}&websiteId=${activeSite.id}`, {
-        method: 'DELETE',
+      const res = await fetch('/api/media/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mediaId, websiteId: activeSite.id }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -348,7 +369,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การลบไฟล์ล้มเหลว');
+      setError(err.message || 'การลบไฟล์สื่อล้มเหลว');
     }
   };
 
@@ -759,9 +780,16 @@ export default function WebmasterDashboard() {
     }
   };
 
-  const handleDeleteFamilyMember = async (memberId: string) => {
+  const handleDeleteFamilyMember = async (memberId: string, force = false) => {
     if (!activeSite) return;
-    if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลญาติท่านนี้?')) return;
+    if (!force) {
+      showConfirm(
+        'ยืนยันการลบข้อมูลญาติ',
+        'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลญาติท่านนี้? การลบแล้วจะไม่สามารถกู้คืนกลับมาได้',
+        () => handleDeleteFamilyMember(memberId, true)
+      );
+      return;
+    }
 
     setError('');
     setSuccess('');
@@ -878,9 +906,16 @@ export default function WebmasterDashboard() {
     }
   };
 
-  const handleDeleteEbook = async (ebId: string) => {
+  const handleDeleteEbook = async (ebId: string, force = false) => {
     if (!activeSite) return;
-    if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบหนังสือที่ระลึกนี้?')) return;
+    if (!force) {
+      showConfirm(
+        'ยืนยันการลบหนังสือที่ระลึก',
+        'คุณแน่ใจหรือไม่ว่าต้องการลบหนังสือที่ระลึกนี้? การลบแล้วจะไม่สามารถกู้คืนกลับมาได้',
+        () => handleDeleteEbook(ebId, true)
+      );
+      return;
+    }
 
     setError('');
     setSuccess('');
@@ -2531,19 +2566,7 @@ export default function WebmasterDashboard() {
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                       <button
-                        onClick={async () => {
-                          if (confirm('คุณต้องการลบรูปภาพนี้หรือไม่?')) {
-                            try {
-                              const res = await fetch(`/api/media/delete?id=${m.id}`, { method: 'POST' });
-                              if (res.ok) {
-                                setGalleryMedias(galleryMedias.filter(g => g.id !== m.id));
-                                setSuccess('ลบรูปภาพสำเร็จ');
-                              }
-                            } catch (e) {
-                              console.error(e);
-                            }
-                          }
-                        }}
+                        onClick={() => deleteGalleryMedia(m.id)}
                         className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer"
                         title="ลบรูปภาพ"
                       >
@@ -2620,19 +2643,7 @@ export default function WebmasterDashboard() {
                       )}
                       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition">
                         <button
-                          onClick={async () => {
-                            if (confirm('คุณต้องการลบวิดีโอนี้หรือไม่?')) {
-                              try {
-                                const res = await fetch(`/api/media/delete?id=${m.id}`, { method: 'POST' });
-                                if (res.ok) {
-                                  setGalleryMedias(galleryMedias.filter(g => g.id !== m.id));
-                                  setSuccess('ลบวิดีโอสำเร็จ');
-                                }
-                              } catch (e) {
-                                console.error(e);
-                              }
-                            }
-                          }}
+                          onClick={() => deleteGalleryMedia(m.id)}
                           className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition shadow-md cursor-pointer"
                           title="ลบวิดีโอ"
                         >
@@ -3538,6 +3549,47 @@ export default function WebmasterDashboard() {
               <Check className="w-4 h-4" />
               <span>เสร็จสิ้นและนำไปใช้</span>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Custom confirm modal dialog */}
+      {confirmOpen && confirmConfig && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-stone-900/40 backdrop-blur-xs p-4 animate-fade-in select-none">
+          <div className="w-full max-w-sm bg-white rounded-3xl border border-stone-200 p-6 flex flex-col gap-4 text-stone-850 text-left shadow-2xl">
+            <div className="space-y-2">
+              <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5 font-sans">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <span>{confirmConfig.title}</span>
+              </h3>
+              <p className="text-xs text-stone-500 leading-normal font-semibold">
+                {confirmConfig.message}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmOpen(false);
+                  setConfirmConfig(null);
+                }}
+                className="flex-1 py-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-250 text-stone-700 font-bold rounded-xl text-xs transition active:scale-95 cursor-pointer"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setConfirmOpen(false);
+                  const onConf = confirmConfig.onConfirm;
+                  setConfirmConfig(null);
+                  await onConf();
+                }}
+                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition active:scale-95 cursor-pointer"
+              >
+                ยืนยันการลบ
+              </button>
+            </div>
           </div>
         </div>
       )}
