@@ -68,26 +68,26 @@ export default function MobileLogin() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
+    <main className="min-h-screen bg-stone-50 text-stone-800 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Decorative Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none" />
 
       {/* Centered Mobile Login Card wrapper */}
-      <div className="w-full max-w-md p-8 rounded-3xl border border-slate-900 bg-slate-900/40 backdrop-blur-md shadow-2xl relative z-10 space-y-8">
+      <div className="w-full max-w-md p-8 rounded-3xl border border-stone-200/80 bg-white shadow-xl relative z-10 space-y-8 animate-fade-in">
         <header className="text-center space-y-2">
-          <span className="text-[10px] uppercase font-black text-emerald-400 tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full">
+          <span className="text-[10px] uppercase font-black text-emerald-800 tracking-widest bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-100 inline-block">
             FOREVER LOGIN
           </span>
-          <h1 className="text-2xl font-black text-white pt-2">
+          <h1 className="text-2xl font-black text-stone-900 pt-2">
             เข้าสู่ระบบด้วยเบอร์มือถือ
           </h1>
-          <p className="text-slate-400 text-xs leading-relaxed max-w-xs mx-auto">
+          <p className="text-stone-500 text-xs leading-relaxed max-w-xs mx-auto">
             เพื่อความปลอดภัยสูงสุดและง่ายดายสำหรับผู้สูงอายุ ระบบจะส่งรหัสความปลอดภัยเข้าเบอร์มือถือของคุณโดยไม่ต้องใช้รหัสผ่าน
           </p>
         </header>
 
         {error && (
-          <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 text-center font-medium">
+          <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-700 text-center font-medium">
             ⚠️ {error}
           </div>
         )}
@@ -95,8 +95,8 @@ export default function MobileLogin() {
         {/* STEP 1: Phone number input form */}
         {step === 1 && (
           <form onSubmit={handleRequestOtp} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+            <div className="space-y-2 text-left">
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wider block pl-1">
                 เบอร์โทรศัพท์มือถือ
               </label>
               <input 
@@ -105,14 +105,14 @@ export default function MobileLogin() {
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="ตัวอย่าง 0812345678"
                 maxLength={10}
-                className="w-full px-5 py-3.5 bg-slate-950 border border-slate-800 rounded-2xl text-white font-mono placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition text-base"
+                className="w-full px-5 py-3.5 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 font-mono placeholder-stone-400 focus:outline-none focus:border-emerald-600 focus:bg-white transition text-base"
                 disabled={isLoading}
               />
             </div>
 
             <button 
               type="submit" 
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold hover:brightness-110 active:scale-[0.98] transition shadow-[0_0_20px_rgba(16,185,129,0.2)] disabled:opacity-50"
+              className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-sm active:scale-[0.98] disabled:opacity-50 cursor-pointer"
               disabled={isLoading}
             >
               {isLoading ? 'กำลังส่งคำขอ...' : 'รับรหัส OTP ผ่าน SMS'}
@@ -123,8 +123,8 @@ export default function MobileLogin() {
         {/* STEP 2: OTP verification input form */}
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+            <div className="space-y-2 text-left">
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wider block pl-1 text-center">
                 ป้อนรหัส OTP 6 หลัก
               </label>
               <input 
@@ -135,27 +135,27 @@ export default function MobileLogin() {
                 value={otpCode}
                 onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
                 placeholder="123456"
-                className="w-full px-5 py-3.5 bg-slate-950 border border-slate-800 rounded-2xl text-white font-mono text-center tracking-[0.7em] text-xl placeholder-slate-800 focus:outline-none focus:border-emerald-500 transition"
+                className="w-full px-5 py-3.5 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 font-mono text-center tracking-[0.7em] text-xl placeholder-stone-300 focus:outline-none focus:border-emerald-600 focus:bg-white transition"
                 disabled={isLoading}
               />
-              <p className="text-[10px] text-slate-500 text-center">
+              <p className="text-[10px] text-stone-400 text-center">
                 * ระบบส่งรหัสไปยังเบอร์ {phoneNumber} แล้ว
               </p>
             </div>
 
             {/* Simulated OTP Banner */}
             {simulatedOtp && (
-              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-1">
-                <p className="text-[10px] text-emerald-400 font-bold">📲 (จำลองการรับข้อความจากโครงข่าย)</p>
-                <p className="text-xs text-white font-mono">
-                  รหัสความทรงจำของคุณคือ: <span className="font-bold underline text-sm tracking-wide">{simulatedOtp}</span>
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 text-center space-y-1">
+                <p className="text-[10px] text-emerald-800 font-bold">📲 (จำลองการรับข้อความจากโครงข่าย)</p>
+                <p className="text-xs text-stone-700 font-mono">
+                  รหัสความทรงจำของคุณคือ: <span className="font-bold underline text-sm tracking-wide text-emerald-800">{simulatedOtp}</span>
                 </p>
               </div>
             )}
 
             <button 
               type="submit" 
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold hover:brightness-110 active:scale-[0.98] transition shadow-[0_0_20px_rgba(16,185,129,0.2)] disabled:opacity-50"
+              className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-sm active:scale-[0.98] disabled:opacity-50 cursor-pointer"
               disabled={isLoading}
             >
               {isLoading ? 'กำลังประมวลผล...' : 'ยืนยันรหัส OTP'}
@@ -164,7 +164,7 @@ export default function MobileLogin() {
             <button 
               type="button"
               onClick={() => { setStep(1); setOtpCode(''); }}
-              className="w-full text-center text-xs text-slate-400 hover:text-slate-200 transition font-medium"
+              className="w-full text-center text-xs text-stone-500 hover:text-stone-850 transition font-medium cursor-pointer"
             >
               แก้ไขเบอร์โทรศัพท์
             </button>

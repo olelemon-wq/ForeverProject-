@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
+import { getEnabledFeatures } from '@/lib/features';
 import EbookReaderClient from './EbookReaderClient';
+import { getFeatureLabel } from '@/lib/categories';
 import { BookOpen } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 async function getTenantData(slug: string) {
   return await db.tenant.findUnique({
@@ -21,6 +25,10 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
   const tenant = await getTenantData(slug);
 
   if (!tenant) {
+    notFound();
+  }
+
+  if (!getEnabledFeatures(tenant.themeConfig, tenant).ebooks) {
     notFound();
   }
 
@@ -68,15 +76,20 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
 
   return (
     <div className="space-y-8 animate-fade-in text-center font-sans">
-      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-        <h2 className="text-xl font-bold mb-2 flex items-center justify-center gap-2"
-            style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> หนังสือของชำร่วยและธรรมทานรำลึก
-        </h2>
-        <p className="text-stone-500 text-xs leading-normal max-w-md mx-auto">
-          อ่านหนังสืองานศพ ของชำร่วย หรือหนังสือบทสวดมนต์แผ่เมตตาอุทิศส่วนกุศลออนไลน์ได้ทันทีผ่าน Web Reader
-        </p>
-      </div>
+      {(() => {
+        const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'ebooks');
+        return (
+          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
+            <h2 className="text-xl font-bold mb-2 flex items-center justify-center gap-2"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}>
+              <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {fLabel}
+            </h2>
+            <p className="text-stone-500 text-xs leading-normal max-w-md mx-auto">
+              {fDesc}
+            </p>
+          </div>
+        );
+      })()}
 
       {/* Render the Client-side Ebook reader */}
       <EbookReaderClient booklets={finalBooklets} />

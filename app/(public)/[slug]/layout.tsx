@@ -4,6 +4,8 @@ import { db } from '@/lib/db';
 import { Metadata } from 'next';
 import PublicLayoutClient from './PublicLayoutClient';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
@@ -71,12 +73,68 @@ export default async function PublicMemorialLayout(props: {
   // Filter out menus that are not visible (Step 7 logic)
   const visibleMenus = tenant.menus.filter((menu) => menu.isVisible);
 
+  // Check content presence in DB for optional features (BR003: only show tabs that have actual content)
+  const [
+    hasGallery,
+    hasVideos,
+    hasCondolence,
+    hasMemory,
+    hasFeed,
+    hasFamily,
+    hasEbooks
+  ] = await Promise.all([
+    db.media.findFirst({
+      where: { 
+        websiteId: tenant.id, 
+        album: 'GALLERY', 
+        isDeleted: false,
+        NOT: { mimeType: { startsWith: 'video/' } }
+      },
+    }).then(m => !!m),
+    db.media.findFirst({
+      where: { 
+        websiteId: tenant.id, 
+        album: 'GALLERY', 
+        isDeleted: false,
+        mimeType: { startsWith: 'video/' }
+      },
+    }).then(m => !!m),
+    db.condolence.findFirst({
+      where: { websiteId: tenant.id, isApproved: true },
+    }).then(c => !!c),
+    db.memoryPost.findFirst({
+      where: { websiteId: tenant.id, isApproved: true },
+    }).then(m => !!m),
+    db.memorialPost.findFirst({
+      where: { tenantId: tenant.id, status: 'PUBLISHED' },
+    }).then(f => !!f),
+    db.familyMember.findFirst({
+      where: { websiteId: tenant.id },
+    }).then(f => !!f),
+    db.ebook.findFirst({
+      where: { websiteId: tenant.id },
+    }).then(e => !!e)
+  ]);
+
+  const hasContent = {
+    announcement: !!themeConfig?.announcement?.active && !!themeConfig?.announcement?.text,
+    gallery: hasGallery,
+    videos: hasVideos,
+    condolence: hasCondolence,
+    memory: hasMemory,
+    feed: hasFeed,
+    family: hasFamily,
+    ebooks: hasEbooks,
+    donation: !!tenant.donationActive && !!tenant.donationPromptPay,
+  };
+
   return (
     <PublicLayoutClient
       tenant={tenant}
       slug={slug}
       visibleMenus={visibleMenus}
       themeStyles={themeStyles}
+      hasContent={hasContent}
     >
       {children}
     </PublicLayoutClient>

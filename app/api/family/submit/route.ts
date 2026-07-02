@@ -19,7 +19,24 @@ export async function POST(request: Request) {
     }
 
     // 2. Parse request variables
-    const { id, websiteId, name, relationship, birthYear, deathYear, isDeceased, avatarUrl } = await request.json();
+    const { 
+      id, 
+      websiteId, 
+      name, 
+      nickname,
+      relationship, 
+      birthYear, 
+      deathYear, 
+      isDeceased, 
+      hideAge,
+      avatarUrl, 
+      avatarScale,
+      avatarX,
+      avatarY,
+      avatarRotate,
+      spouseOfId, 
+      parentId 
+    } = await request.json();
 
     if (!websiteId || !name || !relationship) {
       return NextResponse.json({ error: 'กรุณาระบุรหัสเว็บไซต์ ชื่อญาติ และความสัมพันธ์' }, { status: 400 });
@@ -54,11 +71,19 @@ export async function POST(request: Request) {
         where: { id, websiteId },
         data: {
           name,
+          nickname: nickname || null,
           relationship,
           birthYear: birthYear || null,
           deathYear: deathYear || null,
           isDeceased: isDeceased || false,
+          hideAge: hideAge || false,
           avatarUrl: avatarUrl || null,
+          avatarScale: avatarScale !== undefined ? avatarScale : 1.0,
+          avatarX: avatarX !== undefined ? avatarX : 0.0,
+          avatarY: avatarY !== undefined ? avatarY : 0.0,
+          avatarRotate: avatarRotate !== undefined ? avatarRotate : 0.0,
+          spouseOfId: spouseOfId || null,
+          parentId: parentId || null,
         },
       });
     } else {
@@ -66,11 +91,19 @@ export async function POST(request: Request) {
         data: {
           websiteId,
           name,
+          nickname: nickname || null,
           relationship,
           birthYear: birthYear || null,
           deathYear: deathYear || null,
           isDeceased: isDeceased || false,
+          hideAge: hideAge || false,
           avatarUrl: avatarUrl || null,
+          avatarScale: avatarScale !== undefined ? avatarScale : 1.0,
+          avatarX: avatarX !== undefined ? avatarX : 0.0,
+          avatarY: avatarY !== undefined ? avatarY : 0.0,
+          avatarRotate: avatarRotate !== undefined ? avatarRotate : 0.0,
+          spouseOfId: spouseOfId || null,
+          parentId: parentId || null,
         },
       });
     }

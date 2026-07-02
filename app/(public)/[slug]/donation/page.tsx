@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 import Link from 'next/link';
 import DonationClientForm from './DonationClientForm';
 
+export const dynamic = 'force-dynamic';
+
 async function getTenantData(slug: string) {
   return await db.tenant.findUnique({
     where: { slug: slug.toLowerCase() },
@@ -23,6 +25,7 @@ export default async function PublicDonationPage(props: { params: Promise<{ slug
         websiteId={tenant.id}
         donationPromptPay={tenant.donationPromptPay}
         donationAccountName={tenant.donationAccountName || 'ครอบครัวผู้ล่วงลับ'}
+        category={tenant.category}
       />
     </div>
   );

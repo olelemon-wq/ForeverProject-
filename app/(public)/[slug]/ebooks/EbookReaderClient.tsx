@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Type, Palette, Maximize2, Minimize2, X } from 'lucide-react';
 
 interface Booklet {
   id: string;
@@ -77,7 +77,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
     <div className="space-y-8 text-center font-sans">
       {!activeBook ? (
         /* Render Booklets List Selection Card Grid */
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
           {booklets.map(book => (
             <div 
               key={book.id}
@@ -108,86 +108,121 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
         /* Render Premium Inline Web Ebook Reader (Step 9 Inline Page Swipe) */
         <div 
           className={`rounded-3xl border border-stone-200 bg-white p-6 flex flex-col justify-between shadow-xl animate-fade-in relative z-50 ${
-            isFullScreen ? 'fixed inset-0 w-screen h-screen rounded-none z-50 bg-[#faf6f0] flex flex-col justify-between p-8' : 'max-w-xl mx-auto'
+            isFullScreen ? 'fixed inset-0 w-screen h-screen rounded-none z-50 bg-stone-50 flex flex-col justify-between p-8' : 'w-full'
           }`}
         >
-          <header className="flex justify-between items-center border-b border-stone-200 pb-3 mb-4">
+          <header className="flex justify-between items-center border-b border-stone-200 pb-3 mb-4 select-none animate-fade-in">
             <div>
-              <h3 className="text-sm font-bold text-stone-900 text-left">{activeBook.title}</h3>
-              <p className="text-[9px] text-stone-500 text-left">ผู้แต่ง: {activeBook.author}</p>
+              <h3 className="text-sm font-black text-stone-900 text-left">{activeBook.title}</h3>
+              <p className="text-[10px] text-stone-500 text-left">ผู้แต่ง: {activeBook.author}</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 items-center">
               <button 
+                type="button"
                 onClick={() => setIsFullScreen(!isFullScreen)}
-                className="text-[10px] text-stone-600 hover:text-stone-900 transition bg-stone-50 border border-stone-200 px-2 py-1 rounded"
+                title={isFullScreen ? 'ย่อหน้าจอ' : 'แสดงเต็มหน้าจอ'}
+                className="p-1.5 text-stone-500 hover:text-stone-800 transition bg-white border border-stone-200 rounded-xl hover:bg-stone-50 flex items-center justify-center cursor-pointer shadow-2xs active:scale-95"
               >
-                {isFullScreen ? 'ย่อหน้าจอ' : 'เต็มหน้าจอ'}
+                {isFullScreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
               </button>
               <button 
+                type="button"
                 onClick={closeBook} 
-                className="text-[10px] text-red-500 font-bold hover:text-red-650 transition"
+                title="ปิดหน้าอ่านหนังสือ"
+                className="p-1.5 text-stone-500 hover:text-red-650 transition bg-white border border-stone-200 rounded-xl hover:bg-red-50 flex items-center justify-center cursor-pointer shadow-2xs active:scale-95"
               >
-                ปิด [x]
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
           </header>
 
-          {/* Accessibility Settings Panel */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-stone-50/50 p-3 rounded-2xl border border-stone-200 mb-4 text-xs">
+          {/* Accessibility Settings Panel (Premium Toolbar widget) */}
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 bg-stone-100/50 p-2 rounded-2xl border border-stone-200/80 mb-6 text-xs shadow-xs px-3.5 select-none">
+            
+            {/* Font Size Settings */}
             <div className="flex items-center gap-2">
-              <span className="text-stone-500 font-medium">ขนาดตัวอักษร:</span>
-              <button
-                onClick={() => setFontSize('small')}
-                className={`px-2.5 py-1 rounded-lg font-medium transition ${
-                  fontSize === 'small' ? 'bg-emerald-600 text-white font-bold' : 'bg-stone-50 border border-stone-200 text-stone-600 hover:bg-stone-100'
-                }`}
-              >
-                เล็ก
-              </button>
-              <button
-                onClick={() => setFontSize('medium')}
-                className={`px-2.5 py-1 rounded-lg font-medium transition ${
-                  fontSize === 'medium' ? 'bg-emerald-600 text-white font-bold' : 'bg-stone-50 border border-stone-200 text-stone-600 hover:bg-stone-100'
-                }`}
-              >
-                กลาง
-              </button>
-              <button
-                onClick={() => setFontSize('large')}
-                className={`px-2.5 py-1 rounded-lg font-medium transition ${
-                  fontSize === 'large' ? 'bg-emerald-600 text-white font-bold' : 'bg-stone-50 border border-stone-200 text-stone-600 hover:bg-stone-100'
-                }`}
-              >
-                ใหญ่
-              </button>
+              <span className="text-stone-550 font-bold flex items-center gap-1.5">
+                <Type className="w-3.5 h-3.5 text-stone-400" />
+                <span>ขนาดตัวอักษร:</span>
+              </span>
+              <div className="flex gap-0.5 bg-white border border-stone-200 rounded-full p-0.5 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setFontSize('small')}
+                  className={`px-3.5 py-0.5 rounded-full transition-all text-[10px] font-bold cursor-pointer active:scale-95 ${
+                    fontSize === 'small' 
+                      ? 'bg-stone-800 text-white shadow-xs' 
+                      : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                  }`}
+                >
+                  เล็ก
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFontSize('medium')}
+                  className={`px-3.5 py-0.5 rounded-full transition-all text-[10px] font-bold cursor-pointer active:scale-95 ${
+                    fontSize === 'medium' 
+                      ? 'bg-stone-800 text-white shadow-xs' 
+                      : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                  }`}
+                >
+                  กลาง
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFontSize('large')}
+                  className={`px-3.5 py-0.5 rounded-full transition-all text-[10px] font-bold cursor-pointer active:scale-95 ${
+                    fontSize === 'large' 
+                      ? 'bg-stone-800 text-white shadow-xs' 
+                      : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                  }`}
+                >
+                  ใหญ่
+                </button>
+              </div>
             </div>
             
+            {/* Color Theme Settings */}
             <div className="flex items-center gap-2">
-              <span className="text-stone-550 font-medium">โทนสี:</span>
-              <button
-                onClick={() => setTheme('white')}
-                className={`px-2.5 py-1 rounded-lg font-medium transition border ${
-                  theme === 'white' ? 'bg-white text-stone-900 border-emerald-600 font-bold' : 'bg-white/80 text-stone-900 border-stone-300 hover:bg-white'
-                }`}
-              >
-                สว่าง
-              </button>
-              <button
-                onClick={() => setTheme('sepia')}
-                className={`px-2.5 py-1 rounded-lg font-medium transition border ${
-                  theme === 'sepia' ? 'bg-[#f4eedb] text-[#4f3824] border-emerald-600 font-bold' : 'bg-[#f4eedb]/80 text-[#4f3824] border-[#e7dec3] hover:bg-[#f4eedb]'
-                }`}
-              >
-                ซีเปีย
-              </button>
-              <button
-                onClick={() => setTheme('dark')}
-                className={`px-2.5 py-1 rounded-lg font-medium transition border ${
-                  theme === 'dark' ? 'bg-stone-900 text-white border-emerald-650' : 'bg-stone-100 text-stone-800 border-stone-300 hover:bg-stone-200'
-                }`}
-              >
-                มืด
-              </button>
+              <span className="text-stone-555 font-bold flex items-center gap-1.5">
+                <Palette className="w-3.5 h-3.5 text-stone-400" />
+                <span>โทนสี:</span>
+              </span>
+              <div className="flex gap-0.5 bg-white border border-stone-200 rounded-full p-0.5 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setTheme('white')}
+                  className={`px-3.5 py-0.5 rounded-full transition-all text-[10px] font-bold cursor-pointer active:scale-95 ${
+                    theme === 'white' 
+                      ? 'bg-stone-800 text-white shadow-xs' 
+                      : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                  }`}
+                >
+                  สว่าง
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTheme('sepia')}
+                  className={`px-3.5 py-0.5 rounded-full transition-all text-[10px] font-bold cursor-pointer active:scale-95 ${
+                    theme === 'sepia' 
+                      ? 'bg-[#F4EEDB] text-[#4F3824] border border-[#E4D7B5]/65 shadow-2xs' 
+                      : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                  }`}
+                >
+                  ซีเปีย
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTheme('dark')}
+                  className={`px-3.5 py-0.5 rounded-full transition-all text-[10px] font-bold cursor-pointer active:scale-95 ${
+                    theme === 'dark' 
+                      ? 'bg-stone-900 text-white shadow-xs' 
+                      : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                  }`}
+                >
+                  มืด
+                </button>
+              </div>
             </div>
           </div>
 
@@ -197,7 +232,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
               Forever Commemorative Web Reader
             </span>
             
-            <div className="my-auto space-y-4 px-4 text-center">
+            <div className="my-auto space-y-4 px-4 text-center max-w-2xl mx-auto w-full">
               <p className={`leading-relaxed font-serif italic text-justify whitespace-pre-wrap transition-all duration-300 ${fontSizeClasses[fontSize]} ${currentTheme.pageText}`}>
                 {activeBook.mockPages[currentPage - 1]}
               </p>

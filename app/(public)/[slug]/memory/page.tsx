@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
+import { getEnabledFeatures } from '@/lib/features';
 import MemoryWallClient from './MemoryWallClient';
+import { getFeatureLabel } from '@/lib/categories';
 import { Camera } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 async function getTenantData(slug: string) {
   return await db.tenant.findUnique({
@@ -37,6 +41,10 @@ export default async function PublicMemoryWallPage(props: { params: Promise<{ sl
   const tenant = await getTenantData(slug);
 
   if (!tenant) {
+    notFound();
+  }
+
+  if (!getEnabledFeatures(tenant.themeConfig, tenant).memory) {
     notFound();
   }
 

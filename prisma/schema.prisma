@@ -34,6 +34,7 @@ model Tenant {
   familyMembers FamilyMember[]
   ebooks        Ebook[]
   donations     Donation[]
+  memorialPosts MemorialPost[]
 }
 
 model Webmaster {
@@ -43,8 +44,9 @@ model Webmaster {
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
 
-  websites WebsiteWebmaster[]
-  devices  TrustedDevice[]
+  websites      WebsiteWebmaster[]
+  devices       TrustedDevice[]
+  memorialPosts MemorialPost[]
 }
 
 model WebsiteWebmaster {
@@ -109,6 +111,7 @@ model Media {
   fileHash  String   // MD5/SHA hash of file for duplicate warning check (BR031)
   album     String?  // e.g. "GALLERY", "VIDEO", "AUDIO", "DOCUMENT"
   isDeleted Boolean  @default(false)
+  sortOrder Int      @default(0)
   createdAt DateTime @default(now())
 
   website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
@@ -180,11 +183,19 @@ model FamilyMember {
   id           String   @id @default(uuid())
   websiteId    String
   name         String
+  nickname     String?
   relationship String   // e.g. "PARENT_1", "PARENT_2", "SPOUSE", "SIBLING", "CHILD"
   birthYear    String?
   deathYear    String?
   isDeceased   Boolean  @default(false)
+  hideAge      Boolean  @default(false)
   avatarUrl    String?
+  avatarScale  Float?   @default(1.0)
+  avatarX      Float?   @default(0.0)
+  avatarY      Float?   @default(0.0)
+  avatarRotate Float?   @default(0.0)
+  spouseOfId   String?
+  parentId     String?
   createdAt    DateTime @default(now())
 
   website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
@@ -216,6 +227,89 @@ model Donation {
   createdAt   DateTime @default(now())
 
   website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+model Template {
+  id           String   @id @default(uuid())
+  name         String
+  data         Json     // Stores Element arrays (Text, Image positions)
+  ownerId      String?
+  thumbnailUrl String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("templates")
+}
+
+model MemorialPost {
+  id           String           @id @default(cuid())
+  tenantId     String
+  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  authorId     String?          // null = guest
+  author       Webmaster?       @relation(fields: [authorId], references: [id])
+  authorName   String           // snapshot name
+  authorAvatar String?
+  isAnonymous  Boolean          @default(false)
+  type         MemorialPostType @default(CONDOLENCE)
+  content      String           @db.Text
+  mediaUrls    String[]         // S3 URLs (reusing existing file upload)
+  isPinned     Boolean          @default(false)
+  status       PostStatus       @default(PUBLISHED)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  reactions    PostReaction[]
+  comments     PostComment[]
+
+  @@index([tenantId, isPinned, createdAt])
+}
+
+model PostReaction {
+  id        String       @id @default(cuid())
+  postId    String
+  post      MemorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String?      // linked to Webmaster ID if logged in
+  guestKey  String?      // cookie-based dedup for guests
+  type      ReactionType
+  createdAt DateTime     @default(now())
+
+  @@unique([postId, userId])
+  @@unique([postId, guestKey])
+  @@index([postId])
+}
+
+model PostComment {
+  id           String       @id @default(cuid())
+  postId       String
+  post         MemorialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId     String?
+  authorName   String
+  authorAvatar String?
+  isAnonymous  Boolean      @default(false)
+  content      String       @db.Text
+  status       PostStatus   @default(PUBLISHED)
+  createdAt    DateTime     @default(now())
+
+  @@index([postId, createdAt])
+}
+
+enum MemorialPostType {
+  CONDOLENCE
+  MEMORY
+  ANNOUNCEMENT
+  MERIT
+}
+
+enum PostStatus {
+  PUBLISHED
+  PENDING
+  HIDDEN
+}
+
+enum ReactionType {
+  PRAY
+  LOVE
+  CANDLE
+  FLOWER
 }
 
 

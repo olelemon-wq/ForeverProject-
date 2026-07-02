@@ -44,6 +44,7 @@ export async function GET() {
       donationPromptPay: relation.website.donationPromptPay,
       donationAccountName: relation.website.donationAccountName,
       donationActive: relation.website.donationActive,
+      themeConfig: relation.website.themeConfig,
       role: relation.role,
     }));
 

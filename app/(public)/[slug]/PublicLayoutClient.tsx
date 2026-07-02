@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Flame, Menu as MenuIcon, X, Eye } from 'lucide-react';
+import { getEnabledFeatures } from '@/lib/features';
+import { getFeatureLabel } from '@/lib/categories';
 
 interface Menu {
   id: string;
@@ -16,6 +18,7 @@ interface Tenant {
   name: string;
   category: string;
   donationActive: boolean;
+  themeConfig?: any;
 }
 
 export default function PublicLayoutClient({
@@ -24,29 +27,74 @@ export default function PublicLayoutClient({
   slug,
   visibleMenus,
   themeStyles,
+  hasContent,
 }: {
   children: React.ReactNode;
   tenant: Tenant;
   slug: string;
   visibleMenus: Menu[];
   themeStyles: React.CSSProperties;
+  hasContent?: any;
 }) {
   const [textSize, setTextSize] = useState<'normal' | 'large'>('normal');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const navItems = [
-    ...visibleMenus.map((menu) => {
-      const path = menu.pageType === 'HOME' ? '' : `/${menu.pageType.toLowerCase()}`;
-      return {
-        title: menu.title,
-        href: `/${slug}${path}`,
-      };
-    }),
-    { title: 'กระดานความทรงจำ', href: `/${slug}/memory` },
-    { title: 'ผังครอบครัว', href: `/${slug}/family` },
-    { title: 'หนังสือที่ระลึก', href: `/${slug}/ebooks` },
-    ...(tenant.donationActive ? [{ title: 'ร่วมทำบุญ', href: `/${slug}/donation` }] : []),
-  ];
+  const config = (tenant.themeConfig as any) || {};
+  const coverUrl = config.coverUrl || '';
+  const coverScale = config.coverScale || 1;
+  const coverX = config.coverX || 0;
+  const coverY = config.coverY || 0;
+  const coverRotate = config.coverRotate || 0;
+
+  const enabledFeatures = getEnabledFeatures(config, tenant);
+  
+  const getLabel = (key: string, defaultLabel: string) => {
+    try {
+      return getFeatureLabel(tenant.category, key as any).label || defaultLabel;
+    } catch {
+      return defaultLabel;
+    }
+  };
+
+  const navItems: { title: string; href: string }[] = [];
+
+  // 1. Home (always shown)
+  navItems.push({ title: 'หน้าแรก', href: `/${slug}` });
+
+  // 2. Gallery
+  if (enabledFeatures.gallery) {
+    navItems.push({ title: getLabel('gallery', 'คลังภาพรำลึก'), href: `/${slug}/gallery` });
+  }
+
+  // 3. Condolence (สมุดไว้อาลัย / สมุดส่งความคิดถึง)
+  if (enabledFeatures.condolence) {
+    navItems.push({ title: getLabel('condolence', 'สมุดไว้อาลัย'), href: `/${slug}/condolence` });
+  }
+
+  // 4. Videos
+  if (enabledFeatures.videos) {
+    navItems.push({ title: getLabel('videos', 'คลังวิดีโอ'), href: `/${slug}/videos` });
+  }
+
+  // 5. Memory / ไดอารี่ความสุข
+  if (enabledFeatures.memory) {
+    navItems.push({ title: getLabel('memory', 'กระดานความทรงจำ'), href: `/${slug}/memory` });
+  }
+
+  // 6. Family
+  if (enabledFeatures.family) {
+    navItems.push({ title: getLabel('family', 'ผังครอบครัว'), href: `/${slug}/family` });
+  }
+
+  // 7. Ebooks
+  if (enabledFeatures.ebooks) {
+    navItems.push({ title: getLabel('ebooks', 'หนังสือที่ระลึก'), href: `/${slug}/ebooks` });
+  }
+
+  // 8. Donation
+  if (enabledFeatures.donation && tenant.donationActive) {
+    navItems.push({ title: getLabel('donation', 'ร่วมทำบุญ'), href: `/${slug}/donation` });
+  }
 
   return (
     <div 
@@ -89,17 +137,46 @@ export default function PublicLayoutClient({
       </div>
 
       {/* Header */}
-      <header className="relative py-16 text-center bg-white border-b border-stone-200/60 overflow-hidden">
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full blur-[100px] pointer-events-none opacity-10"
-          style={{ backgroundColor: 'var(--theme-primary)' }}
-        />
-        <div className="max-w-4xl mx-auto px-4 relative z-10">
-          <div className="w-24 h-24 rounded-full border-4 bg-stone-50 mx-auto shadow-md overflow-hidden flex items-center justify-center mb-4 animate-fade-in"
-               style={{ borderColor: 'var(--theme-primary)' }}>
-            <Flame className="w-10 h-10 animate-pulse" style={{ color: 'var(--theme-primary)' }} />
+      <header className={`relative py-16 text-center border-b border-stone-200/60 overflow-hidden transition-all duration-500 ${
+        coverUrl ? 'bg-stone-955 text-white py-20 sm:py-24' : 'bg-white'
+      }`}>
+        {coverUrl ? (
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
+            <img 
+              src={coverUrl.startsWith('http') || coverUrl.startsWith('/') ? coverUrl : `/${coverUrl}`} 
+              alt="Cover Image" 
+              className="w-full h-full object-cover" 
+              style={{
+                transform: `translate(${((coverX || 0) / 320) * 100}%, ${((coverY || 0) / 160) * 100}%) rotate(${coverRotate || 0}deg) scale(${coverScale || 1})`,
+                transformOrigin: 'center center',
+              }}
+            />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[0.5px]" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 mb-2">
+        ) : (
+          <div 
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full blur-[100px] pointer-events-none opacity-10"
+            style={{ backgroundColor: 'var(--theme-primary)' }}
+          />
+        )}
+        <div className="max-w-4xl mx-auto px-4 relative z-10">
+          <div className="w-24 h-24 rounded-full border-4 bg-stone-50 mx-auto shadow-md overflow-hidden flex items-center justify-center mb-4 animate-fade-in relative"
+               style={{ borderColor: 'var(--theme-primary)' }}>
+            {config.avatarUrl ? (
+              <img 
+                src={config.avatarUrl.startsWith('http') || config.avatarUrl.startsWith('/') ? config.avatarUrl : `/${config.avatarUrl}`} 
+                alt="Avatar"
+                className="w-full h-full object-cover"
+                style={{
+                  transform: `translate(${((config.avatarX || 0) / 224) * 100}%, ${((config.avatarY || 0) / 224) * 100}%) rotate(${config.avatarRotate || 0}deg) scale(${(config.avatarScale || 1) * (300 / 224)})`,
+                  transformOrigin: 'center center',
+                }}
+              />
+            ) : (
+              <Flame className="w-10 h-10 animate-pulse" style={{ color: 'var(--theme-primary)' }} />
+            )}
+          </div>
+          <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight mb-2 ${coverUrl ? 'text-white drop-shadow-md' : 'text-stone-900'}`}>
             {tenant.name}
           </h1>
         </div>

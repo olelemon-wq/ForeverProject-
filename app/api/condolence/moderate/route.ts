@@ -76,8 +76,35 @@ export async function POST(request: Request) {
           details: `ลบคำไว้อาลัยรหัส ${condolenceId} สำเร็จ`,
         },
       });
+    } else if (action === 'TOGGLE_TYPE') {
+      const condolence = await db.condolence.findUnique({
+        where: { id: condolenceId, websiteId },
+      });
+      if (!condolence) {
+        return NextResponse.json({ error: 'ไม่พบคำไว้อาลัยที่ระบุ' }, { status: 404 });
+      }
+      const newType = condolence.type === 'FAMILY' ? 'GENERAL' : 'FAMILY';
+      const updated = await db.condolence.update({
+        where: { id: condolenceId, websiteId },
+        data: { type: newType },
+      });
+
+      await db.auditLog.create({
+        data: {
+          websiteId,
+          webmasterId: webmaster.id,
+          action: 'PUBLISH',
+          details: `เปลี่ยนประเภทคำไว้อาลัยรหัส ${condolenceId} เป็น ${newType} สำเร็จ`,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: 'เปลี่ยนประเภทสำเร็จ',
+        condolence: updated,
+      });
     } else {
-      return NextResponse.json({ error: 'ประเภทการกระทำไม่ถูกต้อง (ระบุได้เพียง APPROVE หรือ DELETE)' }, { status: 400 });
+      return NextResponse.json({ error: 'ประเภทการกระทำไม่ถูกต้อง (ระบุได้เพียง APPROVE, DELETE หรือ TOGGLE_TYPE)' }, { status: 400 });
     }
 
     return NextResponse.json({

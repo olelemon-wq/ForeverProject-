@@ -2,31 +2,7 @@ import Link from 'next/link';
 
 export default function MarketingHome() {
   return (
-    <main className="min-h-screen bg-[#faf8f5] text-stone-900 selection:bg-emerald-200 selection:text-stone-900">
-      {/* Navbar */}
-      <nav className="border-b border-stone-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold tracking-wider bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent">
-              FOREVER
-            </span>
-          </div>
-          <div className="flex items-center gap-6">
-            <Link href="/features" className="text-sm font-medium text-stone-600 hover:text-stone-900 transition">
-              คุณสมบัติ
-            </Link>
-            <Link href="/pricing" className="text-sm font-medium text-stone-600 hover:text-stone-900 transition">
-              ราคา
-            </Link>
-            <Link href="/manage" className="text-sm font-medium text-stone-600 hover:text-stone-900 transition">
-              จัดการเว็บ
-            </Link>
-            <Link href="/login" className="px-4 py-2 text-sm font-semibold rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:brightness-105 transition active:scale-95 shadow-[0_4px_12px_rgba(16,185,129,0.2)]">
-              สร้างเว็บไซต์ฟรี
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <>
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 text-center relative overflow-hidden">
@@ -47,7 +23,7 @@ export default function MarketingHome() {
           <Link href="/login" className="px-8 py-4 text-base font-bold rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white hover:brightness-105 transition shadow-[0_6px_20px_rgba(16,185,129,0.3)] active:scale-[0.98]">
             เริ่มสร้างเว็บไซต์ความทรงจำ
           </Link>
-          <Link href="/examples" className="px-8 py-4 text-base font-semibold rounded-full border border-stone-300 bg-white text-stone-700 hover:text-stone-900 hover:bg-stone-50 transition active:scale-[0.98]">
+          <Link href="/boonkrua-family" className="px-8 py-4 text-base font-semibold rounded-full border border-stone-300 bg-white text-stone-700 hover:text-stone-900 hover:bg-stone-50 transition active:scale-[0.98]">
             ดูตัวอย่างเว็บไซต์
           </Link>
         </div>
@@ -86,7 +62,7 @@ export default function MarketingHome() {
           </div>
         </div>
       </section>
-    </main>
+    </>
   );
 }
 

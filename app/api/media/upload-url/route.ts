@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่อีกครั้ง' }, { status: 401 });
     }
 
-    const { fileName, fileType, fileSize, websiteId } = await request.json();
+    const { fileName, fileType, fileSize, websiteId, album } = await request.json();
 
     if (!fileName || !fileType || !fileSize || !websiteId) {
       return NextResponse.json({ error: 'ข้อมูลสเปกไฟล์ไม่ครบถ้วน' }, { status: 400 });
@@ -112,13 +112,13 @@ export async function POST(request: Request) {
       } catch (s3Err) {
         console.error('Error generating real S3 presigned URL:', s3Err);
         // Fallback to mock on error
-        uploadUrl = `https://storage.forever.co.th/api/upload-mock?key=${fileKey}`;
-        fileUrl = `https://storage.forever.co.th/${fileKey}`;
+        uploadUrl = `/api/media/upload-mock?key=${fileKey}`;
+        fileUrl = `/${fileKey}`;
       }
     } else {
       // Standard local simulation mock fallback
-      uploadUrl = `https://storage.forever.co.th/api/upload-mock?key=${fileKey}`;
-      fileUrl = `https://storage.forever.co.th/${fileKey}`;
+      uploadUrl = `/api/media/upload-mock?key=${fileKey}`;
+      fileUrl = `/${fileKey}`;
     }
 
     // 6. Record metadata in Media DB and update AuditLog (BR036)
@@ -130,13 +130,13 @@ export async function POST(request: Request) {
         fileSize: newFileSizeBytes,
         mimeType: fileType,
         fileHash: `hash-${Math.random().toString(36).substring(7)}`, // Hash for duplicate check (BR031)
-        album: fileType.startsWith('image/')
+        album: album || (fileType.startsWith('image/')
           ? 'GALLERY'
           : fileType.startsWith('video/')
           ? 'VIDEO'
           : fileType.startsWith('audio/')
           ? 'AUDIO'
-          : 'DOCUMENT',
+          : 'DOCUMENT'),
       },
     });
 

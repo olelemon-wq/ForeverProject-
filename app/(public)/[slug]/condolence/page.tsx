@@ -1,7 +1,13 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
+import { getEnabledFeatures } from '@/lib/features';
 import CondolenceForm from '../CondolenceForm';
-import { Flame, PenTool } from 'lucide-react';
+import { getFeatureLabel } from '@/lib/categories';
+import { Flame, PenTool, ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import CondolenceItem from './CondolenceItem';
+
+export const dynamic = 'force-dynamic';
 
 async function getTenantData(slug: string) {
   const tenant = await db.tenant.findUnique({
@@ -21,35 +27,93 @@ async function getApprovedCondolences(websiteId: string) {
     },
   });
 
-  // Sort: FAMILY condolences displayed before GENERAL condolences (BR028)
+  const RELATIONSHIP_LEVELS: Record<string, number> = {
+    Family: 1,
+    Spouse: 1,
+    Son: 1,
+    Daughter: 1,
+    Grandchild: 1,
+    Relative: 2,
+    Friend: 3,
+    Colleague: 3,
+  };
+
+  // Sort by relationship level (Spouse -> Son/Daughter -> Grandchild -> Relative -> Friend -> Colleague -> Other)
+  // Within the same level, sort by newest first (chronological order)
   return condolences.sort((a, b) => {
-    if (a.type === 'FAMILY' && b.type !== 'FAMILY') return -1;
-    if (a.type !== 'FAMILY' && b.type === 'FAMILY') return 1;
-    return 0; // maintain original chronological sort order
+    const levelA = RELATIONSHIP_LEVELS[a.relationship] || 7;
+    const levelB = RELATIONSHIP_LEVELS[b.relationship] || 7;
+    
+    if (levelA !== levelB) {
+      return levelA - levelB;
+    }
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 }
 
-export default async function PublicCondolencePage(props: { params: Promise<{ slug: string }> }) {
+const getPageNumbers = (current: number, total: number) => {
+  const pages = [];
+  const delta = 1; // Number of pages to show before and after current
+  
+  for (let i = 1; i <= total; i++) {
+    if (
+      i === 1 ||
+      i === total ||
+      (i >= current - delta && i <= current + delta)
+    ) {
+      pages.push(i);
+    } else if (pages[pages.length - 1] !== '...') {
+      pages.push('...');
+    }
+  }
+  return pages;
+};
+
+export default async function PublicCondolencePage(props: { 
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ page?: string }>;
+}) {
   const { slug } = await props.params;
+  const resolvedSearchParams = await props.searchParams;
+  const rawPage = resolvedSearchParams?.page;
+  const page = rawPage ? parseInt(rawPage, 10) : 1;
+
   const tenant = await getTenantData(slug);
 
   if (!tenant) {
     notFound();
   }
 
+  if (!getEnabledFeatures(tenant.themeConfig, tenant).condolence) {
+    notFound();
+  }
+
   const condolences = await getApprovedCondolences(tenant.id);
+
+  const ITEMS_PER_PAGE = 10;
+  const totalCondolences = condolences.length;
+  const totalPages = Math.max(1, Math.ceil(totalCondolences / ITEMS_PER_PAGE));
+  const currentPage = Math.max(1, Math.min(totalPages, page));
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedCondolences = condolences.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-        <h2 className="text-xl font-bold mb-2 flex items-center gap-2"
-            style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <Flame className="w-5 h-5 animate-pulse" /> สมุดลงนามแสดงความไว้อาลัย
-        </h2>
-        <p className="text-stone-500 text-xs leading-normal">
-          ร่วมลงนาม เขียนคำไว้อาลัย และแสดงความระลึกถึงผู้ล่วงลับ เพื่อเกียรติประวัติและความรักความผูกพันที่จะคงอยู่ตลอดไป
-        </p>
-      </div>
+      {(() => {
+        const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'condolence');
+        return (
+          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
+            <h2 className="text-xl font-bold mb-2 flex items-center gap-2"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}>
+              <Flame className="w-5 h-5 animate-pulse" /> {fLabel}
+            </h2>
+            <p className="text-stone-500 text-xs leading-normal">
+              {fDesc}
+            </p>
+          </div>
+        );
+      })()}
 
       {/* Condolences Board List */}
       <section className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-6">
@@ -63,41 +127,71 @@ export default async function PublicCondolencePage(props: { params: Promise<{ sl
           </div>
         ) : (
           <div className="space-y-4">
-            {condolences.map((c) => {
-              const isFamily = c.type === 'FAMILY';
-              return (
-                <div 
-                  key={c.id} 
-                  className={`p-5 rounded-2xl border transition ${
-                    isFamily 
-                      ? 'border-amber-200 bg-amber-50/40 shadow-[0_2px_10px_rgba(245,158,11,0.03)]' 
-                      : 'border-stone-200 bg-stone-50/50'
+            <div className="space-y-4">
+              {paginatedCondolences.map((c) => (
+                <CondolenceItem key={c.id} condolence={c} />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-1.5 pt-6 border-t border-stone-100 mt-6 flex-wrap">
+                {/* Previous Page Button */}
+                <Link
+                  href={`/${slug}/condolence?page=${currentPage - 1}`}
+                  className={`px-3 py-2 rounded-xl border text-xs font-bold transition flex items-center gap-1 ${
+                    currentPage === 1
+                      ? 'border-stone-100 text-stone-300 pointer-events-none bg-stone-50/50'
+                      : 'border-stone-200 text-stone-700 bg-white hover:bg-stone-50 hover:border-stone-300 active:scale-95'
                   }`}
                 >
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="text-sm font-bold text-stone-850">{c.senderName}</span>
-                    <span className="px-2 py-0.5 text-[10px] font-semibold bg-stone-100 text-stone-600 rounded">
-                      ความสัมพันธ์: {c.relationship}
-                    </span>
-                    {isFamily && (
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-850 border border-amber-200 rounded">
-                        ครอบครัวใกล้ชิด (Family)
-                      </span>
-                    )}
-                    <span className="text-[10px] text-stone-550 ml-auto">
-                      {new Date(c.createdAt).toLocaleDateString('th-TH', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-stone-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
-                    "{c.message}"
-                  </p>
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>ก่อนหน้า</span>
+                </Link>
+
+                {/* Page Numbers */}
+                <div className="flex items-center gap-1">
+                  {getPageNumbers(currentPage, totalPages).map((p, idx) => {
+                    if (p === '...') {
+                      return (
+                        <span key={`ellipsis-${idx}`} className="px-2.5 py-2 text-xs font-bold text-stone-400 select-none">
+                          ...
+                        </span>
+                      );
+                    }
+
+                    const isActive = p === currentPage;
+                    return (
+                      <Link
+                        key={`page-${p}`}
+                        href={`/${slug}/condolence?page=${p}`}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-bold transition ${
+                          isActive
+                            ? 'text-white bg-emerald-600 shadow-sm'
+                            : 'text-stone-600 bg-stone-100 hover:bg-stone-200/80 active:scale-95'
+                        }`}
+                        style={isActive ? { backgroundColor: 'var(--theme-primary, #0d9488)' } : {}}
+                      >
+                        {p}
+                      </Link>
+                    );
+                  })}
                 </div>
-              );
-            })}
+
+                {/* Next Page Button */}
+                <Link
+                  href={`/${slug}/condolence?page=${currentPage + 1}`}
+                  className={`px-3 py-2 rounded-xl border text-xs font-bold transition flex items-center gap-1 ${
+                    currentPage === totalPages
+                      ? 'border-stone-100 text-stone-300 pointer-events-none bg-stone-50/50'
+                      : 'border-stone-200 text-stone-700 bg-white hover:bg-stone-50 hover:border-stone-300 active:scale-95'
+                  }`}
+                >
+                  <span>ถัดไป</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </section>

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
+import { getInitialFeatureMapForCategory } from '@/lib/categories';
 
 export async function POST(request: Request) {
   try {
@@ -51,11 +52,14 @@ export async function POST(request: Request) {
 
     // 5. Calculate default values
     const expiredAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // Default 1 year subscription duration
-    const defaultThemeConfig = themeConfig || {
+    const defaultThemeConfig = {
       primaryColor: '#0d9488',
       secondaryColor: '#f59e0b',
       fontFamily: 'Inter',
       heroStyle: 'Classic',
+      ...(themeConfig || {}),
+      // Seed sensible default feature visibility based on selected category journey
+      features: getInitialFeatureMapForCategory(category),
     };
 
     // 6. DB Transaction to create Tenant, default Menu pages, Webmaster connection, and pending payment
@@ -120,6 +124,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: 'ร่างเว็บไซต์ได้รับการบันทึกสำเร็จ กรุณาชำระเงินเพื่อเปิดใช้งาน',
+      id: result.tenant.id,
       slug: result.tenant.slug,
       payment: {
         id: result.payment.id,

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getFeatureLabel } from '@/lib/categories';
 import { Heart, Sparkles, AlertCircle, Check, Smartphone } from 'lucide-react';
 
 interface Donation {
@@ -16,11 +17,13 @@ interface Donation {
 export default function DonationClientForm({ 
   websiteId, 
   donationPromptPay, 
-  donationAccountName 
+  donationAccountName,
+  category
 }: { 
   websiteId: string; 
   donationPromptPay: string; 
   donationAccountName: string;
+  category?: string;
 }) {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [donorName, setDonorName] = useState('');
@@ -88,6 +91,15 @@ export default function DonationClientForm({
         });
         const quotaData = await quotaRes.json();
         if (!quotaRes.ok) throw new Error(quotaData.error);
+
+        if (quotaData.uploadUrl) {
+          await fetch(quotaData.uploadUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': slipFile.type },
+            body: slipFile,
+          });
+        }
+
         slipUrl = quotaData.filePath;
       }
 

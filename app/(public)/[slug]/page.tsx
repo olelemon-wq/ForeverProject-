@@ -1,16 +1,67 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import CondolenceForm from './CondolenceForm';
-import { BookOpen, Flame } from 'lucide-react';
+import { 
+  BookOpen, Calendar, MapPin, Image, Flame, ArrowRight,
+  Phone, Info, Share2, Printer, ExternalLink, Droplets, Sparkles 
+} from 'lucide-react';
+import Link from 'next/link';
+import DeceasedAvatar from './announcement/DeceasedAvatar';
+import { getEnabledFeatures } from '@/lib/features';
+import { getCategoryJourney } from '@/lib/categories';
+
+export const dynamic = 'force-dynamic';
 
 async function getTenantData(slug: string) {
-  const tenant = await db.tenant.findUnique({
+  return await db.tenant.findUnique({
     where: { slug: slug.toLowerCase() },
   });
-  return tenant;
 }
 
-async function getApprovedCondolences(websiteId: string) {
+async function getRecentGallery(websiteId: string) {
+  const medias = await db.media.findMany({
+    where: {
+      websiteId,
+      album: 'GALLERY',
+      isDeleted: false,
+      NOT: { mimeType: { startsWith: 'video/' } },
+    },
+    orderBy: [
+      { sortOrder: 'asc' },
+      { createdAt: 'desc' },
+    ],
+    take: 4,
+  });
+
+  return medias.map(m => ({
+    id: m.id,
+    filePath: m.filePath,
+    fileName: m.fileName,
+    mimeType: m.mimeType,
+  }));
+}
+
+function getDisplayUrl(filePath: string, mimeType: string, index: number) {
+  if (filePath.startsWith('https://storage.forever.co.th')) {
+    const isVideo = mimeType.startsWith('video/');
+    if (isVideo) {
+      return 'https://assets.mixkit.co/videos/preview/mixkit-sunset-seen-through-the-branches-of-a-tree-42751-large.mp4';
+    }
+
+    const placeholders = [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80',
+    ];
+    return placeholders[index % placeholders.length];
+  }
+  return filePath;
+}
+
+async function getRecentCondolences(websiteId: string) {
   const condolences = await db.condolence.findMany({
     where: {
       websiteId,
@@ -22,11 +73,44 @@ async function getApprovedCondolences(websiteId: string) {
   });
 
   // Sort: FAMILY condolences displayed before GENERAL condolences (BR028)
-  return condolences.sort((a, b) => {
+  const sorted = condolences.sort((a, b) => {
     if (a.type === 'FAMILY' && b.type !== 'FAMILY') return -1;
     if (a.type !== 'FAMILY' && b.type === 'FAMILY') return 1;
     return 0; // maintain original chronological sort order
   });
+
+  return sorted.slice(0, 3); // Take top 3
+}
+
+async function getRecentEbooks(websiteId: string) {
+  const dbEbooks = await db.ebook.findMany({
+    where: { websiteId },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  const mockBooklets = [
+    {
+      id: 'book-1',
+      title: 'หนังสือธรรมะรำลึกและคำสอนสติ',
+      author: 'ครอบครัวเจริญยิ่ง',
+      totalPages: 4,
+    },
+    {
+      id: 'book-2',
+      title: 'บันทึกประวัติความทรงจำและคำขอบคุณ',
+      author: 'คณะผู้จัดทำ',
+      totalPages: 3,
+    },
+  ];
+
+  const mappedDbEbooks = dbEbooks.map(eb => ({
+    id: eb.id,
+    title: eb.title,
+    author: eb.author,
+    totalPages: eb.totalPages,
+  }));
+
+  return [...mappedDbEbooks, ...mockBooklets].slice(0, 2);
 }
 
 export default async function PublicMemorialHome(props: { params: Promise<{ slug: string }> }) {
@@ -37,75 +121,439 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
     notFound();
   }
 
-  const condolences = await getApprovedCondolences(tenant.id);
+  // Parallel database fetching
+  const [recentPhotos, recentCondolences, recentEbooks] = await Promise.all([
+    getRecentGallery(tenant.id),
+    getRecentCondolences(tenant.id),
+    getRecentEbooks(tenant.id),
+  ]);
+
+  const config = tenant.themeConfig as any;
+  const enabledFeatures = getEnabledFeatures(config, tenant);
+  const displayBiography = config?.biography || "คุณพ่อสมศักดิ์เป็นคนขยัน ซื่อสัตย์ และรักครอบครัวมาก ท่านเป็นผู้นำที่ดีและเสียสละเสมอเพื่อการศึกษาของลูกๆ ความดีงามและคำสั่งสอนของท่านจะคงอยู่ในการดำเนินชีวิตของพวกเราตลอดไป...";
+  
+  const journey = getCategoryJourney(tenant.category);
+  const homeCopy = journey.home || {};
+  const biographyHeading = homeCopy.biographyHeading || 'อาลัยและคำรำลึก';
+  const condolenceHeading = homeCopy.condolenceHeading || 'ข้อความไว้อาลัยล่าสุด';
+  const condolenceCta = homeCopy.condolenceCta || 'เขียนข้อความ/ร่วมจุดเทียนออนไลน์';
+  const galleryHeading = homeCopy.galleryHeading || 'ภาพถ่ายความทรงจำล่าสุด';
+  const ann = config?.announcement || {};
+  const isAnnActive = enabledFeatures.announcement;
+
+  // Parse template colors
+  let cardBgClass = 'bg-white border-stone-200 text-stone-900';
+  let textMutedClass = 'text-stone-500';
+  let headingColorClass = 'text-stone-900';
+  let innerCardBg = 'bg-stone-50/60 border-stone-200/80';
+  let borderGoldClass = 'border-amber-600/30';
+
+  if (ann.style === 'CHARCOAL_SLATE') {
+    cardBgClass = 'bg-stone-900 border-stone-800 text-[#C2A878] shadow-[0_10px_30px_rgba(0,0,0,0.4)]';
+    textMutedClass = 'text-[#C2A878]/80';
+    headingColorClass = 'text-[#C2A878]';
+    innerCardBg = 'bg-stone-850/65 border-[#C2A878]/20';
+    borderGoldClass = 'border-[#C2A878]/45';
+  } else if (ann.style === 'WARM_CREAM') {
+    cardBgClass = 'bg-[#FAF6EE] border-[#EADFC9] text-[#4A3E29]';
+    textMutedClass = 'text-[#7D6B4E]';
+    headingColorClass = 'text-[#362C1A]';
+    innerCardBg = 'bg-[#F3EBD9]/60 border-[#E5D7B7]';
+    borderGoldClass = 'border-[#C2A878]/30';
+  }
+
+  // Deceased Image config
+  const avatarUrl = config?.avatarUrl;
+  const avatarScale = config?.avatarScale || 1;
+  const avatarX = config?.avatarX || 0;
+  const avatarY = config?.avatarY || 0;
+  const avatarRotate = config?.avatarRotate || 0;
+
+  // Wreath policy localization
+  const wreathPolicies: Record<string, string> = {
+    'NORMAL': 'เปิดรับพวงหรีดแสดงความอาลัยตามปกติ',
+    'NO_FLOWERS': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)',
+    'NO_WREATH': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
+  };
+
+  const cardStyles: React.CSSProperties = {
+    fontFamily: ann?.fontFamily || 'var(--theme-font)',
+  };
+  if (ann?.style === 'CHARCOAL_SLATE') {
+    cardStyles.backgroundImage = 'url(/Template-cards/charcoal_gold.png)';
+    cardStyles.backgroundSize = 'cover';
+    cardStyles.backgroundPosition = 'center';
+  }
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Biography Box */}
-      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-2"
-            style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> อาลัยและคำรำลึก
-        </h2>
-        <p className="text-stone-600 leading-relaxed indent-8 text-sm sm:text-base">
-          คุณพ่อสมศักดิ์เป็นคนขยัน ซื่อสัตย์ และรักครอบครัวมาก ท่านเป็นผู้นำที่ดีและเสียสละเสมอเพื่อการศึกษาของลูกๆ ความดีงามและคำสั่งสอนของท่านจะคงอยู่ในการดำเนินชีวิตของพวกเราตลอดไป...
-        </p>
-      </div>
+    <div className="space-y-8 animate-fade-in text-center font-sans">
+      
+      {/* 1. Styled Announcement Invitation Card */}
+      {isAnnActive && (
+        <section 
+          id="announcement-card"
+          className={`max-w-2xl mx-auto rounded-3xl border-2 p-8 sm:p-12 shadow-md relative overflow-hidden text-center transition-all duration-300 ${cardBgClass}`}
+          style={cardStyles}
+        >
+          {/* Decorative corner lines */}
+          {ann?.style !== 'CHARCOAL_SLATE' && (
+            <>
+              <div className={`absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 pointer-events-none rounded-tl-lg ${borderGoldClass}`} />
+              <div className={`absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 pointer-events-none rounded-tr-lg ${borderGoldClass}`} />
+              <div className={`absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 pointer-events-none rounded-bl-lg ${borderGoldClass}`} />
+              <div className={`absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 pointer-events-none rounded-br-lg ${borderGoldClass}`} />
+            </>
+          )}
+          
+          <div className="text-center space-y-6 relative z-10">
+            
+            <header className="space-y-4">
+              <span className="text-[10px] font-black tracking-widest uppercase opacity-85 block">กราบเรียนเชิญด้วยความเคารพอย่างสูง</span>
+              <DeceasedAvatar
+                avatarUrl={avatarUrl}
+                avatarScale={avatarScale}
+                avatarX={avatarX}
+                avatarY={avatarY}
+                avatarRotate={avatarRotate}
+                tenantName={tenant.name}
+                primaryColor="var(--theme-primary, #0d9488)"
+              />
+              
+              <div className="space-y-1">
+                <h2 className={`text-2xl sm:text-3xl font-black ${headingColorClass}`}>
+                  {(() => {
+                    const match = tenant.name.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
+                    if (match) {
+                      return (
+                        <>
+                          <span className="block sm:inline">{match[1]}</span>
+                          <span className="hidden sm:inline"> </span>
+                          <span className="block sm:inline">{match[2]}</span>
+                        </>
+                      );
+                    }
+                    return tenant.name;
+                  })()}
+                </h2>
+                {ann.text && (() => {
+                  const deceasedName = tenant.name.replace(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*/, '');
+                  if (deceasedName && ann.text.includes(deceasedName)) {
+                    const index = ann.text.indexOf(deceasedName);
+                    const beforeName = ann.text.substring(0, index);
+                    const nameAndAfter = ann.text.substring(index);
+                    return (
+                      <p className={`text-sm leading-relaxed max-w-md mx-auto whitespace-pre-line ${textMutedClass}`}>
+                        {beforeName}
+                        <br className="hidden sm:inline" />
+                        {nameAndAfter}
+                      </p>
+                    );
+                  }
+                  return (
+                    <p className={`text-sm leading-relaxed max-w-md mx-auto whitespace-pre-line ${textMutedClass}`}>
+                      {ann.text}
+                    </p>
+                  );
+                })()}
+              </div>
+            </header>
 
-      {/* Condolences Board List */}
-      <section className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-6">
-        <h2 className="text-xl font-bold flex items-center gap-2"
-            style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <Flame className="w-5 h-5 animate-pulse" style={{ color: 'var(--theme-primary)' }} /> สมุดลงนามแสดงความไว้อาลัย
-        </h2>
+            <hr className={`border-t ${borderGoldClass}`} />
 
-        {condolences.length === 0 ? (
-          <div className="text-center py-8 text-stone-500 text-sm border border-dashed border-stone-200 rounded-2xl">
-            ยังไม่มีข้อความแสดงความไว้อาลัยปรากฏในสมุดเล่มนี้
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {condolences.map((c) => {
-              const isFamily = c.type === 'FAMILY';
-              return (
-                <div 
-                  key={c.id} 
-                  className={`p-5 rounded-2xl border transition ${
-                    isFamily 
-                      ? 'border-amber-200 bg-amber-50/40 shadow-[0_2px_10px_rgba(245,158,11,0.03)]' 
-                      : 'border-stone-200 bg-stone-50/50'
-                  }`}
-                >
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="text-sm font-bold text-stone-850">{c.senderName}</span>
-                    <span className="px-2 py-0.5 text-[10px] font-semibold bg-stone-100 text-stone-600 rounded">
-                      ความสัมพันธ์: {c.relationship}
-                    </span>
-                    {isFamily && (
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 rounded">
-                        ครอบครัวใกล้ชิด (Family)
-                      </span>
-                    )}
-                    <span className="text-[10px] text-stone-550 ml-auto">
-                      {new Date(c.createdAt).toLocaleDateString('th-TH', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </span>
+            {/* Ceremony Schedule */}
+            <div className="space-y-4 text-left">
+              <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
+                <Calendar className="w-4 h-4" />
+                <span>กำหนดการและพิธีการ</span>
+              </h3>
+
+              <div className="grid grid-cols-1 gap-3">
+                {/* 1. Water Ceremony */}
+                {ann.waterDate && (
+                  <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
+                    <h4 className={`text-xs font-bold ${headingColorClass}`}>1. พิธีรดน้ำศพ</h4>
+                    <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
+                      {ann.waterDate} {ann.waterTime && `เวลา ${ann.waterTime}`}
+                    </p>
                   </div>
-                  <p className="text-stone-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
-                    "{c.message}"
-                  </p>
+                )}
+
+                {/* 2. Abhidhamma Ceremony */}
+                {ann.abhidhammaDateRange && (
+                  <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
+                    <h4 className={`text-xs font-bold ${headingColorClass}`}>2. พิธีสวดพระอภิธรรม</h4>
+                    <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
+                      {ann.abhidhammaDateRange} {ann.abhidhammaTime && `เวลา ${ann.abhidhammaTime}`}
+                    </p>
+                  </div>
+                )}
+
+                {/* 3. Cremation Ceremony */}
+                {ann.cremationDate && (
+                  <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
+                    <h4 className={`text-xs font-bold ${headingColorClass}`}>3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ</h4>
+                    <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
+                      {ann.cremationDate} {ann.cremationTime && `เวลา ${ann.cremationTime}`}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Location & Directions */}
+            {(ann.templeName || ann.pavilion) && (
+              <div className="space-y-3 text-left">
+                <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
+                  <MapPin className="w-4 h-4" />
+                  <span>สถานที่จัดงาน (Venue)</span>
+                </h3>
+                
+                <div className={`p-4 rounded-2xl border ${innerCardBg} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
+                  <div>
+                    <h4 className={`text-sm font-bold ${headingColorClass}`}>
+                      {ann.templeName || 'วัดจัดพิธี'} {ann.pavilion && `(${ann.pavilion})`}
+                    </h4>
+                    <p className={`text-xs mt-0.5 ${textMutedClass}`}>
+                      กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังวัด
+                    </p>
+                  </div>
+                  {ann.mapLink && (
+                    <a 
+                      href={ann.mapLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full sm:w-auto px-4 py-2.5 bg-stone-900 hover:bg-black text-white dark:bg-white dark:hover:bg-stone-50 dark:text-stone-900 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>เปิด Google Maps นำทาง</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Guidelines Block */}
+            <div className="space-y-3 text-left">
+              <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
+                <Info className="w-4 h-4" />
+                <span>ข้อแนะนำการร่วมแสดงความอาลัย</span>
+              </h3>
+
+              <div className={`p-4 rounded-2xl border text-xs space-y-3.5 ${innerCardBg}`}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {ann.dressCode && (
+                    <div className="flex flex-col gap-0.5">
+                      <span className={`font-bold ${headingColorClass}`}>การแต่งกาย:</span>
+                      <span className={textMutedClass}>{ann.dressCode}</span>
+                    </div>
+                  )}
+                  {ann.wreathPolicy && (
+                    <div className="flex flex-col gap-0.5">
+                      <span className={`font-bold ${headingColorClass}`}>นโยบายพวงหรีด:</span>
+                      <span className={textMutedClass}>{wreathPolicies[ann.wreathPolicy] || wreathPolicies.NORMAL}</span>
+                    </div>
+                  )}
+                </div>
+                {ann.contactPhone && (
+                  <div className="flex gap-2 border-t border-stone-200/50 pt-3 mt-3 items-center">
+                    <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--theme-primary, #0d9488)' }} />
+                    <span className={`font-bold shrink-0 ${headingColorClass}`}>ติดต่อประสานงานเจ้าภาพ:</span>
+                    <span className={textMutedClass}>{ann.contactPhone}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <footer className="pt-4 text-center">
+              <p className={`text-[9px] font-bold tracking-wider uppercase ${textMutedClass}`}>
+                กราบขอบพระคุณทุกท่านที่มาร่วมไว้อาลัย — คณะเจ้าภาพ
+              </p>
+            </footer>
+
+          </div>
+        </section>
+      )}
+
+      {/* 2. Recent Gallery Snippet */}
+      {enabledFeatures.gallery && recentPhotos.length > 0 && (
+        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
+          <div className="flex justify-between items-center border-b border-stone-100 pb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}>
+              <Image className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {galleryHeading}
+            </h2>
+            <Link 
+              href={`/${slug}/gallery`}
+              className="hidden sm:inline-flex text-xs font-bold transition items-center gap-1 hover:underline flex-shrink-0"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+            >
+              <span>ดูแกลเลอรีทั้งหมด</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {recentPhotos.map((m, idx) => {
+              const displayUrl = getDisplayUrl(m.filePath, m.mimeType, idx);
+
+              return (
+                <div key={m.id} className="aspect-square bg-stone-50 rounded-2xl overflow-hidden border border-stone-150 group relative">
+                  <img 
+                    src={displayUrl} 
+                    alt={m.fileName} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  />
                 </div>
               );
             })}
           </div>
-        )}
-      </section>
 
-      {/* Condolence submission component */}
-      <CondolenceForm websiteId={tenant.id} />
+          <div className="flex justify-end sm:hidden">
+            <Link 
+              href={`/${slug}/gallery`}
+              className="text-xs font-bold transition flex items-center gap-1 hover:underline"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+            >
+              <span>ดูแกลเลอรีทั้งหมด</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Featured Ebooks Snippet */}
+      {enabledFeatures.ebooks && recentEbooks.length > 0 && (
+        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
+          <div className="flex justify-between items-center border-b border-stone-100 pb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}>
+              <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> หนังสือที่ระลึกและธรรมทานแนะนำ
+            </h2>
+            <Link 
+              href={`/${slug}/ebooks`}
+              className="hidden sm:inline-flex text-xs font-bold transition items-center gap-1 hover:underline flex-shrink-0"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+            >
+              <span>อ่านหนังสือทั้งหมด</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {recentEbooks.map((book) => (
+              <div 
+                key={book.id}
+                className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 flex items-center gap-4 hover:bg-stone-50 transition"
+              >
+                <div className="w-14 h-20 bg-white border border-stone-200 rounded shadow-sm flex flex-col items-center justify-center p-1.5 relative overflow-hidden flex-shrink-0">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-600" style={{ backgroundColor: 'var(--theme-primary)' }} />
+                  <BookOpen className="w-4 h-4 text-emerald-700 mb-1" style={{ color: 'var(--theme-primary)' }} />
+                  <span className="text-[6px] text-stone-550 font-bold text-center leading-tight line-clamp-2">{book.title}</span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-xs font-extrabold text-stone-900 line-clamp-1">{book.title}</h4>
+                  <p className="text-[10px] text-stone-550">ผู้เขียน: {book.author}</p>
+                  <span className="text-[8px] px-1.5 py-0.5 rounded bg-white border border-stone-200 text-stone-600 font-bold">{book.totalPages} หน้า</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-end sm:hidden">
+            <Link 
+              href={`/${slug}/ebooks`}
+              className="text-xs font-bold transition flex items-center gap-1 hover:underline"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+            >
+              <span>อ่านหนังสือทั้งหมด</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Recent Condolences Quote Snippet */}
+      {enabledFeatures.condolence && (
+        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
+          <div className="flex justify-between items-center border-b border-stone-100 pb-3">
+            <h2 className="text-xl font-bold flex items-center gap-2"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}>
+              <Flame className="w-5 h-5 animate-pulse" style={{ color: 'var(--theme-primary)' }} /> {condolenceHeading}
+            </h2>
+            <Link 
+              href={`/${slug}/condolence`}
+              className="hidden sm:inline-flex text-xs font-bold transition items-center gap-1 hover:underline flex-shrink-0"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+            >
+              <span>ดูสมุดลงนามทั้งหมด</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          {recentCondolences.length === 0 ? (
+            <div className="text-center py-8 text-stone-500 text-sm border border-dashed border-stone-200 rounded-2xl">
+              ยังไม่มีข้อความแสดงความไว้อาลัย ร่วมเขียนคำไว้อาลัยเปิดสมุดลงนามเป็นคนแรก
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentCondolences.map((c) => (
+                <div key={c.id} className="p-5 rounded-2xl border border-stone-100 bg-stone-50/30 space-y-3 relative overflow-hidden">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-stone-200 text-stone-700 text-xs font-black flex items-center justify-center select-none uppercase">
+                        {c.senderName.substring(0, 2)}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-extrabold text-stone-850 flex items-center gap-1.5">
+                          <span>{c.senderName}</span>
+                          {c.type === 'FAMILY' && (
+                            <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-bold uppercase tracking-wider">ครอบครัว</span>
+                          )}
+                        </h4>
+                        <p className="text-[9px] text-stone-400">ความสัมพันธ์: {c.relationship}</p>
+                      </div>
+                    </div>
+                    <span className="text-[9px] text-stone-400 font-mono">
+                      {new Date(c.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
+                  <p className="text-xs text-stone-650 italic leading-relaxed pl-1">
+                    " {c.message} "
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <Link
+              href={`/${slug}/condolence`}
+              className="flex-1 px-5 py-3 rounded-xl font-bold text-center border border-stone-200 hover:bg-stone-50 transition text-xs text-stone-750 shadow-sm"
+            >
+              เปิดสมุดอ่านคำไว้อาลัยทั้งหมด
+            </Link>
+            <Link
+              href={`/${slug}/condolence`}
+              className="flex-1 px-5 py-3 rounded-xl font-bold text-center text-white hover:brightness-105 active:scale-95 transition text-xs shadow-md"
+              style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
+            >
+              {condolenceCta}
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Biography Box (Moved to bottom) */}
+      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-2"
+            style={{ color: 'var(--theme-primary, #0d9488)' }}>
+          <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {biographyHeading}
+        </h2>
+        <p className="text-stone-600 leading-relaxed indent-8 text-sm sm:text-base whitespace-pre-line">
+          {displayBiography}
+        </p>
+      </div>
+
     </div>
   );
 }

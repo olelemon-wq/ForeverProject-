@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Flame } from 'lucide-react';
+import { Flame, RotateCw } from 'lucide-react';
 
 export default function CondolenceForm({ websiteId }: { websiteId: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,11 +9,75 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
   const [relationship, setRelationship] = useState('Friend');
   const [customRelation, setCustomRelation] = useState('');
   const [message, setMessage] = useState('');
-  const [type, setType] = useState('GENERAL'); // "FAMILY" or "GENERAL"
+  const [captchaQuestion, setCaptchaQuestion] = useState({ num1: 0, num2: 0, answer: 0 });
+  const [userAnswer, setUserAnswer] = useState('');
+
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 9) + 1; // 1-9
+    const num2 = Math.floor(Math.random() * 9) + 1; // 1-9
+    setCaptchaQuestion({ num1, num2, answer: num1 + num2 });
+    setUserAnswer('');
+  };
+
+  React.useEffect(() => {
+    if (isOpen) {
+      generateCaptcha();
+    }
+  }, [isOpen]);
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const insertFormatting = (tag: 'bold' | 'italic') => {
+    const textarea = document.getElementById('condolence-message-textarea') as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+
+    let replacement = '';
+    if (tag === 'bold') {
+      replacement = `**${selectedText || 'ข้อความตัวหนา'}**`;
+    } else {
+      replacement = `*${selectedText || 'ข้อความตัวเอียง'}*`;
+    }
+
+    const newText = text.substring(0, start) + replacement + text.substring(end);
+    setMessage(newText);
+
+    // Reposition cursor
+    setTimeout(() => {
+      textarea.focus();
+      const offset = tag === 'bold' ? 2 : 1;
+      if (selectedText) {
+        textarea.setSelectionRange(start + offset, start + offset + selectedText.length);
+      } else {
+        const placeholderText = tag === 'bold' ? 'ข้อความตัวหนา' : 'ข้อความตัวเอียง';
+        textarea.setSelectionRange(start + offset, start + offset + placeholderText.length);
+      }
+    }, 0);
+  };
+
+  const insertEmoji = (emoji: string) => {
+    const textarea = document.getElementById('condolence-message-textarea') as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+
+    const newText = text.substring(0, start) + emoji + text.substring(end);
+    setMessage(newText);
+
+    // Reposition cursor after the inserted emoji
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+    }, 0);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +93,19 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
       return;
     }
 
+    if (!userAnswer) {
+      setError('กรุณาตอบคำถามป้องกันบอท (คำนวณเลข)');
+      setIsLoading(false);
+      return;
+    }
+
+    if (parseInt(userAnswer) !== captchaQuestion.answer) {
+      setError('คำตอบคำนวณเลขไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+      generateCaptcha();
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch('/api/condolence/submit', {
         method: 'POST',
@@ -38,7 +115,7 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
           senderName,
           relationship: finalRelation,
           message,
-          type,
+          type: relationship === 'Family' ? 'FAMILY' : 'GENERAL',
           captchaToken: 'mock-token',
         }),
       });
@@ -83,7 +160,7 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-stone-200/80 bg-white text-left space-y-5 max-w-xl mx-auto shadow-xl relative animate-fade-in">
+        <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-stone-200/80 bg-white text-left space-y-5 w-full shadow-xl relative animate-fade-in">
           <header className="flex justify-between items-center border-b border-stone-200 pb-3">
             <h3 className="text-base font-bold text-stone-900">เขียนคำไว้อาลัย</h3>
             <button 
@@ -119,11 +196,8 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
                 className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
                 disabled={isLoading}
               >
-                <option value="Spouse">คู่สมรส</option>
-                <option value="Son">บุตร</option>
-                <option value="Daughter">ธิดา</option>
-                <option value="Grandchild">หลาน</option>
-                <option value="Relative">ญาติ</option>
+                <option value="Family">ครอบครัวใกล้ชิด</option>
+                <option value="Relative">ญาติพี่น้อง</option>
                 <option value="Friend">เพื่อน</option>
                 <option value="Colleague">เพื่อนร่วมงาน</option>
                 <option value="Other">อื่น ๆ (ระบุเอง)</option>
@@ -146,38 +220,59 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
             </div>
           )}
 
-          {/* Comment Type: General or Family priority (BR028) */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block">ประเภทกลุ่มข้อความ</label>
-            <div className="flex gap-4 mt-2">
-              <label className="flex items-center gap-2 cursor-pointer text-xs text-stone-700">
-                <input 
-                  type="radio" 
-                  name="type" 
-                  value="GENERAL"
-                  checked={type === 'GENERAL'}
-                  onChange={() => setType('GENERAL')}
-                  className="accent-emerald-600"
-                />
-                <span>คำไว้อาลัยทั่วไป (General)</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer text-xs text-stone-750">
-                <input 
-                  type="radio" 
-                  name="type" 
-                  value="FAMILY"
-                  checked={type === 'FAMILY'}
-                  onChange={() => setType('FAMILY')}
-                  className="accent-emerald-600"
-                />
-                <span className="text-amber-800 font-semibold">ข้อความจากครอบครัว (Family Priority)</span>
-              </label>
-            </div>
-          </div>
+
 
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ข้อความไว้อาลัย</label>
+            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-1">ข้อความไว้อาลัย</label>
+            <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+              <button
+                type="button"
+                onClick={() => insertFormatting('bold')}
+                className="px-2.5 py-1 text-xs font-black rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-850 transition active:scale-95 cursor-pointer shadow-sm"
+                title="ตัวหนา (Bold)"
+              >
+                B
+              </button>
+              <button
+                type="button"
+                onClick={() => insertFormatting('italic')}
+                className="px-2.5 py-1 text-xs italic font-semibold rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-850 transition active:scale-95 cursor-pointer shadow-sm"
+                title="ตัวเอียง (Italic)"
+              >
+                I
+              </button>
+
+              <div className="h-4 w-px bg-stone-250 mx-1"></div>
+
+              {/* Mourning Emojis List */}
+              <div className="flex items-center gap-1">
+                {[
+                  { char: '🕯️', label: 'เทียนไว้อาลัย' },
+                  { char: '🕊️', label: 'นกพิราบความสงบ' },
+                  { char: '🙏', label: 'ไหว้เคารพ' },
+                  { char: '🤍', label: 'หัวใจสีขาว' },
+                  { char: '🥀', label: 'ดอกไม้เหี่ยว' },
+                  { char: '🖤', label: 'หัวใจสีดำ' },
+                  { char: '🌹', label: 'ดอกไม้ระลึกถึง' },
+                ].map((item) => (
+                  <button
+                    key={item.char}
+                    type="button"
+                    onClick={() => insertEmoji(item.char)}
+                    className="p-1 text-sm hover:bg-stone-100 rounded-md transition active:scale-90 cursor-pointer"
+                    title={item.label}
+                  >
+                    {item.char}
+                  </button>
+                ))}
+              </div>
+
+              <span className="text-[10px] text-stone-400 ml-auto select-none hidden sm:inline">
+                เลือกรูปแบบข้อความหรือใส่อีโมจิไว้อาลัย
+              </span>
+            </div>
             <textarea 
+              id="condolence-message-textarea"
               value={message} 
               onChange={(e) => setMessage(e.target.value)} 
               placeholder="เขียนคำรำลึกและแสดงความไว้อาลัยแด่ผู้ล่วงลับ..."
@@ -185,6 +280,34 @@ export default function CondolenceForm({ websiteId }: { websiteId: string }) {
               className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs resize-none focus:bg-white focus:outline-none"
               disabled={isLoading}
             />
+          </div>
+
+          {/* Math Captcha Challenge for Bot Protection */}
+          <div className="space-y-2 p-4 bg-stone-50 border border-stone-200 rounded-2xl">
+            <label className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide block">
+              🛡️ การป้องกันสแปมบอท (กรุณาคำนวณผลลัพธ์)
+            </label>
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-bold text-stone-800 bg-white border border-stone-200 px-3 py-2 rounded-xl select-none">
+                {captchaQuestion.num1} + {captchaQuestion.num2} = ?
+              </span>
+              <input 
+                type="number" 
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                placeholder="คำตอบของคุณ"
+                className="flex-1 px-4 py-2 bg-white border border-stone-200 rounded-xl text-stone-850 text-xs focus:outline-none"
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                onClick={generateCaptcha}
+                className="px-3 py-2 text-xs bg-stone-100 text-stone-500 hover:text-stone-800 rounded-xl border border-stone-200 transition flex items-center justify-center cursor-pointer active:scale-95"
+                title="เปลี่ยนคำถาม"
+              >
+                <RotateCw className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
