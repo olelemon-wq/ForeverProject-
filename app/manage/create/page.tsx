@@ -378,23 +378,7 @@ export default function WebsiteCreationWizard() {
       return `${day} ${monthName} ${yearThai}`;
     };
 
-    const formattedLifespans = subjects.map(s => {
-      if (!s.name) return null;
-      let range = '';
-      if (s.birthDate && s.deathDate) {
-        range = `${formatThaiDate(s.birthDate, s.birthYearOnly)} – ${formatThaiDate(s.deathDate, s.deathYearOnly)}`;
-      } else if (s.birthDate) {
-        range = `${formatThaiDate(s.birthDate, s.birthYearOnly)} – (ยังไม่ระบุ)`;
-      } else {
-        return null;
-      }
-      return `${s.name}: ${range}`;
-    }).filter(Boolean);
-
-    if (formattedLifespans.length > 0) {
-      setLifespan(formattedLifespans.join(' | '));
-    } else {
-      // Backwards compatibility for preview chip when no name is typed yet but dates are selected
+    if (category === 'Couple' || category === 'Wedding') {
       const first = subjects[0];
       if (first && first.birthDate) {
         if (first.deathDate) {
@@ -405,8 +389,37 @@ export default function WebsiteCreationWizard() {
       } else {
         setLifespan('');
       }
+    } else {
+      const formattedLifespans = subjects.map(s => {
+        if (!s.name) return null;
+        let range = '';
+        if (s.birthDate && s.deathDate) {
+          range = `${formatThaiDate(s.birthDate, s.birthYearOnly)} – ${formatThaiDate(s.deathDate, s.deathYearOnly)}`;
+        } else if (s.birthDate) {
+          range = `${formatThaiDate(s.birthDate, s.birthYearOnly)} – (ยังไม่ระบุ)`;
+        } else {
+          return null;
+        }
+        return `${s.name}: ${range}`;
+      }).filter(Boolean);
+
+      if (formattedLifespans.length > 0) {
+        setLifespan(formattedLifespans.join(' | '));
+      } else {
+        // Backwards compatibility for preview chip when no name is typed yet but dates are selected
+        const first = subjects[0];
+        if (first && first.birthDate) {
+          if (first.deathDate) {
+            setLifespan(`${formatThaiDate(first.birthDate, first.birthYearOnly)} – ${formatThaiDate(first.deathDate, first.deathYearOnly)}`);
+          } else {
+            setLifespan(`${formatThaiDate(first.birthDate, first.birthYearOnly)} – (ยังไม่ระบุ)`);
+          }
+        } else {
+          setLifespan('');
+        }
+      }
     }
-  }, [subjects]);
+  }, [subjects, category]);
   
   const [selectedTheme, setSelectedTheme] = useState('Classic');
   const [primaryColor, setPrimaryColor] = useState('#0d9488');
@@ -970,138 +983,140 @@ export default function WebsiteCreationWizard() {
                     />
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-sm font-bold text-stone-600 tracking-wide">{defaults.dateLabel}</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateStartTitle}</span>
-                        {sub.birthYearOnly ? (
-                          <select
-                            value={sub.birthYear || ''}
-                            onChange={(e) => {
-                              const val = e.target.value ? parseInt(e.target.value, 10) : null;
-                              const newSubs = [...subjects];
-                              newSubs[index].birthYear = val;
-                              if (val) {
-                                newSubs[index].birthDate = new Date(val, 0, 1);
-                              } else {
-                                newSubs[index].birthDate = null;
-                              }
-                              setSubjects(newSubs);
-                            }}
-                            className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:outline-none cursor-pointer focus:border-emerald-500 transition"
-                          >
-                            <option value="">เลือกปี พ.ศ.</option>
-                            {yearsList.map((y) => (
-                              <option key={y} value={y}>พ.ศ. {y + 543}</option>
-                            ))}
-                          </select>
-                        ) : (
-                          <CalendarPicker
-                            selectedDate={sub.birthDate}
-                            onChange={(date) => {
-                              const newSubs = [...subjects];
-                              newSubs[index].birthDate = date;
-                              setSubjects(newSubs);
-                            }}
-                            placeholder={defaults.dateStartPlaceholder}
-                            align="left"
-                          />
-                        )}
-                        <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
-                          <input 
-                            type="checkbox" 
-                            checked={sub.birthYearOnly}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              const newSubs = [...subjects];
-                              newSubs[index].birthYearOnly = checked;
-                              if (checked) {
-                                const initialYear = sub.birthDate ? sub.birthDate.getFullYear() : new Date().getFullYear();
-                                newSubs[index].birthYear = initialYear;
-                                newSubs[index].birthDate = new Date(initialYear, 0, 1);
-                              } else {
-                                newSubs[index].birthYear = null;
-                                newSubs[index].birthDate = null;
-                              }
-                              setSubjects(newSubs);
-                            }}
-                            className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
-                          />
-                          <span className="text-[9px] text-stone-500 font-semibold">
-                            {category === 'Couple' ? 'ระบุเฉพาะปีที่พบกัน' :
-                             category === 'Friends' ? 'ระบุเฉพาะปีที่ก่อตั้ง' :
-                             category === 'Wedding' ? 'ระบุเฉพาะปี' :
-                             'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีเกิด)'}
-                          </span>
-                        </label>
-                      </div>
-                      <div className="space-y-1">
-                        <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateEndTitle}</span>
-                        {sub.deathYearOnly ? (
-                          <select
-                            value={sub.deathYear || ''}
-                            onChange={(e) => {
-                              const val = e.target.value ? parseInt(e.target.value, 10) : null;
-                              const newSubs = [...subjects];
-                              newSubs[index].deathYear = val;
-                              if (val) {
-                                newSubs[index].deathDate = new Date(val, 0, 1);
-                              } else {
-                                newSubs[index].deathDate = null;
-                              }
-                              setSubjects(newSubs);
-                            }}
-                            className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:outline-none cursor-pointer focus:border-emerald-500 transition"
-                          >
-                            <option value="">เลือกปี พ.ศ.</option>
-                            {yearsList.map((y) => (
-                              <option key={y} value={y}>พ.ศ. {y + 543}</option>
-                            ))}
-                          </select>
-                        ) : (
-                          <CalendarPicker
-                            selectedDate={sub.deathDate}
-                            onChange={(date) => {
-                              const newSubs = [...subjects];
-                              newSubs[index].deathDate = date;
-                              setSubjects(newSubs);
-                            }}
-                            placeholder={defaults.dateEndPlaceholder}
-                            align="right"
-                          />
-                        )}
-                        <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
-                          <input 
-                            type="checkbox" 
-                            checked={sub.deathYearOnly}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              const newSubs = [...subjects];
-                              newSubs[index].deathYearOnly = checked;
-                              if (checked) {
-                                const initialYear = sub.deathDate ? sub.deathDate.getFullYear() : new Date().getFullYear();
-                                newSubs[index].deathYear = initialYear;
-                                newSubs[index].deathDate = new Date(initialYear, 0, 1);
-                              } else {
-                                newSubs[index].deathYear = null;
-                                newSubs[index].deathDate = null;
-                              }
-                              setSubjects(newSubs);
-                            }}
-                            className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
-                          />
-                          <span className="text-[9px] text-stone-500 font-semibold">
-                            {category === 'Couple' ? 'ระบุเฉพาะปีมงคลสมรส' :
-                             category === 'Friends' ? 'ระบุเฉพาะปีล่าสุด' :
-                             category === 'Wedding' ? 'ระบุเฉพาะปี' :
-                             category === 'Pet Memorial' ? 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เดินทางกลับดาว)' :
-                             'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)'}
-                          </span>
-                        </label>
+                  {!(index > 0 && (category === 'Couple' || category === 'Wedding')) && (
+                    <div className="space-y-1">
+                      <label className="text-sm font-bold text-stone-600 tracking-wide">{defaults.dateLabel}</label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateStartTitle}</span>
+                          {sub.birthYearOnly ? (
+                            <select
+                              value={sub.birthYear || ''}
+                              onChange={(e) => {
+                                const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                                const newSubs = [...subjects];
+                                newSubs[index].birthYear = val;
+                                if (val) {
+                                  newSubs[index].birthDate = new Date(val, 0, 1);
+                                } else {
+                                  newSubs[index].birthDate = null;
+                                }
+                                setSubjects(newSubs);
+                              }}
+                              className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:outline-none cursor-pointer focus:border-emerald-500 transition"
+                            >
+                              <option value="">เลือกปี พ.ศ.</option>
+                              {yearsList.map((y) => (
+                                <option key={y} value={y}>พ.ศ. {y + 543}</option>
+                              ))}
+                            </select>
+                          ) : (
+                            <CalendarPicker
+                              selectedDate={sub.birthDate}
+                              onChange={(date) => {
+                                const newSubs = [...subjects];
+                                newSubs[index].birthDate = date;
+                                setSubjects(newSubs);
+                              }}
+                              placeholder={defaults.dateStartPlaceholder}
+                              align="left"
+                            />
+                          )}
+                          <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
+                            <input 
+                              type="checkbox" 
+                              checked={sub.birthYearOnly}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
+                                const newSubs = [...subjects];
+                                newSubs[index].birthYearOnly = checked;
+                                if (checked) {
+                                  const initialYear = sub.birthDate ? sub.birthDate.getFullYear() : new Date().getFullYear();
+                                  newSubs[index].birthYear = initialYear;
+                                  newSubs[index].birthDate = new Date(initialYear, 0, 1);
+                                } else {
+                                  newSubs[index].birthYear = null;
+                                  newSubs[index].birthDate = null;
+                                }
+                                setSubjects(newSubs);
+                              }}
+                              className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
+                            />
+                            <span className="text-[9px] text-stone-500 font-semibold">
+                              {category === 'Couple' ? 'ระบุเฉพาะปีที่พบกัน' :
+                               category === 'Friends' ? 'ระบุเฉพาะปีที่ก่อตั้ง' :
+                               category === 'Wedding' ? 'ระบุเฉพาะปี' :
+                               'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีเกิด)'}
+                            </span>
+                          </label>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateEndTitle}</span>
+                          {sub.deathYearOnly ? (
+                            <select
+                              value={sub.deathYear || ''}
+                              onChange={(e) => {
+                                const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                                const newSubs = [...subjects];
+                                newSubs[index].deathYear = val;
+                                if (val) {
+                                  newSubs[index].deathDate = new Date(val, 0, 1);
+                                } else {
+                                  newSubs[index].deathDate = null;
+                                }
+                                setSubjects(newSubs);
+                              }}
+                              className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:outline-none cursor-pointer focus:border-emerald-500 transition"
+                            >
+                              <option value="">เลือกปี พ.ศ.</option>
+                              {yearsList.map((y) => (
+                                <option key={y} value={y}>พ.ศ. {y + 543}</option>
+                              ))}
+                            </select>
+                          ) : (
+                            <CalendarPicker
+                              selectedDate={sub.deathDate}
+                              onChange={(date) => {
+                                const newSubs = [...subjects];
+                                newSubs[index].deathDate = date;
+                                setSubjects(newSubs);
+                              }}
+                              placeholder={defaults.dateEndPlaceholder}
+                              align="right"
+                            />
+                          )}
+                          <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
+                            <input 
+                              type="checkbox" 
+                              checked={sub.deathYearOnly}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
+                                const newSubs = [...subjects];
+                                newSubs[index].deathYearOnly = checked;
+                                if (checked) {
+                                  const initialYear = sub.deathDate ? sub.deathDate.getFullYear() : new Date().getFullYear();
+                                  newSubs[index].deathYear = initialYear;
+                                  newSubs[index].deathDate = new Date(initialYear, 0, 1);
+                                } else {
+                                  newSubs[index].deathYear = null;
+                                  newSubs[index].deathDate = null;
+                                }
+                                setSubjects(newSubs);
+                              }}
+                              className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
+                            />
+                            <span className="text-[9px] text-stone-500 font-semibold">
+                              {category === 'Couple' ? 'ระบุเฉพาะปีมงคลสมรส' :
+                               category === 'Friends' ? 'ระบุเฉพาะปีล่าสุด' :
+                               category === 'Wedding' ? 'ระบุเฉพาะปี' :
+                               category === 'Pet Memorial' ? 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เดินทางกลับดาว)' :
+                               'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)'}
+                            </span>
+                          </label>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
 
