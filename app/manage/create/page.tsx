@@ -522,8 +522,18 @@ export default function WebsiteCreationWizard() {
   };
 
   const handleNextToTheme = () => {
-    if (!name || !deceasedName) {
-      setError('กรุณากรอกชื่อเว็บไซต์และชื่อผู้ล่วงลับ');
+    const hasEmptySubject = subjects.some(s => !s.name.trim());
+    if (!name.trim()) {
+      setError('กรุณากรอกชื่อเว็บไซต์ให้เรียบร้อย');
+      return;
+    }
+    if (hasEmptySubject) {
+      const errorMsg = category === 'Couple' || category === 'Wedding'
+        ? 'กรุณากรอกชื่อคู่รักให้ครบทั้ง 2 ท่าน'
+        : category === 'Pet Memorial'
+        ? 'กรุณากรอกชื่อสัตว์เลี้ยงให้ครบถ้วน'
+        : 'กรุณากรอกชื่อผู้ล่วงลับให้ครบถ้วน';
+      setError(errorMsg);
       return;
     }
     setError('');
@@ -757,6 +767,40 @@ export default function WebsiteCreationWizard() {
                     onClick={() => {
                       setCategory(opt.key);
                       setError('');
+                      if (opt.key === 'Couple' || opt.key === 'Wedding') {
+                        setSubjects([
+                          {
+                            name: '',
+                            birthDate: null,
+                            deathDate: null,
+                            birthYearOnly: false,
+                            deathYearOnly: false,
+                            birthYear: null,
+                            deathYear: null,
+                          },
+                          {
+                            name: '',
+                            birthDate: null,
+                            deathDate: null,
+                            birthYearOnly: false,
+                            deathYearOnly: false,
+                            birthYear: null,
+                            deathYear: null,
+                          }
+                        ]);
+                      } else {
+                        setSubjects([
+                          {
+                            name: '',
+                            birthDate: null,
+                            deathDate: null,
+                            birthYearOnly: false,
+                            deathYearOnly: false,
+                            birthYear: null,
+                            deathYear: null,
+                          }
+                        ]);
+                      }
                     }}
                     className={`group flex flex-col gap-3.5 rounded-3xl p-6 text-left transition-all duration-300 cursor-pointer relative overflow-hidden select-none hover:-translate-y-0.5 border border-transparent ${
                       isSelected
@@ -889,7 +933,7 @@ export default function WebsiteCreationWizard() {
 
               {subjects.map((sub, index) => (
                 <div key={index} className="p-5 rounded-2xl border border-stone-250 bg-stone-50/20 space-y-4 relative animate-fade-in shadow-xs">
-                  {subjects.length > 1 && (
+                  {subjects.length > 1 && category !== 'Couple' && category !== 'Wedding' && (
                     <button
                       type="button"
                       onClick={() => {
@@ -903,7 +947,9 @@ export default function WebsiteCreationWizard() {
                     </button>
                   )}
                   <h4 className="text-[10px] font-black text-stone-400 uppercase tracking-wider">
-                    {category === 'Pet Memorial' ? `ข้อมูลสัตว์เลี้ยงตัวที่ ${index + 1}` : `ข้อมูลผู้ล่วงลับท่านที่ ${index + 1}`}
+                    {category === 'Pet Memorial' ? `ข้อมูลสัตว์เลี้ยงตัวที่ ${index + 1}` :
+                     category === 'Couple' || category === 'Wedding' ? `ข้อมูลคู่รักคนที่ ${index + 1}` :
+                     `ข้อมูลผู้ล่วงลับท่านที่ ${index + 1}`}
                   </h4>
 
                   <div className="space-y-1">
@@ -1059,28 +1105,30 @@ export default function WebsiteCreationWizard() {
                 </div>
               ))}
 
-              <button
-                type="button"
-                onClick={() => {
-                  setSubjects([
-                    ...subjects,
-                    {
-                      name: '',
-                      birthDate: null,
-                      deathDate: null,
-                      birthYearOnly: false,
-                      deathYearOnly: false,
-                      birthYear: null,
-                      deathYear: null,
-                    }
-                  ]);
-                }}
-                className="w-full py-3 border-2 border-dashed border-stone-300 hover:border-emerald-500 hover:text-emerald-700 text-stone-500 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer bg-stone-50/20 active:scale-99 hover:bg-emerald-50/10"
-              >
-                {category === 'Pet Memorial' ? '+ เพิ่มสัตว์เลี้ยงอีกตัว' :
-                 category === 'Memorial' || category === 'Family Legacy' ? '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน' :
-                 '+ เพิ่มรายชื่อผู้ร่วมแสดงผล'}
-              </button>
+              {category !== 'Couple' && category !== 'Wedding' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubjects([
+                      ...subjects,
+                      {
+                        name: '',
+                        birthDate: null,
+                        deathDate: null,
+                        birthYearOnly: false,
+                        deathYearOnly: false,
+                        birthYear: null,
+                        deathYear: null,
+                      }
+                    ]);
+                  }}
+                  className="w-full py-3 border-2 border-dashed border-stone-300 hover:border-emerald-500 hover:text-emerald-700 text-stone-500 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer bg-stone-50/20 active:scale-99 hover:bg-emerald-50/10"
+                >
+                  {category === 'Pet Memorial' ? '+ เพิ่มสัตว์เลี้ยงอีกตัว' :
+                   category === 'Memorial' || category === 'Family Legacy' ? '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน' :
+                   '+ เพิ่มรายชื่อผู้ร่วมแสดงผล'}
+                </button>
+              )}
 
               {lifespan && (
                 <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl space-y-1">
