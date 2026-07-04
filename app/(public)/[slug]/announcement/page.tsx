@@ -24,10 +24,11 @@ const getScheduleLabels = (category: string) => {
       item1: '1. พิธีมงคลสมรส / พิธีหลั่งน้ำพระพุทธมนต์',
       item2: '2. งานฉลองมงคลสมรส / งานเลี้ยงฉลอง',
       item3: '3. พิธีฉลองอาฟเตอร์ปาร์ตี้ / กิจกรรมพิเศษ',
-      venueTitle: 'สถานที่จัดงาน (Venue)',
+      venueTitle: 'สถานที่จัดงาน (VENUE)',
       venueLabel: 'สถานที่จัดงาน',
       pavilionLabel: 'ห้องจัดเลี้ยง / ห้องจัดงาน (ถ้ามี)',
       venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+      footerText: 'ขอขอบคุณแขกผู้มีเกียรติทุกท่านที่มาร่วมแสดงความยินดี — เจ้าภาพ',
     };
   }
   if (category === 'Pet Memorial') {
@@ -36,10 +37,37 @@ const getScheduleLabels = (category: string) => {
       item1: '1. พิธีอำลา / กล่าวคำอาลัย',
       item2: '2. พิธีฌาปนกิจสัตว์เลี้ยง',
       item3: '3. พิธีลอยอังคารอัฐิ / โปรยเถ้ากระดูก',
-      venueTitle: 'สถานที่จัดพิธี (Venue)',
+      venueTitle: 'สถานที่จัดพิธี (VENUE)',
       venueLabel: 'วัดจัดพิธี / สถานที่จัดงาน',
       pavilionLabel: 'ศาลา / โซนจัดพิธี (ถ้ามี)',
       venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+      footerText: 'ขอขอบคุณทุกท่านที่มาร่วมส่งน้องกลับดาวและแบ่งปันความรัก — ครอบครัว',
+    };
+  }
+  if (category === 'Family' || category === 'Family Legacy') {
+    return {
+      title: 'กำหนดการและวันรวมใจสายใยครอบครัว',
+      item1: '1. กิจกรรมสืบสานประวัติศาสตร์ตระกูล',
+      item2: '2. งานเลี้ยงพบปะสังสรรค์ครอบครัวใหญ่',
+      item3: '3. พิธีการเคารพและรำลึกบรรพบุรุษ',
+      venueTitle: 'สถานที่จัดงาน (VENUE)',
+      venueLabel: 'สถานที่นัดหมาย / บ้านครอบครัว',
+      pavilionLabel: 'ห้องประชุม / ห้องจัดเลี้ยง (ถ้ามี)',
+      venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+      footerText: 'กราบขอบพระคุณทุกท่านที่ร่วมสืบสานสายสัมพันธ์และส่งต่อความรัก — ครอบครัว',
+    };
+  }
+  if (category === 'Friends') {
+    return {
+      title: 'กำหนดการและกิจกรรมนัดพบวันวาน',
+      item1: '1. กิจกรรมย้อนรอยความทรงจำวัยเรียน',
+      item2: '2. งานเลี้ยงสังสรรค์พบปะเพื่อนร่วมรุ่น',
+      item3: '3. กิจกรรมถ่ายภาพที่ระลึกและแลกของขวัญ',
+      venueTitle: 'สถานที่จัดงาน (VENUE)',
+      venueLabel: 'สถานที่จัดงาน / ร้านอาหาร',
+      pavilionLabel: 'โซนที่นั่ง / ห้องจัดเลี้ยง (ถ้ามี)',
+      venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+      footerText: 'ขอขอบคุณเพื่อน ๆ ทุกคนที่ร่วมแบ่งปันความรักและมิตรภาพวันวาน — กลุ่มเพื่อน',
     };
   }
   return {
@@ -113,10 +141,16 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   const avatarY = themeConfig?.avatarY || 0;
   const avatarRotate = themeConfig?.avatarRotate || 0;
 
-  // Wreath policy localization
-  const wreathPolicies: Record<string, string> = {
+  // Wreath/Gift policy localization
+  const wreathPolicies: Record<string, string> = (tenant.category === 'Couple' || tenant.category === 'Wedding') ? {
+    'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
+    'NO_FLOWERS': 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
+    'DONATION_ONLY': 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
+    'NO_WREATH': 'ขออภัย เจ้าภาพงดรับซองและของขวัญทุกประเภท',
+  } : {
     'NORMAL': 'เปิดรับพวงหรีดแสดงความอาลัยตามปกติ',
     'NO_FLOWERS': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)',
+    'DONATION_ONLY': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
     'NO_WREATH': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
   };
 
@@ -383,7 +417,9 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
                 )}
                 {announcement.wreathPolicy && (
                   <div className="flex flex-col gap-0.5">
-                    <span className={`font-bold ${headingColorClass}`}>นโยบายพวงหรีด:</span>
+                    <span className={`font-bold ${headingColorClass}`}>
+                      {tenant.category === 'Couple' || tenant.category === 'Wedding' ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
+                    </span>
                     <span className={textMutedClass}>{wreathPolicies[announcement.wreathPolicy] || wreathPolicies.NORMAL}</span>
                   </div>
                 )}
@@ -400,7 +436,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
 
           <footer className="pt-4 text-center">
             <p className={`text-[9px] font-bold tracking-wider uppercase ${textMutedClass}`}>
-              กราบขอบพระคุณทุกท่านที่มาร่วมไว้อาลัย — คณะเจ้าภาพ
+              {sLabels.footerText}
             </p>
           </footer>
 
