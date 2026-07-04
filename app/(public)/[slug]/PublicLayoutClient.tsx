@@ -175,7 +175,7 @@ export default function PublicLayoutClient({
       </header>
 
       {/* Dynamic Navigation Menu */}
-      <nav className="border-b border-stone-200/60 bg-white/85 backdrop-blur-sm sticky top-9 z-40 shadow-xs">
+      <nav className="border-b border-stone-200/60 bg-white/85 backdrop-blur-sm sticky top-0 z-40 shadow-xs">
         {/* Desktop Navigation Links */}
         <div className="hidden sm:flex max-w-5xl mx-auto px-4 items-center justify-center gap-1 sm:gap-2 h-14">
           {navItems.map((item, idx) => (

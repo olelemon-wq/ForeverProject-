@@ -61,6 +61,40 @@ function getDisplayUrl(filePath: string, mimeType: string, index: number) {
   return filePath;
 }
 
+const getScheduleLabels = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') {
+    return {
+      title: 'กำหนดการจัดงานและกิจกรรม',
+      item1: '1. พิธีมงคลสมรส / พิธีหลั่งน้ำพระพุทธมนต์',
+      item2: '2. งานฉลองมงคลสมรส / งานเลี้ยงฉลอง',
+      item3: '3. พิธีฉลองอาฟเตอร์ปาร์ตี้ / กิจกรรมพิเศษ',
+      venueTitle: 'สถานที่จัดงาน (Venue)',
+      venueLabel: 'สถานที่จัดงาน',
+      venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+    };
+  }
+  if (category === 'Pet Memorial') {
+    return {
+      title: 'กำหนดการอำลาและการเดินทางกลับดาว',
+      item1: '1. พิธีอำลา / กล่าวคำอาลัย',
+      item2: '2. พิธีฌาปนกิจสัตว์เลี้ยง',
+      item3: '3. พิธีลอยอังคารอัฐิ / โปรยเถ้ากระดูก',
+      venueTitle: 'สถานที่จัดพิธี (Venue)',
+      venueLabel: 'วัดจัดพิธี / สถานที่จัดงาน',
+      venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+    };
+  }
+  return {
+    title: 'กำหนดการและพิธีการ',
+    item1: '1. พิธีรดน้ำศพ',
+    item2: '2. พิธีสวดพระอภิธรรม',
+    item3: '3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ',
+    venueTitle: 'สถานที่จัดพิธี (Venue)',
+    venueLabel: 'วัดจัดพิธี',
+    venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังวัด',
+  };
+};
+
 async function getRecentCondolences(websiteId: string) {
   const condolences = await db.condolence.findMany({
     where: {
@@ -82,13 +116,13 @@ async function getRecentCondolences(websiteId: string) {
   return sorted.slice(0, 3); // Take top 3
 }
 
-async function getRecentEbooks(websiteId: string) {
+async function getRecentEbooks(websiteId: string, category: string) {
   const dbEbooks = await db.ebook.findMany({
     where: { websiteId },
     orderBy: { createdAt: 'desc' },
   });
 
-  const mockBooklets = [
+  let mockBooklets = [
     {
       id: 'book-1',
       title: 'หนังสือธรรมะรำลึกและคำสอนสติ',
@@ -102,6 +136,53 @@ async function getRecentEbooks(websiteId: string) {
       totalPages: 3,
     },
   ];
+
+  if (category === 'Couple' || category === 'Wedding') {
+    mockBooklets = [
+      {
+        id: 'book-1',
+        title: 'บันทึกความทรงจำและคำขอบคุณพรีเวดดิ้ง',
+        author: 'คู่บ่าวสาว',
+        totalPages: 4,
+      },
+      {
+        id: 'book-2',
+        title: 'เรื่องราวเส้นทางความรักของสองเรา',
+        author: 'คู่รัก',
+        totalPages: 3,
+      },
+    ];
+  } else if (category === 'Pet Memorial') {
+    mockBooklets = [
+      {
+        id: 'book-1',
+        title: 'ไดอารี่บันทึกการเดินทางกลับดาวของหนู',
+        author: 'เจ้าของอันเป็นที่รัก',
+        totalPages: 4,
+      },
+      {
+        id: 'book-2',
+        title: 'รวมโมเมนต์แสนซนและรอยยิ้มสี่ขา',
+        author: 'ครอบครัวน้อง',
+        totalPages: 3,
+      },
+    ];
+  } else if (category === 'Friends') {
+    mockBooklets = [
+      {
+        id: 'book-1',
+        title: 'หนังสือรุ่นและบันทึกมิตรสหายเฟรนด์ชิป',
+        author: 'แก๊งเพื่อนรัก',
+        totalPages: 4,
+      },
+      {
+        id: 'book-2',
+        title: 'บันทึกวีรกรรมความทรงจำแสนเกรียน',
+        author: 'กลุ่มเพื่อนสนิท',
+        totalPages: 3,
+      },
+    ];
+  }
 
   const mappedDbEbooks = dbEbooks.map(eb => ({
     id: eb.id,
@@ -125,12 +206,27 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const [recentPhotos, recentCondolences, recentEbooks] = await Promise.all([
     getRecentGallery(tenant.id),
     getRecentCondolences(tenant.id),
-    getRecentEbooks(tenant.id),
+    getRecentEbooks(tenant.id, tenant.category),
   ]);
 
   const config = tenant.themeConfig as any;
+  const sLabels = getScheduleLabels(tenant.category);
   const enabledFeatures = getEnabledFeatures(config, tenant);
-  const displayBiography = config?.biography || "คุณพ่อสมศักดิ์เป็นคนขยัน ซื่อสัตย์ และรักครอบครัวมาก ท่านเป็นผู้นำที่ดีและเสียสละเสมอเพื่อการศึกษาของลูกๆ ความดีงามและคำสั่งสอนของท่านจะคงอยู่ในการดำเนินชีวิตของพวกเราตลอดไป...";
+  const displayBiography = config?.biography || (() => {
+    if (tenant.category === 'Couple' || tenant.category === 'Wedding') {
+      return "เรื่องราวความรักของเราสองคน เริ่มต้นจากการพบกันครั้งแรก และร่วมเดินทางเติมเต็มรอยยิ้มและสร้างความทรงจำที่อบอุ่นด้วยกันในทุกวัน...";
+    }
+    if (tenant.category === 'Pet Memorial') {
+      return "เรื่องราวของสัตว์เลี้ยงแสนรักผู้เป็นสมาชิกคนสำคัญของบ้าน น้องคอยมอบพลังบวก รอยยิ้ม และความรักที่ไม่มีเงื่อนไขให้กับเราในทุกช่วงเวลา...";
+    }
+    if (tenant.category === 'Family Legacy') {
+      return "บันทึกเรื่องราวประวัติวงศ์ตระกูล บรรพบุรุษผู้บุกเบิก และมรดกทางคำสอนอันทรงคุณค่าที่สืบทอดสายใยความผูกพันจากรุ่นสู่รุ่น...";
+    }
+    if (tenant.category === 'Friends') {
+      return "บันทึกเรื่องราวการเดินทางของมิตรภาพและเพื่อนฝูง รวบรวมทุกวีรกรรม เสียงหัวเราะ และความทรงจำวันวานที่ไม่มีวันจางหาย...";
+    }
+    return "คุณพ่อสมศักดิ์เป็นคนขยัน ซื่อสัตย์ และรักครอบครัวมาก ท่านเป็นผู้นำที่ดีและเสียสละเสมอเพื่อการศึกษาของลูกๆ ความดีงามและคำสั่งสอนของท่านจะคงอยู่ในการดำเนินชีวิตของพวกเราตลอดไป...";
+  })();
   
   const journey = getCategoryJourney(tenant.category);
   const homeCopy = journey.home || {};
@@ -138,6 +234,20 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const condolenceHeading = homeCopy.condolenceHeading || 'ข้อความไว้อาลัยล่าสุด';
   const condolenceCta = homeCopy.condolenceCta || 'เขียนข้อความ/ร่วมจุดเทียนออนไลน์';
   const galleryHeading = homeCopy.galleryHeading || 'ภาพถ่ายความทรงจำล่าสุด';
+  const ebooksTitle = (() => {
+    if (tenant.category === 'Couple') return 'สมุดภาพความรักแนะนำ';
+    if (tenant.category === 'Wedding') return 'ของชำร่วยออนไลน์และหนังสือที่ระลึกแนะนำ';
+    if (tenant.category === 'Pet Memorial') return 'บันทึกการเดินทางของน้องและสมุดภาพแนะนำ';
+    if (tenant.category === 'Friends') return 'หนังสือรุ่นและบันทึกความทรงจำแนะนำ';
+    if (tenant.category === 'Family Legacy') return 'หนังสือประวัติตระกูลและบันทึกแนะนำ';
+    return 'หนังสือที่ระลึกและธรรมทานแนะนำ';
+  })();
+  const ebooksCtaText = (() => {
+    if (tenant.category === 'Couple') return 'ดูสมุดภาพทั้งหมด';
+    if (tenant.category === 'Wedding') return 'ดูของชำร่วยทั้งหมด';
+    if (tenant.category === 'Pet Memorial') return 'ดูบันทึกทั้งหมด';
+    return 'อ่านหนังสือทั้งหมด';
+  })();
   const ann = config?.announcement || {};
   const isAnnActive = enabledFeatures.announcement;
 
@@ -147,13 +257,48 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   let headingColorClass = 'text-stone-900';
   let innerCardBg = 'bg-stone-50/60 border-stone-200/80';
   let borderGoldClass = 'border-amber-600/30';
+  let hasBackgroundImage = false;
+  let bgImageUrl = '';
 
   if (ann.style === 'CHARCOAL_SLATE') {
-    cardBgClass = 'bg-stone-900 border-stone-800 text-[#C2A878] shadow-[0_10px_30px_rgba(0,0,0,0.4)]';
-    textMutedClass = 'text-[#C2A878]/80';
-    headingColorClass = 'text-[#C2A878]';
-    innerCardBg = 'bg-stone-850/65 border-[#C2A878]/20';
-    borderGoldClass = 'border-[#C2A878]/45';
+    hasBackgroundImage = true;
+    bgImageUrl = '/Template-cards/charcoal_gold.png';
+
+    if (tenant.category === 'Couple' || tenant.category === 'Wedding') {
+      cardBgClass = 'bg-[#FFF0F2] border-[#FBC5CD] text-[#8C3A4F] shadow-[0_10px_30px_rgba(251,197,205,0.3)]';
+      textMutedClass = 'text-[#A25F70]';
+      headingColorClass = 'text-[#8C3A4F]';
+      innerCardBg = 'bg-[#FFF5F6]/70 border-[#FBC5CD]/40';
+      borderGoldClass = 'border-[#FBC5CD]/60';
+      hasBackgroundImage = false;
+    } else if (tenant.category === 'Pet Memorial') {
+      cardBgClass = 'bg-[#F2F6F3] border-[#C8D9CD] text-[#2C4A3E] shadow-[0_10px_30px_rgba(200,217,205,0.3)]';
+      textMutedClass = 'text-[#4E7062]';
+      headingColorClass = 'text-[#2C4A3E]';
+      innerCardBg = 'bg-[#FAFDFB]/75 border-[#C8D9CD]/40';
+      borderGoldClass = 'border-[#C8D9CD]/60';
+      hasBackgroundImage = false;
+    } else if (tenant.category === 'Family Legacy') {
+      cardBgClass = 'bg-[#0D1F2D] border-[#2A445C] text-[#E0A96D] shadow-[0_10px_30px_rgba(0,0,0,0.4)]';
+      textMutedClass = 'text-[#B5834C]';
+      headingColorClass = 'text-[#E0A96D]';
+      innerCardBg = 'bg-[#152E40]/65 border-[#2A445C]/40';
+      borderGoldClass = 'border-[#2A445C]/60';
+      hasBackgroundImage = false;
+    } else if (tenant.category === 'Friends') {
+      cardBgClass = 'bg-[#EAF4F4] border-[#A8D1D1] text-[#1E4848] shadow-[0_10px_30px_rgba(168,209,209,0.3)]';
+      textMutedClass = 'text-[#3E7D7D]';
+      headingColorClass = 'text-[#1E4848]';
+      innerCardBg = 'bg-[#F4FAFA]/75 border-[#A8D1D1]/40';
+      borderGoldClass = 'border-[#A8D1D1]/60';
+      hasBackgroundImage = false;
+    } else {
+      cardBgClass = 'bg-stone-900 border-stone-800 text-[#C2A878] shadow-[0_10px_30px_rgba(0,0,0,0.4)]';
+      textMutedClass = 'text-[#C2A878]/80';
+      headingColorClass = 'text-[#C2A878]';
+      innerCardBg = 'bg-stone-850/65 border-[#C2A878]/20';
+      borderGoldClass = 'border-[#C2A878]/45';
+    }
   } else if (ann.style === 'WARM_CREAM') {
     cardBgClass = 'bg-[#FAF6EE] border-[#EADFC9] text-[#4A3E29]';
     textMutedClass = 'text-[#7D6B4E]';
@@ -169,18 +314,24 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const avatarY = config?.avatarY || 0;
   const avatarRotate = config?.avatarRotate || 0;
 
-  // Wreath policy localization
-  const wreathPolicies: Record<string, string> = {
+  // Wreath/Gift policy localization
+  const wreathPolicies: Record<string, string> = (tenant.category === 'Couple' || tenant.category === 'Wedding') ? {
+    'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
+    'NO_FLOWERS': 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
+    'DONATION_ONLY': 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
+    'NO_WREATH': 'ขออภัย เจ้าภาพงดรับซองและของขวัญทุกประเภท',
+  } : {
     'NORMAL': 'เปิดรับพวงหรีดแสดงความอาลัยตามปกติ',
     'NO_FLOWERS': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)',
+    'DONATION_ONLY': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
     'NO_WREATH': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
   };
 
   const cardStyles: React.CSSProperties = {
     fontFamily: ann?.fontFamily || 'var(--theme-font)',
   };
-  if (ann?.style === 'CHARCOAL_SLATE') {
-    cardStyles.backgroundImage = 'url(/Template-cards/charcoal_gold.png)';
+  if (ann?.style === 'CHARCOAL_SLATE' && hasBackgroundImage) {
+    cardStyles.backgroundImage = `url(${bgImageUrl})`;
     cardStyles.backgroundSize = 'cover';
     cardStyles.backgroundPosition = 'center';
   }
@@ -196,7 +347,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           style={cardStyles}
         >
           {/* Decorative corner lines */}
-          {ann?.style !== 'CHARCOAL_SLATE' && (
+          {!hasBackgroundImage && (
             <>
               <div className={`absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 pointer-events-none rounded-tl-lg ${borderGoldClass}`} />
               <div className={`absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 pointer-events-none rounded-tr-lg ${borderGoldClass}`} />
@@ -264,14 +415,14 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             <div className="space-y-4 text-left">
               <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
                 <Calendar className="w-4 h-4" />
-                <span>กำหนดการและพิธีการ</span>
+                <span>{sLabels.title}</span>
               </h3>
 
               <div className="grid grid-cols-1 gap-3">
                 {/* 1. Water Ceremony */}
                 {ann.waterDate && (
                   <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
-                    <h4 className={`text-xs font-bold ${headingColorClass}`}>1. พิธีรดน้ำศพ</h4>
+                    <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
                     <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
                       {ann.waterDate} {ann.waterTime && `เวลา ${ann.waterTime}`}
                     </p>
@@ -281,7 +432,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                 {/* 2. Abhidhamma Ceremony */}
                 {ann.abhidhammaDateRange && (
                   <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
-                    <h4 className={`text-xs font-bold ${headingColorClass}`}>2. พิธีสวดพระอภิธรรม</h4>
+                    <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item2}</h4>
                     <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
                       {ann.abhidhammaDateRange} {ann.abhidhammaTime && `เวลา ${ann.abhidhammaTime}`}
                     </p>
@@ -291,7 +442,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                 {/* 3. Cremation Ceremony */}
                 {ann.cremationDate && (
                   <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
-                    <h4 className={`text-xs font-bold ${headingColorClass}`}>3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ</h4>
+                    <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item3}</h4>
                     <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
                       {ann.cremationDate} {ann.cremationTime && `เวลา ${ann.cremationTime}`}
                     </p>
@@ -305,16 +456,16 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               <div className="space-y-3 text-left">
                 <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
                   <MapPin className="w-4 h-4" />
-                  <span>สถานที่จัดงาน (Venue)</span>
+                  <span>{sLabels.venueTitle}</span>
                 </h3>
                 
                 <div className={`p-4 rounded-2xl border ${innerCardBg} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
                   <div>
                     <h4 className={`text-sm font-bold ${headingColorClass}`}>
-                      {ann.templeName || 'วัดจัดพิธี'} {ann.pavilion && `(${ann.pavilion})`}
+                      {ann.templeName || sLabels.venueLabel} {ann.pavilion && `(${ann.pavilion})`}
                     </h4>
                     <p className={`text-xs mt-0.5 ${textMutedClass}`}>
-                      กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังวัด
+                      {sLabels.venueDesc}
                     </p>
                   </div>
                   {ann.mapLink && (
@@ -336,7 +487,11 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             <div className="space-y-3 text-left">
               <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
                 <Info className="w-4 h-4" />
-                <span>ข้อแนะนำการร่วมแสดงความอาลัย</span>
+                <span>
+                  {tenant.category === 'Couple' || tenant.category === 'Wedding'
+                    ? 'คำแนะนำการร่วมแสดงความยินดี'
+                    : 'ข้อแนะนำการร่วมแสดงความอาลัย'}
+                </span>
               </h3>
 
               <div className={`p-4 rounded-2xl border text-xs space-y-3.5 ${innerCardBg}`}>
@@ -349,7 +504,9 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                   )}
                   {ann.wreathPolicy && (
                     <div className="flex flex-col gap-0.5">
-                      <span className={`font-bold ${headingColorClass}`}>นโยบายพวงหรีด:</span>
+                      <span className={`font-bold ${headingColorClass}`}>
+                        {tenant.category === 'Couple' || tenant.category === 'Wedding' ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
+                      </span>
                       <span className={textMutedClass}>{wreathPolicies[ann.wreathPolicy] || wreathPolicies.NORMAL}</span>
                     </div>
                   )}
@@ -392,16 +549,17 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="columns-2 sm:columns-4 gap-4">
             {recentPhotos.map((m, idx) => {
               const displayUrl = getDisplayUrl(m.filePath, m.mimeType, idx);
 
               return (
-                <div key={m.id} className="aspect-square bg-stone-50 rounded-2xl overflow-hidden border border-stone-150 group relative">
+                <div key={m.id} className="break-inside-avoid mb-4 bg-stone-50 rounded-2xl overflow-hidden border border-stone-150 group relative transition hover:scale-[1.01] hover:shadow-sm">
                   <img 
                     src={displayUrl} 
                     alt={m.fileName} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    className="w-full h-auto block animate-fade-in"
+                    loading="lazy"
                   />
                 </div>
               );
@@ -427,14 +585,14 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           <div className="flex justify-between items-center border-b border-stone-100 pb-3">
             <h2 className="text-xl font-bold flex items-center gap-2"
                 style={{ color: 'var(--theme-primary, #0d9488)' }}>
-              <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> หนังสือที่ระลึกและธรรมทานแนะนำ
+              <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {ebooksTitle}
             </h2>
             <Link 
               href={`/${slug}/ebooks`}
               className="hidden sm:inline-flex text-xs font-bold transition items-center gap-1 hover:underline flex-shrink-0"
               style={{ color: 'var(--theme-primary, #0d9488)' }}
             >
-              <span>อ่านหนังสือทั้งหมด</span>
+              <span>{ebooksCtaText}</span>
               <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -465,7 +623,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               className="text-xs font-bold transition flex items-center gap-1 hover:underline"
               style={{ color: 'var(--theme-primary, #0d9488)' }}
             >
-              <span>อ่านหนังสือทั้งหมด</span>
+              <span>{ebooksCtaText}</span>
               <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -549,7 +707,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
           <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {biographyHeading}
         </h2>
-        <p className="text-stone-600 leading-relaxed indent-8 text-sm sm:text-base whitespace-pre-line">
+        <p className="text-stone-600 leading-relaxed text-sm sm:text-base whitespace-pre-line">
           {displayBiography}
         </p>
       </div>

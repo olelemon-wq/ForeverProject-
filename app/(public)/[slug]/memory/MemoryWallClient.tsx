@@ -13,6 +13,127 @@ interface MemoryPost {
   createdAt: string;
 }
 
+const getFormLabels = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') {
+    return {
+      title: 'แชร์เรื่องราวความทรงจำแสนรัก',
+      subtitle: 'เขียนบอกเล่าเรื่องราวความประทับใจและความรู้สึกดี ๆ ระหว่างเรา',
+      btnText: 'ร่วมเขียนบอกเล่าเรื่องราว',
+      ctaTitle: 'ร่วมแบ่งปันเรื่องราวความทรงจำแสนรัก',
+      ctaDesc: 'คุณสามารถโพสต์รูปถ่ายในอดีต บันทึกเรื่องเล่าสั้น หรือคำอวยพรที่คุณมีต่อคู่รัก เพื่อเก็บบันทึกความทรงจำแสนรักร่วมกัน',
+      writerLabel: 'ชื่อผู้ร่วมอวยพร / เพื่อนรัก',
+      writerPlaceholder: 'เช่น เพื่อนสนิทกิ่งแก้ว',
+      topicLabel: 'หัวข้อเรื่องราว (ระบุหรือไม่ก็ได้)',
+      topicPlaceholder: 'เช่น ทริปประทับใจ หรือ ยินดีกับคู่บ่าวสาว',
+      contentPlaceholder: 'ร่วมแบ่งปันเรื่องราวน่ารักๆ ความประทับใจ หรือคำอวยพรหวานๆ แด่คู่รัก...',
+      emojiLabel: 'เลือกรูปแบบข้อความหรือใส่อีโมจิความรัก/อวยพร',
+      emojis: [
+        { char: '❤️', label: 'หัวใจแดง' },
+        { char: '💖', label: 'หัวใจประกาย' },
+        { char: '✨', label: 'ประกายวิบวับ' },
+        { char: '🥂', label: 'ชนแก้ว' },
+        { char: '💐', label: 'ช่อดอกไม้' },
+        { char: '💍', label: 'แหวน' },
+        { char: '🎉', label: 'ปาร์ตี้' },
+      ],
+    };
+  }
+  if (category === 'Pet Memorial') {
+    return {
+      title: 'แชร์เรื่องราวบันทึกการเดินทางของน้อง',
+      subtitle: 'ร่วมแบ่งปันช่วงเวลาแสนสุข ความน่ารัก และความทรงจำดี ๆ ที่มีต่อน้อง',
+      btnText: 'ร่วมเขียนบันทึกส่งน้อง',
+      ctaTitle: 'ร่วมแบ่งปันบันทึกการเดินทางของน้อง',
+      ctaDesc: 'คุณสามารถโพสต์รูปถ่ายของน้อง เขียนเรื่องเล่าสุนัข/แมว หรือบันทึกความทรงจำ เพื่อแชร์ไดอารี่การเดินทางของน้องร่วมกัน',
+      writerLabel: 'ชื่อพี่ ๆ / แฟนคลับน้อง',
+      writerPlaceholder: 'เช่น พี่สมดี / มะหมาแฟนคลับ',
+      topicLabel: 'หัวข้อความทรงจำ (ระบุหรือไม่ก็ได้)',
+      topicPlaceholder: 'เช่น วีรกรรมความซน หรือ วันแรกที่เจอกัน',
+      contentPlaceholder: 'ร่วมแบ่งปันความซน ความน่ารัก หรือเขียนคำอำลาส่งน้องกลับดาวบริวาร...',
+      emojiLabel: 'เลือกรูปแบบข้อความหรือใส่อีโมจิส่งน้องกลับดาว',
+      emojis: [
+        { char: '🐾', label: 'อุ้งเท้า' },
+        { char: '🐶', label: 'น้องหมา' },
+        { char: '🐱', label: 'น้องแมว' },
+        { char: '🌈', label: 'สายรุ้ง' },
+        { char: '✨', label: 'ประกายวิบวับ' },
+        { char: '🤍', label: 'หัวใจขาว' },
+        { char: '🧸', label: 'ตุ๊กตาหมี' },
+      ],
+    };
+  }
+  if (category === 'Family Legacy') {
+    return {
+      title: 'บันทึกสายใยความผูกพันตระกูล',
+      subtitle: 'ร่วมบันทึกความทรงจำ คำสอน หรือความผูกพันของสมาชิกในครอบครัว',
+      btnText: 'ร่วมเขียนบันทึกความผูกพัน',
+      ctaTitle: 'ร่วมบันทึกสายใยความผูกพันในตระกูล',
+      ctaDesc: 'คุณสามารถโพสต์รูปถ่ายครอบครัว บันทึกคำสอน หรือเรื่องราวของเครือญาติ เพื่อบันทึกความรักความผูกพันในตระกูลร่วมกัน',
+      writerLabel: 'ชื่อลูกหลาน / สมาชิกครอบครัว',
+      writerPlaceholder: 'เช่น หลานสะใภ้พิมพ์ใจ',
+      topicLabel: 'หัวข้อบันทึก (ระบุหรือไม่ก็ได้)',
+      topicPlaceholder: 'เช่น คำสั่งสอนอันทรงคุณค่า หรือ บันทึกวันรวมญาติ',
+      contentPlaceholder: 'ร่วมบันทึกคุณงามความดี คำสอน หรือแชร์ภาพบรรยากาศความผูกพันในตระกูล...',
+      emojiLabel: 'เลือกรูปแบบข้อความหรือใส่อีโมจิครอบครัว',
+      emojis: [
+        { char: '🌳', label: 'ต้นไม้ตระกูล' },
+        { char: '🏠', label: 'บ้าน' },
+        { char: '👨‍👩‍👧‍👦', label: 'ครอบครัว' },
+        { char: '🤍', label: 'หัวใจขาว' },
+        { char: '📜', label: 'บันทึก' },
+        { char: '🕯️', label: 'เทียน' },
+        { char: '🙏', label: 'ไหว้' },
+      ],
+    };
+  }
+  if (category === 'Friends') {
+    return {
+      title: 'แชร์เรื่องราววีรกรรมวันวาน',
+      subtitle: 'เขียนบอกเล่าเรื่องราวความสนุก มิตรภาพ และความทรงจำร่วมกัน',
+      btnText: 'ร่วมเขียนย้อนวันวาน',
+      ctaTitle: 'ร่วมแชร์วีรกรรมความสนุกวันวาน',
+      ctaDesc: 'คุณสามารถโพสต์รูปภาพวันวาน เขียนวีรกรรมสุดฮา หรือความทรงจำมิตรภาพ เพื่อย้อนเวลาความประทับใจร่วมกัน',
+      writerLabel: 'ชื่อเพื่อนรัก / เพื่อนร่วมรุ่น',
+      writerPlaceholder: 'เช่น เพื่อนห้อง 4/2 หรือ สมชายสายลุย',
+      topicLabel: 'หัวข้อเรื่องเล่า (ระบุหรือไม่ก็ได้)',
+      topicPlaceholder: 'เช่น วีรกรรมสุดป่วนสมัยเรียน หรือ มิตรภาพที่ยั่งยืน',
+      contentPlaceholder: 'ร่วมย้อนวันวาน ย้อนเรื่องราวสุดป่วน หรือเสียงหัวเราะที่มีร่วมกัน...',
+      emojiLabel: 'เลือกรูปแบบข้อความหรือใส่อีโมจิมิตรภาพ',
+      emojis: [
+        { char: '🎓', label: 'หมวกปริญญา' },
+        { char: '🍻', label: 'ชนแก้ว' },
+        { char: '📸', label: 'กล้องถ่ายรูป' },
+        { char: '🎒', label: 'กระเป๋าเป้' },
+        { char: '💬', label: 'กล่องแชท' },
+        { char: '💛', label: 'หัวใจเหลือง' },
+        { char: '✨', label: 'ประกาย' },
+      ],
+    };
+  }
+  return {
+    title: 'แชร์เรื่องราวกระดานความทรงจำ',
+    subtitle: 'เขียนบอกเล่าเรื่องราวประทับใจและความรู้สึกระหว่างเรา',
+    btnText: 'ร่วมเขียนบอกเล่าเรื่องราว',
+    ctaTitle: 'ร่วมแบ่งปันเรื่องราวความทรงจำอันงดงาม',
+    ctaDesc: 'คุณสามารถโพสต์รูปถ่ายในอดีต บันทึกเรื่องเล่าสั้น หรือความประทับใจที่คุณมีต่อผู้ล่วงลับ เพื่อเก็บบันทึกความทรงจำร่วมกัน',
+    writerLabel: 'ชื่อผู้ร่วมรำลึก',
+    writerPlaceholder: 'เช่น หลานสมฤดี',
+    topicLabel: 'หัวข้อเรื่องเล่า (ระบุหรือไม่ก็ได้)',
+    topicPlaceholder: 'เช่น ภาพความประทับใจสมัยเด็ก',
+    contentPlaceholder: 'ร่วมแบ่งปันความประทับใจหรือบรรยายรูปภาพนี้...',
+    emojiLabel: 'เลือกรูปแบบข้อความหรือใส่อีโมจิไว้อาลัย',
+    emojis: [
+      { char: '🕯️', label: 'เทียนไว้อาลัย' },
+      { char: '🕊️', label: 'นกพิราบความสงบ' },
+      { char: '🙏', label: 'ไหว้เคารพ' },
+      { char: '🤍', label: 'หัวใจสีขาว' },
+      { char: '🥀', label: 'ดอกไม้เหี่ยว' },
+      { char: '🖤', label: 'หัวใจสีดำ' },
+      { char: '🌹', label: 'ดอกไม้ระลึกถึง' },
+    ],
+  };
+};
+
 function MemoryPostCard({ p, parseMessage }: { p: MemoryPost; parseMessage: (msg: string | null) => React.ReactNode }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const text = p.content || '';
@@ -20,10 +141,48 @@ function MemoryPostCard({ p, parseMessage }: { p: MemoryPost; parseMessage: (msg
   const displayText = shouldTruncate && !isExpanded ? text.slice(0, 220) + '...' : text;
 
   return (
-    <div className="rounded-3xl border border-stone-200/80 bg-white p-6 flex flex-col justify-between shadow-sm min-h-[220px]">
-      <div className="space-y-4">
-        {p.mediaUrl && (
-          <div className="w-full h-48 bg-stone-50 rounded-2xl overflow-hidden border border-stone-200 relative flex items-center justify-center">
+    <div className="relative py-6 pl-1 transition flex flex-col md:flex-row gap-6 items-start text-left w-full">
+      <div className="flex-1 min-w-0 space-y-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-bold text-stone-850">
+            {p.senderName}
+          </span>
+          <span className="text-[10px] text-stone-450 font-semibold font-mono ml-auto">
+            {new Date(p.createdAt).toLocaleDateString('th-TH', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+            })}
+          </span>
+        </div>
+
+        {p.title && (
+          <h4 className="text-sm font-bold text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
+            {p.title}
+          </h4>
+        )}
+
+        {p.content && (
+          <div className="space-y-1">
+            <p className="text-stone-605 text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words">
+              "{parseMessage(displayText)}"
+            </p>
+            {shouldTruncate && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-[10px] font-bold text-emerald-700 hover:text-emerald-850 transition cursor-pointer mt-1 focus:outline-none flex items-center gap-0.5"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}
+              >
+                <span>{isExpanded ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม'}</span>
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {p.mediaUrl && (
+        <div className="w-full md:w-44 flex-shrink-0">
+          <div className="relative rounded-2xl overflow-hidden bg-stone-50 border border-stone-200/80 aspect-video md:aspect-square flex items-center justify-center shadow-sm">
             <img 
               src={p.mediaUrl.startsWith('http') || p.mediaUrl.startsWith('/') ? p.mediaUrl : `/${p.mediaUrl}`} 
               alt={p.title || 'Memory Image'}
@@ -33,46 +192,23 @@ function MemoryPostCard({ p, parseMessage }: { p: MemoryPost; parseMessage: (msg
               }}
             />
           </div>
-        )}
-        
-        <div className="space-y-2 text-left">
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-xs font-bold text-stone-900">โพสต์โดย: {p.senderName}</span>
-            <span className="text-[10px] text-stone-450 font-semibold font-mono">
-              {new Date(p.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </span>
-          </div>
-          {p.title && <h4 className="text-sm font-bold text-stone-900" style={{ color: 'var(--theme-primary)' }}>{p.title}</h4>}
-          {p.content && (
-            <div>
-              <p className="text-xs text-stone-600 leading-relaxed whitespace-pre-line">
-                {parseMessage(displayText)}
-              </p>
-              {shouldTruncate && (
-                <button
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="text-[10px] font-bold text-emerald-700 hover:text-emerald-850 transition cursor-pointer mt-2 focus:outline-none flex items-center gap-0.5"
-                  style={{ color: 'var(--theme-primary, #0d9488)' }}
-                >
-                  <span>{isExpanded ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม'}</span>
-                </button>
-              )}
-            </div>
-          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
 export default function MemoryWallClient({ 
   websiteId, 
-  initialPosts 
+  initialPosts,
+  category = 'Memorial'
 }: { 
   websiteId: string; 
-  initialPosts: MemoryPost[] 
+  initialPosts: MemoryPost[];
+  category?: string;
 }) {
   const [posts, setPosts] = useState<MemoryPost[]>(initialPosts);
+  const mLabels = getFormLabels(category);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 6;
   const [isOpen, setIsOpen] = useState(false);
@@ -262,10 +398,10 @@ export default function MemoryWallClient({
       {!isOpen ? (
         <div className="p-8 rounded-3xl border border-dashed border-stone-300 bg-white text-center shadow-sm">
           <h3 className="text-base sm:text-lg font-semibold text-stone-850 mb-2">
-            ร่วมแบ่งปันเรื่องราวความทรงจำอันงดงาม
+            {mLabels.ctaTitle}
           </h3>
           <p className="text-stone-500 text-xs mb-6 max-w-md mx-auto leading-normal">
-            คุณสามารถโพสต์รูปถ่ายในอดีต บันทึกเรื่องเล่าสั้น หรือความประทับใจที่คุณมีต่อผู้ล่วงลับ เพื่อเก็บบันทึกความทรงจำร่วมกัน
+            {mLabels.ctaDesc}
           </p>
           <button 
             onClick={openForm}
@@ -273,13 +409,13 @@ export default function MemoryWallClient({
             style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
           >
             <PenTool className="w-4 h-4" />
-            <span>ร่วมเขียนบอกเล่าเรื่องราว</span>
+            <span>{mLabels.btnText}</span>
           </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-stone-200 bg-white space-y-4 w-full shadow-xl relative animate-fade-in text-left">
           <header className="flex justify-between items-center border-b border-stone-200 pb-3">
-            <h3 className="text-base font-bold text-stone-900">แชร์เรื่องราวกระดานความทรงจำ</h3>
+            <h3 className="text-base font-bold text-stone-900">{mLabels.title}</h3>
             <button 
               type="button" 
               onClick={() => setIsOpen(false)} 
@@ -294,23 +430,23 @@ export default function MemoryWallClient({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ชื่อผู้ร่วมรำลึก</label>
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">{mLabels.writerLabel}</label>
               <input 
                 type="text" 
                 value={senderName} 
                 onChange={(e) => setSenderName(e.target.value)} 
-                placeholder="เช่น หลานสมฤดี"
+                placeholder={mLabels.writerPlaceholder}
                 className="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
                 disabled={isLoading}
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">หัวข้อเรื่องเล่า (ระบุหรือไม่ก็ได้)</label>
+              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">{mLabels.topicLabel}</label>
               <input 
                 type="text" 
                 value={title} 
                 onChange={(e) => setTitle(e.target.value)} 
-                placeholder="เช่น ภาพความประทับใจสมัยเด็ก"
+                placeholder={mLabels.topicPlaceholder}
                 className="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
                 disabled={isLoading}
               />
@@ -332,7 +468,7 @@ export default function MemoryWallClient({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-1">เนื้อหาเรื่องเล่าบอกต่อความทรงจำ</label>
+            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-1">รายละเอียดและเนื้อเรื่องเล่า</label>
             <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
               <button
                 type="button"
@@ -355,15 +491,7 @@ export default function MemoryWallClient({
 
               {/* Mourning Emojis List */}
               <div className="flex items-center gap-1">
-                {[
-                  { char: '🕯️', label: 'เทียนไว้อาลัย' },
-                  { char: '🕊️', label: 'นกพิราบความสงบ' },
-                  { char: '🙏', label: 'ไหว้เคารพ' },
-                  { char: '🤍', label: 'หัวใจสีขาว' },
-                  { char: '🥀', label: 'ดอกไม้เหี่ยว' },
-                  { char: '🖤', label: 'หัวใจสีดำ' },
-                  { char: '🌹', label: 'ดอกไม้ระลึกถึง' },
-                ].map((item) => (
+                {mLabels.emojis.map((item) => (
                   <button
                     key={item.char}
                     type="button"
@@ -377,14 +505,14 @@ export default function MemoryWallClient({
               </div>
 
               <span className="text-[10px] text-stone-400 ml-auto select-none hidden sm:inline">
-                เลือกรูปแบบข้อความหรือใส่อีโมจิไว้อาลัย
+                {mLabels.emojiLabel}
               </span>
             </div>
             <textarea 
               id="memory-content-textarea"
               value={content} 
               onChange={(e) => setContent(e.target.value)} 
-              placeholder="ร่วมแบ่งปันความประทับใจหรือบรรยายรูปภาพนี้..."
+              placeholder={mLabels.contentPlaceholder}
               rows={4}
               className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs resize-none focus:bg-white focus:outline-none"
               disabled={isLoading}
@@ -450,17 +578,17 @@ export default function MemoryWallClient({
 
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {posts.length === 0 ? (
-                <div className="col-span-full text-center py-12 text-stone-500 text-sm border border-dashed border-stone-250 rounded-3xl">
-                  ยังไม่มีผู้ร่วมแชร์เรื่องราวกระดานความทรงจำในขณะนี้
-                </div>
-              ) : (
-                currentPosts.map(p => (
+            {posts.length === 0 ? (
+              <div className="text-center py-12 text-stone-500 text-sm border border-dashed border-stone-250 rounded-3xl bg-white shadow-sm">
+                ยังไม่มีผู้ร่วมแชร์เรื่องราวกระดานความทรงจำในขณะนี้
+              </div>
+            ) : (
+              <div className="divide-y divide-stone-150">
+                {currentPosts.map(p => (
                   <MemoryPostCard key={p.id} p={p} parseMessage={parseMessage} />
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
 
             {/* Pagination Controls */}
             {totalPages > 1 && (

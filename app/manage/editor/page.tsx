@@ -112,10 +112,124 @@ const measureTextWidth = (text: string, fontSize: number, fontFamily: string, fo
   }
 };
 
+const getStyle3Config = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') {
+    return {
+      name: 'ชมพูโรสพาสเทล (Soft Rose)',
+      bg: '#FFF0F2',
+      textColor: '#8C3A4F',
+      subTextColor: '#A25F70',
+      avatarBorder: '#FBC5CD',
+    };
+  }
+  if (category === 'Pet Memorial') {
+    return {
+      name: 'เขียวเซจอบอุ่น (Warm Sage)',
+      bg: '#F2F6F3',
+      textColor: '#2C4A3E',
+      subTextColor: '#4E7062',
+      avatarBorder: '#C8D9CD',
+    };
+  }
+  if (category === 'Family Legacy') {
+    return {
+      name: 'น้ำเงินกรมท่าทอง (Royal Navy)',
+      bg: '#0D1F2D',
+      textColor: '#E0A96D',
+      subTextColor: '#B5834C',
+      avatarBorder: '#2A445C',
+    };
+  }
+  if (category === 'Friends') {
+    return {
+      name: 'เขียวมินต์สดใส (Mint Teal)',
+      bg: '#EAF4F4',
+      textColor: '#1E4848',
+      subTextColor: '#3E7D7D',
+      avatarBorder: '#A8D1D1',
+    };
+  }
+  return {
+    name: 'เทาสุภาพ (Charcoal Slate)',
+    bg: '/Template-cards/charcoal_gold.png',
+    textColor: '#C2A878',
+    subTextColor: '#d6d3d1',
+    avatarBorder: '#785A28',
+  };
+};
+
+const getTextColors = (category: string, style: string) => {
+  if (style !== 'CHARCOAL_SLATE') {
+    return {
+      main: style === 'WARM_CREAM' ? '#362c1a' : '#1c1917',
+      sub: style === 'WARM_CREAM' ? '#7d6b4e' : '#57534e',
+    };
+  }
+  const config = getStyle3Config(category);
+  return {
+    main: config.textColor,
+    sub: config.subTextColor,
+  };
+};
+
+const getScheduleLabels = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') {
+    return {
+      subtitle: 'กำหนดการจัดงานและกิจกรรม',
+      item1: '1. พิธีมงคลสมรส / พิธีหลั่งน้ำพระพุทธมนต์',
+      item1Placeholder: 'เช่น วันอาทิตย์ที่ 15 ก.พ. 68',
+      item2: '2. งานฉลองมงคลสมรส / งานเลี้ยงฉลอง',
+      item2Placeholder: 'เช่น วันอาทิตย์ที่ 15 ก.พ. 68',
+      item2TimePlaceholder: 'เช่น 18:00 น.',
+      item3: '3. พิธีฉลองอาฟเตอร์ปาร์ตี้ / กิจกรรมพิเศษ',
+      item3Placeholder: 'เช่น เวลา 21:00 น. เป็นต้นไป',
+      venueLabel: 'สถานที่จัดงาน (VENUE)',
+      venuePlaceholder: 'เช่น โรงแรมสยามเคมปินสกี้',
+      pavilionLabel: 'ห้องจัดเลี้ยง / ห้องจัดงาน (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น ห้องแกรนด์บอลรูม / ห้องสราญรมย์',
+      invitePlaceholder: 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี',
+    };
+  }
+  if (category === 'Pet Memorial') {
+    return {
+      subtitle: 'กำหนดการอำลาและการเดินทางกลับดาว',
+      item1: '1. พิธีอำลา / กล่าวคำอาลัย',
+      item1Placeholder: 'เช่น วันเสาร์ที่ 12 ธ.ค. 67',
+      item2: '2. พิธีฌาปนกิจสัตว์เลี้ยง',
+      item2Placeholder: 'เช่น วันเสาร์ที่ 12 ธ.ค. 67',
+      item2TimePlaceholder: 'เช่น 14:00 น.',
+      item3: '3. พิธีลอยอังคารอัฐิ / โปรยเเถ้ากระดูก',
+      item3Placeholder: 'เช่น วันอาทิตย์ที่ 13 ธ.ค. 67',
+      venueLabel: 'สถานที่จัดพิธี (VENUE)',
+      venuePlaceholder: 'เช่น วัดคลองเตยใน (แผนกสัตว์เลี้ยง)',
+      pavilionLabel: 'ศาลา / โซนจัดพิธี (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น ศาลาน้ำตาแสงไต้ หรือ โซน B',
+      invitePlaceholder: 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาวเสร็จสมบูรณ์',
+    };
+  }
+  return {
+    subtitle: 'กำหนดการพิธีสวดพระอภิธรรม และฌาปนกิจศพ',
+    item1: '1. พิธีรดน้ำศพ',
+    item1Placeholder: 'เช่น วันศุกร์ที่ 15 พ.ย. 67',
+    item2: '2. พิธีสวดพระอภิธรรม',
+    item2Placeholder: 'เช่น 16-22 พ.ย. 67',
+    item2TimePlaceholder: 'เช่น 19:00 น.',
+    item3: '3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ',
+    item3Placeholder: 'เช่น วันเสาร์ที่ 23 พ.ย. 67',
+    venueLabel: 'สถานที่จัดพิธี (VENUE)',
+    venuePlaceholder: 'เช่น วัดมกุฏกษัตริยาราม',
+    pavilionLabel: 'ศาลาที่จัดงาน',
+    pavilionPlaceholder: 'เช่น ศาลา 10',
+    invitePlaceholder: 'กราบเรียนเชิญด้วยความเคารพอย่างสูง',
+  };
+};
+
 function EditorWorkspace() {
   const searchParams = useSearchParams();
   const slug = searchParams.get('slug') || 'boonkrua-family';
   const [isLoading, setIsLoading] = useState(true);
+  const [siteCategory, setSiteCategory] = useState('Memorial');
+  const labels = getScheduleLabels(siteCategory);
   const [activeTab, setActiveTab] = useState<'info' | 'layers'>('info');
 
 
@@ -149,6 +263,7 @@ function EditorWorkspace() {
         if (res.ok && data.websites && data.websites.length > 0) {
           const site = data.websites.find((w: any) => w.slug.toLowerCase() === slug.toLowerCase()) || data.websites[0];
           if (site) {
+            setSiteCategory(site.category || 'Memorial');
             const config = site.themeConfig || {};
             const ann = config.announcement || {};
 
@@ -191,12 +306,15 @@ function EditorWorkspace() {
 
             // 2. Determine background color
             let bg = '#FAF6EE'; // WARM_CREAM default
-            if (ann.style === 'CHARCOAL_SLATE') bg = '/Template-cards/charcoal_gold.png';
-            else if (ann.style === 'ELEGANT_WHITE') bg = '#ffffff';
+            if (ann.style === 'CHARCOAL_SLATE') {
+              bg = getStyle3Config(config.category || 'Memorial').bg;
+            } else if (ann.style === 'ELEGANT_WHITE') {
+              bg = '#ffffff';
+            }
 
             if (ann.canvasBg) {
               if (ann.canvasBg === '#1c1917' && ann.style === 'CHARCOAL_SLATE') {
-                bg = '/Template-cards/charcoal_gold.png';
+                bg = getStyle3Config(config.category || 'Memorial').bg;
               } else {
                 bg = ann.canvasBg;
               }
@@ -211,6 +329,7 @@ function EditorWorkspace() {
               initialElements = ann.canvasElements;
             } else {
               // Generate dynamic text elements from inputs as default fallback
+              const colors = getTextColors(config.category || 'Memorial', ann.style || 'WARM_CREAM');
               let y = 60;
               
               const addDynamicTextElement = (id: string, text: string, fontSize: number, fontStyle: 'normal' | 'bold', fill: string, opacity = 1) => {
@@ -242,10 +361,10 @@ function EditorWorkspace() {
 
               addDynamicTextElement(
                 'header-text', 
-                'กราบเรียนเชิญด้วยความเคารพอย่างสูง', 
+                labels.invitePlaceholder, 
                 14, 
                 'normal', 
-                ann.style === 'CHARCOAL_SLATE' ? '#d6d3d1' : '#7d6b4e',
+                colors.sub,
                 0.85
               );
 
@@ -254,7 +373,7 @@ function EditorWorkspace() {
                 site.name || 'คุณพ่อบุญเครือ เขมาภิรัตน์', 
                 26, 
                 'bold', 
-                ann.style === 'CHARCOAL_SLATE' ? '#ffffff' : '#362c1a'
+                colors.main
               );
 
               if (ann.text) {
@@ -263,7 +382,7 @@ function EditorWorkspace() {
                   ann.text, 
                   13, 
                   'normal', 
-                  ann.style === 'CHARCOAL_SLATE' ? '#a8a29e' : '#7d6b4e',
+                  colors.sub,
                   0.9
                 );
               }
@@ -271,53 +390,60 @@ function EditorWorkspace() {
               if (ann.waterDate) {
                 addDynamicTextElement(
                   'water-text', 
-                  `พิธีรดน้ำศพ: ${ann.waterDate} ${ann.waterTime ? `(${ann.waterTime})` : ''}`, 
+                  `${labels.item1.replace(/^\d+\.\s*/, '')}: ${ann.waterDate} ${ann.waterTime ? `(${ann.waterTime})` : ''}`, 
                   13, 
                   'normal', 
-                  ann.style === 'CHARCOAL_SLATE' ? '#ffffff' : '#362c1a'
+                  colors.main
                 );
               }
 
               if (ann.abhidhammaDateRange) {
                 addDynamicTextElement(
                   'abhidhamma-text', 
-                  `พิธีสวดพระอภิธรรม: ${ann.abhidhammaDateRange} ${ann.abhidhammaTime ? `(${ann.abhidhammaTime})` : ''}`, 
+                  `${labels.item2.replace(/^\d+\.\s*/, '')}: ${ann.abhidhammaDateRange} ${ann.abhidhammaTime ? `(${ann.abhidhammaTime})` : ''}`, 
                   13, 
                   'normal', 
-                  ann.style === 'CHARCOAL_SLATE' ? '#ffffff' : '#362c1a'
+                  colors.main
                 );
               }
 
               if (ann.cremationDate) {
                 addDynamicTextElement(
                   'cremation-text', 
-                  `พิธีฌาปนกิจ: ${ann.cremationDate} ${ann.cremationTime ? `(${ann.cremationTime})` : ''}`, 
+                  `${labels.item3.replace(/^\d+\.\s*/, '')}: ${ann.cremationDate} ${ann.cremationTime ? `(${ann.cremationTime})` : ''}`, 
                   13, 
                   'normal', 
-                  ann.style === 'CHARCOAL_SLATE' ? '#ffffff' : '#362c1a'
+                  colors.main
                 );
               }
 
               if (ann.templeName) {
                 addDynamicTextElement(
                   'venue-text', 
-                  `สถานที่จัดงาน: ${ann.templeName} ${ann.pavilion ? `(${ann.pavilion})` : ''}`, 
+                  `${labels.venueLabel.replace(/\s*\(VENUE\)/i, '')}: ${ann.templeName} ${ann.pavilion ? `(${ann.pavilion})` : ''}`, 
                   13, 
                   'bold', 
-                  ann.style === 'CHARCOAL_SLATE' ? '#ffffff' : '#362c1a'
+                  colors.main
                 );
               }
 
               let guidelineStr = '';
               if (ann.dressCode) guidelineStr += `การแต่งกาย: ${ann.dressCode}`;
               if (ann.wreathPolicy) {
-                const policies: any = {
+                const policies: any = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? {
+                  'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
+                  'NO_FLOWERS': 'ขออภัย งดรับของขวัญ (เน้นการร่วมอวยพรแทน)',
+                  'DONATION_ONLY': 'ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
+                  'NO_WREATH': 'ขออภัย งดรับซองและของขวัญทุกประเภท',
+                } : {
                   'NORMAL': 'เปิดรับพวงหรีดตามปกติ',
                   'NO_FLOWERS': 'งดรับพวงหรีดดอกไม้สด (รักษ์โลก)',
+                  'DONATION_ONLY': 'งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
                   'NO_WREATH': 'งดรับพวงหรีดทุกประเภท',
                 };
                 if (guidelineStr) guidelineStr += '\n';
-                guidelineStr += `พวงหรีด: ${policies[ann.wreathPolicy] || policies.NORMAL}`;
+                const policyLabel = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? 'ของขวัญ/ซอง' : 'พวงหรีด';
+                guidelineStr += `${policyLabel}: ${policies[ann.wreathPolicy] || policies.NORMAL}`;
               }
               if (ann.contactPhone) {
                 if (guidelineStr) guidelineStr += '\n';
@@ -330,7 +456,7 @@ function EditorWorkspace() {
                   guidelineStr, 
                   11, 
                   'normal', 
-                  ann.style === 'CHARCOAL_SLATE' ? '#a8a29e' : '#7d6b4e',
+                  colors.sub,
                   0.85
                 );
               }
@@ -391,7 +517,8 @@ function EditorWorkspace() {
     } else if (field === 'announcementTempleName' || field === 'announcementPavilion') {
       const temple = field === 'announcementTempleName' ? value : formData.announcementTempleName;
       const pavilion = field === 'announcementPavilion' ? value : formData.announcementPavilion;
-      const text = `สถานที่จัดงาน: ${temple} ${pavilion ? `(${pavilion})` : ''}`;
+      const venueHeader = labels.venueLabel.replace(/\s*\(VENUE\)/i, '');
+      const text = `${venueHeader}: ${temple} ${pavilion ? `(${pavilion})` : ''}`;
       const el = elements.find((e) => e.id === 'venue-text');
       if (el && el.type === 'text') {
         updateElement('venue-text', { text, width: measureTextWidth(text, el.fontSize, el.fontFamily, el.fontStyle) + 10 });
@@ -404,13 +531,20 @@ function EditorWorkspace() {
       let guidelineStr = '';
       if (dress) guidelineStr += `การแต่งกาย: ${dress}`;
       if (policy) {
-        const policies: any = {
+        const policies: any = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? {
+          'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
+          'NO_FLOWERS': 'ขออภัย งดรับของขวัญ (เน้นการร่วมอวยพรแทน)',
+          'DONATION_ONLY': 'ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
+          'NO_WREATH': 'ขออภัย งดรับซองและของขวัญทุกประเภท',
+        } : {
           'NORMAL': 'เปิดรับพวงหรีดตามปกติ',
           'NO_FLOWERS': 'งดรับพวงหรีดดอกไม้สด (รักษ์โลก)',
+          'DONATION_ONLY': 'งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
           'NO_WREATH': 'งดรับพวงหรีดทุกประเภท',
         };
         if (guidelineStr) guidelineStr += '\n';
-        guidelineStr += `พวงหรีด: ${policies[policy] || policies.NORMAL}`;
+        const policyLabel = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? 'ของขวัญ/ซอง' : 'พวงหรีด';
+        guidelineStr += `${policyLabel}: ${policies[policy] || policies.NORMAL}`;
       }
       if (phone) {
         if (guidelineStr) guidelineStr += '\n';
@@ -423,15 +557,19 @@ function EditorWorkspace() {
       }
     } else if (field === 'announcementStyle') {
       let bg = '#FAF6EE';
-      if (value === 'CHARCOAL_SLATE') bg = '/Template-cards/charcoal_gold.png';
-      else if (value === 'ELEGANT_WHITE') bg = '#ffffff';
+      if (value === 'CHARCOAL_SLATE') {
+        bg = getStyle3Config(siteCategory).bg;
+      } else if (value === 'ELEGANT_WHITE') {
+        bg = '#ffffff';
+      }
       setBackground(bg);
 
+      const colors = getTextColors(siteCategory, value);
       elements.forEach((el) => {
-        if (el.id === 'header-text' || el.id === 'guidelines-text') {
-          updateElement(el.id, { fill: value === 'CHARCOAL_SLATE' ? '#C2A878' : '#7d6b4e' });
-        } else if (['name-text', 'intro-text', 'water-text', 'abhidhamma-text', 'cremation-text', 'venue-text'].includes(el.id)) {
-          updateElement(el.id, { fill: value === 'CHARCOAL_SLATE' ? '#C2A878' : '#362c1a' });
+        if (el.id === 'header-text' || el.id === 'guidelines-text' || el.id === 'intro-text') {
+          updateElement(el.id, { fill: colors.sub });
+        } else if (['name-text', 'water-text', 'abhidhamma-text', 'cremation-text', 'venue-text'].includes(el.id)) {
+          updateElement(el.id, { fill: colors.main });
         }
       });
     }
@@ -570,34 +708,54 @@ function EditorWorkspace() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">ชื่อผู้ล่วงลับ</label>
+                  <label className="text-[10px] font-bold text-stone-600 block">
+                    {siteCategory === 'Couple' || siteCategory === 'Wedding'
+                      ? 'ชื่อคู่รัก / ชื่อเว็บไซต์'
+                      : siteCategory === 'Pet Memorial'
+                      ? 'ชื่อสัตว์เลี้ยง'
+                      : 'ชื่อผู้ล่วงลับ'}
+                  </label>
                   <input 
                     type="text" 
                     value={formData.siteName} 
                     onChange={(e) => handleFieldChange('siteName', e.target.value)} 
-                    placeholder="ระบุชื่อผู้ล่วงลับ"
+                    placeholder={
+                      siteCategory === 'Couple' || siteCategory === 'Wedding'
+                        ? 'ระบุชื่อคู่รัก'
+                        : siteCategory === 'Pet Memorial'
+                        ? 'ระบุชื่อสัตว์เลี้ยง'
+                        : 'ระบุชื่อผู้ล่วงลับ'
+                    }
                     className="w-full px-3 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3.5">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-600 block">ชื่อวัด</label>
+                    <label className="text-[10px] font-bold text-stone-600 block">
+                      {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'สถานที่จัดงาน' : 'ชื่อวัด'}
+                    </label>
                     <input 
                       type="text" 
                       value={formData.announcementTempleName} 
                       onChange={(e) => handleFieldChange('announcementTempleName', e.target.value)} 
-                      placeholder="วัดพระศรีมหาธาตุ"
+                      placeholder={
+                        siteCategory === 'Couple' || siteCategory === 'Wedding'
+                          ? 'เช่น โรงแรมสยามเคมปินสกี้'
+                          : 'เช่น วัดมกุฏกษัตริยาราม'
+                      }
                       className="w-full px-3 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-600 block">ศาลาจัดพิธี</label>
+                    <label className="text-[10px] font-bold text-stone-600 block">
+                      {labels.pavilionLabel}
+                    </label>
                     <input 
                       type="text" 
                       value={formData.announcementPavilion} 
                       onChange={(e) => handleFieldChange('announcementPavilion', e.target.value)} 
-                      placeholder="ศาลา 5"
+                      placeholder={labels.pavilionPlaceholder}
                       className="w-full px-3 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
                     />
                   </div>
@@ -612,7 +770,7 @@ function EditorWorkspace() {
                       className="w-full px-2.5 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
                     >
                       <option value="ELEGANT_WHITE">ขาวหรูหรา (Elegant White)</option>
-                      <option value="CHARCOAL_SLATE">เทาสุภาพ (Charcoal Slate)</option>
+                      <option value="CHARCOAL_SLATE">{getStyle3Config(siteCategory).name}</option>
                       <option value="WARM_CREAM">ครีมทอง (Warm Cream)</option>
                     </select>
                   </div>
@@ -640,7 +798,7 @@ function EditorWorkspace() {
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
                   <span className="text-[10px] font-bold text-stone-700 flex items-center gap-1 select-none">
                     <Droplets className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                    <span>พิธีรดน้ำศพ</span>
+                    <span>{labels.item1.replace(/^\d+\.\s*/, '')}</span>
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex gap-1.5 items-center relative">
@@ -648,7 +806,7 @@ function EditorWorkspace() {
                         type="text" 
                         value={formData.announcementWaterDate} 
                         onChange={(e) => handleFieldChange('announcementWaterDate', e.target.value)} 
-                        placeholder="วันที่ เช่น 23 มิ.ย. 69"
+                        placeholder={labels.item1Placeholder}
                         className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 min-w-0"
                       />
                       <ThaiDatePicker 
@@ -701,7 +859,7 @@ function EditorWorkspace() {
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
                   <span className="text-[10px] font-bold text-stone-700 flex items-center gap-1 select-none">
                     <Flame className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span>พิธีสวดพระอภิธรรม</span>
+                    <span>{labels.item2.replace(/^\d+\.\s*/, '')}</span>
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex gap-1.5 items-center relative">
@@ -709,7 +867,7 @@ function EditorWorkspace() {
                         type="text" 
                         value={formData.announcementAbhidhammaDateRange} 
                         onChange={(e) => handleFieldChange('announcementAbhidhammaDateRange', e.target.value)} 
-                        placeholder="ช่วงวัน เช่น 23-27 มิ.ย."
+                        placeholder={labels.item2Placeholder}
                         className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 min-w-0"
                       />
                       <ThaiDatePicker 
@@ -756,7 +914,7 @@ function EditorWorkspace() {
                           type="text" 
                           value={formData.announcementAbhidhammaTime} 
                           onChange={(e) => handleFieldChange('announcementAbhidhammaTime', e.target.value)} 
-                          placeholder="ระบุเวลา เช่น 19:15 น."
+                          placeholder={labels.item2TimePlaceholder}
                           className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-555"
                         />
                       )}
@@ -768,7 +926,7 @@ function EditorWorkspace() {
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
                   <span className="text-[10px] font-bold text-stone-700 flex items-center gap-1 select-none">
                     <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>พิธีฌาปนกิจ / พระราชทานเพลิงศพ</span>
+                    <span>{labels.item3.replace(/^\d+\.\s*/, '')}</span>
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex gap-1.5 items-center relative">
@@ -776,7 +934,7 @@ function EditorWorkspace() {
                         type="text" 
                         value={formData.announcementCremationDate} 
                         onChange={(e) => handleFieldChange('announcementCremationDate', e.target.value)} 
-                        placeholder="วันอาทิตย์ที่ 28 มิ.ย. 69"
+                        placeholder={labels.item3Placeholder}
                         className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 min-w-0"
                       />
                       <ThaiDatePicker 
@@ -839,21 +997,39 @@ function EditorWorkspace() {
                     type="text" 
                     value={formData.announcementDressCode} 
                     onChange={(e) => handleFieldChange('announcementDressCode', e.target.value)} 
-                    placeholder="เช่น ชุดสุภาพโทนสีดำหรือขาว"
+                    placeholder={
+                      siteCategory === 'Couple' || siteCategory === 'Wedding'
+                        ? 'เช่น ธีมสีชมพู/พาสเทล หรือ ตามความสะดวก'
+                        : 'เช่น ชุดสุภาพโทนสีดำหรือขาว'
+                    }
                     className="w-full px-3 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">นโยบายพวงหรีด</label>
+                  <label className="text-[10px] font-bold text-stone-600 block">
+                    {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'นโยบายการรับซอง/ของขวัญ' : 'นโยบายพวงหรีด'}
+                  </label>
                   <select 
                     value={formData.announcementWreathPolicy} 
                     onChange={(e) => handleFieldChange('announcementWreathPolicy', e.target.value)} 
                     className="w-full px-2.5 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
                   >
-                    <option value="NORMAL">เปิดรับพวงหรีดตามปกติ</option>
-                    <option value="NO_FLOWERS">งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)</option>
-                    <option value="NO_WREATH">งดรับพวงหรีดทุกประเภท</option>
+                    {siteCategory === 'Couple' || siteCategory === 'Wedding' ? (
+                      <>
+                        <option value="NORMAL">ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ</option>
+                        <option value="NO_FLOWERS">ขออภัย งดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)</option>
+                        <option value="DONATION_ONLY">ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)</option>
+                        <option value="NO_WREATH">ขออภัย งดรับซองและของขวัญทุกประเภท</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="NORMAL">เปิดรับพวงหรีดตามปกติ</option>
+                        <option value="NO_FLOWERS">งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)</option>
+                        <option value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</option>
+                        <option value="NO_WREATH">งดรับพวงหรีดทุกประเภท</option>
+                      </>
+                    )}
                   </select>
                 </div>
 

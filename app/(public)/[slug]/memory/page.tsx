@@ -75,7 +75,7 @@ export default async function PublicMemoryWallPage(props: { params: Promise<{ sl
 
             {/* Memory Wall Grid & Interactive Clients */}
             <div>
-              <MemoryWallClient websiteId={tenant.id} initialPosts={posts} />
+              <MemoryWallClient websiteId={tenant.id} initialPosts={posts} category={tenant.category} />
             </div>
           </div>
         );

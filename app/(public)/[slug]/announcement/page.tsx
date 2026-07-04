@@ -17,6 +17,43 @@ async function getTenantData(slug: string) {
   });
 }
 
+const getScheduleLabels = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') {
+    return {
+      title: 'กำหนดการจัดงานและกิจกรรม',
+      item1: '1. พิธีมงคลสมรส / พิธีหลั่งน้ำพระพุทธมนต์',
+      item2: '2. งานฉลองมงคลสมรส / งานเลี้ยงฉลอง',
+      item3: '3. พิธีฉลองอาฟเตอร์ปาร์ตี้ / กิจกรรมพิเศษ',
+      venueTitle: 'สถานที่จัดงาน (Venue)',
+      venueLabel: 'สถานที่จัดงาน',
+      pavilionLabel: 'ห้องจัดเลี้ยง / ห้องจัดงาน (ถ้ามี)',
+      venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+    };
+  }
+  if (category === 'Pet Memorial') {
+    return {
+      title: 'กำหนดการอำลาและการเดินทางกลับดาว',
+      item1: '1. พิธีอำลา / กล่าวคำอาลัย',
+      item2: '2. พิธีฌาปนกิจสัตว์เลี้ยง',
+      item3: '3. พิธีลอยอังคารอัฐิ / โปรยเถ้ากระดูก',
+      venueTitle: 'สถานที่จัดพิธี (Venue)',
+      venueLabel: 'วัดจัดพิธี / สถานที่จัดงาน',
+      pavilionLabel: 'ศาลา / โซนจัดพิธี (ถ้ามี)',
+      venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+    };
+  }
+  return {
+    title: 'กำหนดการและพิธีการ',
+    item1: '1. พิธีรดน้ำศพ',
+    item2: '2. พิธีสวดพระอภิธรรม',
+    item3: '3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ',
+    venueTitle: 'สถานที่จัดพิธี (Venue)',
+    venueLabel: 'วัดจัดพิธี',
+    pavilionLabel: 'ศาลาที่จัดงาน',
+    venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังวัด',
+  };
+};
+
 export default async function PublicAnnouncementPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
   const tenant = await getTenantData(slug);
@@ -24,6 +61,8 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   if (!tenant) {
     notFound();
   }
+
+  const sLabels = getScheduleLabels(tenant.category);
 
   const enabledFeatures = getEnabledFeatures(tenant.themeConfig, tenant);
   if (!enabledFeatures.announcement) {
@@ -255,14 +294,14 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           <div className="space-y-4 text-left">
             <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
               <Calendar className="w-4 h-4" />
-              <span>กำหนดการและพิธีการ</span>
+              <span>{sLabels.title}</span>
             </h3>
 
             <div className="grid grid-cols-1 gap-3 print-inner-card-grid">
               {/* 1. Water Ceremony */}
               {announcement.waterDate && (
                 <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg}`}>
-                  <h4 className={`text-xs font-bold ${headingColorClass}`}>1. พิธีรดน้ำศพ</h4>
+                  <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
                   <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
                     {announcement.waterDate} {announcement.waterTime && `เวลา ${announcement.waterTime}`}
                   </p>
@@ -272,7 +311,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
               {/* 2. Abhidhamma Ceremony */}
               {announcement.abhidhammaDateRange && (
                 <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg}`}>
-                  <h4 className={`text-xs font-bold ${headingColorClass}`}>2. พิธีสวดพระอภิธรรม</h4>
+                  <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item2}</h4>
                   <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
                     {announcement.abhidhammaDateRange} {announcement.abhidhammaTime && `เวลา ${announcement.abhidhammaTime}`}
                   </p>
@@ -282,7 +321,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
               {/* 3. Cremation Ceremony */}
               {announcement.cremationDate && (
                 <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg}`}>
-                  <h4 className={`text-xs font-bold ${headingColorClass}`}>3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ</h4>
+                  <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item3}</h4>
                   <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
                     {announcement.cremationDate} {announcement.cremationTime && `เวลา ${announcement.cremationTime}`}
                   </p>
@@ -296,16 +335,16 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
             <div className="space-y-3 text-left">
               <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
                 <MapPin className="w-4 h-4" />
-                <span>สถานที่จัดงาน (Venue)</span>
+                <span>{sLabels.venueTitle}</span>
               </h3>
               
               <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
                 <div>
                   <h4 className={`text-sm font-bold ${headingColorClass}`}>
-                    {announcement.templeName || 'วัดจัดพิธี'} {announcement.pavilion && `(${announcement.pavilion})`}
+                    {announcement.templeName || sLabels.venueLabel} {announcement.pavilion && `(${announcement.pavilion})`}
                   </h4>
                   <p className={`text-xs mt-0.5 ${textMutedClass}`}>
-                    กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังวัด
+                    {sLabels.venueDesc}
                   </p>
                 </div>
                 {announcement.mapLink && (
@@ -327,7 +366,11 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           <div className="space-y-3 text-left">
             <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
               <Info className="w-4 h-4" />
-              <span>ข้อแนะนำการร่วมแสดงความอาลัย</span>
+              <span>
+                {tenant.category === 'Couple' || tenant.category === 'Wedding'
+                  ? 'คำแนะนำการร่วมแสดงความยินดี'
+                  : 'ข้อแนะนำการร่วมแสดงความอาลัย'}
+              </span>
             </h3>
 
             <div className={`p-4 print-inner-card-tight rounded-2xl border text-xs space-y-3.5 ${innerCardBg}`}>

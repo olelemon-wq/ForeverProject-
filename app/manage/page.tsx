@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import FeatureToggleList from '@/components/FeatureToggleList';
+import ThaiDatePicker from '@/components/ThaiDatePicker';
 import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categories';
 import { 
   Flame, BookOpen, Camera, GitBranch, Settings, Plus, Minus, Trash2, Edit3, 
   CreditCard, Smartphone, Check, AlertCircle, ArrowLeft, ArrowRight, 
   LogOut, Upload, User, Calendar, Heart, Sparkles, DollarSign, Download, RotateCw
-, X, Lock, Database, Search, Save, Palette, ChevronUp, ChevronDown, LayoutDashboard, AlertTriangle, MapPin, Clock, Phone, Info, Droplets, Image as ImageIcon, Video, Menu as MenuIcon, Copy, ExternalLink } from 'lucide-react';
+, X, Lock, Database, Search, Save, Palette, ChevronUp, ChevronDown, LayoutDashboard, AlertTriangle, MapPin, Clock, Phone, Info, Droplets, Image as ImageIcon, Video, Menu as MenuIcon, Copy, ExternalLink, Globe, Grid, History, FileText } from 'lucide-react';
 
 interface Website {
   id: string;
@@ -22,6 +23,171 @@ interface Website {
   donationActive: boolean;
   role: string;
 }
+
+const TIME_PRESETS = [
+  "09:00 น.", "10:00 น.", "13:00 น.", "14:00 น.", "15:00 น.",
+  "15:30 น.", "16:00 น.", "16:30 น.", "17:00 น.", "19:00 น.", "19:30 น.", "20:00 น."
+];
+
+const formatShortThaiDate = (dateStr: string) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+  const monthNamesShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  const day = date.getDate();
+  const month = monthNamesShort[date.getMonth()];
+  const yearShort = String(date.getFullYear() + 543).slice(-2);
+  return `${day} ${month} ${yearShort}`;
+};
+
+const formatThaiDateWithDay = (dateStr: string) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+  const dayNames = ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'];
+  const monthNamesShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  const dayOfWeek = dayNames[date.getDay()];
+  const day = date.getDate();
+  const month = monthNamesShort[date.getMonth()];
+  const yearShort = String(date.getFullYear() + 543).slice(-2);
+  return `${dayOfWeek}ที่ ${day} ${month} ${yearShort}`;
+};
+
+const formatThaiDateRange = (startDateStr: string, endDateStr: string) => {
+  if (!startDateStr) return '';
+  const startDate = new Date(startDateStr);
+  if (isNaN(startDate.getTime())) return '';
+  
+  const monthNamesShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  
+  const startDay = startDate.getDate();
+  const startMonthIndex = startDate.getMonth();
+  const startYear = startDate.getFullYear() + 543;
+  
+  if (!endDateStr) {
+    return `${startDay} ${monthNamesShort[startMonthIndex]} ${String(startYear).slice(-2)}`;
+  }
+  
+  const endDate = new Date(endDateStr);
+  if (isNaN(endDate.getTime())) {
+    return `${startDay} ${monthNamesShort[startMonthIndex]} ${String(startYear).slice(-2)}`;
+  }
+  
+  const endDay = endDate.getDate();
+  const endMonthIndex = endDate.getMonth();
+  const endYear = endDate.getFullYear() + 543;
+  
+  if (startYear !== endYear) {
+    return `${startDay} ${monthNamesShort[startMonthIndex]} ${String(startYear).slice(-2)} - ${endDay} ${monthNamesShort[endMonthIndex]} ${String(endYear).slice(-2)}`;
+  }
+  
+  if (startMonthIndex !== endMonthIndex) {
+    return `${startDay} ${monthNamesShort[startMonthIndex]} - ${endDay} ${monthNamesShort[endMonthIndex]} ${String(startYear).slice(-2)}`;
+  }
+  
+  return `${startDay}-${endDay} ${monthNamesShort[startMonthIndex]} ${String(startYear).slice(-2)}`;
+};
+
+const getScheduleLabels = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') {
+    return {
+      subtitle: 'กำหนดการจัดงานและกิจกรรม',
+      item1: '1. พิธีมงคลสมรส / พิธีหลั่งน้ำพระพุทธมนต์',
+      item1Placeholder: 'เช่น วันอาทิตย์ที่ 15 ก.พ. 68',
+      item2: '2. งานฉลองมงคลสมรส / งานเลี้ยงฉลอง',
+      item2Placeholder: 'เช่น วันอาทิตย์ที่ 15 ก.พ. 68',
+      item2TimePlaceholder: 'เช่น 18:00 น.',
+      item3: '3. พิธีฉลองอาฟเตอร์ปาร์ตี้ / กิจกรรมพิเศษ',
+      item3Placeholder: 'เช่น เวลา 21:00 น. เป็นต้นไป',
+      venueLabel: 'สถานที่จัดงาน (VENUE)',
+      venuePlaceholder: 'เช่น โรงแรมสยามเคมปินสกี้',
+      pavilionLabel: 'ห้องจัดเลี้ยง / ห้องจัดงาน (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น ห้องแกรนด์บอลรูม / ห้องสราญรมย์',
+      invitePlaceholder: 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี',
+    };
+  }
+  if (category === 'Pet Memorial') {
+    return {
+      subtitle: 'กำหนดการอำลาและการเดินทางกลับดาว',
+      item1: '1. พิธีอำลา / กล่าวคำอาลัย',
+      item1Placeholder: 'เช่น วันเสาร์ที่ 12 ธ.ค. 67',
+      item2: '2. พิธีฌาปนกิจสัตว์เลี้ยง',
+      item2Placeholder: 'เช่น วันเสาร์ที่ 12 ธ.ค. 67',
+      item2TimePlaceholder: 'เช่น 14:00 น.',
+      item3: '3. พิธีลอยอังคารอัฐิ / โปรยเเถ้ากระดูก',
+      item3Placeholder: 'เช่น วันอาทิตย์ที่ 13 ธ.ค. 67',
+      venueLabel: 'สถานที่จัดพิธี (VENUE)',
+      venuePlaceholder: 'เช่น วัดคลองเตยใน (แผนกสัตว์เลี้ยง)',
+      pavilionLabel: 'ศาลา / โซนจัดพิธี (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น ศาลาน้ำตาแสงไต้ หรือ โซน B',
+      invitePlaceholder: 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาวเสร็จสมบูรณ์',
+    };
+  }
+  return {
+    subtitle: 'กำหนดการพิธีสวดพระอภิธรรม และฌาปนกิจศพ',
+    item1: '1. พิธีรดน้ำศพ',
+    item1Placeholder: 'เช่น วันศุกร์ที่ 15 พ.ย. 67',
+    item2: '2. พิธีสวดพระอภิธรรม',
+    item2Placeholder: 'เช่น 16-22 พ.ย. 67',
+    item2TimePlaceholder: 'เช่น 19:00 น.',
+    item3: '3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ',
+    item3Placeholder: 'เช่น วันเสาร์ที่ 23 พ.ย. 67',
+    venueLabel: 'สถานที่จัดพิธี (VENUE)',
+    venuePlaceholder: 'เช่น วัดมกุฏกษัตริยาราม',
+    pavilionLabel: 'ศาลาที่จัดงาน',
+    pavilionPlaceholder: 'เช่น ศาลา 10',
+    invitePlaceholder: 'กราบเรียนเชิญด้วยความเคารพอย่างสูง',
+  };
+};
+
+const getStyle3Label = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') return 'ชมพูโรสพาสเทล (Soft Rose)';
+  if (category === 'Pet Memorial') return 'เขียวเซจอบอุ่น (Warm Sage)';
+  if (category === 'Family Legacy') return 'น้ำเงินกรมท่าทอง (Royal Navy)';
+  if (category === 'Friends') return 'เขียวมินต์สดใส (Mint Teal)';
+  return 'Charcoal Gold (สีเทาเข้มหรูหรา)';
+};
+
+const getStyle3Config = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') {
+    return {
+      classes: 'bg-[#FFF0F2] border-[#FBC5CD] text-[#8C3A4F] shadow-[0_10px_30px_rgba(251,197,205,0.3)]',
+      backgroundImage: undefined,
+      avatarBorder: 'border-[#FBC5CD]',
+      innerCardBg: 'bg-[#FFF5F6]/70 border-[#FBC5CD]/40',
+    };
+  }
+  if (category === 'Pet Memorial') {
+    return {
+      classes: 'bg-[#F2F6F3] border-[#C8D9CD] text-[#2C4A3E] shadow-[0_10px_30px_rgba(200,217,205,0.3)]',
+      backgroundImage: undefined,
+      avatarBorder: 'border-[#C8D9CD]',
+      innerCardBg: 'bg-[#FAFDFB]/75 border-[#C8D9CD]/40',
+    };
+  }
+  if (category === 'Family Legacy') {
+    return {
+      classes: 'bg-[#0D1F2D] border-[#2A445C] text-[#E0A96D] shadow-[0_10px_30px_rgba(0,0,0,0.4)]',
+      backgroundImage: undefined,
+      avatarBorder: 'border-[#2A445C]',
+      innerCardBg: 'bg-[#152E40]/65 border-[#2A445C]/40',
+    };
+  }
+  if (category === 'Friends') {
+    return {
+      classes: 'bg-[#EAF4F4] border-[#A8D1D1] text-[#1E4848] shadow-[0_10px_30px_rgba(168,209,209,0.3)]',
+      backgroundImage: undefined,
+      avatarBorder: 'border-[#A8D1D1]',
+      innerCardBg: 'bg-[#F4FAFA]/75 border-[#A8D1D1]/40',
+    };
+  }
+  return {
+    classes: 'bg-stone-950 border-stone-800 text-[#C2A878] shadow-[0_10px_30px_rgba(0,0,0,0.4)]',
+    backgroundImage: 'url(/Template-cards/charcoal_gold.png)',
+    avatarBorder: 'border-amber-600/40',
+    innerCardBg: 'bg-stone-900/60 border-[#C2A878]/25',
+  };
+};
 
 interface Condolence {
   id: string;
@@ -117,6 +283,12 @@ export default function WebmasterDashboard() {
   const [annDressCode, setAnnDressCode] = useState('');
   const [annWreathPolicy, setAnnWreathPolicy] = useState('NORMAL');
   const [annContactPhone, setAnnContactPhone] = useState('');
+  
+  const [isCustomWaterTime, setIsCustomWaterTime] = useState(false);
+  const [isCustomAbhidhammaTime, setIsCustomAbhidhammaTime] = useState(false);
+  const [isCustomCremationTime, setIsCustomCremationTime] = useState(false);
+  const [abhidhammaStartDate, setAbhidhammaStartDate] = useState('');
+  const [abhidhammaEndDate, setAbhidhammaEndDate] = useState('');
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -549,6 +721,12 @@ export default function WebmasterDashboard() {
       setAnnWreathPolicy(ann.wreathPolicy || 'NORMAL');
       setAnnContactPhone(ann.contactPhone || '');
 
+      setIsCustomWaterTime(ann.waterTime ? !TIME_PRESETS.includes(ann.waterTime) : false);
+      setIsCustomAbhidhammaTime(ann.abhidhammaTime ? !TIME_PRESETS.includes(ann.abhidhammaTime) : false);
+      setIsCustomCremationTime(ann.cremationTime ? !TIME_PRESETS.includes(ann.cremationTime) : false);
+      setAbhidhammaStartDate('');
+      setAbhidhammaEndDate('');
+
       if (config.features) {
         setFeatures({
           family: config.features.family !== false,
@@ -681,8 +859,16 @@ export default function WebmasterDashboard() {
   };
 
   // 4. Moderate Condolence (Approve / Delete - BR027)
-  const handleModerateCondolence = async (id: string, action: 'APPROVE' | 'DELETE') => {
+  const handleModerateCondolence = async (id: string, action: 'APPROVE' | 'DELETE', force = false) => {
     if (!activeSite) return;
+    if (action === 'DELETE' && !force) {
+      showConfirm(
+        'ยืนยันการลบข้อมูล',
+        'คุณต้องการลบข้อความแสดงความไว้อาลัยนี้ใช่หรือไม่? การลบนี้จะไม่สามารถย้อนกลับได้',
+        () => handleModerateCondolence(id, 'DELETE', true)
+      );
+      return;
+    }
     setError('');
     setSuccess('');
 
@@ -708,8 +894,16 @@ export default function WebmasterDashboard() {
   };
 
   // 5. Moderate Memory Post (Approve / Delete)
-  const handleModerateMemoryPost = async (id: string, action: 'APPROVE' | 'DELETE') => {
+  const handleModerateMemoryPost = async (id: string, action: 'APPROVE' | 'DELETE', force = false) => {
     if (!activeSite) return;
+    if (action === 'DELETE' && !force) {
+      showConfirm(
+        'ยืนยันการลบข้อมูล',
+        'คุณต้องการลบเรื่องราวความทรงจำนี้ใช่หรือไม่? การลบนี้จะไม่สามารถย้อนกลับได้',
+        () => handleModerateMemoryPost(id, 'DELETE', true)
+      );
+      return;
+    }
     setError('');
     setSuccess('');
 
@@ -1217,6 +1411,7 @@ export default function WebmasterDashboard() {
   }
 
   const selectedSite = activeSite || websites[0];
+  const sLabels = getScheduleLabels(selectedSite?.category || 'Memorial');
   const storagePercentage = Math.min((storageUsedBytes / storageQuotaBytes) * 100, 100);
 
   // Dynamic invoice lists matching expiredAt dates (Thai receipt logs)
@@ -1379,18 +1574,33 @@ export default function WebmasterDashboard() {
                 <span>หนังสือของชำร่วย ({ebooks.length})</span>
               </button>
             )}
-            {features.condolence && (
+            {(features.condolence || features.memory) && (
               <button 
                 type="button"
                 onClick={() => handleTabClick('condolences')}
-                className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition font-semibold cursor-pointer ${
+                className={`w-full text-left flex items-center justify-between px-4 py-2.5 rounded-xl text-xs transition font-semibold cursor-pointer ${
                   activeTab === 'condolences' 
                     ? 'bg-emerald-600 shadow-sm border border-emerald-700 text-white font-bold' 
                     : 'text-stone-600 hover:text-stone-955 hover:bg-stone-200/30'
                 }`}
               >
-                <Flame className={`w-3.5 h-3.5 ${activeTab === 'condolences' ? 'text-white' : 'text-stone-500'}`} />
-                <span>กลั่นกรองเนื้อหา ({condolences.length + pendingPosts.length})</span>
+                <div className="flex items-center gap-3">
+                  <Flame className={`w-3.5 h-3.5 ${activeTab === 'condolences' ? 'text-white' : 'text-stone-500'}`} />
+                  <span>
+                    {features.condolence && features.memory
+                      ? 'กลั่นกรองเนื้อหา'
+                      : features.memory
+                      ? 'กลั่นกรองความทรงจำ'
+                      : 'กลั่นกรองคำไว้อาลัย'}
+                  </span>
+                </div>
+                
+                {/* LINE-style Notification Badge */}
+                {(condolences.length + pendingPosts.length) > 0 && (
+                  <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1.5 text-[9px] font-black text-white ring-2 ring-rose-300/30 animate-pulse">
+                    {condolences.length + pendingPosts.length}
+                  </span>
+                )}
               </button>
             )}
 
@@ -1652,33 +1862,46 @@ export default function WebmasterDashboard() {
             {/* Settings Customizer */}
             <form onSubmit={handleSaveConfig} className="w-full p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
               
-              {/* Settings Sub-Tabs Header (Horizontal Scrollable) */}
-              <div className="flex border-b border-stone-150 overflow-x-auto scrollbar-none -mx-6 px-6 mb-6 gap-6 text-xs font-bold text-stone-500 select-none">
+              {/* Settings Sub-Tabs Header (Capsule-style horizontal scroll list) */}
+              <div className="w-full bg-stone-100/60 p-1.5 rounded-2xl flex items-center gap-1 overflow-x-auto scrollbar-none mb-6 select-none border border-stone-200/30">
                 {[
-                  { id: 'general', label: 'ข้อมูลทั่วไป & ประกาศ' },
-                  { id: 'media', label: 'รูปโปรไฟล์ & หน้าปก' },
-                  { id: 'theme', label: 'ธีม & สี & ฟอนต์' },
-                  { id: 'features', label: 'ฟีเจอร์ที่เปิดใช้งาน' },
-                  { id: 'billing', label: 'พื้นที่จัดเก็บ & การชำระเงิน' },
-                ].map(sub => (
-                  <button
-                    key={sub.id}
-                    type="button"
-                    onClick={() => setActiveSubTab(sub.id as any)}
-                    className={`pb-2.5 relative transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                      activeSubTab === sub.id ? 'text-emerald-700 font-extrabold border-b-2 border-emerald-600' : 'hover:text-stone-850'
-                    }`}
-                  >
-                    {sub.label}
-                  </button>
-                ))}
+                  { id: 'general', label: 'ข้อมูลทั่วไป & ประกาศ', icon: Globe },
+                  { id: 'media', label: 'รูปโปรไฟล์ & หน้าปก', icon: ImageIcon },
+                  { id: 'theme', label: 'ธีม & สี & ฟอนต์', icon: Palette },
+                  { id: 'features', label: 'ฟีเจอร์ที่เปิดใช้งาน', icon: Grid },
+                  { id: 'billing', label: 'พื้นที่จัดเก็บ & การชำระเงิน', icon: CreditCard },
+                ].map(sub => {
+                  const Icon = sub.icon;
+                  const isActive = activeSubTab === sub.id;
+                  return (
+                    <button
+                      key={sub.id}
+                      type="button"
+                      onClick={() => setActiveSubTab(sub.id as any)}
+                      className={`px-4 py-2 flex items-center gap-2 rounded-xl text-xs font-bold transition select-none cursor-pointer whitespace-nowrap ${
+                        isActive
+                          ? 'bg-white shadow-xs text-stone-900 border border-stone-200/40 font-extrabold'
+                          : 'text-stone-500 hover:text-stone-900 hover:bg-white/40'
+                      }`}
+                    >
+                      <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-600' : 'text-stone-400'}`} />
+                      <span>{sub.label}</span>
+                    </button>
+                  );
+                })}
               </div>
 
               {/* 1. ข้อมูลทั่วไป & ประกาศ Tab */}
               {activeSubTab === 'general' && (
                 <div className="space-y-6 animate-fade-in text-left">
                   <div className="space-y-1">
-                    <label className="text-sm font-bold text-stone-600 tracking-wide">ชื่อหน้ารำลึก</label>
+                    <label className="text-sm font-bold text-stone-600 tracking-wide">
+                      {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                        ? 'ชื่อคู่รัก / ชื่อหน้าความรัก'
+                        : selectedSite.category === 'Pet Memorial'
+                        ? 'ชื่อสัตว์เลี้ยง / หน้าความทรงจำ'
+                        : 'ชื่อหน้ารำลึก'}
+                    </label>
                     <input 
                       type="text" 
                       value={siteName} 
@@ -1688,12 +1911,24 @@ export default function WebmasterDashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">คำอาลัยและคำรำลึก (ประวัติโดยย่อ)</label>
+                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">
+                      {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                        ? 'เรื่องราวความรัก (ประวัติคู่รักโดยย่อ)'
+                        : selectedSite.category === 'Pet Memorial'
+                        ? 'คำอำลาและประวัติสัตว์เลี้ยงโดยย่อ'
+                        : 'คำอาลัยและคำรำลึก (ประวัติโดยย่อ)'}
+                    </label>
                     <textarea 
                       value={biography} 
                       onChange={(e) => setBiography(e.target.value)} 
                       rows={4}
-                      placeholder="เช่น คุณพ่อสมศักดิ์เป็นคนดี มีความเสียสละ..."
+                      placeholder={
+                        selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                          ? 'เช่น เรื่องราวความรักของเราสองคน เริ่มต้นจากการพบกันครั้งแรกในที่ทำงาน และร่วมทุกข์ร่วมสุขด้วยกันมา...'
+                          : selectedSite.category === 'Pet Memorial'
+                          ? 'เช่น น้องเป็นหมาที่ร่าเริงและแสนรู้ที่สุด นำความสุขและรอยยิ้มมาให้ครอบครัวเราตลอดเวลาที่อยู่ด้วยกัน...'
+                          : 'เช่น คุณพ่อสมศักดิ์เป็นคนดี มีความเสียสละ...'
+                      }
                       className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                     />
                   </div>
@@ -1732,7 +1967,7 @@ export default function WebmasterDashboard() {
                                 >
                                   <option value="ELEGANT_WHITE">Classic White (สีขาวเรียบหรู)</option>
                                   <option value="WARM_CREAM">Warm Cream (สีครีมวินเทจ)</option>
-                                  <option value="CHARCOAL_SLATE">Charcoal Gold (สีเข้มหรูหรา)</option>
+                                  <option value="CHARCOAL_SLATE">{getStyle3Label(selectedSite?.category || 'Memorial')}</option>
                                 </select>
                               </div>
                               <div className="space-y-1">
@@ -1772,86 +2007,205 @@ export default function WebmasterDashboard() {
                                 type="text"
                                 value={annText}
                                 onChange={(e) => setAnnText(e.target.value)}
-                                placeholder="กราบเรียนเชิญด้วยความเคารพอย่างสูง"
+                                placeholder={sLabels.invitePlaceholder}
                                 className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold"
                               />
                             </div>
 
                             <div className="border-t border-stone-150 pt-3">
-                              <p className="font-bold text-stone-700 mb-2">กำหนดการพิธี</p>
+                              <p className="font-bold text-stone-700 mb-2">{sLabels.subtitle}</p>
                               <div className="space-y-3">
                                 {/* 1. รดน้ำ */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
-                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">1. พิธีรดน้ำศพ</div>
+                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item1}</div>
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">วันที่จัด</label>
-                                    <input
-                                      type="text"
-                                      value={annWaterDate}
-                                      onChange={(e) => setAnnWaterDate(e.target.value)}
-                                      placeholder="เช่น วันศุกร์ที่ 15 พ.ย. 67"
-                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                    />
+                                    <div className="flex gap-1.5 items-center relative">
+                                      <input
+                                        type="text"
+                                        value={annWaterDate}
+                                        onChange={(e) => setAnnWaterDate(e.target.value)}
+                                        placeholder={sLabels.item1Placeholder}
+                                        className="flex-1 px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 min-w-0"
+                                      />
+                                      <ThaiDatePicker
+                                        align="right"
+                                        buttonClassName="p-2 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer h-[38px] w-[38px] shrink-0"
+                                        iconClassName="w-4 h-4"
+                                        onChange={(val) => {
+                                          if (val) {
+                                            setAnnWaterDate(formatThaiDateWithDay(val));
+                                          }
+                                        }}
+                                      />
+                                    </div>
                                   </div>
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">เวลาเริ่ม</label>
-                                    <input
-                                      type="text"
-                                      value={annWaterTime}
-                                      onChange={(e) => setAnnWaterTime(e.target.value)}
-                                      placeholder="เช่น 16:00 น."
-                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                    />
+                                    <div className="space-y-1.5">
+                                      <select
+                                        value={isCustomWaterTime ? 'CUSTOM' : annWaterTime}
+                                        onChange={(e) => {
+                                          const val = e.target.value;
+                                          if (val === 'CUSTOM') {
+                                            setIsCustomWaterTime(true);
+                                            if (!annWaterTime || TIME_PRESETS.includes(annWaterTime)) {
+                                              setAnnWaterTime('16:00 น.');
+                                            }
+                                          } else {
+                                            setIsCustomWaterTime(false);
+                                            setAnnWaterTime(val);
+                                          }
+                                        }}
+                                        className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"
+                                      >
+                                        <option value="">เลือกเวลา</option>
+                                        {TIME_PRESETS.map((preset) => (
+                                          <option key={preset} value={preset}>{preset}</option>
+                                        ))}
+                                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
+                                      </select>
+                                      {isCustomWaterTime && (
+                                        <input
+                                          type="text"
+                                          value={annWaterTime}
+                                          onChange={(e) => setAnnWaterTime(e.target.value)}
+                                          placeholder="ระบุเวลา เช่น 16:15 น."
+                                          className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 text-sm animate-fade-in"
+                                        />
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
 
                                 {/* 2. สวดพระอภิธรรม */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
-                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">2. พิธีสวดพระอภิธรรม</div>
+                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item2}</div>
                                   <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">ช่วงวันที่สวด</label>
-                                    <input
-                                      type="text"
-                                      value={annAbhidhammaDateRange}
-                                      onChange={(e) => setAnnAbhidhammaDateRange(e.target.value)}
-                                      placeholder="เช่น 16-22 พ.ย. 67"
-                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                    />
+                                    <label className="text-stone-500 font-medium">ช่วงวันที่จัด</label>
+                                    <div className="flex gap-1.5 items-center relative">
+                                      <input
+                                        type="text"
+                                        value={annAbhidhammaDateRange}
+                                        onChange={(e) => setAnnAbhidhammaDateRange(e.target.value)}
+                                        placeholder={sLabels.item2Placeholder}
+                                        className="flex-1 px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 min-w-0"
+                                      />
+                                      <ThaiDatePicker
+                                        mode="range"
+                                        align="right"
+                                        buttonClassName="p-2 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer h-[38px] w-[38px] shrink-0"
+                                        iconClassName="w-4 h-4"
+                                        rangeStart={abhidhammaStartDate}
+                                        rangeEnd={abhidhammaEndDate}
+                                        onChangeRange={(start, end) => {
+                                          setAbhidhammaStartDate(start);
+                                          setAbhidhammaEndDate(end);
+                                          if (start) {
+                                            setAnnAbhidhammaDateRange(formatThaiDateRange(start, end));
+                                          }
+                                        }}
+                                      />
+                                    </div>
                                   </div>
                                   <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">เวลาเริ่มสวด</label>
-                                    <input
-                                      type="text"
-                                      value={annAbhidhammaTime}
-                                      onChange={(e) => setAnnAbhidhammaTime(e.target.value)}
-                                      placeholder="เช่น 19:00 น."
-                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                    />
+                                    <label className="text-stone-500 font-medium">เวลาเริ่มงาน</label>
+                                    <div className="space-y-1.5">
+                                      <select
+                                        value={isCustomAbhidhammaTime ? 'CUSTOM' : annAbhidhammaTime}
+                                        onChange={(e) => {
+                                          const val = e.target.value;
+                                          if (val === 'CUSTOM') {
+                                            setIsCustomAbhidhammaTime(true);
+                                            if (!annAbhidhammaTime || TIME_PRESETS.includes(annAbhidhammaTime)) {
+                                              setAnnAbhidhammaTime('19:00 น.');
+                                            }
+                                          } else {
+                                            setIsCustomAbhidhammaTime(false);
+                                            setAnnAbhidhammaTime(val);
+                                          }
+                                        }}
+                                        className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"
+                                      >
+                                        <option value="">เลือกเวลา</option>
+                                        {TIME_PRESETS.map((preset) => (
+                                          <option key={preset} value={preset}>{preset}</option>
+                                        ))}
+                                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
+                                      </select>
+                                      {isCustomAbhidhammaTime && (
+                                        <input
+                                          type="text"
+                                          value={annAbhidhammaTime}
+                                          onChange={(e) => setAnnAbhidhammaTime(e.target.value)}
+                                          placeholder="ระบุเวลา เช่น 19:15 น."
+                                          className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 text-sm animate-fade-in"
+                                        />
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
 
                                 {/* 3. ฌาปนกิจ */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
-                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ</div>
+                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item3}</div>
                                   <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">วันที่ฌาปนกิจ</label>
-                                    <input
-                                      type="text"
-                                      value={annCremationDate}
-                                      onChange={(e) => setAnnCremationDate(e.target.value)}
-                                      placeholder="เช่น วันเสาร์ที่ 23 พ.ย. 67"
-                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                    />
+                                    <label className="text-stone-500 font-medium">วันที่จัด</label>
+                                    <div className="flex gap-1.5 items-center relative">
+                                      <input
+                                        type="text"
+                                        value={annCremationDate}
+                                        onChange={(e) => setAnnCremationDate(e.target.value)}
+                                        placeholder={sLabels.item3Placeholder}
+                                        className="flex-1 px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 min-w-0"
+                                      />
+                                      <ThaiDatePicker
+                                        align="right"
+                                        buttonClassName="p-2 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer h-[38px] w-[38px] shrink-0"
+                                        iconClassName="w-4 h-4"
+                                        onChange={(val) => {
+                                          if (val) {
+                                            setAnnCremationDate(formatThaiDateWithDay(val));
+                                          }
+                                        }}
+                                      />
+                                    </div>
                                   </div>
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">เวลาเริ่มพิธี</label>
-                                    <input
-                                      type="text"
-                                      value={annCremationTime}
-                                      onChange={(e) => setAnnCremationTime(e.target.value)}
-                                      placeholder="เช่น 16:30 น."
-                                      className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                    />
+                                    <div className="space-y-1.5">
+                                      <select
+                                        value={isCustomCremationTime ? 'CUSTOM' : annCremationTime}
+                                        onChange={(e) => {
+                                          const val = e.target.value;
+                                          if (val === 'CUSTOM') {
+                                            setIsCustomCremationTime(true);
+                                            if (!annCremationTime || TIME_PRESETS.includes(annCremationTime)) {
+                                              setAnnCremationTime('16:00 น.');
+                                            }
+                                          } else {
+                                            setIsCustomCremationTime(false);
+                                            setAnnCremationTime(val);
+                                          }
+                                        }}
+                                        className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"
+                                      >
+                                        <option value="">เลือกเวลา</option>
+                                        {TIME_PRESETS.map((preset) => (
+                                          <option key={preset} value={preset}>{preset}</option>
+                                        ))}
+                                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
+                                      </select>
+                                      {isCustomCremationTime && (
+                                        <input
+                                          type="text"
+                                          value={annCremationTime}
+                                          onChange={(e) => setAnnCremationTime(e.target.value)}
+                                          placeholder="ระบุเวลา เช่น 16:15 น."
+                                          className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 text-sm animate-fade-in"
+                                        />
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -1859,25 +2213,29 @@ export default function WebmasterDashboard() {
 
                             {/* Location Details */}
                             <div className="border-t border-stone-150 pt-3 space-y-3">
-                              <p className="font-bold text-stone-700">สถานที่จัดงาน (VENUE)</p>
+                              <p className="font-bold text-stone-700">{sLabels.venueLabel}</p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div className="space-y-1">
-                                  <label className="text-stone-600 font-semibold">ชื่อวัด</label>
+                                  <label className="text-stone-600 font-semibold">
+                                    {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                      ? 'สถานที่จัดงาน (เช่น โรงแรม/โบสถ์)'
+                                      : 'ชื่อวัด / สถานที่จัดงาน'}
+                                  </label>
                                   <input
                                     type="text"
                                     value={annTempleName}
                                     onChange={(e) => setAnnTempleName(e.target.value)}
-                                    placeholder="เช่น วัดมกุฏกษัตริยาราม"
+                                    placeholder={sLabels.venuePlaceholder}
                                     className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
                                   />
                                 </div>
                                 <div className="space-y-1">
-                                  <label className="text-stone-600 font-semibold">ศาลาที่จัดงาน</label>
+                                  <label className="text-stone-600 font-semibold">{sLabels.pavilionLabel}</label>
                                   <input
                                     type="text"
                                     value={annPavilion}
                                     onChange={(e) => setAnnPavilion(e.target.value)}
-                                    placeholder="เช่น ศาลา 10"
+                                    placeholder={sLabels.pavilionPlaceholder}
                                     className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
                                   />
                                 </div>
@@ -1896,7 +2254,11 @@ export default function WebmasterDashboard() {
 
                             {/* Recommendations */}
                             <div className="border-t border-stone-150 pt-3 space-y-3">
-                              <p className="font-bold text-stone-700">คำแนะนำการร่วมงาน</p>
+                              <p className="font-bold text-stone-700">
+                                {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                  ? 'คำแนะนำการร่วมงานแสดงความยินดี'
+                                  : 'คำแนะนำการร่วมงาน'}
+                              </p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div className="space-y-1">
                                   <label className="text-stone-600 font-semibold">การแต่งกาย</label>
@@ -1904,7 +2266,11 @@ export default function WebmasterDashboard() {
                                     type="text"
                                     value={annDressCode}
                                     onChange={(e) => setAnnDressCode(e.target.value)}
-                                    placeholder="เช่น ชุดสุภาพสีขาว/ดำ"
+                                    placeholder={
+                                      selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                        ? 'เช่น ธีมสีชมพู/พาสเทล หรือ ตามความสะดวก'
+                                        : 'เช่น ชุดสุภาพสีขาว/ดำ'
+                                    }
                                     className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
                                   />
                                 </div>
@@ -1920,15 +2286,31 @@ export default function WebmasterDashboard() {
                                 </div>
                               </div>
                               <div className="space-y-1">
-                                <label className="text-stone-600 font-semibold">นโยบายการรับพวงหรีด</label>
+                                <label className="text-stone-600 font-semibold">
+                                  {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                    ? 'นโยบายการรับซอง/ของขวัญ'
+                                    : 'นโยบายการรับพวงหรีด'}
+                                </label>
                                 <select
                                   value={annWreathPolicy}
                                   onChange={(e) => setAnnWreathPolicy(e.target.value)}
                                   className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
                                 >
-                                  <option value="NORMAL">รับพวงหรีดตามปกติ</option>
-                                  <option value="NO_WREATH">งดรับพวงหรีดทุกประเภท</option>
-                                  <option value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</option>
+                                  {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding' ? (
+                                    <>
+                                      <option value="NORMAL">ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ</option>
+                                      <option value="NO_FLOWERS">ขออภัย งดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)</option>
+                                      <option value="DONATION_ONLY">ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)</option>
+                                      <option value="NO_WREATH">ขออภัย งดรับซองและของขวัญทุกประเภท</option>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <option value="NORMAL">รับพวงหรีดตามปกติ</option>
+                                      <option value="NO_FLOWERS">งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)</option>
+                                      <option value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</option>
+                                      <option value="NO_WREATH">งดรับพวงหรีดทุกประเภท</option>
+                                    </>
+                                  )}
                                 </select>
                               </div>
                             </div>
@@ -1948,20 +2330,24 @@ export default function WebmasterDashboard() {
                           <div 
                             className={`w-full max-w-md mx-auto rounded-3xl border p-8 space-y-6 text-center shadow-lg relative overflow-hidden transition-all duration-300 ${
                               annStyle === 'CHARCOAL_SLATE'
-                                ? 'bg-stone-950 border-stone-800 text-[#C2A878] shadow-[0_10px_30px_rgba(0,0,0,0.4)]'
+                                ? getStyle3Config(selectedSite?.category || 'Memorial').classes
                                 : annStyle === 'WARM_CREAM'
                                 ? 'bg-[#FAF6EE] border-[#EADFC9] text-[#4A3E29]'
                                 : 'bg-white border-stone-200 text-stone-900'
                             }`}
                             style={{
                               fontFamily: annFontFamily,
-                              backgroundImage: annStyle === 'CHARCOAL_SLATE' ? 'url(/Template-cards/charcoal_gold.png)' : undefined,
+                              backgroundImage: annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').backgroundImage : undefined,
                               backgroundSize: 'cover',
                               backgroundPosition: 'center',
                             }}
                           >
                             {/* Repositioned Deceased Image */}
-                            <div className="relative w-28 h-28 rounded-full border border-amber-600/40 overflow-hidden mx-auto bg-stone-100 flex items-center justify-center shadow-md">
+                            <div className={`relative w-28 h-28 rounded-full border overflow-hidden mx-auto bg-stone-100 flex items-center justify-center shadow-md ${
+                              annStyle === 'CHARCOAL_SLATE'
+                                ? getStyle3Config(selectedSite?.category || 'Memorial').avatarBorder
+                                : 'border-amber-600/40'
+                            }`}>
                               {deceasedAvatarUrl ? (
                                 <img
                                   src={deceasedAvatarUrl.replace('https://storage.forever.co.th', '')}
@@ -1971,7 +2357,8 @@ export default function WebmasterDashboard() {
                                     width: '100%',
                                     height: '100%',
                                     objectFit: 'cover',
-                                    transform: `translate(${deceasedAvatarX}px, ${deceasedAvatarY}px) rotate(${deceasedAvatarRotate}deg) scale(${deceasedAvatarScale})`,
+                                    transform: `translate(${((deceasedAvatarX || 0) / 224) * 100}%, ${((deceasedAvatarY || 0) / 224) * 100}%) rotate(${deceasedAvatarRotate}deg) scale(${(deceasedAvatarScale || 1) * (300 / 224)})`,
+                                    transformOrigin: 'center center',
                                   }}
                                 />
                               ) : (
@@ -1999,7 +2386,7 @@ export default function WebmasterDashboard() {
                                   return siteName;
                                 })()}
                               </h2>
-                              <p className="text-[10px] opacity-75 font-semibold">กำหนดการพิธีสวดพระอภิธรรม และฌาปนกิจศพ</p>
+                              <p className="text-[10px] opacity-75 font-semibold">{sLabels.subtitle}</p>
                             </div>
 
                             {/* Timelines list */}
@@ -2007,11 +2394,11 @@ export default function WebmasterDashboard() {
                               {/* 1. Water */}
                               {(annWaterDate || annWaterTime) && (
                                 <div className={`p-4 rounded-2xl border transition-all ${
-                                  annStyle === 'CHARCOAL_SLATE' ? 'bg-stone-900/60 border-[#C2A878]/25' : 
+                                  annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
                                   annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
                                   'bg-stone-50 border-stone-200/80'
                                 }`}>
-                                  <p className="font-bold mb-1">1. พิธีรดน้ำศพ</p>
+                                  <p className="font-bold mb-1">{sLabels.item1}</p>
                                   <p className="opacity-90">{annWaterDate || '-'} {annWaterTime ? `เวลา ${annWaterTime}` : ''}</p>
                                 </div>
                               )}
@@ -2019,11 +2406,11 @@ export default function WebmasterDashboard() {
                               {/* 2. Abhidhamma */}
                               {(annAbhidhammaDateRange || annAbhidhammaTime) && (
                                 <div className={`p-4 rounded-2xl border transition-all ${
-                                  annStyle === 'CHARCOAL_SLATE' ? 'bg-stone-900/60 border-[#C2A878]/25' : 
+                                  annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
                                   annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
                                   'bg-stone-50 border-stone-200/80'
                                 }`}>
-                                  <p className="font-bold mb-1">2. พิธีสวดพระอภิธรรม</p>
+                                  <p className="font-bold mb-1">{sLabels.item2}</p>
                                   <p className="opacity-90">ช่วงวันที่: {annAbhidhammaDateRange || '-'} {annAbhidhammaTime ? `เวลา ${annAbhidhammaTime}` : ''}</p>
                                 </div>
                               )}
@@ -2031,11 +2418,11 @@ export default function WebmasterDashboard() {
                               {/* 3. Cremation */}
                               {(annCremationDate || annCremationTime) && (
                                 <div className={`p-4 rounded-2xl border transition-all ${
-                                  annStyle === 'CHARCOAL_SLATE' ? 'bg-stone-900/60 border-[#C2A878]/25' : 
+                                  annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
                                   annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
                                   'bg-stone-50 border-stone-200/80'
                                 }`}>
-                                  <p className="font-bold mb-1">3. พิธีฌาปนกิจ / พระราชทานเพลิงศพ</p>
+                                  <p className="font-bold mb-1">{sLabels.item3}</p>
                                   <p className="opacity-90">{annCremationDate || '-'} {annCremationTime ? `เวลา ${annCremationTime}` : ''}</p>
                                 </div>
                               )}
@@ -2046,7 +2433,7 @@ export default function WebmasterDashboard() {
                               <div className="space-y-4 border-t border-dashed border-stone-300/30 pt-4 text-xs text-left">
                                 {annTempleName && (
                                   <div>
-                                    <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">สถานที่จัดพิธี (VENUE)</p>
+                                    <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">{sLabels.venueLabel}</p>
                                     <p className="font-bold mt-0.5">{annTempleName} {annPavilion ? `(${annPavilion})` : ''}</p>
                                     {annMapLink && (
                                       <span className="inline-block text-[9px] text-emerald-600 underline font-bold mt-1">
@@ -2058,11 +2445,34 @@ export default function WebmasterDashboard() {
 
                                 {(annDressCode || annContactPhone || annWreathPolicy !== 'NORMAL') && (
                                   <div className="space-y-1">
-                                    <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">ข้อแนะนำการร่วมแสดงความอาลัย</p>
+                                    <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">
+                                      {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                        ? 'คำแนะนำการร่วมงานแสดงความยินดี'
+                                        : 'ข้อแนะนำการร่วมแสดงความอาลัย'}
+                                    </p>
                                     {annDressCode && <p className="opacity-90">👗 การแต่งกาย: {annDressCode}</p>}
                                     {annContactPhone && <p className="opacity-90">📞 ติดต่อประสานงาน: {annContactPhone}</p>}
-                                    {annWreathPolicy === 'NO_WREATH' && <p className="text-red-600 font-bold">🚫 งดรับพวงหรีดทุกประเภท</p>}
-                                    {annWreathPolicy === 'DONATION_ONLY' && <p className="text-amber-800 font-bold">🎗️ งดรับพวงหรีด ร่วมทำบุญสมทบทุนแทน</p>}
+                                    {annWreathPolicy === 'NO_FLOWERS' && (
+                                      <p className="text-amber-800 font-bold">
+                                        🎗️ {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                          ? 'งดรับของขวัญ เน้นการร่วมอวยพรแทน'
+                                          : 'งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)'}
+                                      </p>
+                                    )}
+                                    {annWreathPolicy === 'NO_WREATH' && (
+                                      <p className="text-red-650 font-bold">
+                                        🚫 {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                          ? 'งดรับซองและของขวัญทุกประเภท'
+                                          : 'งดรับพวงหรีดทุกประเภท'}
+                                      </p>
+                                    )}
+                                    {annWreathPolicy === 'DONATION_ONLY' && (
+                                      <p className="text-amber-800 font-bold">
+                                        🎗️ {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                          ? 'งดรับของขวัญ ร่วมสมทบทุนมูลนิธิแทน'
+                                          : 'งดรับพวงหรีด ร่วมทำบุญสมทบทุนแทน'}
+                                      </p>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -2347,40 +2757,75 @@ export default function WebmasterDashboard() {
               {/* 3. ธีม & สี & ฟอนต์ Tab */}
               {activeSubTab === 'theme' && (
                 <div className="space-y-6 animate-fade-in text-left">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">โทนสีหลักยอดนิยม (Theme Presets)</label>
-                    <div className="flex flex-wrap gap-2.5 bg-stone-50/50 p-4 border border-stone-200 rounded-2xl">
+                  <div className="space-y-4">
+                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
+                      <Palette className="w-4 h-4 text-stone-500" />
+                      <span>ธีมสำเร็จรูป (Theme Templates)</span>
+                    </label>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                       {[
-                        { name: 'Classic', color: '#0d9488', desc: 'Classic Teal' },
-                        { name: 'Warm', color: '#b45309', desc: 'Warm Amber' },
-                        { name: 'Peaceful', color: '#0369a1', desc: 'Peaceful Blue' },
-                        { name: 'Dark', color: '#1e293b', desc: 'Elegant Slate' },
-                        { name: 'Gold', color: '#d97706', desc: 'Luxurious Gold' },
-                        { name: 'Rose', color: '#be185d', desc: 'Sweet Rose' },
-                        { name: 'Sky', color: '#0284c7', desc: 'Sky Blue' },
-                        { name: 'Forest', color: '#15803d', desc: 'Forest Green' },
-                        { name: 'Royal', color: '#6d28d9', desc: 'Royal Purple' },
-                        { name: 'Lavender', color: '#701a75', desc: 'Lavender' },
-                      ].map(t => (
-                        <button
-                          key={t.name}
-                          type="button"
-                          onClick={() => {
-                            setPrimaryColor(t.color);
-                            setSecondaryColor('#f59e0b');
-                          }}
-                          className={`w-9 h-9 rounded-full border-2 transition active:scale-90 flex items-center justify-center cursor-pointer shadow-xs ${
-                            primaryColor.toLowerCase() === t.color.toLowerCase() ? 'border-stone-900 ring-4 ring-emerald-500/20 scale-105' : 'border-white hover:scale-105'
-                          }`}
-                          style={{ backgroundColor: t.color }}
-                          title={`${t.name} (${t.desc})`}
-                        >
-                          {primaryColor.toLowerCase() === t.color.toLowerCase() && (
-                            <span className="text-xs text-white font-bold">✓</span>
-                          )}
-                        </button>
-                      ))}
+                        { name: 'Peaceful Mint', primary: '#7ea18b', hover: '#668571', secondary: '#d4be95', light: '#f4f6f3', badge: 'ไว้อาลัย / รำลึกอย่างสงบ' },
+                        { name: 'Sweet Peach', primary: '#e09f9f', hover: '#c48282', secondary: '#e6c1a8', light: '#fff7f5', badge: 'งานแต่งงาน / คู่รักแสนรัก' },
+                        { name: 'Warm Caramel', primary: '#c29a7c', hover: '#a67f62', secondary: '#dcc6a8', light: '#fbf8f5', badge: 'สัตว์เลี้ยง / บันทึกการเดินทาง' },
+                        { name: 'Classic Olive', primary: '#96a288', hover: '#7a866d', secondary: '#cfc5b0', light: '#f7f8f5', badge: 'สายใยตระกูล / ครอบครัว' },
+                        { name: 'Ocean Breeze', primary: '#8ba8bd', hover: '#708d9e', secondary: '#ded2af', light: '#f5f7f9', badge: 'มิตรภาพ / ย้อนวันวาน' },
+                        { name: 'Lilac Dream', primary: '#a49cb5', hover: '#89819a', secondary: '#c8bfcb', light: '#f7f6f8', badge: 'หรูหรา / ทางการทั่วไป' }
+                      ].map(t => {
+                        const isActive = primaryColor.toLowerCase() === t.primary.toLowerCase() && secondaryColor.toLowerCase() === t.secondary.toLowerCase();
+                        return (
+                          <button
+                            key={t.name}
+                            type="button"
+                            onClick={() => {
+                              setPrimaryColor(t.primary);
+                              setSecondaryColor(t.secondary);
+                            }}
+                            className={`p-4 rounded-2xl bg-white border-2 text-left relative transition-all duration-200 cursor-pointer flex flex-col justify-between hover:shadow-md ${
+                              isActive 
+                                ? 'border-sky-500 ring-4 ring-sky-500/10 scale-102 shadow-xs' 
+                                : 'border-stone-200 hover:border-stone-300'
+                            }`}
+                          >
+                            {isActive && (
+                              <div className="absolute top-2.5 right-2.5 w-4 h-4 bg-sky-500 rounded-full flex items-center justify-center text-white shadow-xs">
+                                <Check className="w-2.5 h-2.5 stroke-[3]" />
+                              </div>
+                            )}
+                            <div className="space-y-3">
+                              <div className="space-y-1">
+                                <h5 className="text-xs font-black text-stone-900 leading-tight">
+                                  {t.name}
+                                </h5>
+                                <span className="text-[9px] text-stone-400 font-semibold block leading-none">
+                                  {t.badge}
+                                </span>
+                              </div>
+                              
+                              {/* Color dots row */}
+                              <div className="flex gap-1 items-center">
+                                <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.primary }} />
+                                <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.hover }} />
+                                <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.secondary }} />
+                                <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.light }} />
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPrimaryColor('#0d9488');
+                        setSecondaryColor('#f59e0b');
+                      }}
+                      className="px-3.5 py-2 border border-stone-250 hover:bg-stone-50 rounded-xl text-[10px] sm:text-xs font-bold text-stone-600 transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-2xs"
+                    >
+                      <RotateCw className="w-3.5 h-3.5 text-stone-500" />
+                      <span>รีเซ็ตเป็นธีมเริ่มต้น (Reset to Default)</span>
+                    </button>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -3233,95 +3678,98 @@ export default function WebmasterDashboard() {
             </div>
           )}
         </section>
-        )}        {/* Condolence moderation */}
+        )}
         {activeTab === 'condolences' && (
-          <>
-            <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-          <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
-            <Flame className="w-5 h-5 text-emerald-700 animate-pulse" />
-            <span>คำไว้อาลัยรออนุมัติ ({condolences.length})</span>
-          </h3>
+          <div className="space-y-6">
+            {features.condolence && (
+              <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
+                  <Flame className="w-5 h-5 text-emerald-700 animate-pulse" />
+                  <span>คำไว้อาลัยรออนุมัติ ({condolences.length})</span>
+                </h3>
 
-          {condolences.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-              ไม่มีข้อความไว้อาลัยค้างอนุมัติในเวลานี้
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {condolences.map(c => (
-                <div key={c.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-stone-900">{c.senderName}</span>
-                      <span className="px-2 py-0.5 text-[9px] font-semibold bg-stone-200/50 text-stone-600 rounded">
-                        ความสัมพันธ์: {c.relationship}
-                      </span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{c.message}"</p>
+                {condolences.length === 0 ? (
+                  <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
+                    ไม่มีข้อความไว้อาลัยค้างอนุมัติในเวลานี้
                   </div>
-                  <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
-                    <button 
-                      onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
-                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
-                    >
-                      อนุมัติ
-                    </button>
-                    <button 
-                      onClick={() => handleModerateCondolence(c.id, 'DELETE')}
-                      className="px-4 py-2 rounded-xl border border-red-300 text-red-750 hover:bg-red-50 text-xs font-bold transition active:scale-95"
-                    >
-                      ลบออก
-                    </button>
+                ) : (
+                  <div className="space-y-4">
+                    {condolences.map(c => (
+                      <div key={c.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-stone-900">{c.senderName}</span>
+                            <span className="px-2 py-0.5 text-[9px] font-semibold bg-stone-200/50 text-stone-600 rounded">
+                              ความสัมพันธ์: {c.relationship}
+                            </span>
+                          </div>
+                          <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{c.message}"</p>
+                        </div>
+                        <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
+                          <button 
+                            onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
+                            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
+                          >
+                            อนุมัติ
+                          </button>
+                          <button 
+                            onClick={() => handleModerateCondolence(c.id, 'DELETE')}
+                            className="px-4 py-2 rounded-xl border border-red-300 text-red-755 hover:bg-red-50 text-xs font-bold transition active:scale-95"
+                          >
+                            ลบออก
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+                )}
+              </section>
+            )}
 
-        {/* Memory Wall Moderation Section (Phase 2 integration) */}
-        <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-          <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
-            <Camera className="w-5 h-5 text-emerald-700" />
-            <span>เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</span>
-          </h3>
+            {features.memory && (
+              <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
+                  <Camera className="w-5 h-5 text-emerald-700" />
+                  <span>เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</span>
+                </h3>
 
-          {pendingPosts.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-              ไม่มีเรื่องราวหรือรูปถ่ายค้างอนุมัติในเวลานี้
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {pendingPosts.map(p => (
-                <div key={p.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-stone-900">ส่งโดย: {p.senderName}</span>
-                      {p.title && <span className="text-xs font-semibold text-stone-600">| หัวข้อ: {p.title}</span>}
-                    </div>
-                    {p.mediaUrl && <p className="text-[10px] text-stone-500 font-mono">แนบไฟล์รูป: {p.mediaUrl}</p>}
-                    {p.content && <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{p.content}"</p>}
+                {pendingPosts.length === 0 ? (
+                  <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
+                    ไม่มีเรื่องราวหรือรูปถ่ายค้างอนุมัติในเวลานี้
                   </div>
-                  <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
-                    <button 
-                      onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
-                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
-                    >
-                      อนุมัติลงบอร์ด
-                    </button>
-                    <button 
-                      onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
-                      className="px-4 py-2 rounded-xl border border-red-300 text-red-755 hover:bg-red-50 text-xs font-bold transition active:scale-95"
-                    >
-                      ลบออก
-                    </button>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingPosts.map(p => (
+                      <div key={p.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-stone-900">ส่งโดย: {p.senderName}</span>
+                            {p.title && <span className="text-xs font-semibold text-stone-600">| หัวข้อ: {p.title}</span>}
+                          </div>
+                          {p.mediaUrl && <p className="text-[10px] text-stone-500 font-mono">แนบไฟล์รูป: {p.mediaUrl}</p>}
+                          {p.content && <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{p.content}"</p>}
+                        </div>
+                        <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
+                          <button 
+                            onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
+                            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
+                          >
+                            อนุมัติลงบอร์ด
+                          </button>
+                          <button 
+                            onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
+                            className="px-4 py-2 rounded-xl border border-red-300 text-red-755 hover:bg-red-50 text-xs font-bold transition active:scale-95"
+                          >
+                            ลบออก
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-          </>
+                )}
+              </section>
+            )}
+          </div>
         )}      {/* Cover Crop Modal */}
       {isCoverCropModalOpen && (
         <div className="fixed inset-0 z-55 flex flex-col items-center justify-center bg-stone-900/40 backdrop-blur-sm p-4 animate-fade-in select-none">
