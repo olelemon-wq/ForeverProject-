@@ -47,11 +47,23 @@ export function proxy(request: NextRequest) {
 
   if (!isLocalhost) {
     const parts = hostname.split('.');
-    // Expecting at least 3 parts for a subdomain: e.g. subdomain.forever.co.th (parts length 4)
-    if (parts.length >= 3) {
-      const firstPart = parts[0].toLowerCase();
-      if (firstPart !== 'www' && firstPart !== 'forever') {
-        subdomain = firstPart;
+    const isVercel = hostname.endsWith('.vercel.app');
+
+    if (isVercel) {
+      // For Vercel domains like: tenant.forever-project-delta.vercel.app (parts length >= 4)
+      if (parts.length >= 4) {
+        const firstPart = parts[0].toLowerCase();
+        if (firstPart !== 'www' && firstPart !== 'forever') {
+          subdomain = firstPart;
+        }
+      }
+    } else {
+      // For production domains like: tenant.forever.co.th (parts length >= 4)
+      if (parts.length >= 4) {
+        const firstPart = parts[0].toLowerCase();
+        if (firstPart !== 'www' && firstPart !== 'forever') {
+          subdomain = firstPart;
+        }
       }
     }
   }
