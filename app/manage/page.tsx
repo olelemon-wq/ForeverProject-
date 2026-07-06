@@ -259,6 +259,12 @@ export default function WebmasterDashboard() {
   const [familyAvatarUrl, setFamilyAvatarUrl] = useState('');
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [biography, setBiography] = useState('');
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [albums, setAlbums] = useState<string[]>([]);
+  const [mediaAlbums, setMediaAlbums] = useState<Record<string, string>>({});
+  const [selectedAlbumFilter, setSelectedAlbumFilter] = useState('ALL');
+  const [isCreatingAlbum, setIsCreatingAlbum] = useState(false);
+  const [tempAlbumName, setTempAlbumName] = useState('');
   const [activeTab, setActiveTab] = useState<'settings' | 'card' | 'gallery' | 'videos' | 'family' | 'ebooks' | 'condolences' | 'billing'>('settings');
   const [activeSubTab, setActiveSubTab] = useState<'general' | 'media' | 'theme' | 'features' | 'billing'>('general');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -375,9 +381,15 @@ export default function WebmasterDashboard() {
         
         if (!res.ok) throw new Error(data.error);
         
-        setWebsites(data.websites || []);
-        if (data.websites && data.websites.length > 0) {
-          selectWebsite(data.websites[0]);
+        const list = data.websites || [];
+        setWebsites(list);
+        if (list.length > 0) {
+          const searchParams = new URLSearchParams(window.location.search);
+          const siteParam = searchParams.get('site');
+          const matchedSite = siteParam
+            ? list.find((w: any) => w.slug === siteParam || w.id === siteParam)
+            : null;
+          selectWebsite(matchedSite || list[0]);
         }
       } catch (err: any) {
         setError(err.message || 'เกิดข้อผิดพลาดในการโหลดข้อมูลเว็บไซต์');
@@ -472,8 +484,8 @@ export default function WebmasterDashboard() {
     }
   };
 
-  const uploadGalleryMedia = async (file: File) => {
-    if (!activeSite) return;
+  const uploadGalleryMedia = async (file: File): Promise<string | null> => {
+    if (!activeSite) return null;
     setGalleryUploading(true);
     setError('');
     setSuccess('');
@@ -509,8 +521,10 @@ export default function WebmasterDashboard() {
       if (listRes.ok) {
         setGalleryMedias(listData.mediaList || []);
       }
+      return data.mediaId || null;
     } catch (err: any) {
       setError(err.message || 'การอัปโหลดไฟล์ขัดข้อง');
+      return null;
     } finally {
       setGalleryUploading(false);
     }
@@ -546,6 +560,124 @@ export default function WebmasterDashboard() {
     } catch (err: any) {
       setError(err.message || 'การลบไฟล์สื่อล้มเหลว');
     }
+  };
+
+  const saveAlbumConfig = async (updatedAlbums: string[], updatedMediaAlbums: Record<string, string>) => {
+    if (!activeSite) return;
+    try {
+      const res = await fetch('/api/tenant/update-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          websiteId: activeSite.id,
+          name: siteName,
+          category: siteCategory,
+          visibility,
+          donationPromptPay,
+          donationAccountName,
+          donationActive,
+          themeConfig: {
+            primaryColor,
+            secondaryColor,
+            fontFamily,
+            defaultFontSize,
+            heroStyle: 'Classic',
+            avatarUrl: deceasedAvatarUrl,
+            avatarScale: deceasedAvatarScale,
+            avatarX: deceasedAvatarX,
+            avatarY: deceasedAvatarY,
+            avatarRotate: deceasedAvatarRotate,
+            coverUrl: deceasedCoverUrl,
+            coverScale: deceasedCoverScale,
+            coverX: deceasedCoverX,
+            coverY: deceasedCoverY,
+            coverRotate: deceasedCoverRotate,
+            biography,
+            subjects,
+            albums: updatedAlbums,
+            mediaAlbums: updatedMediaAlbums,
+            features,
+            announcement: {
+              active: annActive,
+              text: annText,
+              style: annStyle,
+              fontFamily: annFontFamily,
+              waterDate: annWaterDate,
+              waterTime: annWaterTime,
+              abhidhammaDateRange: annAbhidhammaDateRange,
+              abhidhammaTime: annAbhidhammaTime,
+              cremationDate: annCremationDate,
+              cremationTime: annCremationTime,
+              templeName: annTempleName,
+              pavilion: annPavilion,
+              mapLink: annMapLink,
+              dressCode: annDressCode,
+              wreathPolicy: annWreathPolicy,
+              contactPhone: annContactPhone,
+            },
+          },
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setWebsites(websites.map(w => w.id === activeSite.id ? { 
+        ...w, 
+        name: siteName, 
+        category: siteCategory,
+        donationPromptPay,
+        donationAccountName,
+        donationActive,
+        themeConfig: data.tenant.themeConfig
+      } : w));
+      setActiveSite(data.tenant);
+    } catch (err: any) {
+      console.error('Error saving album config:', err);
+      setError(err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูลอัลบั้ม');
+    }
+  };
+
+  const handleAddAlbum = (name: string) => {
+    if (!name.trim()) return;
+    if (albums.includes(name.trim())) return;
+    const nextAlbums = [...albums, name.trim()];
+    setAlbums(nextAlbums);
+    saveAlbumConfig(nextAlbums, mediaAlbums);
+  };
+
+  const handleDeleteAlbum = (name: string) => {
+    const nextAlbums = albums.filter(a => a !== name);
+    const nextMediaAlbums = { ...mediaAlbums };
+    Object.keys(nextMediaAlbums).forEach(k => {
+      if (nextMediaAlbums[k] === name) {
+        delete nextMediaAlbums[k];
+      }
+    });
+    setAlbums(nextAlbums);
+    setMediaAlbums(nextMediaAlbums);
+    if (selectedAlbumFilter === name) {
+      setSelectedAlbumFilter('ALL');
+    }
+    saveAlbumConfig(nextAlbums, nextMediaAlbums);
+  };
+
+  const handleRenameAlbum = (oldName: string, newName: string) => {
+    if (!newName.trim() || oldName === newName.trim()) return;
+    if (albums.includes(newName.trim())) return;
+    const nextAlbums = albums.map(a => a === oldName ? newName.trim() : a);
+    const nextMediaAlbums = { ...mediaAlbums };
+    Object.keys(nextMediaAlbums).forEach(k => {
+      if (nextMediaAlbums[k] === oldName) {
+        nextMediaAlbums[k] = newName.trim();
+      }
+    });
+    setAlbums(nextAlbums);
+    setMediaAlbums(nextMediaAlbums);
+    if (selectedAlbumFilter === oldName) {
+      setSelectedAlbumFilter(newName.trim());
+    }
+    saveAlbumConfig(nextAlbums, nextMediaAlbums);
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -624,6 +756,13 @@ export default function WebmasterDashboard() {
     // Reset status flags
     setError('');
     setSuccess('');
+
+    // Update URL query parameter
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('site', site.slug);
+      window.history.replaceState({}, '', url.toString());
+    }
     
     // Fetch pending condolences for this site
     try {
@@ -691,6 +830,9 @@ export default function WebmasterDashboard() {
       const loadedFont = config.fontFamily || 'Inter';
       setFontFamily(scriptFonts.includes(loadedFont) ? 'LINE Seed Sans TH' : loadedFont);
       setBiography(config.biography || '');
+      setSubjects(config.subjects || []);
+      setAlbums(config.albums || []);
+      setMediaAlbums(config.mediaAlbums || {});
       setDefaultFontSize(config.defaultFontSize || 'NORMAL');
       setDeceasedAvatarUrl(config.avatarUrl || '');
       setDeceasedAvatarScale(config.avatarScale || 1);
@@ -745,6 +887,9 @@ export default function WebmasterDashboard() {
       setSecondaryColor('#f59e0b');
       setFontFamily('Inter');
       setBiography('');
+      setSubjects([]);
+      setAlbums([]);
+      setMediaAlbums({});
       setDeceasedAvatarUrl('');
       setDeceasedAvatarScale(1);
       setDeceasedAvatarX(0);
@@ -812,6 +957,9 @@ export default function WebmasterDashboard() {
             coverY: deceasedCoverY,
             coverRotate: deceasedCoverRotate,
             biography,
+            subjects,
+            albums,
+            mediaAlbums,
             features,
             announcement: {
               active: annActive,
@@ -3034,97 +3182,264 @@ export default function WebmasterDashboard() {
             </form>
           </div>
         )}
-        {activeTab === 'gallery' && (
-          <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-            <div className="flex justify-between items-center border-b border-stone-100 pb-4">
-              <div>
-                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
-                  <Camera className="w-5 h-5 text-emerald-700" />
-                  <span>คลังภาพถ่ายความทรงจำ ({photoMedias.length})</span>
-                </h3>
-                <p className="text-xs text-stone-500">อัปโหลดและจัดการภาพถ่ายของแกลเลอรีความทรงจำ</p>
-              </div>
-              <label className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
-                <Plus className="w-3.5 h-3.5" />
-                <span>อัปโหลดรูปภาพใหม่</span>
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  multiple 
-                  className="hidden" 
-                  onChange={async (e) => {
-                    if (e.target.files) {
-                      for (let i = 0; i < e.target.files.length; i++) {
-                        await uploadGalleryMedia(e.target.files[i]);
-                      }
-                      // Refresh list
-                      if (!activeSite) return;
-                      const listRes = await fetch(`/api/media/list?websiteId=${activeSite.id}`);
-                      const listData = await listRes.json();
-                      if (listRes.ok) {
-                        setGalleryMedias(listData.mediaList || []);
-                      }
-                    }
-                  }}
-                />
-              </label>
-            </div>
+        {activeTab === 'gallery' && (() => {
+          const filteredPhotoMedias = selectedAlbumFilter === 'ALL'
+            ? photoMedias
+            : photoMedias.filter(m => mediaAlbums[m.id] === selectedAlbumFilter);
 
-            {galleryUploading && (
-              <div className="p-4 bg-stone-50 border border-stone-200 text-xs text-stone-600 rounded-2xl font-semibold animate-pulse flex items-center gap-2">
-                <RotateCw className="w-4 h-4 animate-spin text-emerald-600" />
-                <span>กำลังอัปโหลดไฟล์สื่อไปยังคลังเก็บข้อมูล...</span>
-              </div>
-            )}
-
-            {photoMedias.length === 0 ? (
-              <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-sm">
-                ยังไม่มีการอัปโหลดไฟล์รูปภาพความทรงจำ
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                {photoMedias.map((m, index) => {
-                  const isDraggingItem = draggedIndex === index;
-                  return (
-                    <div 
-                      key={m.id} 
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, index)}
-                      onDragOver={(e) => handleDragOver(e, index)}
-                      onDrop={(e) => handleDrop(e, index)}
-                      onDragEnd={handleDragEnd}
-                      className={`
-                        group relative aspect-square bg-stone-50 rounded-2xl overflow-hidden border shadow-sm flex flex-col justify-between transition-all duration-200 cursor-grab active:cursor-grabbing
-                        ${isDraggingItem 
-                          ? 'opacity-40 border-emerald-500 scale-[0.97] ring-2 ring-emerald-500/20' 
-                          : 'border-stone-200 hover:scale-[1.02]'
+          return (
+            <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+              <div className="flex justify-between items-center border-b border-stone-100 pb-4">
+                <div>
+                  <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
+                    <Camera className="w-5 h-5 text-emerald-700" />
+                    <span>คลังภาพถ่ายความทรงจำ ({photoMedias.length})</span>
+                  </h3>
+                  <p className="text-xs text-stone-500">อัปโหลดและจัดการภาพถ่ายของแกลเลอรีความทรงจำ</p>
+                </div>
+                <label className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>อัปโหลดรูปภาพใหม่</span>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    multiple 
+                    className="hidden" 
+                    onChange={async (e) => {
+                      if (e.target.files) {
+                        const newMediaIds: string[] = [];
+                        for (let i = 0; i < e.target.files.length; i++) {
+                          const mediaId = await uploadGalleryMedia(e.target.files[i]);
+                          if (mediaId) {
+                            newMediaIds.push(mediaId);
+                          }
                         }
-                      `}
-                    >
-                      <img 
-                        src={m.filePath} 
-                        alt={m.fileName} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300 pointer-events-none"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteGalleryMedia(m.id);
-                          }}
-                          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer"
-                          title="ลบรูปภาพ"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                        if (selectedAlbumFilter !== 'ALL' && newMediaIds.length > 0) {
+                          const nextMediaAlbums = { ...mediaAlbums };
+                          newMediaIds.forEach((id) => {
+                            nextMediaAlbums[id] = selectedAlbumFilter;
+                          });
+                          setMediaAlbums(nextMediaAlbums);
+                          await saveAlbumConfig(albums, nextMediaAlbums);
+                        }
+                        // Refresh list
+                        if (!activeSite) return;
+                        const listRes = await fetch(`/api/media/list?websiteId=${activeSite.id}`);
+                        const listData = await listRes.json();
+                        if (listRes.ok) {
+                          setGalleryMedias(listData.mediaList || []);
+                        }
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+
+              {/* Albums manager bar */}
+              <div className="flex flex-wrap items-center gap-2 border-b border-stone-100 pb-4 select-none">
+                <button
+                  type="button"
+                  onClick={() => setSelectedAlbumFilter('ALL')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                    selectedAlbumFilter === 'ALL'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'bg-stone-50 hover:bg-stone-100 text-stone-600 border border-stone-200'
+                  }`}
+                >
+                  ทั้งหมด ({photoMedias.length})
+                </button>
+
+                {albums.map((albumName) => {
+                  const albumPhotosCount = photoMedias.filter(m => mediaAlbums[m.id] === albumName).length;
+                  const isSelected = selectedAlbumFilter === albumName;
+                  
+                  return (
+                    <div key={albumName} className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedAlbumFilter(albumName)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                          isSelected
+                            ? 'bg-emerald-600 text-white shadow-sm'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-600 border border-stone-200'
+                        }`}
+                      >
+                        {albumName} ({albumPhotosCount})
+                      </button>
+                      
+                      {isSelected && (
+                        <div className="flex items-center gap-1 bg-stone-100 p-0.5 rounded-lg border border-stone-200">
+                          {/* Rename */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newName = prompt('เปลี่ยนชื่ออัลบั้มใหม่:', albumName);
+                              if (newName && newName.trim()) {
+                                handleRenameAlbum(albumName, newName.trim());
+                              }
+                            }}
+                            className="p-1 hover:bg-stone-200 rounded text-stone-650 transition"
+                            title="เปลี่ยนชื่ออัลบั้ม"
+                          >
+                            <Edit3 className="w-3 h-3" />
+                          </button>
+                          {/* Delete */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm(`คุณต้องการลบอัลบั้ม "${albumName}" ใช่หรือไม่?\n(รูปภาพภายในอัลบั้มจะยังคงอยู่ในระบบแต่จะถูกย้ายออกจากอัลบั้มนี้)`)) {
+                                handleDeleteAlbum(albumName);
+                              }
+                            }}
+                            className="p-1 hover:bg-red-50 text-red-650 hover:text-red-755 rounded transition"
+                            title="ลบอัลบั้ม"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
+
+                {/* Add Album Button */}
+                {isCreatingAlbum ? (
+                  <div className="flex items-center gap-1.5 bg-stone-50 border border-stone-200 rounded-xl p-1">
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="ชื่ออัลบั้ม..."
+                      value={tempAlbumName}
+                      onChange={(e) => setTempAlbumName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleAddAlbum(tempAlbumName);
+                          setIsCreatingAlbum(false);
+                          setTempAlbumName('');
+                        } else if (e.key === 'Escape') {
+                          setIsCreatingAlbum(false);
+                          setTempAlbumName('');
+                        }
+                      }}
+                      className="px-2 py-1 text-xs border border-stone-200 rounded-lg text-stone-900 bg-white focus:outline-none focus:border-emerald-500 max-w-[120px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleAddAlbum(tempAlbumName);
+                        setIsCreatingAlbum(false);
+                        setTempAlbumName('');
+                      }}
+                      className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold transition"
+                    >
+                      เพิ่ม
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCreatingAlbum(false);
+                        setTempAlbumName('');
+                      }}
+                      className="px-2 py-1 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-[10px] font-bold transition"
+                    >
+                      ยกเลิก
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsCreatingAlbum(true)}
+                    className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-250 border-dashed rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>สร้างอัลบั้มใหม่</span>
+                  </button>
+                )}
               </div>
-            )}
-          </section>
-        )}
+
+              {galleryUploading && (
+                <div className="p-4 bg-stone-50 border border-stone-200 text-xs text-stone-600 rounded-2xl font-semibold animate-pulse flex items-center gap-2">
+                  <RotateCw className="w-4 h-4 animate-spin text-emerald-600" />
+                  <span>กำลังอัปโหลดไฟล์สื่อไปยังคลังเก็บข้อมูล...</span>
+                </div>
+              )}
+
+              {photoMedias.length === 0 ? (
+                <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-sm">
+                  ยังไม่มีการอัปโหลดไฟล์รูปภาพความทรงจำ
+                </div>
+              ) : filteredPhotoMedias.length === 0 ? (
+                <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-sm">
+                  ยังไม่มีรูปภาพในอัลบั้มนี้
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                  {filteredPhotoMedias.map((m, index) => {
+                    const isDraggingItem = draggedIndex === index;
+                    return (
+                      <div 
+                        key={m.id} 
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDrop={(e) => handleDrop(e, index)}
+                        onDragEnd={handleDragEnd}
+                        className={`
+                          group relative aspect-square bg-stone-50 rounded-2xl overflow-hidden border shadow-sm flex flex-col justify-between transition-all duration-200 cursor-grab active:cursor-grabbing
+                          ${isDraggingItem 
+                            ? 'opacity-40 border-emerald-500 scale-[0.97] ring-2 ring-emerald-500/20' 
+                            : 'border-stone-200 hover:scale-[1.02]'
+                          }
+                        `}
+                      >
+                        <img 
+                          src={m.filePath} 
+                          alt={m.fileName} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300 pointer-events-none"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center p-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteGalleryMedia(m.id);
+                            }}
+                            className="p-2 bg-red-650 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer border-0"
+                            title="ลบรูปภาพ"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+
+                          {/* Move to Album Dropdown */}
+                          {albums.length > 0 && (
+                            <div className="w-full px-1" onClick={(e) => e.stopPropagation()}>
+                              <select
+                                value={mediaAlbums[m.id] || ''}
+                                onChange={(e) => {
+                                  const nextMediaAlbums = { ...mediaAlbums, [m.id]: e.target.value };
+                                  setMediaAlbums(nextMediaAlbums);
+                                  saveAlbumConfig(albums, nextMediaAlbums);
+                                }}
+                                className="w-full px-1.5 py-1 bg-white hover:bg-stone-50 text-stone-900 border border-stone-300 rounded-lg text-[10px] font-bold focus:outline-none cursor-pointer"
+                              >
+                                <option value="">(ไม่มีอัลบั้ม)</option>
+                                {albums.map((a) => (
+                                  <option key={a} value={a}>
+                                    ย้ายไป: {a}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          );
+        })()}
 
         {activeTab === 'videos' && (
           <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">

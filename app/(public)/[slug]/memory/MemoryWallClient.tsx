@@ -181,12 +181,12 @@ function MemoryPostCard({ p, parseMessage }: { p: MemoryPost; parseMessage: (msg
       </div>
 
       {p.mediaUrl && (
-        <div className="w-full md:w-44 flex-shrink-0">
-          <div className="relative rounded-2xl overflow-hidden bg-stone-50 border border-stone-200/80 aspect-video md:aspect-square flex items-center justify-center shadow-sm">
+        <div className="w-full md:w-44 flex-shrink-0 mt-3 md:mt-0">
+          <div className="relative rounded-2xl overflow-hidden bg-stone-50 border border-stone-200/80 md:aspect-square flex items-center justify-center shadow-sm max-w-full mx-auto md:mx-0">
             <img 
               src={p.mediaUrl.startsWith('http') || p.mediaUrl.startsWith('/') ? p.mediaUrl : `/${p.mediaUrl}`} 
               alt={p.title || 'Memory Image'}
-              className="w-full h-full object-cover"
+              className="max-h-64 sm:max-h-72 md:max-h-none md:w-full md:h-full object-contain md:object-cover"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&q=80&w=600';
               }}

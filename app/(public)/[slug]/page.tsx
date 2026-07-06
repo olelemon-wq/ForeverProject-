@@ -257,9 +257,20 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   
   const journey = getCategoryJourney(tenant.category);
   const homeCopy = journey.home || {};
-  const biographyHeading = homeCopy.biographyHeading || 'อาลัยและคำรำลึก';
-  const condolenceHeading = homeCopy.condolenceHeading || 'ข้อความไว้อาลัยล่าสุด';
-  const condolenceCta = homeCopy.condolenceCta || 'เขียนข้อความ/ร่วมจุดเทียนออนไลน์';
+  
+  const subjects = config?.subjects || [];
+  const allSubjectsAlive = subjects.length > 0 && subjects.every((s: any) => s.isAlive);
+  const isHappy = tenant.category === 'Couple' || tenant.category === 'Wedding' || (tenant.category === 'Pet Memorial' && allSubjectsAlive);
+
+  const biographyHeading = isHappy 
+    ? (tenant.category === 'Pet Memorial' ? 'เรื่องราวและช่วงเวลาแสนซน' : 'เรื่องราวประทับใจ') 
+    : (homeCopy.biographyHeading || 'อาลัยและคำรำลึก');
+  const condolenceHeading = isHappy 
+    ? (tenant.category === 'Pet Memorial' ? 'สมุดเยี่ยมเยียนและข้อความถึงน้อง ๆ' : 'สมุดเยี่ยมเยียนและข้อความอวยพร') 
+    : (homeCopy.condolenceHeading || 'ข้อความไว้อาลัยล่าสุด');
+  const condolenceCta = isHappy 
+    ? 'ส่งความรักและความปรารถนาดี' 
+    : (homeCopy.condolenceCta || 'เขียนข้อความ/ร่วมจุดเทียนออนไลน์');
   const galleryHeading = homeCopy.galleryHeading || 'ภาพถ่ายความทรงจำล่าสุด';
   const ebooksTitle = (() => {
     if (tenant.category === 'Couple') return 'สมุดภาพความรักแนะนำ';

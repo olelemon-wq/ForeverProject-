@@ -94,7 +94,7 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
 
             {/* Gallery Grid */}
             <div>
-              <GalleryClient mediaList={mediaList} slug={slug} />
+              <GalleryClient mediaList={mediaList} slug={slug} themeConfig={tenant.themeConfig} />
             </div>
           </div>
         );

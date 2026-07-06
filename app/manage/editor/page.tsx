@@ -302,6 +302,7 @@ function EditorWorkspace() {
               announcementDressCode: ann.dressCode || '',
               announcementWreathPolicy: ann.wreathPolicy || 'NORMAL',
               announcementContactPhone: ann.contactPhone || '',
+              subjects: config.subjects || [],
             });
 
             // 2. Determine background color
@@ -728,6 +729,243 @@ function EditorWorkspace() {
                     }
                     className="w-full px-3 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
                   />
+                </div>
+
+                {/* Dynamic Subject List Editor (BR003 / Phase 2 consult: Alive/Deceased toggle) */}
+                <div className="space-y-3 pt-2.5 border-t border-stone-100">
+                  <div className="flex justify-between items-center select-none">
+                    <span className="text-[10px] font-bold text-stone-600">
+                      {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'รายชื่อคู่รัก' :
+                       siteCategory === 'Pet Memorial' ? 'รายชื่อสัตว์เลี้ยง' :
+                       siteCategory === 'Family Legacy' ? 'รายชื่อผู้ดูแล/บรรพบุรุษ' :
+                       'รายชื่อผู้ล่วงลับ'}
+                    </span>
+                    {!(siteCategory === 'Couple' || siteCategory === 'Wedding') && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextSubjects = [...(formData.subjects || [])];
+                          nextSubjects.push({
+                            name: '',
+                            birthDate: null,
+                            deathDate: null,
+                            birthYearOnly: false,
+                            deathYearOnly: false,
+                            birthYear: null,
+                            deathYear: null,
+                            isAlive: false
+                          });
+                          handleFieldChange('subjects', nextSubjects);
+                        }}
+                        className="text-[9px] font-bold text-emerald-700 hover:text-emerald-800 transition flex items-center gap-1 cursor-pointer border-0 bg-transparent"
+                      >
+                        <Plus className="w-3 h-3" />
+                        <span>เพิ่มรายชื่อ</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {(formData.subjects || []).map((sub: any, index: number) => {
+                    const yearsList = Array.from({ length: 150 }, (_, i) => new Date().getFullYear() - i);
+                    
+                    return (
+                      <div key={index} className="p-3 bg-stone-50/50 rounded-2xl border border-stone-200 space-y-2.5 relative">
+                        {/* Remove button */}
+                        {!(siteCategory === 'Couple' || siteCategory === 'Wedding') && (formData.subjects || []).length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const nextSubjects = (formData.subjects || []).filter((_, idx) => idx !== index);
+                              handleFieldChange('subjects', nextSubjects);
+                            }}
+                            className="absolute top-2 right-2 text-stone-400 hover:text-rose-600 transition p-1 cursor-pointer border-0 bg-transparent"
+                            title="ลบรายชื่อ"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+
+                        {/* Name Input */}
+                        <div className="space-y-1 pr-6">
+                          <label className="text-[9px] font-bold text-stone-500 block">ชื่อ</label>
+                          <input
+                            type="text"
+                            value={sub.name || ''}
+                            onChange={(e) => {
+                              const nextSubjects = [...(formData.subjects || [])];
+                              nextSubjects[index] = { ...nextSubjects[index], name: e.target.value };
+                              handleFieldChange('subjects', nextSubjects);
+                            }}
+                            placeholder="ระบุชื่อ..."
+                            className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+
+                        {/* Still Alive checkbox for Pet and Family Legacy */}
+                        {(siteCategory === 'Pet Memorial' || siteCategory === 'Family Legacy') && (
+                          <label className="flex items-center gap-1.5 cursor-pointer select-none py-0.5">
+                            <input
+                              type="checkbox"
+                              checked={sub.isAlive || false}
+                              onChange={(e) => {
+                                const nextSubjects = [...(formData.subjects || [])];
+                                const checked = e.target.checked;
+                                nextSubjects[index] = {
+                                  ...nextSubjects[index],
+                                  isAlive: checked,
+                                  deathDate: checked ? null : nextSubjects[index].deathDate,
+                                  deathYear: checked ? null : nextSubjects[index].deathYear,
+                                  deathYearOnly: checked ? false : nextSubjects[index].deathYearOnly,
+                                };
+                                handleFieldChange('subjects', nextSubjects);
+                              }}
+                              className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
+                            />
+                            <span className="text-[10px] font-bold text-emerald-800">
+                              {siteCategory === 'Pet Memorial' ? 'น้องยังมีชีวิตอยู่' : 'ท่านยังมีชีวิตอยู่'}
+                            </span>
+                          </label>
+                        )}
+
+                        {/* Dates grid */}
+                        <div className={`grid gap-3.5 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                          {/* Birth Date */}
+                          <div className="space-y-1">
+                            <span className="text-[9px] text-stone-500 font-semibold block">วันเกิด</span>
+                            {sub.birthYearOnly ? (
+                              <select
+                                value={sub.birthYear || ''}
+                                onChange={(e) => {
+                                  const nextSubjects = [...(formData.subjects || [])];
+                                  const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                                  nextSubjects[index] = {
+                                    ...nextSubjects[index],
+                                    birthYear: val,
+                                    birthDate: val ? new Date(val, 0, 1) : null
+                                  };
+                                  handleFieldChange('subjects', nextSubjects);
+                                }}
+                                className="w-full px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none cursor-pointer focus:border-emerald-500"
+                              >
+                                <option value="">เลือกปี พ.ศ.</option>
+                                {yearsList.map((y) => (
+                                  <option key={y} value={y}>พ.ศ. {y + 543}</option>
+                                ))}
+                              </select>
+                            ) : (
+                              <div className="flex gap-1 items-center relative">
+                                <input
+                                  type="text"
+                                  readOnly
+                                  value={sub.birthDate ? new Date(sub.birthDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
+                                  placeholder="เลือกวันเกิด"
+                                  className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none min-w-0"
+                                />
+                                <ThaiDatePicker
+                                  buttonClassName="p-1 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer"
+                                  iconClassName="w-3 h-3"
+                                  onChange={(val) => {
+                                    const nextSubjects = [...(formData.subjects || [])];
+                                    nextSubjects[index] = { ...nextSubjects[index], birthDate: val };
+                                    handleFieldChange('subjects', nextSubjects);
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <label className="flex items-center gap-1 cursor-pointer select-none">
+                              <input
+                                  type="checkbox"
+                                  checked={sub.birthYearOnly || false}
+                                  onChange={(e) => {
+                                    const nextSubjects = [...(formData.subjects || [])];
+                                    const checked = e.target.checked;
+                                    const bDateObj = sub.birthDate ? new Date(sub.birthDate) : null;
+                                    const initialYear = bDateObj ? bDateObj.getFullYear() : new Date().getFullYear();
+                                    nextSubjects[index] = {
+                                      ...nextSubjects[index],
+                                      birthYearOnly: checked,
+                                      birthYear: checked ? initialYear : null,
+                                      birthDate: checked ? new Date(initialYear, 0, 1) : null
+                                    };
+                                    handleFieldChange('subjects', nextSubjects);
+                                  }}
+                                  className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-2.5 h-2.5 cursor-pointer"
+                              />
+                              <span className="text-[8px] text-stone-400 font-semibold">ระบุเฉพาะปี พ.ศ.</span>
+                            </label>
+                          </div>
+
+                          {/* Death Date */}
+                          {!sub.isAlive && (
+                            <div className="space-y-1">
+                              <span className="text-[9px] text-stone-550 font-semibold block">วันเสียชีวิต</span>
+                              {sub.deathYearOnly ? (
+                                <select
+                                  value={sub.deathYear || ''}
+                                  onChange={(e) => {
+                                    const nextSubjects = [...(formData.subjects || [])];
+                                    const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                                    nextSubjects[index] = {
+                                      ...nextSubjects[index],
+                                      deathYear: val,
+                                      deathDate: val ? new Date(val, 0, 1) : null
+                                    };
+                                    handleFieldChange('subjects', nextSubjects);
+                                  }}
+                                  className="w-full px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none cursor-pointer focus:border-emerald-500"
+                                >
+                                  <option value="">เลือกปี พ.ศ.</option>
+                                  {yearsList.map((y) => (
+                                    <option key={y} value={y}>พ.ศ. {y + 543}</option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <div className="flex gap-1 items-center relative">
+                                  <input
+                                    type="text"
+                                    readOnly
+                                    value={sub.deathDate ? new Date(sub.deathDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
+                                    placeholder="เลือกวันเสียชีวิต"
+                                    className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none min-w-0"
+                                  />
+                                  <ThaiDatePicker
+                                    buttonClassName="p-1 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer"
+                                    iconClassName="w-3 h-3"
+                                    onChange={(val) => {
+                                      const nextSubjects = [...(formData.subjects || [])];
+                                      nextSubjects[index] = { ...nextSubjects[index], deathDate: val };
+                                      handleFieldChange('subjects', nextSubjects);
+                                    }}
+                                  />
+                                </div>
+                              )}
+                              <label className="flex items-center gap-1 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={sub.deathYearOnly || false}
+                                  onChange={(e) => {
+                                    const nextSubjects = [...(formData.subjects || [])];
+                                    const checked = e.target.checked;
+                                    const dDateObj = sub.deathDate ? new Date(sub.deathDate) : null;
+                                    const initialYear = dDateObj ? dDateObj.getFullYear() : new Date().getFullYear();
+                                    nextSubjects[index] = {
+                                      ...nextSubjects[index],
+                                      deathYearOnly: checked,
+                                      deathYear: checked ? initialYear : null,
+                                      deathDate: checked ? new Date(initialYear, 0, 1) : null
+                                    };
+                                    handleFieldChange('subjects', nextSubjects);
+                                  }}
+                                  className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-2.5 h-2.5 cursor-pointer"
+                                />
+                                <span className="text-[8px] text-stone-400 font-semibold">ระบุเฉพาะปี พ.ศ.</span>
+                              </label>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3.5">

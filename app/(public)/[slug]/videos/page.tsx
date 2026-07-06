@@ -17,7 +17,7 @@ async function getVideoMedia(websiteId: string) {
   const medias = await db.media.findMany({
     where: {
       websiteId,
-      album: 'GALLERY',
+      album: { in: ['GALLERY', 'VIDEO'] },
       isDeleted: false,
       mimeType: { startsWith: 'video/' },
     },

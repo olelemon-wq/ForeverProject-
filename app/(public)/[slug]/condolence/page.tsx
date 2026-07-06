@@ -97,19 +97,30 @@ export default async function PublicCondolencePage(props: {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedCondolences = condolences.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
+  const config = (tenant.themeConfig as any) || {};
+  const subjects = config.subjects || [];
+  const allSubjectsAlive = subjects.length > 0 && subjects.every((s: any) => s.isAlive);
+  const isHappy = tenant.category === 'Couple' || tenant.category === 'Wedding' || (tenant.category === 'Pet Memorial' && allSubjectsAlive);
+
   return (
     <div className="space-y-8 animate-fade-in">
       {(() => {
         const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'condolence');
+        const displayLabel = isHappy 
+          ? (tenant.category === 'Pet Memorial' ? 'สมุดเยี่ยมเยียนและส่งความรักถึงน้อง ๆ' : 'สมุดเยี่ยมเยียนและข้อความอวยพร') 
+          : fLabel;
+        const displayDesc = isHappy
+          ? 'คุณสามารถเขียนบันทึกความรู้สึก ส่งต่อกำลังใจ ความรัก และอธิษฐานจิตผ่านสมุดเยี่ยมเยียนเล่มนี้'
+          : fDesc;
         return (
           <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
             {/* Page Header with CategoryOrnament and Wing lines */}
             <div className="flex flex-col items-center text-center space-y-3">
               <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
-                {fLabel}
+                {displayLabel}
               </h2>
               <p className="text-stone-500 text-xs max-w-lg leading-normal">
-                {fDesc}
+                {displayDesc}
               </p>
               {/* Centered Motif with Wing lines divider */}
               <div className="w-full flex items-center justify-center gap-4 pt-4 select-none">
@@ -125,12 +136,12 @@ export default async function PublicCondolencePage(props: {
             <div className="space-y-6">
               <h3 className="text-base font-bold flex items-center gap-2 text-stone-800">
                 <PenTool className="w-4 h-4 text-emerald-700" style={{ color: 'var(--theme-primary)' }} />
-                <span>ข้อความรำลึกทั้งหมด ({condolences.length})</span>
+                <span>{isHappy ? `ข้อความอวยพรทั้งหมด (${condolences.length})` : `ข้อความรำลึกทั้งหมด (${condolences.length})`}</span>
               </h3>
 
               {condolences.length === 0 ? (
                 <div className="text-center py-12 text-stone-500 text-sm border border-dashed border-stone-200 rounded-2xl">
-                  ยังไม่มีข้อความแสดงความไว้อาลัยปรากฏในสมุดเล่มนี้
+                  {isHappy ? 'ยังไม่มีข้อความส่งรักปรากฏในสมุดเล่มนี้' : 'ยังไม่มีข้อความแสดงความไว้อาลัยปรากฏในสมุดเล่มนี้'}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -205,7 +216,11 @@ export default async function PublicCondolencePage(props: {
       })()}
 
       {/* Condolence submission component */}
-      <CondolenceForm websiteId={tenant.id} />
+      <CondolenceForm 
+        websiteId={tenant.id} 
+        category={tenant.category} 
+        subjects={(tenant.themeConfig as any)?.subjects} 
+      />
     </div>
   );
 }

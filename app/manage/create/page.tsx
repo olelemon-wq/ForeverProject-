@@ -17,6 +17,7 @@ interface Subject {
   deathYearOnly: boolean;
   birthYear: number | null;
   deathYear: number | null;
+  isAlive?: boolean;
 }
 
 function CalendarPicker({
@@ -393,7 +394,9 @@ export default function WebsiteCreationWizard() {
       const formattedLifespans = subjects.map(s => {
         if (!s.name) return null;
         let range = '';
-        if (s.birthDate && s.deathDate) {
+        if (s.isAlive && s.birthDate) {
+          range = `เกิด ${formatThaiDate(s.birthDate, s.birthYearOnly)} (ปัจจุบัน)`;
+        } else if (s.birthDate && s.deathDate) {
           range = `${formatThaiDate(s.birthDate, s.birthYearOnly)} – ${formatThaiDate(s.deathDate, s.deathYearOnly)}`;
         } else if (s.birthDate) {
           range = `${formatThaiDate(s.birthDate, s.birthYearOnly)} – (ยังไม่ระบุ)`;
@@ -409,7 +412,9 @@ export default function WebsiteCreationWizard() {
         // Backwards compatibility for preview chip when no name is typed yet but dates are selected
         const first = subjects[0];
         if (first && first.birthDate) {
-          if (first.deathDate) {
+          if (first.isAlive) {
+            setLifespan(`เกิด ${formatThaiDate(first.birthDate, first.birthYearOnly)} (ปัจจุบัน)`);
+          } else if (first.deathDate) {
             setLifespan(`${formatThaiDate(first.birthDate, first.birthYearOnly)} – ${formatThaiDate(first.deathDate, first.deathYearOnly)}`);
           } else {
             setLifespan(`${formatThaiDate(first.birthDate, first.birthYearOnly)} – (ยังไม่ระบุ)`);
@@ -993,9 +998,36 @@ export default function WebsiteCreationWizard() {
                   </div>
 
                   {!(index > 0 && (category === 'Couple' || category === 'Wedding')) && (
-                    <div className="space-y-1">
+                    <div className="space-y-2.5">
+                      {/* Still Alive checkbox for Pet Memorial and Family Legacy */}
+                      {(category === 'Pet Memorial' || category === 'Family Legacy') && (
+                        <label className="flex items-center gap-1.5 cursor-pointer select-none pb-0.5">
+                          <input 
+                            type="checkbox" 
+                            checked={sub.isAlive || false}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              const newSubs = [...subjects];
+                              newSubs[index].isAlive = checked;
+                              if (checked) {
+                                newSubs[index].deathDate = null;
+                                newSubs[index].deathYear = null;
+                                newSubs[index].deathYearOnly = false;
+                              }
+                              setSubjects(newSubs);
+                            }}
+                            className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5 cursor-pointer"
+                          />
+                          <span className="text-xs font-bold text-emerald-800">
+                            {category === 'Pet Memorial' ? 'น้องยังมีชีวิตอยู่' : 'ท่านยังมีชีวิตอยู่'}
+                          </span>
+                        </label>
+                      )}
+
                       <label className="text-sm font-bold text-stone-600 tracking-wide">{defaults.dateLabel}</label>
-                      <div className="grid grid-cols-2 gap-4">
+                      
+                      <div className={`grid gap-4 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                        {/* Birth Date column */}
                         <div className="space-y-1">
                           <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateStartTitle}</span>
                           {sub.birthYearOnly ? (
@@ -1059,70 +1091,74 @@ export default function WebsiteCreationWizard() {
                             </span>
                           </label>
                         </div>
-                        <div className="space-y-1">
-                          <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateEndTitle}</span>
-                          {sub.deathYearOnly ? (
-                            <select
-                              value={sub.deathYear || ''}
-                              onChange={(e) => {
-                                const val = e.target.value ? parseInt(e.target.value, 10) : null;
-                                const newSubs = [...subjects];
-                                newSubs[index].deathYear = val;
-                                if (val) {
-                                  newSubs[index].deathDate = new Date(val, 0, 1);
-                                } else {
-                                  newSubs[index].deathDate = null;
-                                }
-                                setSubjects(newSubs);
-                              }}
-                              className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:outline-none cursor-pointer focus:border-emerald-500 transition"
-                            >
-                              <option value="">เลือกปี พ.ศ.</option>
-                              {yearsList.map((y) => (
-                                <option key={y} value={y}>พ.ศ. {y + 543}</option>
-                              ))}
-                            </select>
-                          ) : (
-                            <CalendarPicker
-                              selectedDate={sub.deathDate}
-                              onChange={(date) => {
-                                const newSubs = [...subjects];
-                                newSubs[index].deathDate = date;
-                                setSubjects(newSubs);
-                              }}
-                              placeholder={defaults.dateEndPlaceholder}
-                              align="right"
-                            />
-                          )}
-                          <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
-                            <input 
-                              type="checkbox" 
-                              checked={sub.deathYearOnly}
-                              onChange={(e) => {
-                                const checked = e.target.checked;
-                                const newSubs = [...subjects];
-                                newSubs[index].deathYearOnly = checked;
-                                if (checked) {
-                                  const initialYear = sub.deathDate ? sub.deathDate.getFullYear() : new Date().getFullYear();
-                                  newSubs[index].deathYear = initialYear;
-                                  newSubs[index].deathDate = new Date(initialYear, 0, 1);
-                                } else {
-                                  newSubs[index].deathYear = null;
-                                  newSubs[index].deathDate = null;
-                                }
-                                setSubjects(newSubs);
-                              }}
-                              className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
-                            />
-                            <span className="text-[9px] text-stone-500 font-semibold">
-                              {category === 'Couple' ? 'ระบุเฉพาะปีมงคลสมรส' :
-                               category === 'Friends' ? 'ระบุเฉพาะปีล่าสุด' :
-                               category === 'Wedding' ? 'ระบุเฉพาะปี' :
-                               category === 'Pet Memorial' ? 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เดินทางกลับดาว)' :
-                               'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)'}
-                            </span>
-                          </label>
-                        </div>
+
+                        {/* Death Date column (only if not alive) */}
+                        {!sub.isAlive && (
+                          <div className="space-y-1">
+                            <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateEndTitle}</span>
+                            {sub.deathYearOnly ? (
+                              <select
+                                value={sub.deathYear || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                                  const newSubs = [...subjects];
+                                  newSubs[index].deathYear = val;
+                                  if (val) {
+                                    newSubs[index].deathDate = new Date(val, 0, 1);
+                                  } else {
+                                    newSubs[index].deathDate = null;
+                                  }
+                                  setSubjects(newSubs);
+                                }}
+                                className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:outline-none cursor-pointer focus:border-emerald-500 transition"
+                              >
+                                <option value="">เลือกปี พ.ศ.</option>
+                                {yearsList.map((y) => (
+                                  <option key={y} value={y}>พ.ศ. {y + 543}</option>
+                                ))}
+                              </select>
+                            ) : (
+                              <CalendarPicker
+                                selectedDate={sub.deathDate}
+                                onChange={(date) => {
+                                  const newSubs = [...subjects];
+                                  newSubs[index].deathDate = date;
+                                  setSubjects(newSubs);
+                                }}
+                                placeholder={defaults.dateEndPlaceholder}
+                                align="right"
+                              />
+                            )}
+                            <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
+                              <input 
+                                type="checkbox" 
+                                checked={sub.deathYearOnly}
+                                onChange={(e) => {
+                                  const checked = e.target.checked;
+                                  const newSubs = [...subjects];
+                                  newSubs[index].deathYearOnly = checked;
+                                  if (checked) {
+                                    const initialYear = sub.deathDate ? sub.deathDate.getFullYear() : new Date().getFullYear();
+                                    newSubs[index].deathYear = initialYear;
+                                    newSubs[index].deathDate = new Date(initialYear, 0, 1);
+                                  } else {
+                                    newSubs[index].deathYear = null;
+                                    newSubs[index].deathDate = null;
+                                  }
+                                  setSubjects(newSubs);
+                                }}
+                                className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
+                              />
+                              <span className="text-[9px] text-stone-500 font-semibold">
+                                {category === 'Couple' ? 'ระบุเฉพาะปีมงคลสมรส' :
+                                 category === 'Friends' ? 'ระบุเฉพาะปีล่าสุด' :
+                                 category === 'Wedding' ? 'ระบุเฉพาะปี' :
+                                 category === 'Pet Memorial' ? 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เดินทางกลับดาว)' :
+                                 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)'}
+                              </span>
+                            </label>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

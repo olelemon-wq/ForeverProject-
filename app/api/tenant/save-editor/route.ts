@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       announcementDressCode,
       announcementWreathPolicy,
       announcementContactPhone,
+      subjects,
       elements, // Canvas text elements
       background, // Canvas bg color
     } = await request.json();
@@ -83,6 +84,7 @@ export async function POST(request: Request) {
       ...currentConfig,
       // If font family was selected in properties panel, keep it updated
       fontFamily: currentConfig.fontFamily || 'LINE Seed Sans TH',
+      subjects: subjects || currentConfig.subjects || [],
       features: {
         ...(currentConfig.features || {}),
         announcement: announcementActive,

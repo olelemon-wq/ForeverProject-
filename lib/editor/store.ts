@@ -19,6 +19,7 @@ export interface AnnouncementFormData {
   announcementDressCode: string;
   announcementWreathPolicy: string;
   announcementContactPhone: string;
+  subjects: any[];
 }
 
 interface EditorState {
@@ -75,6 +76,7 @@ export const useEditorStore = create<EditorState>((set) => ({
     announcementDressCode: '',
     announcementWreathPolicy: 'NORMAL',
     announcementContactPhone: '',
+    subjects: [],
   },
   saveStatus: { type: 'idle', message: '' },
 
@@ -141,6 +143,7 @@ export const useEditorStore = create<EditorState>((set) => ({
           announcementDressCode: formData.announcementDressCode,
           announcementWreathPolicy: formData.announcementWreathPolicy,
           announcementContactPhone: formData.announcementContactPhone,
+          subjects: formData.subjects,
           elements,
           background,
         }),

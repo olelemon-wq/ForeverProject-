@@ -94,7 +94,7 @@ export default async function PublicMemorialLayout(props: {
     db.media.findFirst({
       where: { 
         websiteId: tenant.id, 
-        album: 'GALLERY', 
+        album: { in: ['GALLERY', 'VIDEO'] }, 
         isDeleted: false,
         mimeType: { startsWith: 'video/' }
       },

@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const mediaList = await db.media.findMany({
       where: {
         websiteId,
-        album: 'GALLERY',
+        album: { in: ['GALLERY', 'VIDEO'] },
         isDeleted: false,
       },
       orderBy: [

@@ -57,13 +57,7 @@ export default function CondolenceItem({ condolence }: CondolenceItemProps) {
   };
 
   return (
-    <div 
-      className={`relative overflow-hidden py-6 transition ${
-        isFamily 
-          ? 'border-l-4 border-amber-400 pl-5 ml-1 bg-amber-50/20 rounded-r-2xl' 
-          : 'pl-1'
-      }`}
-    >
+    <div className="relative overflow-hidden py-6 transition pl-1">
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <span className="text-sm font-bold text-stone-850">{condolence.senderName}</span>
         {(() => {
