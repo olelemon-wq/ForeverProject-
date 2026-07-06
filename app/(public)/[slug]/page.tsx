@@ -41,23 +41,6 @@ async function getRecentGallery(websiteId: string) {
 }
 
 function getDisplayUrl(filePath: string, mimeType: string, index: number) {
-  if (filePath.startsWith('https://storage.forever.co.th')) {
-    const isVideo = mimeType.startsWith('video/');
-    if (isVideo) {
-      return 'https://assets.mixkit.co/videos/preview/mixkit-sunset-seen-through-the-branches-of-a-tree-42751-large.mp4';
-    }
-
-    const placeholders = [
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80',
-    ];
-    return placeholders[index % placeholders.length];
-  }
   return filePath;
 }
 

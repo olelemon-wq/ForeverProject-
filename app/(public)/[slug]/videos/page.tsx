@@ -38,9 +38,6 @@ async function getVideoMedia(websiteId: string) {
 }
 
 function getDisplayUrl(filePath: string, mimeType: string, index: number) {
-  if (filePath.startsWith('https://storage.forever.co.th')) {
-    return 'https://assets.mixkit.co/videos/preview/mixkit-sunset-seen-through-the-branches-of-a-tree-42751-large.mp4';
-  }
   return filePath;
 }
 
