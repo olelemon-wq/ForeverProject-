@@ -2498,7 +2498,7 @@ export default function WebmasterDashboard() {
                             }`}>
                               {deceasedAvatarUrl ? (
                                 <img
-                                  src={deceasedAvatarUrl.replace('https://storage.forever.co.th', '')}
+                                  src={deceasedAvatarUrl}
                                   alt="Avatar Preview"
                                   className="pointer-events-none max-w-none origin-center"
                                   style={{
@@ -2713,7 +2713,7 @@ export default function WebmasterDashboard() {
                     {deceasedCoverUrl ? (
                       <div className="absolute inset-0 w-full h-full">
                         <img 
-                          src={deceasedCoverUrl.replace('https://storage.forever.co.th', '')} 
+                          src={deceasedCoverUrl} 
                           alt="Cover Preview" 
                           className="w-full h-full object-cover" 
                           style={{
@@ -2735,7 +2735,7 @@ export default function WebmasterDashboard() {
                       {deceasedAvatarUrl ? (
                         <div className="w-full h-full relative">
                           <img 
-                            src={deceasedAvatarUrl.replace('https://storage.forever.co.th', '')} 
+                            src={deceasedAvatarUrl} 
                             alt="Avatar Preview" 
                             className="pointer-events-none w-full h-full object-cover" 
                             style={{
@@ -4204,7 +4204,7 @@ export default function WebmasterDashboard() {
               }}
             >
               <img
-                src={deceasedCoverUrl.replace('https://storage.forever.co.th', '')}
+                src={deceasedCoverUrl}
                 alt="Cover Repositioning"
                 className="pointer-events-none max-w-none origin-center"
                 style={{
@@ -4369,7 +4369,7 @@ export default function WebmasterDashboard() {
                 }}
               >
                 <img
-                  src={deceasedAvatarUrl.replace('https://storage.forever.co.th', '')}
+                  src={deceasedAvatarUrl}
                   alt="Avatar Repositioning"
                   className="pointer-events-none max-w-none origin-center"
                   style={{

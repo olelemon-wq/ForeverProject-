@@ -91,7 +91,7 @@ function CustomFamilyNode({ data }: { data: any }) {
 
   const lifespanText = hideAge ? '' : getAgeText();
 
-  let cleanedAvatarUrl = avatarUrl ? avatarUrl.replace('https://storage.forever.co.th', '') : '';
+  let cleanedAvatarUrl = avatarUrl || '';
   if (cleanedAvatarUrl && !cleanedAvatarUrl.startsWith('http') && !cleanedAvatarUrl.startsWith('/')) {
     cleanedAvatarUrl = '/' + cleanedAvatarUrl;
   }
