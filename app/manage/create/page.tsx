@@ -883,7 +883,15 @@ export default function WebsiteCreationWizard() {
                     setSlug(e.target.value.replace(/[^a-zA-Z0-9-]/g, ''));
                     setSlugValid(null);
                   }}
-                  placeholder="somsak-family"
+                  placeholder={
+                    category === 'Memorial' ? 'somsak-memorial' :
+                    category === 'Family Legacy' ? 'somsak-family' :
+                    category === 'Couple' ? 'somsak-and-ying' :
+                    category === 'Wedding' ? 'wedding-somsak-ying' :
+                    category === 'Friends' ? 'chula-law-35' :
+                    category === 'Pet Memorial' ? 'lucky-cat' :
+                    'somsak-family'
+                  }
                   className="flex-1 px-4 py-3.5 bg-stone-50 text-stone-900 font-mono text-sm focus:outline-none focus:bg-white"
                 />
               </div>
