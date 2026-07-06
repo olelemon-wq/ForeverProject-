@@ -3073,7 +3073,7 @@ export default function WebmasterDashboard() {
             {galleryUploading && (
               <div className="p-4 bg-stone-50 border border-stone-200 text-xs text-stone-600 rounded-2xl font-semibold animate-pulse flex items-center gap-2">
                 <RotateCw className="w-4 h-4 animate-spin text-emerald-600" />
-                <span>กำลังอัปโหลดรูปภาพไปยังคลังเก็บข้อมูล...</span>
+                <span>กำลังอัปโหลดไฟล์สื่อไปยังคลังเก็บข้อมูล...</span>
               </div>
             )}
 
@@ -3138,24 +3138,62 @@ export default function WebmasterDashboard() {
               </div>
             </div>
 
-            {/* YouTube Link Form */}
-            <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 text-left">
-              <h4 className="text-sm font-bold text-stone-900">แนบลิงก์วิดีโอจาก YouTube</h4>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="text"
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                  placeholder="วางลิงก์ เช่น https://www.youtube.com/watch?v=..."
-                  className="flex-1 px-4 py-2.5 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
-                />
-                <button
-                  onClick={handleSaveYoutubeLink}
-                  disabled={youtubeSaving}
-                  className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition active:scale-95 flex-shrink-0 cursor-pointer"
-                >
-                  {youtubeSaving ? 'กำลังบันทึก...' : 'บันทึกลิงก์'}
-                </button>
+            {/* Video Input Forms (YouTube link & Direct File upload) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* YouTube Link Form */}
+              <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 text-left flex flex-col justify-between">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-stone-900">แนบลิงก์วิดีโอจาก YouTube</h4>
+                  <p className="text-[10px] text-stone-500">ใส่ลิงก์คลิปจาก YouTube เพื่อแสดงผลบนหน้าเว็บ</p>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={youtubeUrl}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
+                    placeholder="วางลิงก์ เช่น https://www.youtube.com/watch?v=..."
+                    className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveYoutubeLink}
+                    disabled={youtubeSaving}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition active:scale-95 flex-shrink-0 cursor-pointer"
+                  >
+                    {youtubeSaving ? 'บันทึก...' : 'บันทึกลิงก์'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Direct File Upload Form */}
+              <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 text-left flex flex-col justify-between">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-stone-900">อัปโหลดไฟล์วิดีโอโดยตรง</h4>
+                  <p className="text-[10px] text-stone-500">รองรับไฟล์วิดีโอรูปแบบ .mp4, .mov (ขนาดแนะนำไม่เกิน 50MB)</p>
+                </div>
+                <div>
+                  <label className="w-full py-2 bg-white border border-stone-250 hover:bg-stone-50 text-stone-700 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-2xs">
+                    <Upload className="w-4 h-4 text-stone-500" />
+                    <span>เลือกไฟล์วิดีโอเพื่ออัปโหลด</span>
+                    <input 
+                      type="file" 
+                      accept="video/*" 
+                      className="hidden" 
+                      onChange={async (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          await uploadGalleryMedia(e.target.files[0]);
+                          // Refresh list
+                          if (!activeSite) return;
+                          const listRes = await fetch(`/api/media/list?websiteId=${activeSite.id}`);
+                          const listData = await listRes.json();
+                          if (listRes.ok) {
+                            setGalleryMedias(listData.mediaList || []);
+                          }
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
 
