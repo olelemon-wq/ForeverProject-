@@ -1,0 +1,15 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+async function main() {
+  const tenants = await prisma.tenant.findMany({
+    where: {
+      name: {
+        contains: 'บุญเครือ',
+      },
+    },
+  });
+  console.log(JSON.stringify(tenants, null, 2));
+}
+
+main().catch(console.error).finally(() => prisma.$disconnect());

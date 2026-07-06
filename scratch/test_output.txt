@@ -1,0 +1,9 @@
+Initial: 71895
+After grid replace: 61194
+family_start: 31502 section_start: 31554 family_end: 45281
+Is family_target in content? True
+After family replace: 61242
+ebook_start: 45329 ebook_section_start: 45377 ebook_end: 56378
+Is ebook_target in content? True
+After ebook replace: 61290
+condo_start: 56426 condo_section_start: 56472 condo_end: 61258
