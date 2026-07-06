@@ -421,7 +421,7 @@ export default function WebsiteCreationWizard() {
     }
   }, [subjects, category]);
   
-  const [selectedTheme, setSelectedTheme] = useState('Classic');
+  const [selectedTheme, setSelectedTheme] = useState('Peaceful Mint');
   const [primaryColor, setPrimaryColor] = useState('#0d9488');
   
   // Loading & error states
@@ -559,16 +559,21 @@ export default function WebsiteCreationWizard() {
     try {
       // Call create endpoint to save the tenant in pending payment state
       const themeColors: Record<string, string> = {
-        Classic: '#0d9488',
-        Warm: '#b45309',
-        Peaceful: '#0369a1',
-        Dark: '#1e293b',
-        Gold: '#b45309',
-        Rose: '#be185d',
-        Sky: '#0284c7',
-        Forest: '#15803d',
-        Royal: '#6d28d9',
-        Lavender: '#701a75',
+        'Peaceful Mint': '#7ea18b',
+        'Sweet Peach': '#e09f9f',
+        'Warm Caramel': '#c29a7c',
+        'Classic Olive': '#96a288',
+        'Ocean Breeze': '#8ba8bd',
+        'Lilac Dream': '#a49cb5',
+      };
+      
+      const themeSecondaryColors: Record<string, string> = {
+        'Peaceful Mint': '#d4be95',
+        'Sweet Peach': '#e6c1a8',
+        'Warm Caramel': '#dcc6a8',
+        'Classic Olive': '#cfc5b0',
+        'Ocean Breeze': '#ded2af',
+        'Lilac Dream': '#c8bfcb',
       };
       
       const res = await fetch('/api/tenant/create', {
@@ -580,8 +585,8 @@ export default function WebsiteCreationWizard() {
           category,
           deceasedName,
           themeConfig: {
-            primaryColor: themeColors[selectedTheme] || primaryColor,
-            secondaryColor: '#f59e0b',
+            primaryColor: themeColors[selectedTheme] || '#0d9488',
+            secondaryColor: themeSecondaryColors[selectedTheme] || '#f59e0b',
             fontFamily: 'Inter',
             heroStyle: 'Classic',
             subjects: subjects.map(s => ({
@@ -711,16 +716,12 @@ export default function WebsiteCreationWizard() {
 
   // RENDER WIZARD FLOW (IF AUTHENTICATED)
   const themes = [
-    { name: 'Classic', color: '#0d9488', desc: 'สุขุม เรียบง่าย สมเกียรติ' },
-    { name: 'Warm', color: '#b45309', desc: 'อบอุ่น อบอวลด้วยความคิดถึง' },
-    { name: 'Peaceful', color: '#0369a1', desc: 'เงียบสงบ สันติ รำลึก' },
-    { name: 'Dark', color: '#1e293b', desc: 'สง่างาม มั่นคง ล้ำลึก' },
-    { name: 'Gold', color: '#b45309', desc: 'หรูหรา เลอค่า มีเกียรติประวัติ' },
-    { name: 'Rose', color: '#be185d', desc: 'อ่อนหวาน รำลึกถึงเรื่องรักงาม' },
-    { name: 'Sky', color: '#0284c7', desc: 'สดใส ท้องฟ้า การเดินทางครั้งใหม่' },
-    { name: 'Forest', color: '#15803d', desc: 'สงบเย็น ร่มรื่น ธรรมชาติ' },
-    { name: 'Royal', color: '#6d28d9', desc: 'ทรงคุณค่า ภูมิฐาน โดดเด่น' },
-    { name: 'Lavender', color: '#701a75', desc: 'ผ่อนคลาย อ่อนโยน ปลอบประโลมใจ' },
+    { name: 'Peaceful Mint', primary: '#7ea18b', hover: '#668571', secondary: '#d4be95', light: '#f4f6f3', desc: 'โทนเขียวเสจหม่นและเบจทรายพรีเมียม (ไว้อาลัยอย่างสงบ)' },
+    { name: 'Sweet Peach', primary: '#e09f9f', hover: '#c48282', secondary: '#e6c1a8', light: '#fff7f5', desc: 'โทนชมพูพีชพาสเทลและส้มแอปริคอตนวล (งานแต่งงาน / คู่รัก)' },
+    { name: 'Warm Caramel', primary: '#c29a7c', hover: '#a67f62', secondary: '#dcc6a8', light: '#fbf8f5', desc: 'โทนน้ำตาลคาราเมลและเหลืองนมอุ่น (สัตว์เลี้ยง / บันทึกการเดินทาง)' },
+    { name: 'Classic Olive', primary: '#96a288', hover: '#7a866d', secondary: '#cfc5b0', light: '#f7f8f5', desc: 'โทนเขียวมะกอกหม่นและแชมเปญคลาสสิก (สายใยตระกูล / ครอบครัว)' },
+    { name: 'Ocean Breeze', primary: '#8ba8bd', hover: '#708d9e', secondary: '#ded2af', light: '#f5f7f9', desc: 'โทนฟ้าพาสเทลและเหลืองเลมอนครีมสดใส (มิตรภาพ / ย้อนวันวาน)' },
+    { name: 'Lilac Dream', primary: '#a49cb5', hover: '#89819a', secondary: '#c8bfcb', light: '#f7f6f8', desc: 'โทนม่วงไลแล็กหม่นและเทาลาเวนเดอร์ (หรูหรา / ทางการทั่วไป)' }
   ];
 
   return (
@@ -1177,26 +1178,43 @@ export default function WebsiteCreationWizard() {
         {wizardStep === 4 && (
           <div className="space-y-6 animate-fade-in">
             <header className="space-y-1">
-              <h2 className="text-xl font-black text-stone-900">เลือกธีมความทรงจำ V1 (10 ตัวเลือก)</h2>
+              <h2 className="text-xl font-black text-stone-900">เลือกธีมความทรงจำพาสเทลสำเร็จรูป (6 ตัวเลือก)</h2>
               <p className="text-xs text-stone-500">เลือกแนวโทนสีและอารมณ์ของหน้าเว็บความทรงจำของคุณ</p>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto pr-2">
-              {themes.map(t => (
-                <div 
-                  key={t.name}
-                  onClick={() => setSelectedTheme(t.name)}
-                  className={`p-4 rounded-2xl border cursor-pointer flex items-center justify-between gap-4 transition ${
-                    selectedTheme === t.name ? 'border-emerald-600 bg-emerald-50/40 shadow-sm' : 'border-stone-200 hover:border-stone-300 bg-stone-50/40'
-                  }`}
-                >
-                  <div className="space-y-1">
-                    <p className="text-sm font-bold text-stone-900">{t.name}</p>
-                    <p className="text-[10px] text-stone-500 leading-normal">{t.desc}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto pr-2">
+              {themes.map(t => {
+                const isActive = selectedTheme === t.name;
+                return (
+                  <div 
+                    key={t.name}
+                    onClick={() => setSelectedTheme(t.name)}
+                    className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between gap-4 transition select-none hover:shadow-md ${
+                      isActive ? 'border-sky-500 bg-sky-50/10 shadow-xs ring-2 ring-sky-500/10' : 'border-stone-200 hover:border-stone-300 bg-stone-50/20'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-bold text-stone-900">{t.name}</p>
+                        {isActive && (
+                          <span className="w-4 h-4 bg-sky-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                            ✓
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-stone-500 leading-normal">{t.desc}</p>
+                    </div>
+                    
+                    {/* Color dots row */}
+                    <div className="flex gap-1 items-center">
+                      <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.primary }} />
+                      <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.hover }} />
+                      <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.secondary }} />
+                      <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.light }} />
+                    </div>
                   </div>
-                  <div className="w-8 h-8 rounded-full shadow-inner flex-shrink-0" style={{ backgroundColor: t.color }} />
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="flex justify-between pt-4 border-t border-stone-100">
