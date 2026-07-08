@@ -22,18 +22,24 @@ export default function MarketingLayout({
           </Link>
 
           {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-8 text-xs font-normal text-[#1D1D1F]/80">
-            <a href="#features" className="hover:text-[#1D1D1F] transition-colors duration-300">
-              Features
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-xs font-normal text-[#1D1D1F]/80">
+            <a href="#memorial" className="hover:text-[#1D1D1F] transition-colors duration-300">
+              Memorial
             </a>
-            <a href="#legacy" className="hover:text-[#1D1D1F] transition-colors duration-300">
-              Legacy
+            <a href="#family-legacy" className="hover:text-[#1D1D1F] transition-colors duration-300">
+              Family Legacy
             </a>
-            <a href="#memorials" className="hover:text-[#1D1D1F] transition-colors duration-300">
-              Memorials
+            <a href="#couple" className="hover:text-[#1D1D1F] transition-colors duration-300">
+              Couple
             </a>
-            <a href="#about" className="hover:text-[#1D1D1F] transition-colors duration-300">
-              About
+            <a href="#wedding" className="hover:text-[#1D1D1F] transition-colors duration-300">
+              Wedding
+            </a>
+            <a href="#friends" className="hover:text-[#1D1D1F] transition-colors duration-300">
+              Friends
+            </a>
+            <a href="#pet-memorial" className="hover:text-[#1D1D1F] transition-colors duration-300">
+              Pet Memorial
             </a>
           </div>
 
@@ -48,7 +54,7 @@ export default function MarketingLayout({
             
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden text-[#1D1D1F] hover:opacity-80 transition-opacity cursor-pointer p-1"
+              className="lg:hidden text-[#1D1D1F] hover:opacity-80 transition-opacity cursor-pointer p-1"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -56,35 +62,49 @@ export default function MarketingLayout({
 
           {/* Mobile Dropdown Panel */}
           {isMobileMenuOpen && (
-            <div className="md:hidden absolute left-0 right-0 top-full border-b border-[#bfc9c3]/20 bg-[#FFFFFF] shadow-xl z-50 divide-y divide-[#bfc9c3]/10">
+            <div className="lg:hidden absolute left-0 right-0 top-full border-b border-[#bfc9c3]/20 bg-[#FFFFFF] shadow-xl z-50 divide-y divide-[#bfc9c3]/10">
               <div className="flex flex-col p-4 gap-2 bg-[#FFFFFF]">
                 <a 
-                  href="#features" 
+                  href="#memorial" 
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="px-4 py-3 text-sm font-medium text-[#1D1D1F]/80 hover:text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-xl transition block"
                 >
-                  Features
+                  Memorial
                 </a>
                 <a 
-                  href="#legacy" 
+                  href="#family-legacy" 
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="px-4 py-3 text-sm font-medium text-[#1D1D1F]/80 hover:text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-xl transition block"
                 >
-                  Legacy
+                  Family Legacy
                 </a>
                 <a 
-                  href="#memorials" 
+                  href="#couple" 
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="px-4 py-3 text-sm font-medium text-[#1D1D1F]/80 hover:text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-xl transition block"
                 >
-                  Memorials
+                  Couple
                 </a>
                 <a 
-                  href="#about" 
+                  href="#wedding" 
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="px-4 py-3 text-sm font-medium text-[#1D1D1F]/80 hover:text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-xl transition block"
                 >
-                  About
+                  Wedding
+                </a>
+                <a 
+                  href="#friends" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="px-4 py-3 text-sm font-medium text-[#1D1D1F]/80 hover:text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-xl transition block"
+                >
+                  Friends
+                </a>
+                <a 
+                  href="#pet-memorial" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="px-4 py-3 text-sm font-medium text-[#1D1D1F]/80 hover:text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-xl transition block"
+                >
+                  Pet Memorial
                 </a>
                 <Link 
                   href="/login" 
