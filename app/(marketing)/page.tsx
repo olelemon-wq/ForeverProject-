@@ -21,12 +21,12 @@ import {
 
 export default function MarketingHome() {
   return (
-    <main className="bg-[#FFFFFF] text-[#1D1D1F] antialiased selection:bg-[#0F6E56] selection:text-[#FFFFFF] min-h-screen">
+    <main className="bg-[#FFFFFF] text-[#1D1D1F] antialiased selection:bg-[#0071e3] selection:text-[#FFFFFF] min-h-screen">
       
       {/* HERO SECTION */}
       <section className="max-w-[1040px] mx-auto px-6 py-20 md:py-32 relative overflow-hidden">
         {/* Background glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#0F6E56]/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#0071e3]/5 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
           <h1 className="text-[48px] md:text-[80px] font-bold tracking-tight text-[#1D1D1F] leading-[1.05] font-sans">
@@ -38,13 +38,13 @@ export default function MarketingHome() {
           <div className="flex flex-col sm:flex-row gap-4 pt-6">
             <Link 
               href="/login" 
-              className="inline-flex items-center justify-center bg-[#0F6E56] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0F6E56]/90 transition-all active:scale-[0.98]"
+              className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-all active:scale-[0.98]"
             >
               Start a Memorial
             </Link>
             <Link 
               href="/kittiemeaw" 
-              className="inline-flex items-center justify-center bg-transparent text-[#0F6E56] font-medium text-[17px] px-8 py-3 rounded-full hover:underline transition-all flex items-center gap-1"
+              className="inline-flex items-center justify-center bg-transparent text-[#0071e3] font-medium text-[17px] px-8 py-3 rounded-full hover:underline transition-all flex items-center gap-1"
             >
               Explore Examples <ChevronRight className="w-4 h-4" />
             </Link>
@@ -97,7 +97,7 @@ export default function MarketingHome() {
               <div>
                 <Link 
                   href="/login" 
-                  className="inline-flex items-center justify-center bg-[#0F6E56] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0F6E56]/90 transition-colors"
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   สร้างเว็บคู่รัก
                 </Link>
@@ -175,7 +175,7 @@ export default function MarketingHome() {
               <div>
                 <Link 
                   href="/login" 
-                  className="inline-flex items-center justify-center bg-[#0F6E56] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0F6E56]/90 transition-colors"
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   สร้างเว็บงานแต่ง
                 </Link>
@@ -270,7 +270,7 @@ export default function MarketingHome() {
               <div>
                 <Link 
                   href="/login" 
-                  className="inline-flex items-center justify-center bg-[#0F6E56] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0F6E56]/90 transition-colors"
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   สร้างเว็บกลุ่มเพื่อน
                 </Link>
@@ -362,7 +362,7 @@ export default function MarketingHome() {
               <div>
                 <Link 
                   href="/login" 
-                  className="inline-flex items-center justify-center bg-[#0F6E56] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0F6E56]/90 transition-colors"
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   สร้างเว็บสัตว์เลี้ยง
                 </Link>
@@ -441,22 +441,22 @@ export default function MarketingHome() {
             <h2 className="text-[48px] md:text-[80px] tracking-tight text-[#1D1D1F] font-bold">฿2,000 / ปี</h2>
             <div className="flex flex-col items-center gap-3 pt-4">
               <div className="flex items-center gap-2 text-[#1D1D1F] font-medium text-[17px]">
-                <Check className="w-4 h-4 text-[#0F6E56]" />
+                <Check className="w-4 h-4 text-[#0071e3]" />
                 <span>พื้นที่ 1 GB</span>
               </div>
               <div className="flex items-center gap-2 text-[#1D1D1F] font-medium text-[17px]">
-                <Check className="w-4 h-4 text-[#0F6E56]" />
+                <Check className="w-4 h-4 text-[#0071e3]" />
                 <span>ครบทุกฟีเจอร์</span>
               </div>
               <div className="flex items-center gap-2 text-[#1D1D1F] font-medium text-[17px]">
-                <Check className="w-4 h-4 text-[#0F6E56]" />
+                <Check className="w-4 h-4 text-[#0071e3]" />
                 <span>QR ถาวรสำหรับพิมพ์</span>
               </div>
             </div>
             <div className="pt-8">
               <Link 
                 href="/login" 
-                className="inline-flex items-center justify-center bg-[#0F6E56] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0F6E56]/90 transition-colors"
+                className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
               >
                 เริ่มสร้างเลย
               </Link>
@@ -472,7 +472,7 @@ export default function MarketingHome() {
             <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">พร้อมเริ่มเก็บความทรงจำแล้วหรือยัง</h2>
             <Link 
               href="/login" 
-              className="inline-flex items-center justify-center bg-[#0F6E56] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0F6E56]/90 transition-colors"
+              className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
             >
               สร้างเว็บไซต์ของคุณ
             </Link>
