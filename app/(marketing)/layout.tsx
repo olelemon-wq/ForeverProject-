@@ -2,8 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { useLanguageStore } from '@/stores/useLanguageStore';
+
+const TH_FLAG = (
+  <svg viewBox="0 0 9 6" className="w-[22px] h-[15px] rounded-[3px] overflow-hidden object-cover border border-stone-200 flex-shrink-0">
+    <rect fill="#EF3340" width="9" height="6"/>
+    <rect fill="#F1F2F2" y="1" width="9" height="4"/>
+    <rect fill="#002F6C" y="2" width="9" height="2"/>
+  </svg>
+);
+
+const EN_FLAG = (
+  <svg viewBox="0 0 60 30" className="w-[22px] h-[15px] rounded-[3px] overflow-hidden object-cover border border-stone-200 flex-shrink-0">
+    <rect width="60" height="30" fill="#012169"/>
+    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
+    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="2"/>
+    <path d="M30,0 V30 M0,15 H60" stroke="#fff" strokeWidth="10"/>
+    <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" strokeWidth="6"/>
+  </svg>
+);
 
 export default function MarketingLayout({
   children,
@@ -11,6 +29,7 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const { lang, setLang } = useLanguageStore();
   const [mounted, setMounted] = useState(false);
 
@@ -52,41 +71,54 @@ export default function MarketingLayout({
           {/* Right action button / Language Switcher / Mobile toggle */}
           <div className="flex items-center gap-4">
             
-            {/* Flag Selector Switcher */}
-            <div className="flex items-center gap-2.5 px-2 py-1 bg-stone-100/60 rounded-full border border-stone-200/50">
-              <button 
+            {/* Single Flag Dropdown Switcher */}
+            <div className="relative">
+              <button
                 type="button"
-                onClick={() => setLang('th')}
-                className={`w-5.5 h-5.5 rounded-full overflow-hidden flex items-center justify-center transition active:scale-95 cursor-pointer border ${
-                  currentLang === 'th' ? 'border-[#0071e3] scale-105 shadow-xs' : 'border-transparent opacity-50 hover:opacity-90'
-                }`}
-                title="ภาษาไทย"
+                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200/80 rounded-full border border-stone-200/50 transition active:scale-95 cursor-pointer text-stone-600 hover:text-stone-900 select-none"
               >
-                {/* Thailand Flag SVG */}
-                <svg viewBox="0 0 9 6" className="w-full h-full object-cover">
-                  <rect fill="#EF3340" width="9" height="6"/>
-                  <rect fill="#F1F2F2" y="1" width="9" height="4"/>
-                  <rect fill="#002F6C" y="2" width="9" height="2"/>
-                </svg>
+                {currentLang === 'th' ? TH_FLAG : EN_FLAG}
+                <ChevronDown className={`w-3.5 h-3.5 text-stone-500 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              <button 
-                type="button"
-                onClick={() => setLang('en')}
-                className={`w-5.5 h-5.5 rounded-full overflow-hidden flex items-center justify-center transition active:scale-95 cursor-pointer border ${
-                  currentLang === 'en' ? 'border-[#0071e3] scale-105 shadow-xs' : 'border-transparent opacity-50 hover:opacity-90'
-                }`}
-                title="English"
-              >
-                {/* UK Union Jack Flag SVG */}
-                <svg viewBox="0 0 60 30" className="w-full h-full object-cover">
-                  <rect width="60" height="30" fill="#012169"/>
-                  <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
-                  <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="2"/>
-                  <path d="M30,0 V30 M0,15 H60" stroke="#fff" strokeWidth="10"/>
-                  <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" strokeWidth="6"/>
-                </svg>
-              </button>
+              {/* Dropdown Menu */}
+              {isLangDropdownOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40 bg-transparent"
+                    onClick={() => setIsLangDropdownOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-36 bg-white rounded-2xl border border-stone-200 shadow-lg p-1.5 z-50 flex flex-col gap-0.5 animate-fade-in text-left">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLang('th');
+                        setIsLangDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition text-left cursor-pointer hover:bg-stone-50 ${
+                        currentLang === 'th' ? 'text-blue-600 bg-blue-50/40 font-bold' : 'text-stone-600'
+                      }`}
+                    >
+                      {TH_FLAG}
+                      <span>ภาษาไทย</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLang('en');
+                        setIsLangDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition text-left cursor-pointer hover:bg-stone-50 ${
+                        currentLang === 'en' ? 'text-blue-600 bg-blue-50/40 font-bold' : 'text-stone-600'
+                      }`}
+                    >
+                      {EN_FLAG}
+                      <span>English</span>
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
 
             <Link 
@@ -129,7 +161,7 @@ export default function MarketingLayout({
                     <button 
                       type="button"
                       onClick={() => { setLang('th'); setIsMobileMenuOpen(false); }}
-                      className={`w-6 h-6 rounded-full overflow-hidden border ${currentLang === 'th' ? 'border-[#0071e3] scale-105' : 'border-stone-300 opacity-60'}`}
+                      className={`w-[24px] h-[16px] rounded-[3px] overflow-hidden border ${currentLang === 'th' ? 'border-[#0071e3] scale-105' : 'border-stone-300 opacity-60'}`}
                     >
                       <svg viewBox="0 0 9 6" className="w-full h-full object-cover">
                         <rect fill="#EF3340" width="9" height="6"/>
@@ -140,7 +172,7 @@ export default function MarketingLayout({
                     <button 
                       type="button"
                       onClick={() => { setLang('en'); setIsMobileMenuOpen(false); }}
-                      className={`w-6 h-6 rounded-full overflow-hidden border ${currentLang === 'en' ? 'border-[#0071e3] scale-105' : 'border-stone-300 opacity-60'}`}
+                      className={`w-[24px] h-[16px] rounded-[3px] overflow-hidden border ${currentLang === 'en' ? 'border-[#0071e3] scale-105' : 'border-stone-300 opacity-60'}`}
                     >
                       <svg viewBox="0 0 60 30" className="w-full h-full object-cover">
                         <rect width="60" height="30" fill="#012169"/>
