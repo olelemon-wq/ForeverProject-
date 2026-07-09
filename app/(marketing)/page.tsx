@@ -250,7 +250,7 @@ export default function MarketingHome() {
             <div className="relative md:absolute md:inset-0 md:right-1/2 w-full md:w-1/2 h-[300px] md:h-full order-2 md:order-1">
               <img 
                 className="w-full h-full object-cover object-center absolute inset-0" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTUa1wYwXk0261eC8s3h9uG52_2eK2Wq2r6l0PewXhL1z2J5v8O9H9Z2z6F_0P1e9aR9H9M2z6F_0P1e9" 
+                src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80" 
                 alt="Wedding editorial photograph"
               />
             </div>
