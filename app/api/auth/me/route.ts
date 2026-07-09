@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth/jwt';
+import { verifyToken, signToken } from '@/lib/auth/jwt';
 
 export async function GET() {
   try {
@@ -16,10 +16,23 @@ export async function GET() {
       return NextResponse.json({ authenticated: false });
     }
 
-    return NextResponse.json({
+    // SLIDING RENEWAL: Re-sign token and re-issue the cookie
+    const newToken = await signToken({ phone: decoded.phone });
+
+    const response = NextResponse.json({
       authenticated: true,
       phone: decoded.phone,
     });
+
+    response.cookies.set('session', newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 90 * 24 * 60 * 60, // 90 days sliding renewal
+    });
+
+    return response;
   } catch (error) {
     return NextResponse.json({ authenticated: false }, { status: 500 });
   }

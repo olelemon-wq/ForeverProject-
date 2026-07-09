@@ -7,7 +7,7 @@ export async function signToken(payload: { phone: string }): Promise<string> {
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('30d') // Session lasts for 30 days
+    .setExpirationTime('90d') // Session lasts for 90 days
     .sign(secretKey);
   return token;
 }

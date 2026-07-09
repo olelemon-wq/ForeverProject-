@@ -37,7 +37,7 @@ export default function MarketingHome() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 pt-6">
             <Link 
-              href="/login" 
+              href="/login?category=Memorial" 
               className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-all active:scale-[0.98]"
             >
               Start a Memorial
@@ -78,6 +78,14 @@ export default function MarketingHome() {
                   <span className="text-[17px] text-[#1D1D1F] font-medium">Collaborative photo albums</span>
                 </li>
               </ul>
+              <div className="pt-6">
+                <Link 
+                  href="/login?category=Memorial" 
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
+                >
+                  สร้างเว็บรำลึกบุคคล
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -96,7 +104,7 @@ export default function MarketingHome() {
               </p>
               <div>
                 <Link 
-                  href="/login" 
+                  href="/login?category=Couple" 
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   สร้างเว็บคู่รัก
@@ -174,7 +182,7 @@ export default function MarketingHome() {
               </p>
               <div>
                 <Link 
-                  href="/login" 
+                  href="/login?category=Wedding" 
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   สร้างเว็บงานแต่ง
@@ -251,6 +259,14 @@ export default function MarketingHome() {
                   <h3 className="font-semibold text-[17px] text-[#1D1D1F]">Heirloom Recipes</h3>
                 </div>
               </div>
+              <div className="pt-6">
+                <Link 
+                  href="/login?category=Family Legacy" 
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
+                >
+                  สร้างเว็บประวัติตระกูล
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -269,7 +285,7 @@ export default function MarketingHome() {
               </p>
               <div>
                 <Link 
-                  href="/login" 
+                  href="/login?category=Friends" 
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   สร้างเว็บกลุ่มเพื่อน
@@ -361,7 +377,7 @@ export default function MarketingHome() {
               </p>
               <div>
                 <Link 
-                  href="/login" 
+                  href="/login?category=Pet Memorial" 
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   สร้างเว็บสัตว์เลี้ยง
@@ -455,7 +471,7 @@ export default function MarketingHome() {
             </div>
             <div className="pt-8">
               <Link 
-                href="/login" 
+                href="/login?category=Memorial" 
                 className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
               >
                 เริ่มสร้างเลย
@@ -471,7 +487,7 @@ export default function MarketingHome() {
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">พร้อมเริ่มเก็บความทรงจำแล้วหรือยัง</h2>
             <Link 
-              href="/login" 
+              href="/login?category=Memorial" 
               className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
             >
               สร้างเว็บไซต์ของคุณ

@@ -44,9 +44,20 @@ model Webmaster {
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
 
+  phones        WebmasterPhone[]
   websites      WebsiteWebmaster[]
   devices       TrustedDevice[]
   memorialPosts MemorialPost[]
+}
+
+model WebmasterPhone {
+  id          String   @id @default(uuid())
+  webmasterId String
+  phone       String   @unique
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  webmaster Webmaster @relation(fields: [webmasterId], references: [id], onDelete: Cascade)
 }
 
 model WebsiteWebmaster {

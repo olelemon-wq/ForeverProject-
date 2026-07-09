@@ -18,21 +18,27 @@ export async function GET() {
       return NextResponse.json({ error: 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่อีกครั้ง' }, { status: 401 });
     }
 
-    // 2. Fetch all website relations for this Webmaster phone number
-    const webmaster = await db.webmaster.findUnique({
+    // 2. Fetch all website relations for this Webmaster phone number via WebmasterPhone
+    const phoneRecord = await db.webmasterPhone.findUnique({
       where: { phone: decoded.phone },
       include: {
-        websites: {
+        webmaster: {
           include: {
-            website: true,
+            websites: {
+              include: {
+                website: true,
+              },
+            },
           },
         },
       },
     });
 
-    if (!webmaster) {
+    if (!phoneRecord || !phoneRecord.webmaster) {
       return NextResponse.json({ websites: [] });
     }
+
+    const webmaster = phoneRecord.webmaster;
 
     const managedSites = webmaster.websites.map((relation) => ({
       id: relation.website.id,

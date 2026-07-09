@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import FeatureToggleList from '@/components/FeatureToggleList';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
+import BackupPhoneSection from '@/components/BackupPhoneSection';
 import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categories';
 import { 
   Flame, BookOpen, Camera, GitBranch, Settings, Plus, Minus, Trash2, Edit3, 
@@ -386,10 +387,16 @@ export default function WebmasterDashboard() {
         if (list.length > 0) {
           const searchParams = new URLSearchParams(window.location.search);
           const siteParam = searchParams.get('site');
-          const matchedSite = siteParam
-            ? list.find((w: any) => w.slug === siteParam || w.id === siteParam)
-            : null;
-          selectWebsite(matchedSite || list[0]);
+          if (siteParam) {
+            const matchedSite = list.find((w: any) => w.slug === siteParam || w.id === siteParam);
+            if (matchedSite) {
+              selectWebsite(matchedSite);
+            } else {
+              setActiveSite(null);
+            }
+          } else {
+            setActiveSite(null);
+          }
         }
       } catch (err: any) {
         setError(err.message || 'เกิดข้อผิดพลาดในการโหลดข้อมูลเว็บไซต์');
@@ -744,6 +751,10 @@ export default function WebmasterDashboard() {
 
   // 2. Select Website & Load related details
   const selectWebsite = async (site: Website) => {
+    if (site.status === 'PENDING_PAYMENT') {
+      window.location.href = `/manage/payment?site=${site.id}`;
+      return;
+    }
     setActiveSite(site);
     setSiteName(site.name);
     setSiteCategory(site.category);
@@ -1628,6 +1639,141 @@ export default function WebmasterDashboard() {
   const photoMedias = galleryMedias.filter(m => !m.mimeType?.startsWith('video/') && m.mimeType !== 'video/youtube');
   const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
 
+  if (!activeSite) {
+    return (
+      <main className="min-h-screen bg-stone-50 text-stone-850 p-6 md:p-12 font-sans relative flex items-center justify-center">
+        {/* Decorative Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-blue-500/5 rounded-full blur-[80px] pointer-events-none" />
+
+        <div className="max-w-5xl w-full mx-auto space-y-10 relative z-10">
+          
+          {/* Header */}
+          <header className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-3xl border border-stone-200 p-6 shadow-sm gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-xl font-black text-stone-900 tracking-wider">
+                FOREVER <span className="text-[#0071e3] font-normal">เว็บของฉัน</span>
+              </span>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-3 justify-center">
+              <div className="text-right pr-2">
+                <p className="text-[10px] text-stone-400 font-bold uppercase">บัญชีผู้ใช้งาน</p>
+                <p className="text-xs font-bold text-stone-700">{userPhone || 'กำลังโหลด...'}</p>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="px-4 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 hover:text-stone-900 text-stone-600 text-xs font-bold transition flex items-center gap-1.5 active:scale-[0.97] cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>ออกจากระบบ</span>
+              </button>
+            </div>
+          </header>
+
+          {/* Backup Phones Section & Grid layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Left: Websites Grid */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex justify-between items-center pl-1">
+                <h2 className="text-sm font-black text-stone-900 flex items-center gap-2">
+                  <Grid className="w-4 h-4 text-[#0071e3]" />
+                  <span>เว็บไซต์อนุสรณ์ของฉัน ({websites.length})</span>
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {websites.map((site) => {
+                  const isActive = site.status === 'ACTIVE';
+                  
+                  return (
+                    <div key={site.id} className="bg-white rounded-3xl border border-stone-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between h-48 group text-left animate-fade-in">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-start">
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-50 text-[#0071e3] border border-blue-100">
+                            {site.category}
+                          </span>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black ${
+                            isActive ? 'bg-emerald-50 text-emerald-800 border border-emerald-100' : 'bg-amber-50 text-amber-800 border border-amber-100'
+                          }`}>
+                            {isActive ? '● ใช้งานอยู่' : '● รอชำระเงิน'}
+                          </span>
+                        </div>
+                        <h3 className="text-sm font-bold text-stone-900 line-clamp-1 group-hover:text-[#0071e3] transition">{site.name}</h3>
+                        
+                        {isActive ? (
+                          <a 
+                            href={`/${site.slug}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-[10px] text-stone-400 font-medium hover:underline flex items-center gap-1 mt-1 font-mono"
+                          >
+                            <ExternalLink className="w-3 h-3 text-stone-400" />
+                            <span>forever.co.th/{site.slug}</span>
+                          </a>
+                        ) : (
+                          <p className="text-[10px] text-stone-400 font-mono mt-1">ยังไม่เปิดใช้งาน (ยังไม่มีลิงก์)</p>
+                        )}
+                      </div>
+
+                      <div className="pt-4 border-t border-stone-100 mt-2 flex gap-2">
+                        {isActive ? (
+                          <button
+                            onClick={() => selectWebsite(site)}
+                            className="w-full py-2.5 rounded-xl bg-stone-900 hover:bg-stone-850 text-white font-bold text-xs transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+                          >
+                            <Settings className="w-3.5 h-3.5" />
+                            <span>จัดการเว็บไซต์</span>
+                          </button>
+                        ) : (
+                          <Link
+                            href={`/manage/payment?site=${site.id}`}
+                            className="w-full py-2.5 rounded-xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-xs transition active:scale-95 text-center flex items-center justify-center gap-1.5 animate-pulse"
+                          >
+                            <CreditCard className="w-3.5 h-3.5" />
+                            <span>ชำระเงิน ฿2,000</span>
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Create New Website card button */}
+                <Link 
+                  href="/"
+                  className="bg-stone-50 hover:bg-stone-100/70 border-2 border-dashed border-stone-250 rounded-3xl p-6 flex flex-col items-center justify-center h-48 transition group text-center space-y-2 select-none"
+                >
+                  <div className="w-12 h-12 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-xs group-hover:scale-105 transition">
+                    <Plus className="w-6 h-6 text-stone-500 group-hover:text-[#0071e3]" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-stone-700 group-hover:text-stone-900">สร้างเว็บไซต์ความทรงจำใหม่</p>
+                    <p className="text-[10px] text-stone-400 mt-0.5">เลือกหัวข้อและรับรหัสผ่านมือถือ</p>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Phone Numbers Management */}
+            <div className="space-y-6">
+              <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-sm space-y-5">
+                <h2 className="text-sm font-black text-stone-900 flex items-center gap-1.5 border-b border-stone-100 pb-3">
+                  <Smartphone className="w-4.5 h-4.5 text-[#0071e3]" />
+                  <span>การจัดการเบอร์โทรศัพท์</span>
+                </h2>
+                
+                <BackupPhoneSection userPhone={userPhone} />
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-850 flex flex-col md:flex-row font-sans">
       {/* Mobile Top Bar */}
@@ -1660,9 +1806,25 @@ export default function WebmasterDashboard() {
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div>
-          <div className="flex items-center gap-2 mb-8">
-            <span className="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              FOREVER MANAGE
+          <div className="mb-6">
+            <button
+              onClick={() => {
+                setActiveSite(null);
+                if (typeof window !== 'undefined') {
+                  const url = new URL(window.location.href);
+                  url.searchParams.delete('site');
+                  window.history.replaceState({}, '', url.toString());
+                }
+              }}
+              className="w-full py-2.5 bg-white border border-stone-250 hover:bg-stone-50 text-stone-700 hover:text-stone-900 rounded-xl text-[10px] font-black transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-stone-500" />
+              <span>กลับไปหน้าเว็บของฉัน</span>
+            </button>
+          </div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xs font-black tracking-wider bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent truncate max-w-[200px]">
+              จัดการ: {activeSite?.name}
             </span>
           </div>
           <nav className="space-y-1">

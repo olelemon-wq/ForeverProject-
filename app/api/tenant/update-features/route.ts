@@ -70,6 +70,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'ไม่พบเว็บไซต์ความทรงจำนี้' }, { status: 404 });
     }
 
+    if (tenant.status === 'PENDING_PAYMENT') {
+      return NextResponse.json({ error: 'ไม่สามารถปรับปรุงฟีเจอร์ได้เนื่องจากเว็บไซต์อยู่ในสถานะรอชำระเงิน' }, { status: 403 });
+    }
+
     const currentConfig =
       tenant.themeConfig && typeof tenant.themeConfig === 'object'
         ? (tenant.themeConfig as Record<string, unknown>)

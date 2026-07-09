@@ -56,6 +56,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'คุณไม่มีสิทธิ์อัปเดตข้อมูลของเว็บไซต์ความทรงจำนี้' }, { status: 403 });
     }
 
+    const tenant = await db.tenant.findUnique({
+      where: { id: websiteId }
+    });
+
+    if (tenant && tenant.status === 'PENDING_PAYMENT') {
+      return NextResponse.json({ error: 'ไม่สามารถอัปเดตข้อมูลได้เนื่องจากเว็บไซต์อยู่ในสถานะรอชำระเงิน' }, { status: 403 });
+    }
+
     // 4. Update fields
     const updatedTenant = await db.tenant.update({
       where: { id: websiteId },

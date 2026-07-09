@@ -21,20 +21,34 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const refId = searchParams.get('refId');
+    const websiteId = searchParams.get('websiteId');
+    const json = searchParams.get('json');
 
-    if (!refId) {
-      return NextResponse.json({ error: 'กรุณาระบุรหัสอ้างอิงการชำระเงิน (refId)' }, { status: 400 });
+    if (!refId && !websiteId) {
+      return NextResponse.json({ error: 'กรุณาระบุรหัสอ้างอิงการชำระเงิน (refId) หรือ รหัสเว็บไซต์ (websiteId)' }, { status: 400 });
     }
 
     // 1. Fetch payment details from DB
-    let payment: any = await db.payment.findUnique({
-      where: { refId },
-      include: { website: true },
-    });
+    let payment: any = null;
+    if (refId) {
+      payment = await db.payment.findUnique({
+        where: { refId },
+        include: { website: true },
+      });
+    } else if (websiteId) {
+      payment = await db.payment.findFirst({
+        where: { websiteId, status: 'PENDING' },
+        include: { website: true },
+      });
+    }
+
+    if (json === 'true') {
+      return NextResponse.json({ success: true, payment });
+    }
 
     // Fallback Mock data for testing and validation when database is unseeded
     if (!payment) {
-      if (refId.startsWith('mock') || refId.startsWith('QR-')) {
+      if (refId && (refId.startsWith('mock') || refId.startsWith('QR-'))) {
         payment = {
           id: 'mock-id-' + Date.now(),
           websiteId: 'mock-web-id',

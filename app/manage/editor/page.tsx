@@ -263,6 +263,10 @@ function EditorWorkspace() {
         if (res.ok && data.websites && data.websites.length > 0) {
           const site = data.websites.find((w: any) => w.slug.toLowerCase() === slug.toLowerCase()) || data.websites[0];
           if (site) {
+            if (site.status === 'PENDING_PAYMENT') {
+              window.location.href = `/manage/payment?site=${site.id}`;
+              return;
+            }
             setSiteCategory(site.category || 'Memorial');
             const config = site.themeConfig || {};
             const ann = config.announcement || {};
