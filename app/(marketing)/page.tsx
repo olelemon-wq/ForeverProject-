@@ -411,26 +411,20 @@ export default function MarketingHome() {
               </div>
 
               <div className="bg-[#F5F5F7] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
-                <div className="mb-6">
+                <div className="mb-6 overflow-hidden rounded-2xl aspect-[4/3] bg-[#FFFFFF]/50 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+                  <img 
+                    src="/images/pet-polaroids.jpg" 
+                    alt="Pet gallery preview" 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="mb-4">
                   <PawPrint className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">คลังภาพเจ้าตัวน้อย</h3>
                 <p className="font-medium text-[17px] text-[#86868B] mb-8 flex-grow">อัลบั้มภาพและโมเมนต์น่ารักทั้งหมด</p>
-                <div className="grid grid-cols-2 gap-2 mt-4 w-full">
-                  <div className="aspect-square rounded-2xl overflow-hidden bg-[#FFFFFF]/50 relative">
-                    <img 
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIxLkfzmvAuAolaGpul_xvo2K4S3tly6NV59mSVrHvPXPaRAR04z-avcFb_IyFIIGKhAnM2I-wQxbILN_yrieU1afVJ0OZNfpPfqzjUpZr-km0rQ9sXwNlj0JZoKAt3qT3QHn2Ztup47QqGWxxRwTkaze_5I7QKD9entCRu7QxOufzfNyhrWwek_onJz--O8Lg_sTCVp2KOdG8I2ciTxhdAhLSw6GxWiWRK3ifEVnTw4REedWXfepycOl7QIXm9Fzv" 
-                      alt="Pet thumbnail" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="aspect-square rounded-2xl overflow-hidden bg-[#FFFFFF]/50 relative">
-                    <img 
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ8mHQmVD4_KsLtwkvbuHyjoHqzmFXCSA9a_Et-5otktj3t8I27I-fx6BNbOJkoDbfDoRCbHzFAWF0touf4ao8dFHxRb5c3X0UL79kCjW-IRGyvveHy3n6OkJzjc1l5UbEHCFFKyEgU2UNxlBCSueU4sHVX4yy7sV3m-o9uSUM4tVzbzFGw-LEGRU2I6wx41uk_4HdO1pNlP2n00Wfe0_x_oEbevQ8JjjaIPuWXXVpWcy94XhyCYY" 
-                      alt="Kitten thumbnail" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
+                  <Plus className="w-4 h-4" />
                 </div>
               </div>
 
