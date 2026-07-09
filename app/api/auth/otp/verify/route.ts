@@ -75,18 +75,38 @@ export async function POST(request: Request) {
     if (phoneRecord) {
       webmaster = phoneRecord.webmaster;
     } else {
-      webmaster = await db.webmaster.create({
-        data: {
-          phone: cleanPhone,
-          name: '',
-          phones: {
-            create: {
-              phone: cleanPhone,
-              isPrimary: true,
+      // Fallback: Check if a Webmaster already exists with this phone number (legacy record)
+      const existingWebmaster = await db.webmaster.findUnique({
+        where: { phone: cleanPhone },
+      });
+
+      if (existingWebmaster) {
+        webmaster = existingWebmaster;
+        // Create the WebmasterPhone relation so we heal the database automatically
+        await db.webmasterPhone.create({
+          data: {
+            webmasterId: webmaster.id,
+            phone: cleanPhone,
+            isPrimary: true,
+          },
+        }).catch((err) => {
+          console.warn('Failed to auto-heal WebmasterPhone record:', err);
+        });
+      } else {
+        // Create new Webmaster + WebmasterPhone
+        webmaster = await db.webmaster.create({
+          data: {
+            phone: cleanPhone,
+            name: '',
+            phones: {
+              create: {
+                phone: cleanPhone,
+                isPrimary: true,
+              },
             },
           },
-        },
-      });
+        });
+      }
     }
 
     // 7. If Category param is provided, create a PENDING_PAYMENT Draft website with temp slug (draft-<uuid>)
