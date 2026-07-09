@@ -356,8 +356,8 @@ export default function MarketingHome() {
               <h2 className="text-[40px] md:text-[56px] tracking-tight font-semibold mb-4 leading-tight text-[#1D1D1F]">
                 สัตว์เลี้ยง (Pet Memorial)
               </h2>
-              <p className="text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
-                อนุสรณ์แห่งรักถึงเจ้าตัวน้อยในครอบครัว
+              <p className="text-[19px] text-[#86868B] font-medium mb-8 max-w-md leading-relaxed">
+                พื้นที่เก็บความทรงจำที่สวยงามและความรักอันไม่มีเงื่อนไขของเจ้าตัวน้อยผู้เป็นสมาชิกในครอบครัว เพื่อให้ทุกช่วงเวลาแสนรักและรอยยิ้มของน้องยังคงอยู่และเบ่งบานในใจเราตลอดกาล
               </p>
               <div>
                 <Link 
@@ -386,7 +386,7 @@ export default function MarketingHome() {
                   <FileEdit className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">สมุดส่งความคิดถึง</h3>
-                <p className="font-medium text-[17px] text-[#86868B] mb-8 flex-grow">ฝากคำรักและข้อความคิดถึงถึงเจ้าตัวน้อย</p>
+                <p className="font-medium text-[15px] text-[#86868B] mb-8 flex-grow leading-relaxed">พื้นที่ส่งต่อความคิดถึง ให้สมาชิกในบ้านและเพื่อนๆ ได้ร่วมเขียนฝากถ้อยคำแห่งความรัก ความผูกพัน และแบ่งปันความคิดถึงที่แสนอบอุ่นส่งถึงน้องได้ตลอดเวลา</p>
                 <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
                   <Plus className="w-4 h-4" />
                 </div>
@@ -404,7 +404,7 @@ export default function MarketingHome() {
                   <Book className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">ไดอารี่ความสุข</h3>
-                <p className="font-medium text-[17px] text-[#86868B] mb-8 flex-grow">โพสต์รูปและเล่าเรื่องราวความสุขระหว่างเรา</p>
+                <p className="font-medium text-[15px] text-[#86868B] mb-8 flex-grow leading-relaxed">ไดอารี่บันทึกเรื่องราวการเติบโต วีรกรรมแสนซน และบันทึกวันสำคัญที่ได้ร่วมเดินทางด้วยกัน เพื่อเก็บรวบรวมทุกๆ ความรู้สึกและความอบอุ่นไว้ให้อ่านได้ในวันข้างหน้า</p>
                 <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
                   <Plus className="w-4 h-4" />
                 </div>
@@ -422,7 +422,7 @@ export default function MarketingHome() {
                   <PawPrint className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">คลังภาพเจ้าตัวน้อย</h3>
-                <p className="font-medium text-[17px] text-[#86868B] mb-8 flex-grow">อัลบั้มภาพและโมเมนต์น่ารักทั้งหมด</p>
+                <p className="font-medium text-[15px] text-[#86868B] mb-8 flex-grow leading-relaxed">รวบรวมทุกภาพถ่ายใบโปรดและวิดีโอโมเมนต์สำคัญของน้อง จัดเก็บแบ่งเป็นอัลบั้มอย่างเป็นสัดส่วน เพื่อจัดแสดงความสดใสและเก็บรักษาไว้เป็นหน้าต่างเวลาที่หยิบมาดูเมื่อไหร่ก็ยิ้มได้</p>
                 <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
                   <Plus className="w-4 h-4" />
                 </div>
