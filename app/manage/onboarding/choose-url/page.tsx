@@ -183,7 +183,7 @@ function ChooseUrlInner() {
                     setValidationMsg('');
                   }}
                   placeholder="name-surname"
-                  className="w-full pl-[92px] pr-4 py-3 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 font-mono text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition"
+                  className="w-full pl-[120px] pr-4 py-3 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 font-mono text-sm focus:outline-none focus:border-blue-600 focus:bg-white transition"
                   disabled={isSubmitting}
                 />
               </div>
