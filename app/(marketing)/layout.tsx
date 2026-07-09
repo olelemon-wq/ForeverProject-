@@ -17,12 +17,12 @@ export default function MarketingLayout({
       <nav className="border-b border-[#bfc9c3]/20 bg-[#FFFFFF]/80 backdrop-blur-md sticky top-0 z-50 py-3">
         <div className="max-w-[1040px] mx-auto w-full flex justify-between items-center px-4 relative">
           
-          <Link href="/" className="font-semibold text-lg tracking-tight text-[#1D1D1F] hover:opacity-80 transition-opacity duration-300">
+          <Link href="/" className="font-semibold text-xl tracking-tight text-[#1D1D1F] hover:opacity-80 transition-opacity duration-300">
             FOREVER
           </Link>
 
           {/* Desktop links */}
-          <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-xs font-normal text-[#1D1D1F]/80">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-normal text-[#1D1D1F]/80">
             <a href="#memorial" className="hover:text-[#1D1D1F] transition-colors duration-300">
               Memorial
             </a>
