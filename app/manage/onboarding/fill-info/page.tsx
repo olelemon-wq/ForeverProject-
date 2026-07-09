@@ -250,6 +250,7 @@ function FillInfoInner() {
                       value={subjectBirth1}
                       onChange={setSubjectBirth1}
                       placeholder="เลือกวันเกิด"
+                      variant="input"
                     />
                   </div>
                   <div className="space-y-1 text-left">
@@ -258,6 +259,7 @@ function FillInfoInner() {
                       value={subjectDeath1}
                       onChange={setSubjectDeath1}
                       placeholder="เลือกวันเสียชีวิต"
+                      variant="input"
                     />
                   </div>
                 </div>
