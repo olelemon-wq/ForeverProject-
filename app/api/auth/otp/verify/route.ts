@@ -193,10 +193,10 @@ export async function POST(request: Request) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('OTP verify error:', error);
     return NextResponse.json(
-      { error: 'เกิดข้อผิดพลาดของระบบ กรุณาลองใหม่อีกครั้ง' },
+      { error: `เกิดข้อผิดพลาดของระบบ: ${error.message || error}` },
       { status: 500 }
     );
   }
