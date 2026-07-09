@@ -53,7 +53,7 @@ export default function MarketingHome() {
       </section>
 
       {/* MEMORIAL SECTION */}
-      <section id="memorial" className="py-12 md:py-24">
+      <section id="memorial" className="py-8 md:py-12">
         <div className="max-w-[1040px] mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center gap-12 bg-[#F5F5F7] rounded-[28px] overflow-hidden p-12 md:p-16">
             <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-3xl overflow-hidden aspect-[4/5] bg-[#F5F5F7]">
@@ -84,7 +84,7 @@ export default function MarketingHome() {
       </section>
 
       {/* COUPLE / WEDDING SECTION */}
-      <section id="couple" className="py-12 md:py-24">
+      <section id="couple" className="py-8 md:py-12">
         <div className="max-w-[1040px] mx-auto px-6 space-y-8">
           <div className="relative w-full rounded-[32px] overflow-hidden bg-[#F5F5F7] flex flex-col md:flex-row items-stretch min-h-[560px]">
             <div className="w-full md:w-1/2 p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] md:bg-transparent md:bg-gradient-to-r md:from-[#FFFFFF] md:via-[#FFFFFF]/90 md:to-transparent">
@@ -155,7 +155,7 @@ export default function MarketingHome() {
       </section>
 
       {/* WEDDING SECTION */}
-      <section id="wedding" className="py-12 md:py-24 bg-[#F5F5F7]">
+      <section id="wedding" className="py-8 md:py-12 bg-[#F5F5F7]">
         <div className="max-w-[1040px] mx-auto px-6 space-y-8">
           <div className="relative w-full rounded-[32px] overflow-hidden flex flex-col md:flex-row items-stretch min-h-[560px] bg-[#FFFFFF]">
             <div className="relative md:absolute md:inset-0 md:right-1/2 w-full md:w-1/2 h-[300px] md:h-full">
@@ -226,7 +226,7 @@ export default function MarketingHome() {
       </section>
 
       {/* FAMILY LEGACY SECTION */}
-      <section id="family-legacy" className="py-12 md:py-24">
+      <section id="family-legacy" className="py-8 md:py-12">
         <div className="max-w-[1040px] mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center gap-12 bg-[#F5F5F7] rounded-[28px] overflow-hidden p-12 md:p-16">
             <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-3xl overflow-hidden aspect-[16/9] bg-[#F5F5F7]">
@@ -257,7 +257,7 @@ export default function MarketingHome() {
       </section>
 
       {/* FRIENDS SECTION */}
-      <section id="friends" className="py-12 md:py-24">
+      <section id="friends" className="py-8 md:py-12">
         <div className="max-w-[1040px] mx-auto px-6 space-y-8">
           <div className="relative w-full rounded-[32px] overflow-hidden bg-[#F5F5F7] flex flex-col md:flex-row items-stretch min-h-[560px]">
             <div className="w-full md:w-1/2 p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] md:bg-transparent md:bg-gradient-to-r md:from-[#FFFFFF] md:via-[#FFFFFF]/90 md:to-transparent">
@@ -342,7 +342,7 @@ export default function MarketingHome() {
       </section>
 
       {/* PET SECTION */}
-      <section id="pet-memorial" className="py-12 md:py-24">
+      <section id="pet-memorial" className="py-8 md:py-12">
         <div className="max-w-[1040px] mx-auto px-6 space-y-8">
           <div className="relative w-full rounded-[32px] overflow-hidden flex flex-col md:flex-row items-stretch min-h-[560px] bg-[#F5F5F7]">
             <div className="relative md:absolute md:inset-0 md:right-1/2 w-full md:w-1/2 h-[300px] md:h-full">
@@ -440,7 +440,7 @@ export default function MarketingHome() {
       </section>
 
       {/* PRICING SECTION */}
-      <section className="py-20 md:py-32">
+      <section className="py-12 md:py-20">
         <div className="max-w-[1040px] mx-auto px-6 text-center">
           <div className="space-y-6">
             <p className="text-[14px] text-[#86868B] font-medium uppercase tracking-widest">แผนสมาชิก</p>
@@ -472,7 +472,7 @@ export default function MarketingHome() {
       </section>
 
       {/* CALL TO ACTION */}
-      <section className="py-20 md:py-32 bg-[#F5F5F7]">
+      <section className="py-12 md:py-20 bg-[#F5F5F7]">
         <div className="max-w-[1040px] mx-auto px-6 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">พร้อมเริ่มเก็บความทรงจำแล้วหรือยัง</h2>
