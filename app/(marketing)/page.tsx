@@ -37,7 +37,7 @@ const TRANSLATIONS = {
     createMemorialBtn: "สร้างเว็บรำลึกบุคคล",
 
     coupleTitle: "คู่รัก (Couple)",
-    coupleDesc: "บันทึกการเดินทางของความรักและวันเวลาที่ร่วมทางไว้ในที่เดียว",
+    coupleDesc: "สมุดบันทึกดิจิทัลส่วนตัวสำหรับคู่รัก เก็บรวบรวมทุกหมุดหมายสำคัญ วันครบรอบแสนพิเศษ และโมเมนต์ที่น่ารักในวันธรรมดา เพื่อร่วมเฉลองความผูกพันและการเดินทางของชีวิตคู่ในพื้นที่ปลอดภัยตลอดกาล",
     createCoupleBtn: "สร้างเว็บคู่รัก",
 
     weddingTitle: "งานแต่งงาน (Wedding)",
@@ -92,7 +92,7 @@ const TRANSLATIONS = {
     createMemorialBtn: "Create Memorial",
 
     coupleTitle: "Couple",
-    coupleDesc: "Document the beautiful journey of love and togetherness in one safe place.",
+    coupleDesc: "Your private digital journal to celebrate milestones, anniversaries, and the warmth of everyday moments, preserving your shared growth and narrative forever.",
     createCoupleBtn: "Create Couple Site",
 
     weddingTitle: "Wedding",
