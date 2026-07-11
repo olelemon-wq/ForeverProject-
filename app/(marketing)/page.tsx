@@ -322,7 +322,7 @@ export default function MarketingHome() {
               <img 
                 className="w-full h-full object-cover" 
                 alt="A multi-generational family" 
-                src="https://lh3.googleusercontent.com/aida/AP1WRLs5KxS0ef4ywjKOR9h_L-_j3jEUTXn06zLG0A1OoZqYtPDEHRFy4xMXpU2MajHk4EhE6OV5V3xGNUVWtYWZXsvXztjhw36C4yVI5JYm1TEjm3r03dLNoGLMrRScyPKhbKBdhf8V680js1iJ-TSSmlcyYCaFrM07zRQVPkFVP7Rz_gnzyGIWluXomluhNlSx4jGuY5IHEKeGJ9qDkq2yuVKUFYKWfklqPFRrGzJFhFNIl7fZDO838Y6Z2Q"
+                src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80"
               />
             </div>
             <div className="w-full md:w-1/2 order-1 md:order-2 space-y-6 text-left">
