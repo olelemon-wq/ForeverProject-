@@ -289,10 +289,7 @@ export default function MarketingHome() {
                   <Mail className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.inviteTitle}</h3>
-                <p className="font-medium text-[17px] text-[#86868B] mb-8 flex-grow">{t.inviteDesc}</p>
-                <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
-                  <Plus className="w-4 h-4" />
-                </div>
+                <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.inviteDesc}</p>
               </div>
 
               <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer border border-stone-200/60">
@@ -300,10 +297,7 @@ export default function MarketingHome() {
                   <CreditCard className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.giftTitle}</h3>
-                <p className="font-medium text-[17px] text-[#86868B] mb-8 flex-grow">{t.giftDesc}</p>
-                <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
-                  <Plus className="w-4 h-4" />
-                </div>
+                <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.giftDesc}</p>
               </div>
 
               <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer border border-stone-200/60">
@@ -311,10 +305,7 @@ export default function MarketingHome() {
                   <HeartHandshake className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.rsvpTitle}</h3>
-                <p className="font-medium text-[17px] text-[#86868B] mb-8 flex-grow">{t.rsvpDesc}</p>
-                <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
-                  <Plus className="w-4 h-4" />
-                </div>
+                <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.rsvpDesc}</p>
               </div>
 
             </div>
@@ -437,10 +428,7 @@ export default function MarketingHome() {
                   <FileEdit className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.guestbookTitle}</h3>
-                <p className="font-medium text-[15px] text-[#86868B] mb-8 flex-grow leading-relaxed">{t.guestbookDesc}</p>
-                <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
-                  <Plus className="w-4 h-4" />
-                </div>
+                <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.guestbookDesc}</p>
               </div>
 
               <div className="bg-[#F5F5F7] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
@@ -455,10 +443,7 @@ export default function MarketingHome() {
                   <Book className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.diaryTitle}</h3>
-                <p className="font-medium text-[15px] text-[#86868B] mb-8 flex-grow leading-relaxed">{t.diaryDesc}</p>
-                <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
-                  <Plus className="w-4 h-4" />
-                </div>
+                <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.diaryDesc}</p>
               </div>
 
               <div className="bg-[#F5F5F7] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
@@ -473,10 +458,7 @@ export default function MarketingHome() {
                   <PawPrint className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
                 <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.galleryTitle}</h3>
-                <p className="font-medium text-[15px] text-[#86868B] mb-8 flex-grow leading-relaxed">{t.galleryDesc}</p>
-                <div className="mt-auto self-end h-8 w-8 rounded-full bg-[#1D1D1F]/5 flex items-center justify-center text-[#1D1D1F] group-hover:bg-[#1D1D1F] group-hover:text-[#FFFFFF] transition-colors">
-                  <Plus className="w-4 h-4" />
-                </div>
+                <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.galleryDesc}</p>
               </div>
 
             </div>
