@@ -54,7 +54,7 @@ const TRANSLATIONS = {
     rsvpDesc: "ให้แขกยืนยันการร่วมงานล่วงหน้าได้อย่างง่ายดาย",
 
     friendsTitle: "กลุ่มเพื่อน (Friends)",
-    friendsDesc: "รวมทริป เรื่องราวมิตรภาพ และความผูกพันของกลุ่มเพื่อนไว้ตลอดกาล",
+    friendsDesc: "พื้นที่บันทึกความทรงจำการเดินทางร่วมกัน ทริปแก๊งเพื่อนซี้ เรื่องราวมิตรภาพที่เติบโตไปด้วยกัน เพื่อบันทึกรอยยิ้ม เสียงหัวเราะ และคำยินดีในทุกก้าวของชีวิตไว้เป็นของขวัญล้ำค่าของกลุ่มตลอดไป",
     createFriendsBtn: "สร้างเว็บกลุ่มเพื่อน",
 
     petTitle: "สัตว์เลี้ยง (Pet Memorial)",
@@ -109,7 +109,7 @@ const TRANSLATIONS = {
     createFamilyBtn: "Create Family Site",
 
     friendsTitle: "Friends",
-    friendsDesc: "Gather trips, shared stories, and the bond of friendship forever.",
+    friendsDesc: "A dedicated space to preserve shared journeys, road trips, and the story of a lifetime friendship, keeping the laughter and warm memories alive as a timeless treasure for your circle.",
     createFriendsBtn: "Create Friends Site",
 
     petTitle: "Pet Memorial",
