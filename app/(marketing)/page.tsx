@@ -156,7 +156,15 @@ export default function MarketingHome() {
 
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
           <h1 className="text-[48px] md:text-[80px] font-bold tracking-tight text-[#1D1D1F] leading-[1.05] font-sans">
-            {t.heroTitle}
+            {mounted && lang === 'en' ? (
+              t.heroTitle
+            ) : (
+              <>
+                สลักความทรงจำไว้
+                <br className="block sm:hidden" />
+                ชั่วนิรันดร์
+              </>
+            )}
           </h1>
           <p className="text-[21px] md:text-[24px] text-[#86868B] max-w-2xl font-medium leading-snug">
             {t.heroDesc}
