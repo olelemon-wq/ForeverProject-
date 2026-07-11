@@ -50,7 +50,7 @@ export default function MarketingLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-stone-900 selection:bg-emerald-200 selection:text-stone-900 font-sans">
+    <div className="min-h-screen bg-[#F5F5F7] text-stone-900 selection:bg-emerald-200 selection:text-stone-900 font-sans">
       {/* Navbar */}
       <nav className="border-b border-[#bfc9c3]/20 bg-[#FFFFFF]/80 backdrop-blur-md sticky top-0 z-50 py-3">
         <div className="max-w-[1280px] mx-auto w-full flex justify-between items-center px-4 relative">
