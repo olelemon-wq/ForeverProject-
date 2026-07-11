@@ -1,3 +1,10 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 /**
  * Extracts the first actual letter of a name by stripping common prefixes
  * (e.g., นาย, นาง, นางสาว, คุณ, ดร., ด.ช., ด.ญ., นพ., พญ. etc.)
