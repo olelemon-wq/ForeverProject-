@@ -23,6 +23,7 @@ import {
   Send,
 } from 'lucide-react';
 import { useLanguageStore } from '@/stores/useLanguageStore';
+import { AuroraBackground } from '@/components/ui/aurora-background';
 
 const TRANSLATIONS = {
   th: {
@@ -161,41 +162,43 @@ export default function MarketingHome() {
     <main className="bg-[#F5F5F7] text-[#1D1D1F] antialiased selection:bg-[#0071e3] selection:text-[#FFFFFF] min-h-screen">
       
       {/* HERO SECTION */}
-      <section className="max-w-[1280px] mx-auto px-6 py-20 md:py-32 relative overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#0071e3]/5 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
-          <h1 className="text-[48px] md:text-[80px] font-bold tracking-tight text-[#1D1D1F] leading-[1.05] font-sans">
-            {mounted && lang === 'en' ? (
-              t.heroTitle
-            ) : (
-              <>
-                สลักความทรงจำไว้
-                <br className="block sm:hidden" />
-                ชั่วนิรันดร์
-              </>
-            )}
-          </h1>
-          <p className="text-[21px] md:text-[24px] text-[#86868B] max-w-2xl font-medium leading-snug">
-            {t.heroDesc}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 pt-6">
-            <Link 
-              href="/login?category=Memorial" 
-              className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-all active:scale-[0.98]"
-            >
-              {t.startMemorial}
-            </Link>
-            <Link 
-              href="/kittiemeaw" 
-              className="inline-flex items-center justify-center bg-transparent text-[#0071e3] font-medium text-[17px] px-8 py-3 rounded-full hover:underline transition-all flex items-center gap-1"
-            >
-              {t.exploreExamples} <ChevronRight className="w-4 h-4" />
-            </Link>
+      <AuroraBackground
+        className="h-auto min-h-[70vh] py-20 md:py-32 bg-[#F5F5F7]"
+        showRadialGradient
+      >
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6 w-full">
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
+            <h1 className="text-[48px] md:text-[80px] font-bold tracking-tight text-[#1D1D1F] leading-[1.05] font-sans">
+              {mounted && lang === 'en' ? (
+                t.heroTitle
+              ) : (
+                <>
+                  สลักความทรงจำไว้
+                  <br className="block sm:hidden" />
+                  ชั่วนิรันดร์
+                </>
+              )}
+            </h1>
+            <p className="text-[21px] md:text-[24px] text-[#86868B] max-w-2xl font-medium leading-snug">
+              {t.heroDesc}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 pt-6">
+              <Link 
+                href="/login?category=Memorial" 
+                className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-all active:scale-[0.98]"
+              >
+                {t.startMemorial}
+              </Link>
+              <Link 
+                href="/kittiemeaw" 
+                className="inline-flex items-center justify-center bg-transparent text-[#0071e3] font-medium text-[17px] px-8 py-3 rounded-full hover:underline transition-all flex items-center gap-1"
+              >
+                {t.exploreExamples} <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
-      </section>
+      </AuroraBackground>
 
       {/* MEMORIAL SECTION */}
       <section id="memorial" className="py-8 md:py-12">
