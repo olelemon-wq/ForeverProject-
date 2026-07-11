@@ -150,7 +150,7 @@ export default function MarketingHome() {
     <main className="bg-[#FFFFFF] text-[#1D1D1F] antialiased selection:bg-[#0071e3] selection:text-[#FFFFFF] min-h-screen">
       
       {/* HERO SECTION */}
-      <section className="max-w-[1040px] mx-auto px-6 py-20 md:py-32 relative overflow-hidden">
+      <section className="max-w-[1280px] mx-auto px-6 py-20 md:py-32 relative overflow-hidden">
         {/* Background glow */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#0071e3]/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -180,7 +180,7 @@ export default function MarketingHome() {
 
       {/* MEMORIAL SECTION */}
       <section id="memorial" className="py-8 md:py-12">
-        <div className="max-w-[1040px] mx-auto px-6">
+        <div className="max-w-[1280px] mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center gap-12 bg-[#F5F5F7] rounded-[28px] overflow-hidden p-12 md:p-16">
             <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-3xl overflow-hidden aspect-[4/5] bg-[#F5F5F7]">
               <img 
@@ -219,7 +219,7 @@ export default function MarketingHome() {
 
       {/* COUPLE / WEDDING SECTION */}
       <section id="couple" className="py-8 md:py-12">
-        <div className="max-w-[1040px] mx-auto px-6 space-y-8">
+        <div className="max-w-[1280px] mx-auto px-6 space-y-8">
           <div className="relative w-full rounded-[32px] overflow-hidden bg-[#F5F5F7] flex flex-col md:flex-row items-stretch min-h-[560px]">
             <div className="w-full md:w-1/2 p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] md:bg-transparent md:bg-gradient-to-r md:from-[#FFFFFF] md:via-[#FFFFFF]/90 md:to-transparent text-left">
               <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
@@ -316,7 +316,7 @@ export default function MarketingHome() {
 
       {/* FAMILY LEGACY SECTION */}
       <section id="family-legacy" className="py-8 md:py-12">
-        <div className="max-w-[1040px] mx-auto px-6">
+        <div className="max-w-[1280px] mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center gap-12 bg-[#F5F5F7] rounded-[28px] overflow-hidden p-12 md:p-16">
             <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-3xl overflow-hidden aspect-[16/9] bg-[#F5F5F7]">
               <img 
@@ -355,7 +355,7 @@ export default function MarketingHome() {
 
       {/* FRIENDS SECTION */}
       <section id="friends" className="py-8 md:py-12">
-        <div className="max-w-[1040px] mx-auto px-6 space-y-8">
+        <div className="max-w-[1280px] mx-auto px-6 space-y-8">
           <div className="relative w-full rounded-[32px] overflow-hidden bg-[#F5F5F7] flex flex-col md:flex-row items-stretch min-h-[560px]">
             <div className="w-full md:w-1/2 p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] md:bg-transparent md:bg-gradient-to-r md:from-[#FFFFFF] md:via-[#FFFFFF]/90 md:to-transparent text-left">
               <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
@@ -386,7 +386,7 @@ export default function MarketingHome() {
 
       {/* PET MEMORIAL SECTION */}
       <section id="pet-memorial" className="py-8 md:py-12">
-        <div className="max-w-[1040px] mx-auto px-6 space-y-8">
+        <div className="max-w-[1280px] mx-auto px-6 space-y-8">
           <div className="relative w-full rounded-[32px] overflow-hidden bg-[#F5F5F7] flex flex-col md:flex-row items-stretch min-h-[560px]">
             <div className="relative md:absolute md:inset-0 md:right-1/2 w-full md:w-1/2 h-[300px] md:h-full">
               <img 
@@ -478,7 +478,7 @@ export default function MarketingHome() {
 
       {/* PRICING SECTION */}
       <section className="py-12 md:py-20 text-center">
-        <div className="max-w-[1040px] mx-auto px-6">
+        <div className="max-w-[1280px] mx-auto px-6">
           <div className="space-y-6">
             <p className="text-[14px] text-[#86868B] font-medium uppercase tracking-widest">{t.pricingTitle}</p>
             <h2 className="text-[48px] md:text-[80px] tracking-tight text-[#1D1D1F] font-bold">{t.priceUnit}</h2>
@@ -510,7 +510,7 @@ export default function MarketingHome() {
 
       {/* CALL TO ACTION */}
       <section className="py-12 md:py-20 bg-[#F5F5F7] text-center">
-        <div className="max-w-[1040px] mx-auto px-6">
+        <div className="max-w-[1280px] mx-auto px-6">
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.readyTitle}</h2>
             <Link 
@@ -525,7 +525,7 @@ export default function MarketingHome() {
 
       {/* FOOTER */}
       <footer className="bg-[#FFFFFF] border-t border-[#bfc9c3]/20 py-12 text-xs">
-        <div className="max-w-[1040px] mx-auto px-6 text-left">
+        <div className="max-w-[1280px] mx-auto px-6 text-left">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 border-b border-[#bfc9c3]/20 pb-12">
             <div className="space-y-3">
               <h4 className="font-semibold text-[#1D1D1F]">ผลิตภัณฑ์</h4>

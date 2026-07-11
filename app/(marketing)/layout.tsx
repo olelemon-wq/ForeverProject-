@@ -53,7 +53,7 @@ export default function MarketingLayout({
     <div className="min-h-screen bg-[#faf8f5] text-stone-900 selection:bg-emerald-200 selection:text-stone-900 font-sans">
       {/* Navbar */}
       <nav className="border-b border-[#bfc9c3]/20 bg-[#FFFFFF]/80 backdrop-blur-md sticky top-0 z-50 py-3">
-        <div className="max-w-[1040px] mx-auto w-full flex justify-between items-center px-4 relative">
+        <div className="max-w-[1280px] mx-auto w-full flex justify-between items-center px-4 relative">
           
           <Link href="/" className="font-semibold text-[20px] tracking-tight text-[#1D1D1F] hover:opacity-80 transition-opacity duration-300">
             FOREVER
