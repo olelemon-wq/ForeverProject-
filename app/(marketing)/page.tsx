@@ -159,7 +159,7 @@ export default function MarketingHome() {
   const t = mounted && lang === 'en' ? TRANSLATIONS.en : TRANSLATIONS.th;
 
   return (
-    <main className="bg-[#F5F5F7] text-[#1D1D1F] antialiased selection:bg-[#0071e3] selection:text-[#FFFFFF] min-h-screen">
+    <main className="marketing-light-surface bg-[#F5F5F7] text-[#1D1D1F] antialiased selection:bg-[#0071e3] selection:text-[#FFFFFF] min-h-screen [color-scheme:light]">
       
       {/* HERO SECTION */}
       <AuroraBackground
@@ -168,7 +168,7 @@ export default function MarketingHome() {
       >
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 w-full">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
-            <h1 className="text-[48px] md:text-[80px] font-bold tracking-tight text-[#1D1D1F] leading-[1.05] font-sans">
+            <h1 className="text-[36px] md:text-[80px] font-bold tracking-tight text-[#1D1D1F] leading-[1.05] font-sans">
               {mounted && lang === 'en' ? (
                 t.heroTitle
               ) : (
@@ -179,7 +179,7 @@ export default function MarketingHome() {
                 </>
               )}
             </h1>
-            <p className="text-[21px] md:text-[24px] text-[#86868B] max-w-2xl font-medium leading-snug">
+            <p className="text-[17px] md:text-[24px] text-[#86868B] max-w-2xl font-medium leading-snug">
               {t.heroDesc}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
@@ -212,8 +212,8 @@ export default function MarketingHome() {
               />
             </div>
             <div className="w-full md:w-1/2 order-1 md:order-2 space-y-6 text-left">
-              <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.memorialTitle}</h2>
-              <p className="text-[19px] text-[#86868B] font-medium">
+              <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.memorialTitle}</h2>
+              <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium">
                 {t.memorialDesc}
               </p>
               <ul className="space-y-4 pt-4">
@@ -245,10 +245,10 @@ export default function MarketingHome() {
           <div className="rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
           <div className="relative w-full rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-[560px]">
             <div className="w-full md:w-1/2 p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
-              <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
+              <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
                 {t.coupleTitle}
               </h2>
-              <p className="text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
+              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
                 {t.coupleDesc}
               </p>
               <div>
@@ -280,10 +280,10 @@ export default function MarketingHome() {
               />
             </div>
             <div className="w-full md:w-1/2 md:ml-auto p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left order-1 md:order-2">
-              <h2 className="text-[40px] md:text-[56px] tracking-tight font-semibold mb-4 leading-tight text-[#1D1D1F]">
+              <h2 className="text-[32px] md:text-[56px] tracking-tight font-semibold mb-4 leading-tight text-[#1D1D1F]">
                 {t.weddingTitle}
               </h2>
-              <p className="text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
+              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
                 {t.weddingDesc}
               </p>
               <div>
@@ -299,14 +299,14 @@ export default function MarketingHome() {
           </div>
 
           <div className="space-y-6 pt-4 text-left">
-            <h3 className="font-semibold text-[24px] text-[#1D1D1F] text-center md:text-left">{t.whatYouGet}</h3>
+            <h3 className="font-semibold text-[21px] md:text-[24px] text-[#1D1D1F] text-center md:text-left">{t.whatYouGet}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
               <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
                 <div className="mb-6">
                   <Mail className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
-                <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.inviteTitle}</h3>
+                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.inviteTitle}</h3>
                 <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.inviteDesc}</p>
               </div>
 
@@ -314,7 +314,7 @@ export default function MarketingHome() {
                 <div className="mb-6">
                   <CreditCard className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
-                <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.giftTitle}</h3>
+                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.giftTitle}</h3>
                 <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.giftDesc}</p>
               </div>
 
@@ -322,7 +322,7 @@ export default function MarketingHome() {
                 <div className="mb-6">
                   <HeartHandshake className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
-                <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.rsvpTitle}</h3>
+                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.rsvpTitle}</h3>
                 <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.rsvpDesc}</p>
               </div>
 
@@ -343,8 +343,8 @@ export default function MarketingHome() {
               />
             </div>
             <div className="w-full md:w-1/2 order-1 md:order-2 space-y-6 text-left">
-              <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.familyTitle}</h2>
-              <p className="text-[19px] text-[#86868B] font-medium">
+              <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.familyTitle}</h2>
+              <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium">
                 {t.familyDesc}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
@@ -376,10 +376,10 @@ export default function MarketingHome() {
           <div className="rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
           <div className="relative w-full rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-[560px]">
             <div className="w-full md:w-1/2 p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
-              <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
+              <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
                 {t.friendsTitle}
               </h2>
-              <p className="text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
+              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
                 {t.friendsDesc}
               </p>
               <div>
@@ -416,10 +416,10 @@ export default function MarketingHome() {
               />
             </div>
             <div className="w-full md:w-1/2 md:ml-auto p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
-              <h2 className="text-[40px] md:text-[56px] tracking-tight font-semibold mb-4 leading-tight text-[#1D1D1F]">
+              <h2 className="text-[32px] md:text-[56px] tracking-tight font-semibold mb-4 leading-tight text-[#1D1D1F]">
                 {t.petTitle}
               </h2>
-              <p className="text-[19px] text-[#86868B] font-medium mb-8 max-w-md leading-relaxed">
+              <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium mb-8 max-w-md leading-relaxed">
                 {t.petDesc}
               </p>
               <div>
@@ -435,7 +435,7 @@ export default function MarketingHome() {
           </div>
 
           <div className="space-y-6 pt-4 text-left">
-            <h3 className="font-semibold text-[24px] text-[#1D1D1F] text-center md:text-left">{t.whatYouGet}</h3>
+            <h3 className="font-semibold text-[21px] md:text-[24px] text-[#1D1D1F] text-center md:text-left">{t.whatYouGet}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
               <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
@@ -460,7 +460,7 @@ export default function MarketingHome() {
                 <div className="mb-4">
                   <FileEdit className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
-                <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.guestbookTitle}</h3>
+                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.guestbookTitle}</h3>
                 <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.guestbookDesc}</p>
               </div>
 
@@ -475,7 +475,7 @@ export default function MarketingHome() {
                 <div className="mb-4">
                   <Book className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
-                <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.diaryTitle}</h3>
+                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.diaryTitle}</h3>
                 <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.diaryDesc}</p>
               </div>
 
@@ -490,7 +490,7 @@ export default function MarketingHome() {
                 <div className="mb-4">
                   <PawPrint className="w-8 h-8 text-[#1D1D1F]" />
                 </div>
-                <h3 className="font-semibold text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.galleryTitle}</h3>
+                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.galleryTitle}</h3>
                 <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.galleryDesc}</p>
               </div>
 
@@ -504,7 +504,7 @@ export default function MarketingHome() {
         <div className="max-w-[1280px] mx-auto px-6">
           <div className="space-y-6">
             <p className="text-[14px] text-[#86868B] font-medium uppercase tracking-widest">{t.pricingTitle}</p>
-            <h2 className="text-[48px] md:text-[80px] tracking-tight text-[#1D1D1F] font-bold">{t.priceUnit}</h2>
+            <h2 className="text-[36px] md:text-[80px] tracking-tight text-[#1D1D1F] font-bold">{t.priceUnit}</h2>
             <div className="flex flex-col items-center gap-3 pt-4">
               <div className="flex items-center gap-2 text-[#1D1D1F] font-medium text-[17px]">
                 <Check className="w-4 h-4 text-[#0071e3]" />
@@ -535,7 +535,7 @@ export default function MarketingHome() {
       <section className="py-12 md:py-20 text-center">
         <div className="max-w-[1280px] mx-auto px-6">
           <div className="max-w-3xl mx-auto space-y-8">
-            <h2 className="text-[40px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.readyTitle}</h2>
+            <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.readyTitle}</h2>
             <Link 
               href="/login?category=Memorial" 
               className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
