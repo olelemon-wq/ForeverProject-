@@ -6,21 +6,25 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { useLanguageStore } from '@/stores/useLanguageStore';
 
 const TH_FLAG = (
-  <svg viewBox="0 0 9 6" className="w-[22px] h-[15px] rounded-[3px] overflow-hidden object-cover border border-stone-200 flex-shrink-0">
-    <rect fill="#EF3340" width="9" height="6"/>
-    <rect fill="#F1F2F2" y="1" width="9" height="4"/>
-    <rect fill="#002F6C" y="2" width="9" height="2"/>
-  </svg>
+  <span className="inline-flex w-[22px] h-[15px] shrink-0 overflow-hidden rounded-[3px] border border-stone-200/70 bg-[#EF3340]">
+    <svg viewBox="0 0 9 6" className="block h-full w-full" preserveAspectRatio="none" aria-hidden>
+      <rect fill="#EF3340" width="9" height="6" />
+      <rect fill="#F1F2F2" y="1" width="9" height="4" />
+      <rect fill="#002F6C" y="2" width="9" height="2" />
+    </svg>
+  </span>
 );
 
 const EN_FLAG = (
-  <svg viewBox="0 0 60 30" className="w-[22px] h-[15px] rounded-[3px] overflow-hidden object-cover border border-stone-200 flex-shrink-0">
-    <rect width="60" height="30" fill="#012169"/>
-    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
-    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="2"/>
-    <path d="M30,0 V30 M0,15 H60" stroke="#fff" strokeWidth="10"/>
-    <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" strokeWidth="6"/>
-  </svg>
+  <span className="inline-flex w-[22px] h-[15px] shrink-0 overflow-hidden rounded-[3px] border border-stone-200/70 bg-[#012169]">
+    <svg viewBox="0 0 60 30" className="block h-full w-full" preserveAspectRatio="none" aria-hidden>
+      <rect width="60" height="30" fill="#012169" />
+      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6" />
+      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="2" />
+      <path d="M30,0 V30 M0,15 H60" stroke="#fff" strokeWidth="10" />
+      <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" strokeWidth="6" />
+    </svg>
+  </span>
 );
 
 export default function MarketingLayout({
@@ -76,7 +80,7 @@ export default function MarketingLayout({
               <button
                 type="button"
                 onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200/80 rounded-full border border-stone-200/50 transition active:scale-95 cursor-pointer text-stone-600 hover:text-stone-900 select-none"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-stone-50 rounded-full border border-stone-200/70 transition active:scale-95 cursor-pointer text-stone-600 hover:text-stone-900 select-none"
               >
                 {currentLang === 'th' ? TH_FLAG : EN_FLAG}
                 <ChevronDown className={`w-3.5 h-3.5 text-stone-500 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
@@ -161,9 +165,9 @@ export default function MarketingLayout({
                     <button 
                       type="button"
                       onClick={() => { setLang('th'); setIsMobileMenuOpen(false); }}
-                      className={`w-[24px] h-[16px] rounded-[3px] overflow-hidden border ${currentLang === 'th' ? 'border-[#0071e3] scale-105' : 'border-stone-300 opacity-60'}`}
+                      className={`w-[24px] h-[16px] rounded-[3px] overflow-hidden border bg-[#EF3340] ${currentLang === 'th' ? 'border-[#0071e3] scale-105' : 'border-stone-300 opacity-60'}`}
                     >
-                      <svg viewBox="0 0 9 6" className="w-full h-full object-cover">
+                      <svg viewBox="0 0 9 6" className="block h-full w-full" preserveAspectRatio="none" aria-hidden>
                         <rect fill="#EF3340" width="9" height="6"/>
                         <rect fill="#F1F2F2" y="1" width="9" height="4"/>
                         <rect fill="#002F6C" y="2" width="9" height="2"/>
@@ -172,9 +176,9 @@ export default function MarketingLayout({
                     <button 
                       type="button"
                       onClick={() => { setLang('en'); setIsMobileMenuOpen(false); }}
-                      className={`w-[24px] h-[16px] rounded-[3px] overflow-hidden border ${currentLang === 'en' ? 'border-[#0071e3] scale-105' : 'border-stone-300 opacity-60'}`}
+                      className={`w-[24px] h-[16px] rounded-[3px] overflow-hidden border bg-[#012169] ${currentLang === 'en' ? 'border-[#0071e3] scale-105' : 'border-stone-300 opacity-60'}`}
                     >
-                      <svg viewBox="0 0 60 30" className="w-full h-full object-cover">
+                      <svg viewBox="0 0 60 30" className="block h-full w-full" preserveAspectRatio="none" aria-hidden>
                         <rect width="60" height="30" fill="#012169"/>
                         <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
                         <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="2"/>
