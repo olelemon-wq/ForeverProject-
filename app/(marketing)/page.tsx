@@ -5,22 +5,14 @@ import Link from 'next/link';
 import { 
   Sparkles, 
   UserPlus, 
-  Heart, 
-  Calendar, 
-  HeartHandshake, 
-  Mail, 
-  PenTool, 
-  CreditCard, 
   GitBranch, 
   BookOpen, 
-  MessageSquare, 
-  FileEdit, 
-  Book, 
-  PawPrint, 
-  Check, 
-  Plus, 
   ChevronRight,
-  Send,
+  Mail,
+  Gift,
+  HeartHandshake,
+  Cloud,
+  QrCode,
 } from 'lucide-react';
 import { useLanguageStore } from '@/stores/useLanguageStore';
 import { AuroraBackground } from '@/components/ui/aurora-background';
@@ -83,7 +75,7 @@ const TRANSLATIONS = {
     permanentQr: "QR Code ถาวรสำหรับพิมพ์",
     pricingBtn: "เริ่มสร้างเลย",
 
-    readyTitle: "พร้อมเริ่มเก็บความทรงจำแล้วหรือยัง",
+    readyTitle: "พร้อมเก็บความทรงจำของคุณหรือยัง",
     readyBtn: "สร้างเว็บไซต์ของคุณ"
   },
   en: {
@@ -143,7 +135,7 @@ const TRANSLATIONS = {
     permanentQr: "Permanent QR Code for Printing",
     pricingBtn: "Get Started Now",
 
-    readyTitle: "Ready to preserve your memories?",
+    readyTitle: "Ready to keep your memories?",
     readyBtn: "Create Your Website"
   }
 };
@@ -201,22 +193,22 @@ export default function MarketingHome() {
       </AuroraBackground>
 
       {/* MEMORIAL SECTION */}
-      <section id="memorial" className="py-8 md:py-12">
+      <section id="memorial" className="py-5 md:py-12">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center gap-12 bg-[#FFFFFF] rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] overflow-hidden p-12 md:p-16">
-            <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-3xl overflow-hidden aspect-[4/5] bg-[#F5F5F7]">
+          <div className="flex flex-col md:flex-row md:items-stretch gap-6 md:gap-12 bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] overflow-hidden p-6 md:p-12 lg:p-16">
+            <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-3xl overflow-hidden aspect-[16/10] md:aspect-auto bg-[#F5F5F7]">
               <img 
-                className="w-full h-full object-cover" 
+                className="w-full h-full object-cover md:absolute md:inset-0" 
                 alt="Premium lifestyle photography for a memorial service website" 
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpnY3Uwxk0XiEohL9UGRkc8Hc9BwOPmZ242HyhpqVqu3t52QxxmSxKuQc8FNiFclznZvPBCIV4Hxrlyt13LDNgaMd9PrfyDYKXN8LLHZpkvcVIb5xtAfXZCfPKYVidBSTtaVkZ9X-sq-6ZXQWxXEn6ScaiRB58xRknLM1zQZTYyIac-UA48-I99R2hxNNm5WWWWQZ9ekLTZwFJy9RVNdoDIyPyrVFcab0mp4SKC1NgdBnxJGs4X3k"
               />
             </div>
-            <div className="w-full md:w-1/2 order-1 md:order-2 space-y-6 text-left">
-              <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.memorialTitle}</h2>
+            <div className="w-full md:w-1/2 order-1 md:order-2 space-y-4 md:space-y-6 text-left">
+              <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.memorialTitle}</h2>
               <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium">
                 {t.memorialDesc}
               </p>
-              <ul className="space-y-4 pt-4">
+              <ul className="space-y-3 md:space-y-4 pt-2 md:pt-4">
                 <li className="flex items-center gap-3">
                   <Sparkles className="w-5 h-5 text-[#1D1D1F] shrink-0" />
                   <span className="text-[17px] text-[#1D1D1F] font-medium">{t.timelineBio}</span>
@@ -226,7 +218,7 @@ export default function MarketingHome() {
                   <span className="text-[17px] text-[#1D1D1F] font-medium">{t.collaborativeAlbums}</span>
                 </li>
               </ul>
-              <div className="pt-6">
+              <div className="pt-4 md:pt-6">
                 <Link 
                   href="/login?category=Memorial" 
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
@@ -239,28 +231,28 @@ export default function MarketingHome() {
         </div>
       </section>
 
-      {/* COUPLE / WEDDING SECTION */}
-      <section id="couple" className="py-8 md:py-12">
-        <div className="max-w-[1280px] mx-auto px-6 space-y-8">
-          <div className="rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
-          <div className="relative w-full rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-[560px]">
-            <div className="w-full md:w-1/2 p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
-              <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
+      {/* COUPLE SECTION */}
+      <section id="couple" className="py-5 md:py-12">
+        <div className="max-w-[1280px] mx-auto px-6">
+          <div className="rounded-[22px] md:rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
+          <div className="relative w-full rounded-[22px] md:rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-0 md:min-h-[480px]">
+            <div className="w-full md:w-1/2 p-6 md:p-12 lg:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
+              <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
                 {t.coupleTitle}
               </h2>
-              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
+              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-5 md:mb-8 max-w-md">
                 {t.coupleDesc}
               </p>
               <div>
                 <Link 
                   href="/login?category=Couple" 
-                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   {t.createCoupleBtn}
                 </Link>
               </div>
             </div>
-            <div className="relative md:absolute md:inset-0 md:left-1/2 w-full md:w-1/2 h-[300px] md:h-full">
+            <div className="relative md:absolute md:inset-0 md:left-1/2 w-full md:w-1/2 h-[220px] md:h-full">
               <img 
                 alt="A beautiful, high-end editorial photo of a couple" 
                 className="w-full h-full object-cover object-center absolute inset-0" 
@@ -269,101 +261,131 @@ export default function MarketingHome() {
             </div>
           </div>
           </div>
+        </div>
+      </section>
 
-          <div id="wedding" className="rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
-          <div className="relative w-full rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-[560px]">
-            <div className="relative md:absolute md:inset-0 md:right-1/2 w-full md:w-1/2 h-[300px] md:h-full order-2 md:order-1">
-              <img 
-                className="w-full h-full object-cover object-center absolute inset-0" 
-                src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80" 
-                alt="Wedding editorial photograph"
-              />
-            </div>
-            <div className="w-full md:w-1/2 md:ml-auto p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left order-1 md:order-2">
-              <h2 className="text-[32px] md:text-[56px] tracking-tight font-semibold mb-4 leading-tight text-[#1D1D1F]">
+      {/* WEDDING SECTION */}
+      <section id="wedding" className="py-5 md:py-12">
+        <div className="max-w-[1280px] mx-auto px-6">
+          <div className="overflow-hidden rounded-[22px] md:rounded-[32px] bg-[#FFFFFF] shadow-[0_4px_24px_rgba(0,0,0,0.08)] flex flex-col lg:flex-row lg:items-stretch">
+            <div className="flex w-full flex-col justify-center p-6 md:p-10 lg:w-1/2 lg:p-14 text-left space-y-4 md:space-y-6">
+              <h2 className="text-[32px] md:text-[48px] tracking-tight font-semibold leading-tight text-[#1D1D1F]">
                 {t.weddingTitle}
               </h2>
-              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
+              <p className="max-w-md text-[17px] md:text-[19px] text-[#86868B] font-medium leading-relaxed">
                 {t.weddingDesc}
               </p>
-              <div>
-                <Link 
-                  href="/login?category=Wedding" 
-                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
+
+              <ul className="space-y-3 md:space-y-4 pt-2 md:pt-4">
+                {[
+                  { icon: Mail, label: t.inviteTitle },
+                  { icon: Gift, label: t.giftTitle },
+                  { icon: HeartHandshake, label: t.rsvpTitle },
+                ].map((item) => (
+                  <li key={item.label} className="flex items-center gap-3">
+                    <item.icon className="w-5 h-5 text-[#0071e3] shrink-0" />
+                    <span className="text-[17px] text-[#1D1D1F] font-medium">{item.label}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="pt-4 md:pt-6">
+                <Link
+                  href="/login?category=Wedding"
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   {t.createWeddingBtn}
                 </Link>
               </div>
             </div>
-          </div>
-          </div>
 
-          <div className="space-y-6 pt-4 text-left">
-            <h3 className="font-semibold text-[21px] md:text-[24px] text-[#1D1D1F] text-center md:text-left">{t.whatYouGet}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
-                <div className="mb-6">
-                  <Mail className="w-8 h-8 text-[#1D1D1F]" />
+            <div className="grid w-full grid-cols-3 gap-2.5 p-4 sm:gap-3 sm:p-5 md:p-6 lg:w-1/2 lg:gap-3 lg:p-5 lg:pl-2">
+              {[
+                {
+                  src: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80',
+                  alt: 'คู่บ่าวสาวในวันแต่งงาน',
+                },
+                {
+                  src: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80',
+                  alt: 'บรรยากาศพิธีแต่งงานกลางแจ้ง',
+                },
+                {
+                  src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80',
+                  alt: 'แหวนแต่งงานบนดอกไม้',
+                },
+              ].map((photo) => (
+                <div
+                  key={photo.src}
+                  className="relative aspect-[3/4] overflow-hidden rounded-2xl md:rounded-[1.25rem] bg-[#F5F5F7] lg:aspect-auto lg:min-h-[320px]"
+                >
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
                 </div>
-                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.inviteTitle}</h3>
-                <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.inviteDesc}</p>
-              </div>
-
-              <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
-                <div className="mb-6">
-                  <CreditCard className="w-8 h-8 text-[#1D1D1F]" />
-                </div>
-                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.giftTitle}</h3>
-                <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.giftDesc}</p>
-              </div>
-
-              <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
-                <div className="mb-6">
-                  <HeartHandshake className="w-8 h-8 text-[#1D1D1F]" />
-                </div>
-                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.rsvpTitle}</h3>
-                <p className="font-medium text-[17px] text-[#86868B] flex-grow">{t.rsvpDesc}</p>
-              </div>
-
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* FAMILY LEGACY SECTION */}
-      <section id="family-legacy" className="py-8 md:py-12">
+      <section id="family-legacy" className="py-5 md:py-12">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center gap-12 bg-[#FFFFFF] rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] overflow-hidden p-12 md:p-16">
-            <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-3xl overflow-hidden aspect-[16/9] bg-[#F5F5F7]">
-              <img 
-                className="w-full h-full object-cover" 
-                alt="A multi-generational family" 
-                src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80"
-              />
-            </div>
-            <div className="w-full md:w-1/2 order-1 md:order-2 space-y-6 text-left">
-              <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.familyTitle}</h2>
-              <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium">
-                {t.familyDesc}
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                <div className="bg-[#F5F5F7] p-6 rounded-3xl flex flex-col gap-2">
-                  <GitBranch className="w-6 h-6 text-[#1D1D1F]" />
-                  <h3 className="font-semibold text-[17px] text-[#1D1D1F]">Interactive Family Trees</h3>
-                </div>
-                <div className="bg-[#F5F5F7] p-6 rounded-3xl flex flex-col gap-2">
-                  <BookOpen className="w-6 h-6 text-[#1D1D1F]" />
-                  <h3 className="font-semibold text-[17px] text-[#1D1D1F]">Heirloom Recipes</h3>
+          <div className="rounded-[22px] md:rounded-[32px] bg-[#E8F1FB] p-6 sm:p-8 md:p-10 lg:p-12">
+            <h2 className="text-center text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">
+              {mounted && lang === 'en' ? (
+                t.familyTitle
+              ) : (
+                <>
+                  มรดกวงศ์ตระกูล
+                  <br className="sm:hidden" />
+                  <span className="hidden sm:inline"> </span>
+                  (Family Legacy)
+                </>
+              )}
+            </h2>
+
+            <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-[1fr_1.35fr_1fr] gap-4 md:gap-5 items-stretch">
+              {/* Description */}
+              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] p-6 md:p-8 flex flex-col justify-center text-left shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+                <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium leading-relaxed">
+                  {t.familyDesc}
+                </p>
+              </div>
+
+              {/* Image + CTA */}
+              <div className="relative min-h-[280px] md:min-h-[360px] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+                <img
+                  className="absolute inset-0 h-full w-full object-cover"
+                  alt="A multi-generational family"
+                  src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80"
+                />
+                <div className="absolute inset-x-0 bottom-0 flex justify-start md:justify-center bg-gradient-to-t from-black/50 to-transparent p-5 md:p-6 pt-16">
+                  <Link
+                    href="/login?category=Family Legacy"
+                    className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
+                  >
+                    {t.createFamilyBtn}
+                  </Link>
                 </div>
               </div>
-              <div className="pt-6">
-                <Link 
-                  href="/login?category=Family Legacy" 
-                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
-                >
-                  {t.createFamilyBtn}
-                </Link>
+
+              {/* Feature icons */}
+              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] p-6 md:p-8 flex flex-col justify-center gap-5 md:gap-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+                <div className="flex flex-col gap-2">
+                  <GitBranch className="w-6 h-6 text-[#0071e3]" />
+                  <h3 className="font-semibold text-[17px] md:text-[19px] text-[#1D1D1F] tracking-tight">
+                    Interactive Family Trees
+                  </h3>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <BookOpen className="w-6 h-6 text-[#0071e3]" />
+                  <h3 className="font-semibold text-[17px] md:text-[19px] text-[#1D1D1F] tracking-tight">
+                    Heirloom Recipes
+                  </h3>
+                </div>
               </div>
             </div>
           </div>
@@ -371,27 +393,27 @@ export default function MarketingHome() {
       </section>
 
       {/* FRIENDS SECTION */}
-      <section id="friends" className="py-8 md:py-12">
-        <div className="max-w-[1280px] mx-auto px-6 space-y-8">
-          <div className="rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
-          <div className="relative w-full rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-[560px]">
-            <div className="w-full md:w-1/2 p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
-              <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
+      <section id="friends" className="py-5 md:py-12">
+        <div className="max-w-[1280px] mx-auto px-6">
+          <div className="rounded-[22px] md:rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
+          <div className="relative w-full rounded-[22px] md:rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-0 md:min-h-[480px]">
+            <div className="w-full md:w-1/2 p-6 md:p-12 lg:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
+              <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
                 {t.friendsTitle}
               </h2>
-              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-8 max-w-md">
+              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-5 md:mb-8 max-w-md">
                 {t.friendsDesc}
               </p>
               <div>
                 <Link 
                   href="/login?category=Friends" 
-                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
+                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   {t.createFriendsBtn}
                 </Link>
               </div>
             </div>
-            <div className="relative md:absolute md:inset-0 md:left-1/2 w-full md:w-1/2 h-[300px] md:h-full">
+            <div className="relative md:absolute md:inset-0 md:left-1/2 w-full md:w-1/2 h-[220px] md:h-full">
               <img 
                 alt="Friends laughing together" 
                 className="w-full h-full object-cover object-center absolute inset-0" 
@@ -404,144 +426,115 @@ export default function MarketingHome() {
       </section>
 
       {/* PET MEMORIAL SECTION */}
-      <section id="pet-memorial" className="py-8 md:py-12">
-        <div className="max-w-[1280px] mx-auto px-6 space-y-8">
-          <div className="rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
-          <div className="relative w-full rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-[560px]">
-            <div className="relative md:absolute md:inset-0 md:right-1/2 w-full md:w-1/2 h-[300px] md:h-full">
-              <img 
-                className="w-full h-full object-cover object-center absolute inset-0" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz2pGinLl6I0W9a40FYq3VtO-LvGKt-wrsWP_rd5npjmAAv8lM6I3FkjcSmiUiTppfWjtKLgXA6xfRK5Ghic1_WAXr-NDt-Fbvtvm_Lm2E62Lq16BHKP_TyM52OBktxG0kgtPDSqH1dwPQGDxPlvDGvK4PNFrFw-WJ9XhKwcNKwX9VMlJvDhqJLJ0XYYI7JratIH2v5foXRPHMOzVX8b4bGHXXQLDuNeRB2N70DyEfMaN24kptZCs"
-                alt="Pet editorial photograph"
-              />
-            </div>
-            <div className="w-full md:w-1/2 md:ml-auto p-12 md:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
-              <h2 className="text-[32px] md:text-[56px] tracking-tight font-semibold mb-4 leading-tight text-[#1D1D1F]">
+      <section id="pet-memorial" className="py-5 md:py-12">
+        <div className="max-w-[1280px] mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+            {/* Intro */}
+            <div className="lg:col-span-4 flex flex-col justify-center text-left space-y-4 md:space-y-5">
+              <h2 className="text-[32px] md:text-[48px] tracking-tight font-semibold leading-tight text-[#1D1D1F]">
                 {t.petTitle}
               </h2>
-              <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium mb-8 max-w-md leading-relaxed">
+              <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium leading-relaxed max-w-md">
                 {t.petDesc}
               </p>
-              <div>
-                <Link 
-                  href="/login?category=Pet Memorial" 
-                  className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
-                >
-                  {t.createPetBtn}
-                </Link>
-              </div>
             </div>
-          </div>
-          </div>
 
-          <div className="space-y-6 pt-4 text-left">
-            <h3 className="font-semibold text-[21px] md:text-[24px] text-[#1D1D1F] text-center md:text-left">{t.whatYouGet}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
-                <div className="mb-6 overflow-hidden rounded-2xl aspect-[4/3] bg-[#F5F5F7] p-4 flex flex-col justify-between transition-transform duration-500 group-hover:scale-[1.02]">
-                  <div className="space-y-2.5">
-                    <div className="bg-[#FFFFFF] rounded-2xl px-3.5 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-                      <p className="text-[12px] font-medium text-[#1D1D1F] leading-snug line-clamp-2">{t.guestbookMockMsg1}</p>
-                      <p className="mt-1.5 text-[11px] font-medium text-[#86868B]">{t.guestbookMockAuthor1}</p>
-                    </div>
-                    <div className="bg-[#FFFFFF] rounded-2xl px-3.5 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-                      <p className="text-[12px] font-medium text-[#1D1D1F] leading-snug line-clamp-2">{t.guestbookMockMsg2}</p>
-                      <p className="mt-1.5 text-[11px] font-medium text-[#86868B]">{t.guestbookMockAuthor2}</p>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex items-center gap-2 rounded-full bg-[#FFFFFF] pl-4 pr-1.5 py-1.5 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-                    <span className="flex-1 text-[12px] font-medium text-[#86868B] truncate">{t.guestbookMockPlaceholder}</span>
-                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0071e3] text-white">
-                      <Send className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <FileEdit className="w-8 h-8 text-[#1D1D1F]" />
-                </div>
-                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.guestbookTitle}</h3>
-                <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.guestbookDesc}</p>
-              </div>
-
-              <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
-                <div className="mb-6 overflow-hidden rounded-2xl aspect-[4/3] bg-[#F5F5F7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                  <img 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD820QBgMfc-5pN5og1xXtoq_UQTU7WavbhOKky7GCd62tebOjx1BHsAbPSsOvFemIZUXbYUYyWYqzglJfK2pjylxjDVcbWAmdSIraZQQMnjIPbwVF0dMIckVkoAJJNnx3-FBee5hDiQpj1hHTfDP92wQcFHwoRo0b4tchupTZAFKUuHnc_AporchqfZLmL7hlaxn6IC38la4WyL91s5inkfnAJ8QAHytDGxt7enHkuS2mEpSwTqQUVvRnB5pkKjOBj" 
-                    alt="Cute pet memorial illustration" 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            {/* Feature cards: guestbook | blue gallery | diary */}
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5">
+              {/* 1 — Guestbook + dog with owner */}
+              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.08)] flex flex-col h-full group">
+                <div className="relative aspect-[2/1] md:aspect-[4/3] overflow-hidden bg-[#F5F5F7]">
+                  <img
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz2pGinLl6I0W9a40FYq3VtO-LvGKt-wrsWP_rd5npjmAAv8lM6I3FkjcSmiUiTppfWjtKLgXA6xfRK5Ghic1_WAXr-NDt-Fbvtvm_Lm2E62Lq16BHKP_TyM52OBktxG0kgtPDSqH1dwPQGDxPlvDGvK4PNFrFw-WJ9XhKwcNKwX9VMlJvDhqJLJ0XYYI7JratIH2v5foXRPHMOzVX8b4bGHXXQLDuNeRB2N70DyEfMaN24kptZCs"
+                    alt={t.guestbookTitle}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
-                <div className="mb-4">
-                  <Book className="w-8 h-8 text-[#1D1D1F]" />
+                <div className="p-5 md:p-6 flex flex-col flex-grow text-left">
+                  <h3 className="font-semibold text-[28px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight leading-tight">{t.guestbookTitle}</h3>
+                  <p className="font-medium text-[14px] md:text-[15px] text-[#86868B] leading-relaxed">{t.guestbookDesc}</p>
                 </div>
-                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.diaryTitle}</h3>
-                <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.diaryDesc}</p>
               </div>
 
-              <div className="bg-[#FFFFFF] rounded-[28px] overflow-hidden p-8 transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative flex flex-col h-full group cursor-pointer">
-                <div className="mb-6 overflow-hidden rounded-2xl aspect-[4/3] bg-[#F5F5F7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-                  <img 
-                    src="/images/pet-polaroids.jpg" 
-                    alt="Pet gallery preview" 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              {/* 3 — Gallery details on blue (center) */}
+              <div className="bg-[#0071e3] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.08)] flex flex-col sm:h-full">
+                <div className="p-5 md:p-6 flex flex-col sm:flex-grow text-left text-white">
+                  <h3 className="font-semibold text-[28px] md:text-[32px] mb-2 tracking-tight leading-tight">{t.galleryTitle}</h3>
+                  <p className="font-medium text-[14px] md:text-[15px] text-white/85 leading-relaxed sm:flex-grow">{t.galleryDesc}</p>
+                  <div className="mt-4 sm:mt-6 flex justify-start md:justify-center">
+                    <Link
+                      href="/login?category=Pet Memorial"
+                      className="inline-flex items-center justify-center bg-[#FFFFFF] text-[#0071e3] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-white/90 transition-colors"
+                    >
+                      {t.createPetBtn}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2 — Diary + gallery polaroids image */}
+              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.08)] flex flex-col h-full group">
+                <div className="relative aspect-[2/1] md:aspect-[4/3] overflow-hidden bg-[#F5F5F7]">
+                  <img
+                    src="/images/pet-polaroids.jpg"
+                    alt={t.diaryTitle}
+                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
-                <div className="mb-4">
-                  <PawPrint className="w-8 h-8 text-[#1D1D1F]" />
+                <div className="p-5 md:p-6 flex flex-col flex-grow text-left">
+                  <h3 className="font-semibold text-[28px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight leading-tight">{t.diaryTitle}</h3>
+                  <p className="font-medium text-[14px] md:text-[15px] text-[#86868B] leading-relaxed">{t.diaryDesc}</p>
                 </div>
-                <h3 className="font-semibold text-[19px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight">{t.galleryTitle}</h3>
-                <p className="font-medium text-[15px] text-[#86868B] flex-grow leading-relaxed">{t.galleryDesc}</p>
               </div>
-
             </div>
           </div>
         </div>
       </section>
 
-      {/* PRICING SECTION */}
+      {/* PRICING + CTA */}
       <section className="py-12 md:py-20 text-center">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="space-y-6">
+          <div className="space-y-6 md:space-y-8">
             <p className="text-[14px] text-[#86868B] font-medium uppercase tracking-widest">{t.pricingTitle}</p>
             <h2 className="text-[36px] md:text-[80px] tracking-tight text-[#1D1D1F] font-bold">{t.priceUnit}</h2>
-            <div className="flex flex-col items-center gap-3 pt-4">
-              <div className="flex items-center gap-2 text-[#1D1D1F] font-medium text-[17px]">
-                <Check className="w-4 h-4 text-[#0071e3]" />
-                <span>{t.storage}</span>
-              </div>
-              <div className="flex items-center gap-2 text-[#1D1D1F] font-medium text-[17px]">
-                <Check className="w-4 h-4 text-[#0071e3]" />
-                <span>{t.allFeatures}</span>
-              </div>
-              <div className="flex items-center gap-2 text-[#1D1D1F] font-medium text-[17px]">
-                <Check className="w-4 h-4 text-[#0071e3]" />
-                <span>{t.permanentQr}</span>
-              </div>
+
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 max-w-2xl mx-auto pt-2 md:pt-4">
+              {[
+                { icon: Cloud, label: t.storage },
+                { icon: Sparkles, label: t.allFeatures },
+                { icon: QrCode, label: t.permanentQr },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex flex-col items-center gap-2 sm:gap-3 text-center"
+                >
+                  <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#0071e3] shrink-0" />
+                  <span className="text-[13px] sm:text-[17px] text-[#1D1D1F] font-medium leading-snug">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
             </div>
-            <div className="pt-8">
-              <Link 
-                href="/login?category=Memorial" 
+
+            <div className="max-w-3xl mx-auto space-y-5 md:space-y-8 pt-4 md:pt-6">
+              <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">
+                {mounted && lang === 'en' ? (
+                  t.readyTitle
+                ) : (
+                  <>
+                    พร้อมเก็บความทรงจำ{' '}
+                    <br className="sm:hidden" />
+                    ของคุณหรือยัง
+                  </>
+                )}
+              </h2>
+              <Link
+                href="/login?category=Memorial"
                 className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
               >
-                {t.pricingBtn}
+                {t.readyBtn}
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CALL TO ACTION */}
-      <section className="py-12 md:py-20 text-center">
-        <div className="max-w-[1280px] mx-auto px-6">
-          <div className="max-w-3xl mx-auto space-y-8">
-            <h2 className="text-[32px] md:text-[56px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">{t.readyTitle}</h2>
-            <Link 
-              href="/login?category=Memorial" 
-              className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
-            >
-              {t.readyBtn}
-            </Link>
           </div>
         </div>
       </section>
