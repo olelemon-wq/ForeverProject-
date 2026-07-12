@@ -121,6 +121,13 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+
+  /* Marketing surface stays light even when the device is in dark mode */
+  .marketing-light-surface {
+    --background: #f5f5f7;
+    --foreground: #1d1d1f;
+    color-scheme: light;
+  }
 }
 
 body {
