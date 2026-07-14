@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Flame, Menu as MenuIcon, X, Eye, Type } from 'lucide-react';
 import { getEnabledFeatures } from '@/lib/features';
 import { getFeatureLabel } from '@/lib/categories';
+import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 
 interface Menu {
   id: string;
@@ -68,9 +69,13 @@ export default function PublicLayoutClient({
   }, [config.defaultFontSize, zoomLevel]);
   const coverUrl = config.coverUrl || '';
   const coverScale = config.coverScale || 1;
-  const coverX = config.coverX || 0;
-  const coverY = config.coverY || 0;
+  const coverX = toRelativeOffset(config.coverX || 0, 320, config.imageCoordSpace);
+  const coverY = toRelativeOffset(config.coverY || 0, 160, config.imageCoordSpace);
   const coverRotate = config.coverRotate || 0;
+  const avatarX = toRelativeOffset(config.avatarX || 0, 224, config.imageCoordSpace);
+  const avatarY = toRelativeOffset(config.avatarY || 0, 224, config.imageCoordSpace);
+  const avatarScale = config.avatarScale || 1;
+  const avatarRotate = config.avatarRotate || 0;
 
   const enabledFeatures = getEnabledFeatures(config, tenant);
   
@@ -125,7 +130,7 @@ export default function PublicLayoutClient({
   return (
     <div 
       style={themeStyles} 
-      className="min-h-screen bg-[#faf6f0] text-stone-800 flex flex-col font-sans transition-all duration-200"
+      className="flex min-h-screen flex-col bg-[#faf6f0] text-stone-800 transition-all duration-200"
     >
 
       {/* Header */}
@@ -138,10 +143,12 @@ export default function PublicLayoutClient({
               src={coverUrl.startsWith('http') || coverUrl.startsWith('/') ? coverUrl : `/${coverUrl}`} 
               alt="Cover Image" 
               className="w-full h-full object-cover" 
-              style={{
-                transform: `translate(${((coverX || 0) / 320) * 100}%, ${((coverY || 0) / 160) * 100}%) rotate(${coverRotate || 0}deg) scale(${coverScale || 1})`,
-                transformOrigin: 'center center',
-              }}
+              style={imageTransformStyle({
+                x: coverX,
+                y: coverY,
+                scale: coverScale,
+                rotate: coverRotate,
+              })}
             />
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[0.5px]" />
           </div>
@@ -159,10 +166,12 @@ export default function PublicLayoutClient({
                 src={config.avatarUrl.startsWith('http') || config.avatarUrl.startsWith('/') ? config.avatarUrl : `/${config.avatarUrl}`} 
                 alt="Avatar"
                 className="w-full h-full object-cover"
-                style={{
-                  transform: `translate(${((config.avatarX || 0) / 224) * 100}%, ${((config.avatarY || 0) / 224) * 100}%) rotate(${config.avatarRotate || 0}deg) scale(${(config.avatarScale || 1) * (300 / 224)})`,
-                  transformOrigin: 'center center',
-                }}
+                style={imageTransformStyle({
+                  x: avatarX,
+                  y: avatarY,
+                  scale: avatarScale,
+                  rotate: avatarRotate,
+                })}
               />
             ) : (
               <Flame className="w-10 h-10 animate-pulse" style={{ color: 'var(--theme-primary)' }} />

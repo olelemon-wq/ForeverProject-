@@ -1,0 +1,17 @@
+---
+description: Prefer shadcn/ui components for UI controls
+alwaysApply: true
+---
+
+# Prefer shadcn/ui
+
+When adding or replacing UI controls (Select, Button, Dialog, Input, Dropdown, Checkbox, Tabs, etc.):
+
+1. **Use shadcn/ui first** from `@/components/ui/*`.
+2. If a component is missing, add it with `npx shadcn@latest add <component>` before inventing a custom one.
+3. Prefer composing shadcn primitives over native HTML form controls when the control needs custom chrome (e.g. Select triggers, menus, dialogs).
+4. Keep brand colors where the product already uses them (e.g. `#0071e3`) by className overrides on shadcn components when needed.
+5. Still follow icon guidelines: lucide-react only, no emoji icons.
+6. Do not reinvent Select / Dropdown / Dialog / Popover with hand-rolled divs if a shadcn component exists.
+
+Existing one-off custom layouts (marketing sections, galleries) can stay custom; form controls and app chrome should migrate toward shadcn over time.

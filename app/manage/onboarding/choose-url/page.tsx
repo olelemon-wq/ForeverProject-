@@ -3,6 +3,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, CheckCircle2, Globe, ArrowRight, RotateCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 function ChooseUrlInner() {
   const router = useRouter();
@@ -173,7 +175,7 @@ function ChooseUrlInner() {
                 <span className="absolute left-4 top-3.5 text-xs text-stone-400 font-mono select-none">
                   forever.co.th/
                 </span>
-                <input
+                <Input
                   type="text"
                   value={slug}
                   onChange={(e) => {
@@ -187,15 +189,15 @@ function ChooseUrlInner() {
                   disabled={isSubmitting}
                 />
               </div>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={checkSlugAvailability}
                 disabled={isChecking || !slug}
-                className="px-5 bg-stone-900 hover:bg-stone-800 disabled:bg-stone-100 disabled:text-stone-400 text-white font-bold text-xs rounded-2xl transition active:scale-95 cursor-pointer flex-shrink-0 flex items-center justify-center gap-1.5"
+                className="h-auto px-5 bg-stone-900 hover:bg-stone-800 disabled:bg-stone-100 disabled:text-stone-400 text-white font-bold text-xs rounded-2xl transition active:scale-95 cursor-pointer flex-shrink-0 flex items-center justify-center gap-1.5"
               >
                 {isChecking && <RotateCw className="w-3 h-3 animate-spin" />}
                 <span>ตรวจสอบความว่าง</span>
-              </button>
+              </Button>
             </div>
 
             {/* Validation Message display status */}
@@ -212,14 +214,14 @@ function ChooseUrlInner() {
           </div>
 
           <div className="pt-2">
-            <button
+            <Button variant="ghost"
               type="submit"
               disabled={!isValidated || !isAvailable || isSubmitting}
-              className="w-full py-4 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex items-center justify-center gap-2"
+              className="h-auto w-full py-4 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex items-center justify-center gap-2"
             >
               <span>{isSubmitting ? 'กำลังบันทึก...' : 'ยืนยันชื่อลิงก์และไปต่อ'}</span>
               {!isSubmitting && <ArrowRight className="w-4 h-4" />}
-            </button>
+            </Button>
             <p className="mt-3 text-center text-[10px] text-stone-400 leading-relaxed">
               * ต้องประกอบด้วยตัวอักษรพิมพ์เล็ก (a-z) ตัวเลข (0-9) และขีดกลาง (-) เท่านั้น ความยาว 3-50 ตัวอักษร
             </p>

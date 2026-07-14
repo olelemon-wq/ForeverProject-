@@ -59,13 +59,15 @@ export default function FeatureToggleList({
   const sortedFeatures = [...mandatoryFeatures, ...optionalFeatures];
 
   return (
-    <div className="grid grid-cols-1 gap-3 max-w-2xl">
+    <div className="grid max-w-2xl grid-cols-1 gap-3">
       {sortedFeatures.map((feature) => {
         const Icon = ICONS[feature.icon] ?? Flame;
         const isMandatory = mandatoryKeys.includes(feature.key);
         const active = isMandatory ? true : !!value[feature.key];
 
-        const labelCopy = labelFor ? labelFor(feature.key) : { label: feature.label, description: feature.description };
+        const labelCopy = labelFor
+          ? labelFor(feature.key)
+          : { label: feature.label, description: feature.description };
         const displayLabel = labelCopy.label;
         const displayDesc = labelCopy.description;
 
@@ -78,31 +80,31 @@ export default function FeatureToggleList({
             aria-label={displayLabel}
             onClick={() => toggle(feature.key)}
             disabled={disabled || isMandatory}
-            className={`flex items-center gap-3 rounded-2xl border p-4 text-left transition-all disabled:cursor-not-allowed ${
+            className={`flex h-auto w-full items-center gap-3 rounded-2xl border p-4 text-left transition-all disabled:cursor-not-allowed ${
               isMandatory
-                ? 'border-emerald-300 bg-emerald-50/50 opacity-85'
+                ? 'border-emerald-300 bg-emerald-50/50'
                 : active
-                ? 'border-emerald-300 bg-emerald-50/70 shadow-[0_2px_10px_rgba(13,148,136,0.08)]'
-                : 'border-stone-200 bg-white hover:border-stone-300'
+                  ? 'border-emerald-300 bg-emerald-50/70 shadow-[0_2px_10px_rgba(13,148,136,0.08)] hover:border-emerald-400'
+                  : 'border-stone-200 bg-white hover:border-stone-300 hover:bg-stone-50/60'
             }`}
           >
             <span
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors order-1 ${
+              className={`flex size-5 shrink-0 items-center justify-center rounded-md border transition-colors ${
                 active
                   ? 'border-emerald-500 bg-emerald-500 text-white'
                   : 'border-stone-300 bg-white text-transparent'
               }`}
             >
-              <Check className="h-3.5 w-3.5" strokeWidth={3} />
+              <Check className="size-3.5" strokeWidth={3} />
             </span>
 
-            <span className="flex-1 order-2">
-              <span className="block text-sm font-semibold text-stone-880 flex items-center gap-2">
+            <span className="min-w-0 flex-1">
+              <span className="flex items-center gap-2 text-sm font-semibold text-stone-900">
                 <span>{displayLabel}</span>
                 {isMandatory && (
-                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md">
-                    <Lock className="h-2.5 w-2.5" />
-                    <span className="text-rose-500 font-black">*</span>
+                  <span className="inline-flex items-center gap-1 rounded-md border border-emerald-100 bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700">
+                    <Lock className="size-2.5" />
+                    <span className="font-black text-rose-500">*</span>
                     จำเป็น
                   </span>
                 )}
@@ -113,11 +115,11 @@ export default function FeatureToggleList({
             </span>
 
             <span
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl order-3 ${
+              className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${
                 active ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-400'
               }`}
             >
-              <Icon className="h-5 w-5" />
+              <Icon className="size-5" />
             </span>
           </button>
         );

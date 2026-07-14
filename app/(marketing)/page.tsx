@@ -355,14 +355,14 @@ export default function MarketingHome() {
                 </p>
               </div>
 
-              {/* Image + CTA */}
+              {/* Image + mobile CTA */}
               <div className="relative min-h-[280px] md:min-h-[360px] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
                 <img
                   className="absolute inset-0 h-full w-full object-cover"
                   alt="A multi-generational family"
                   src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80"
                 />
-                <div className="absolute inset-x-0 bottom-0 flex justify-start md:justify-center bg-gradient-to-t from-black/50 to-transparent p-5 md:p-6 pt-16">
+                <div className="absolute inset-x-0 bottom-0 flex justify-start bg-gradient-to-t from-black/50 to-transparent p-5 pt-16 md:hidden">
                   <Link
                     href="/login?category=Family Legacy"
                     className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
@@ -372,19 +372,27 @@ export default function MarketingHome() {
                 </div>
               </div>
 
-              {/* Feature icons */}
+              {/* Feature icons + desktop CTA */}
               <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] p-6 md:p-8 flex flex-col justify-center gap-5 md:gap-6 text-left shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
-                <div className="flex flex-col gap-2">
-                  <GitBranch className="w-6 h-6 text-[#0071e3]" />
+                <div className="flex items-center gap-3">
+                  <GitBranch className="w-6 h-6 text-[#0071e3] shrink-0" />
                   <h3 className="font-semibold text-[17px] md:text-[19px] text-[#1D1D1F] tracking-tight">
                     Interactive Family Trees
                   </h3>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <BookOpen className="w-6 h-6 text-[#0071e3]" />
+                <div className="flex items-center gap-3">
+                  <BookOpen className="w-6 h-6 text-[#0071e3] shrink-0" />
                   <h3 className="font-semibold text-[17px] md:text-[19px] text-[#1D1D1F] tracking-tight">
                     Heirloom Recipes
                   </h3>
+                </div>
+                <div className="hidden md:block pt-2">
+                  <Link
+                    href="/login?category=Family Legacy"
+                    className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
+                  >
+                    {t.createFamilyBtn}
+                  </Link>
                 </div>
               </div>
             </div>
@@ -432,7 +440,16 @@ export default function MarketingHome() {
             {/* Intro */}
             <div className="lg:col-span-4 flex flex-col justify-center text-left space-y-4 md:space-y-5">
               <h2 className="text-[32px] md:text-[48px] tracking-tight font-semibold leading-tight text-[#1D1D1F]">
-                {t.petTitle}
+                {mounted && lang === 'en' ? (
+                  t.petTitle
+                ) : (
+                  <>
+                    สัตว์เลี้ยง
+                    <br className="hidden md:block" />
+                    <span className="md:hidden"> </span>
+                    (Pet Memorial)
+                  </>
+                )}
               </h2>
               <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium leading-relaxed max-w-md">
                 {t.petDesc}
@@ -464,7 +481,7 @@ export default function MarketingHome() {
                   <div className="mt-4 sm:mt-6 flex justify-start md:justify-center">
                     <Link
                       href="/login?category=Pet Memorial"
-                      className="inline-flex items-center justify-center bg-[#FFFFFF] text-[#0071e3] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-white/90 transition-colors"
+                      className="inline-flex items-center justify-center bg-[#E8F1FB] text-[#0071e3] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#d6e8fa] transition-colors"
                     >
                       {t.createPetBtn}
                     </Link>

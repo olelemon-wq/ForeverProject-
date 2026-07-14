@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Flame } from 'lucide-react';
+import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 
 interface DeceasedAvatarProps {
   avatarUrl?: string | null;
@@ -9,6 +10,7 @@ interface DeceasedAvatarProps {
   avatarX?: number;
   avatarY?: number;
   avatarRotate?: number;
+  imageCoordSpace?: string | null;
   tenantName: string;
   primaryColor?: string;
 }
@@ -19,12 +21,15 @@ export default function DeceasedAvatar({
   avatarX = 0,
   avatarY = 0,
   avatarRotate = 0,
+  imageCoordSpace,
   tenantName,
   primaryColor = '#0d9488',
 }: DeceasedAvatarProps) {
   const [imageError, setImageError] = useState(false);
 
   const hasValidAvatar = !!avatarUrl && !imageError;
+  const x = toRelativeOffset(avatarX, 224, imageCoordSpace);
+  const y = toRelativeOffset(avatarY, 224, imageCoordSpace);
 
   return (
     <div 
@@ -40,8 +45,12 @@ export default function DeceasedAvatar({
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            transform: `translate(${(avatarX / 224) * 100}%, ${(avatarY / 224) * 100}%) rotate(${avatarRotate}deg) scale(${avatarScale * (300 / 224)})`,
-            transformOrigin: 'center center',
+            ...imageTransformStyle({
+              x,
+              y,
+              scale: avatarScale,
+              rotate: avatarRotate,
+            }),
           }}
           onError={() => setImageError(true)}
         />

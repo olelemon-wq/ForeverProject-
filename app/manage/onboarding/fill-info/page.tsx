@@ -4,6 +4,9 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Sparkles, AlertCircle, ArrowRight, User, Calendar, BookOpen, Palette, RotateCw } from 'lucide-react';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 const THEME_PRESETS = [
   { id: 'ELEGANT_WHITE', name: 'ขาวเรียบหรู (Elegant White)', primary: '#0071e3', secondary: '#ffffff' },
@@ -207,7 +210,7 @@ function FillInfoInner() {
               <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wider block pl-1">
                 ชื่อหัวข้อหน้าเว็บ (เช่น อนุสรณ์แด่... / ความทรงจำแสนรักของ...)
               </label>
-              <input
+              <Input
                 type="text"
                 value={websiteName}
                 onChange={(e) => setWebsiteName(e.target.value)}
@@ -232,7 +235,7 @@ function FillInfoInner() {
                 <label className="text-[10px] font-bold text-stone-500 block">
                   {isCoupleCategory ? 'ชื่อฝ่ายชาย / บุคคลที่ 1' : 'ชื่อจริง - นามสกุล'}
                 </label>
-                <input
+                <Input
                   type="text"
                   value={subjectName1}
                   onChange={(e) => setSubjectName1(e.target.value)}
@@ -271,7 +274,7 @@ function FillInfoInner() {
               <div className="bg-stone-50/50 p-4 rounded-2xl border border-stone-200 space-y-4">
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-stone-500 block">ชื่อฝ่ายหญิง / บุคคลที่ 2</label>
-                  <input
+                  <Input
                     type="text"
                     value={subjectName2}
                     onChange={(e) => setSubjectName2(e.target.value)}
@@ -290,7 +293,7 @@ function FillInfoInner() {
               <BookOpen className="w-4 h-4 text-blue-650" />
               <span>ประวัติย่อ / คำพูดติดปาก / ข้อความระลึกถึงเริ่มต้น</span>
             </h3>
-            <textarea
+            <Textarea
               value={biography}
               onChange={(e) => setBiography(e.target.value)}
               rows={4}
@@ -308,7 +311,7 @@ function FillInfoInner() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {THEME_PRESETS.map((theme) => (
-                <button
+                <Button variant="ghost"
                   key={theme.id}
                   type="button"
                   onClick={() => setSelectedTheme(theme.id)}
@@ -323,21 +326,21 @@ function FillInfoInner() {
                     <span className="w-4 h-4 rounded-full border border-stone-300" style={{ backgroundColor: theme.primary }} />
                     <span className="w-4 h-4 rounded-full border border-stone-300" style={{ backgroundColor: theme.secondary }} />
                   </div>
-                </button>
+                </Button>
               ))}
             </div>
           </div>
 
           {/* Submit */}
           <div className="pt-4 border-t border-stone-100">
-            <button
+            <Button variant="ghost"
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
+              className="h-auto w-full py-4 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-[0.98] disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
             >
               <span>{isSubmitting ? 'กำลังบันทึก...' : 'บันทึกข้อมูลและไปเลือกฟีเจอร์'}</span>
               {!isSubmitting && <ArrowRight className="w-4 h-4" />}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

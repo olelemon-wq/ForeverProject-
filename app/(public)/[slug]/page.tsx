@@ -387,6 +387,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                 avatarX={avatarX}
                 avatarY={avatarY}
                 avatarRotate={avatarRotate}
+                imageCoordSpace={config?.imageCoordSpace}
                 tenantName={tenant.name}
                 primaryColor="var(--theme-primary, #0d9488)"
               />
@@ -689,7 +690,9 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                             <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-bold uppercase tracking-wider">ครอบครัว</span>
                           )}
                         </h4>
-                        <p className="text-[9px] text-stone-400">ความสัมพันธ์: {c.relationship}</p>
+                        {tenant.category !== 'Pet Memorial' && c.relationship && c.relationship !== '—' && (
+                          <p className="text-[9px] text-stone-400">ความสัมพันธ์: {c.relationship}</p>
+                        )}
                       </div>
                     </div>
                     <span className="text-[9px] text-stone-400 font-mono">

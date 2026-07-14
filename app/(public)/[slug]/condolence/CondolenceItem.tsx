@@ -14,6 +14,7 @@ interface Condolence {
 
 interface CondolenceItemProps {
   condolence: Condolence;
+  hideRelationship?: boolean;
 }
 
 const RELATIONSHIP_BADGES: Record<string, { label: string; className: string }> = {
@@ -34,12 +35,15 @@ const getRelationshipBadge = (rel: string) => {
   return { label: `ผู้ร่วมไว้อาลัย (${rel})`, className: 'bg-stone-50 text-stone-600 border-stone-200' };
 };
 
-export default function CondolenceItem({ condolence }: CondolenceItemProps) {
+export default function CondolenceItem({ condolence, hideRelationship = false }: CondolenceItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const isFamily = condolence.type === 'FAMILY';
   const text = condolence.message || '';
   const shouldTruncate = text.length > 220;
   const displayText = shouldTruncate && !isExpanded ? text.slice(0, 180) + '...' : text;
+  const showRelationship =
+    !hideRelationship &&
+    !!condolence.relationship &&
+    condolence.relationship !== '—';
 
   const parseMessage = (msg: string) => {
     if (!msg) return '';
@@ -60,7 +64,7 @@ export default function CondolenceItem({ condolence }: CondolenceItemProps) {
     <div className="relative overflow-hidden py-6 transition pl-1">
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <span className="text-sm font-bold text-stone-850">{condolence.senderName}</span>
-        {(() => {
+        {showRelationship && (() => {
           const badge = getRelationshipBadge(condolence.relationship);
           return (
             <span className={`px-2 py-0.5 text-[9px] font-bold border rounded ${badge.className}`}>

@@ -279,6 +279,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
               avatarX={avatarX}
               avatarY={avatarY}
               avatarRotate={avatarRotate}
+              imageCoordSpace={themeConfig?.imageCoordSpace}
               tenantName={tenant.name}
               primaryColor="var(--theme-primary, #0d9488)"
             />

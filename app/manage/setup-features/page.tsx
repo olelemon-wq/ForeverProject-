@@ -11,6 +11,7 @@ import {
   MANDATORY_FEATURES 
 } from '@/lib/categories';
 import { type FeatureMap } from '@/lib/features';
+import { Button } from '@/components/ui/button';
 
 function SetupFeaturesInner() {
   const router = useRouter();
@@ -87,15 +88,15 @@ function SetupFeaturesInner() {
         </div>
 
         <div className="pt-2">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={handleConfirm}
             disabled={isLoading}
-            className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="h-auto w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? 'กำลังบันทึก...' : 'ยืนยันและเริ่มใช้งาน'}
             {!isLoading && <ArrowRight className="w-4 h-4" />}
-          </button>
+          </Button>
           <p className="mt-3 text-center text-[11px] text-stone-400">
             ฟีเจอร์ที่เลือกไว้ตอนนี้จะแสดงบนเว็บทันที — ปรับเปลี่ยนได้ทุกเมื่อในเมนูตั้งค่า
           </p>

@@ -1,8 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Calendar, ChevronLeft, ChevronRight, AlertCircle, Smartphone, Info, Check, Flame, GitBranch, Heart, Sparkles, Users } from 'lucide-react';
+import { AlertCircle, Smartphone, Info, Check, Flame, GitBranch, Heart, Sparkles, Users, PawPrint, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import ThaiDatePicker from '@/components/ThaiDatePicker';
 
 const MONTHS_THAI = [
   'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -20,158 +25,18 @@ interface Subject {
   isAlive?: boolean;
 }
 
-function CalendarPicker({
-  selectedDate,
-  onChange,
-  placeholder,
-  align = 'left',
-}: {
-  selectedDate: Date | null;
-  onChange: (date: Date) => void;
-  placeholder: string;
-  align?: 'left' | 'right';
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
+function dateToYmd(d: Date | null): string {
+  if (!d || isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDayIndex = new Date(year, month, 1).getDay();
-
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
-  };
-
-  const handleMonthChange = (newMonth: number) => {
-    setCurrentDate(new Date(year, newMonth, 1));
-  };
-
-  const handleYearChange = (newYear: number) => {
-    setCurrentDate(new Date(newYear, month, 1));
-  };
-
-  const currentCEYear = new Date().getFullYear();
-  const years = Array.from({ length: 150 }, (_, i) => currentCEYear + 10 - i);
-
-  const formatThaiDateShort = (date: Date) => {
-    const day = date.getDate();
-    const monthName = MONTHS_THAI[date.getMonth()];
-    const yearThai = date.getFullYear() + 543;
-    return `${day} ${monthName} ${yearThai}`;
-  };
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-left text-xs sm:text-sm flex justify-between items-center cursor-pointer hover:bg-stone-100/50 transition focus:outline-none"
-      >
-        <span className={selectedDate ? 'text-stone-900 font-medium' : 'text-stone-400'}>
-          {selectedDate ? formatThaiDateShort(selectedDate) : placeholder}
-        </span>
-        <Calendar className="w-4 h-4 text-stone-400" />
-      </button>
-
-      {isOpen && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} bottom-full mb-2 z-50 bg-white border border-stone-250 rounded-2xl shadow-xl p-3 w-[315px] sm:w-[350px] animate-fade-in text-left`}>
-            <div className="flex justify-between items-center mb-4 gap-1">
-              <button
-                type="button"
-                onClick={handlePrevMonth}
-                className="p-1.5 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center"
-              >
-                <ChevronLeft className="w-4 h-4 text-stone-500" />
-              </button>
-              
-              <div className="flex gap-1">
-                <select
-                  value={month}
-                  onChange={(e) => handleMonthChange(parseInt(e.target.value))}
-                  className="bg-stone-50 border border-stone-200 rounded-xl px-2 py-1.5 text-sm sm:text-base font-bold text-stone-900 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
-                >
-                  {MONTHS_THAI.map((mName, idx) => (
-                    <option key={idx} value={idx}>{mName}</option>
-                  ))}
-                </select>
-
-                <select
-                  value={year}
-                  onChange={(e) => handleYearChange(parseInt(e.target.value))}
-                  className="bg-stone-50 border border-stone-200 rounded-xl px-2 py-1.5 text-sm sm:text-base font-bold text-stone-900 focus:outline-none cursor-pointer hover:bg-stone-100/50 transition"
-                >
-                  {years.map((yVal) => (
-                    <option key={yVal} value={yVal}>
-                      พ.ศ. {yVal + 543}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleNextMonth}
-                className="p-1.5 rounded-xl hover:bg-stone-100 text-stone-600 transition cursor-pointer flex items-center justify-center"
-              >
-                <ChevronRight className="w-4 h-4 text-stone-500" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-stone-500 mb-2 border-b border-stone-100 pb-1">
-              <span>อา</span>
-              <span>จ</span>
-              <span>อ</span>
-              <span>พ</span>
-              <span>พฤ</span>
-              <span>ศ</span>
-              <span>ส</span>
-            </div>
-
-            <div className="grid grid-cols-7 gap-1 text-center text-xs">
-              {Array.from({ length: firstDayIndex }).map((_, i) => (
-                <div key={`empty-${i}`} className="p-2" />
-              ))}
-
-              {Array.from({ length: daysInMonth }).map((_, i) => {
-                const dayNum = i + 1;
-                const thisDate = new Date(year, month, dayNum);
-                const isSelected = selectedDate && 
-                  selectedDate.getDate() === dayNum && 
-                  selectedDate.getMonth() === month && 
-                  selectedDate.getFullYear() === year;
-
-                return (
-                  <button
-                    key={dayNum}
-                    type="button"
-                    onClick={() => {
-                      onChange(thisDate);
-                      setIsOpen(false);
-                    }}
-                    className={`p-2 rounded-lg text-center cursor-pointer transition ${
-                      isSelected 
-                        ? 'bg-emerald-600 text-white font-bold' 
-                        : 'hover:bg-stone-100 text-stone-800'
-                    }`}
-                  >
-                    {dayNum}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
+function ymdToDate(s: string): Date | null {
+  if (!s) return null;
+  const d = new Date(`${s}T00:00:00`);
+  return isNaN(d.getTime()) ? null : d;
 }
 
 const CATEGORY_INPUT_DEFAULTS: Record<string, {
@@ -267,8 +132,6 @@ const CATEGORY_OPTIONS = [
     subLabel: 'รำลึกบุคคลทั่วไป', 
     desc: 'พื้นที่ส่งต่อความรักและความระลึกถึงผู้ล่วงลับ รวบรวมคำไว้อาลัยและภาพความอบอุ่น', 
     icon: Flame, 
-    colorClass: 'from-amber-500/10 to-orange-500/5 text-amber-700 shadow-amber-500/5',
-    iconColor: 'bg-amber-100 text-amber-700 shadow-amber-200/30'
   },
   { 
     key: 'Family Legacy', 
@@ -276,8 +139,6 @@ const CATEGORY_OPTIONS = [
     subLabel: 'มรดกวงศ์ตระกูล', 
     desc: 'หอเกียรติยศบันทึกประวัติศาสตร์ บันทึกความเป็นมา และผังเครือญาติสืบต่อวงศ์ตระกูล', 
     icon: GitBranch, 
-    colorClass: 'from-emerald-500/10 to-teal-500/5 text-emerald-700 shadow-emerald-500/5',
-    iconColor: 'bg-emerald-100 text-emerald-700 shadow-emerald-200/30'
   },
   { 
     key: 'Couple', 
@@ -285,8 +146,6 @@ const CATEGORY_OPTIONS = [
     subLabel: 'ความรักคู่รัก', 
     desc: 'บันทึกการเดินทางของความรัก ไทม์ไลน์ภาพถ่ายและวิดีโอแห่งความประทับใจคู่ชีวิต', 
     icon: Heart, 
-    colorClass: 'from-rose-500/10 to-pink-500/5 text-rose-700 shadow-rose-500/5',
-    iconColor: 'bg-rose-100 text-rose-700 shadow-rose-200/30'
   },
   { 
     key: 'Wedding', 
@@ -294,8 +153,6 @@ const CATEGORY_OPTIONS = [
     subLabel: 'ความทรงจำแต่งงาน', 
     desc: 'กำหนดการงานมงคลสมรส สมุดลงนามแสดงความยินดีดิจิทัล และฟีดภาพวันสำคัญ', 
     icon: Sparkles, 
-    colorClass: 'from-violet-500/10 to-indigo-500/5 text-violet-700 shadow-violet-500/5',
-    iconColor: 'bg-violet-100 text-violet-700 shadow-violet-200/30'
   },
   { 
     key: 'Friends', 
@@ -303,17 +160,13 @@ const CATEGORY_OPTIONS = [
     subLabel: 'กลุ่มเพื่อนรัก', 
     desc: 'พื้นที่รวบรวมเรื่องราวความผูกพัน มิตรภาพที่ไม่มีวันจางหาย และความทรงจำร่วมกับแก๊ง', 
     icon: Users, 
-    colorClass: 'from-sky-500/10 to-blue-500/5 text-sky-700 shadow-sky-500/5',
-    iconColor: 'bg-sky-100 text-sky-700 shadow-sky-200/30'
   },
   { 
     key: 'Pet Memorial', 
     thaiLabel: 'Pet Memorial', 
     subLabel: 'สัตว์เลี้ยงแสนรัก', 
     desc: 'คลังรูปถ่ายและพื้นที่ส่งท้ายความผูกพันถึงเจ้าตัวน้อย สมาชิกแสนสำคัญของครอบครัว', 
-    icon: Heart, 
-    colorClass: 'from-orange-500/10 to-red-500/5 text-orange-700 shadow-orange-500/5',
-    iconColor: 'bg-orange-100 text-orange-700 shadow-orange-200/30'
+    icon: PawPrint, 
   },
 ];
 
@@ -353,8 +206,6 @@ export default function WebsiteCreationWizard() {
       deathYear: null,
     }
   ]);
-  const currentCEYear = new Date().getFullYear();
-  const yearsList = Array.from({ length: 150 }, (_, i) => currentCEYear + 5 - i);
 
   // Synchronize subjects to deceasedName and lifespan
   useEffect(() => {
@@ -683,20 +534,20 @@ export default function WebsiteCreationWizard() {
 
           {loginStep === 1 ? (
             <form onSubmit={handleRequestOtp} className="space-y-6">
-              <input 
+              <Input 
                 type="tel" 
                 value={loginPhone} 
                 onChange={(e) => setLoginPhone(e.target.value)} 
                 placeholder="ป้อนเบอร์โทรศัพท์ 10 หลัก (เช่น 0812345678)"
                 className="w-full px-5 py-3.5 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 text-sm focus:bg-white focus:outline-none"
               />
-              <button type="submit" disabled={isLoading} className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
+              <Button variant="ghost" type="submit" disabled={isLoading} className="h-auto w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
                 {isLoading ? 'กำลังประมวลผล...' : 'ขอรหัส OTP'}
-              </button>
+              </Button>
             </form>
           ) : (
             <form onSubmit={handleVerifyOtp} className="space-y-6">
-              <input 
+              <Input 
                 type="text" 
                 maxLength={6} 
                 value={loginOtp} 
@@ -709,9 +560,9 @@ export default function WebsiteCreationWizard() {
                   รหัสทดสอบ: <span className="font-bold underline">{simulatedOtp}</span>
                 </div>
               )}
-              <button type="submit" disabled={isLoading} className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
+              <Button variant="ghost" type="submit" disabled={isLoading} className="h-auto w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
                 {isLoading ? 'กำลังตรวจสอบ...' : 'ยืนยันรหัส OTP'}
-              </button>
+              </Button>
             </form>
           )}
         </div>
@@ -730,38 +581,49 @@ export default function WebsiteCreationWizard() {
   ];
 
   return (
-    <main className="min-h-screen bg-stone-50 text-stone-800 py-12 px-4 flex flex-col items-center">
-      {/* Steps indicator */}
-      <div className="w-full max-w-2xl flex items-center justify-between text-xs text-stone-400 mb-12 select-none">
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 1 ? 'text-emerald-700 font-bold' : ''}`}>
-          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 1 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>1</span>
-          <span>เลือกหมวดหมู่</span>
-        </div>
-        <div className={`flex-1 h-px mx-2 transition ${wizardStep >= 2 ? 'bg-emerald-600/60' : 'bg-stone-200'}`} />
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 2 ? 'text-emerald-700 font-bold' : ''}`}>
-          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 2 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>2</span>
-          <span>ชื่อลิงก์ URL</span>
-        </div>
-        <div className={`flex-1 h-px mx-2 transition ${wizardStep >= 3 ? 'bg-emerald-600/60' : 'bg-stone-200'}`} />
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 3 ? 'text-emerald-700 font-bold' : ''}`}>
-          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 3 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>3</span>
-          <span>กรอกข้อมูล</span>
-        </div>
-        <div className={`flex-1 h-px mx-2 transition ${wizardStep >= 4 ? 'bg-emerald-600/60' : 'bg-stone-200'}`} />
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 4 ? 'text-emerald-700 font-bold' : ''}`}>
-          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 4 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>4</span>
-          <span>เลือกธีม</span>
-        </div>
-        <div className={`flex-1 h-px mx-2 transition ${wizardStep >= 5 ? 'bg-emerald-600/60' : 'bg-stone-200'}`} />
-        <div className={`flex flex-col items-center gap-2 ${wizardStep >= 5 ? 'text-emerald-700 font-bold' : ''}`}>
-          <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition ${wizardStep >= 5 ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold' : 'border-stone-200 bg-white text-stone-400'}`}>5</span>
-          <span>ชำระเงิน</span>
-        </div>
+    <main className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] py-8 md:py-12 px-4 flex flex-col items-center">
+      <div className="w-full max-w-3xl mb-6 md:mb-8">
+        <Link
+          href="/manage"
+          className="inline-flex items-center gap-1.5 text-[14px] font-medium text-[#86868B] hover:text-[#1D1D1F] transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          กลับไปแผงควบคุม
+        </Link>
       </div>
 
-      <div className="w-full max-w-2xl p-8 rounded-3xl border border-stone-200 bg-white shadow-xl space-y-6 overflow-visible">
+      {/* Steps indicator — lighter, Home-aligned */}
+      <div className="w-full max-w-3xl flex items-center justify-between text-[11px] md:text-[12px] text-[#86868B] mb-8 md:mb-10 select-none">
+        {[
+          { n: 1, label: 'เลือกหมวดหมู่' },
+          { n: 2, label: 'ชื่อลิงก์ URL' },
+          { n: 3, label: 'กรอกข้อมูล' },
+          { n: 4, label: 'เลือกธีม' },
+          { n: 5, label: 'ชำระเงิน' },
+        ].map((step, idx, arr) => (
+          <React.Fragment key={step.n}>
+            <div className={`flex flex-col items-center gap-1.5 ${wizardStep >= step.n ? 'text-[#0071e3] font-semibold' : ''}`}>
+              <span
+                className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[12px] md:text-[13px] transition ${
+                  wizardStep >= step.n
+                    ? 'bg-[#0071e3] text-white'
+                    : 'bg-white text-[#86868B] shadow-[0_1px_3px_rgba(0,0,0,0.06)]'
+                }`}
+              >
+                {wizardStep > step.n ? <Check className="w-3.5 h-3.5" strokeWidth={2.5} /> : step.n}
+              </span>
+              <span className="hidden sm:block text-center leading-tight">{step.label}</span>
+            </div>
+            {idx < arr.length - 1 && (
+              <div className={`flex-1 h-px mx-1.5 md:mx-2 transition ${wizardStep > step.n ? 'bg-[#0071e3]/50' : 'bg-[#d2d2d7]'}`} />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="w-full max-w-3xl p-6 md:p-8 rounded-[22px] md:rounded-[28px] bg-[#FFFFFF] shadow-[0_4px_24px_rgba(0,0,0,0.08)] space-y-6 overflow-visible">
         {error && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium flex items-center gap-2">
+          <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-[13px] text-red-700 font-medium flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -770,12 +632,19 @@ export default function WebsiteCreationWizard() {
         {/* STEP 1: CATEGORY SELECTION */}
         {wizardStep === 1 && (
           <div className="space-y-6 animate-fade-in">
-            <header className="space-y-1 text-center">
-              <h2 className="text-xl font-black text-stone-900">เลือกประเภทความทรงจำ</h2>
-              <p className="text-xs text-stone-500">เลือกรูปแบบที่ต้องการสร้างเพื่อรับการจัดแต่งฟีเจอร์และคำนำทางที่เหมาะสม</p>
+            <header className="space-y-2 text-left sm:text-center">
+              <p className="text-[13px] font-medium text-[#86868B]">
+                {userPhone ? `เข้าสู่ระบบด้วย ${userPhone}` : 'สร้างเว็บเพิ่ม'}
+              </p>
+              <h2 className="text-[28px] md:text-[32px] font-semibold tracking-tight text-[#1D1D1F] leading-tight">
+                สร้างเว็บไซต์ใหม่
+              </h2>
+              <p className="text-[15px] md:text-[17px] text-[#86868B] font-medium leading-relaxed max-w-xl mx-auto">
+                เลือกหมวดความทรงจำสำหรับเว็บถัดไป ระบบจะจัดฟีเจอร์ให้เหมาะกับหมวดที่เลือก
+              </p>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4">
               {CATEGORY_OPTIONS.map((opt) => {
                 const Icon = opt.icon;
                 const isSelected = category === opt.key;
@@ -821,36 +690,33 @@ export default function WebsiteCreationWizard() {
                         ]);
                       }
                     }}
-                    className={`group flex flex-col gap-3.5 rounded-3xl p-6 text-left transition-all duration-300 cursor-pointer relative overflow-hidden select-none hover:-translate-y-0.5 border border-transparent ${
+                    className={`group relative flex h-auto w-full min-w-0 cursor-pointer select-none flex-col items-stretch gap-3 rounded-[18px] border p-5 text-left transition-all duration-200 md:rounded-[22px] md:p-6 ${
                       isSelected
-                        ? `bg-gradient-to-br ${opt.colorClass} shadow-lg shadow-emerald-500/5`
-                        : 'bg-stone-100/40 hover:bg-stone-100/70 hover:shadow-xs'
+                        ? 'border-[#0071e3] bg-white shadow-[0_4px_20px_rgba(0,113,227,0.12)]'
+                        : 'border-transparent bg-[#F5F5F7] hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]'
                     }`}
                   >
-                    {/* Glowing highlight blur circle inside selected card */}
-                    {isSelected && (
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
-                    )}
-
-                    <div className="flex items-center gap-3.5">
-                      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 shadow-xs ${
-                        isSelected 
-                          ? 'bg-emerald-600 text-white scale-105' 
-                          : `${opt.iconColor} group-hover:scale-105`
-                      }`}>
-                        <Icon className="h-5 w-5" />
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span
+                        className={`flex size-10 shrink-0 items-center justify-center rounded-full transition-colors ${
+                          isSelected
+                            ? 'bg-[#0071e3] text-white'
+                            : 'bg-white text-[#1D1D1F] shadow-[0_1px_3px_rgba(0,0,0,0.06)]'
+                        }`}
+                      >
+                        <Icon className="size-5" strokeWidth={1.75} />
                       </span>
-                      <div>
-                        <span className="block text-[10px] font-black tracking-wider uppercase text-stone-400">
+                      <div className="min-w-0">
+                        <span className="block text-[12px] font-semibold tracking-wide text-[#86868B]">
                           {opt.thaiLabel}
                         </span>
-                        <span className="block text-sm font-extrabold text-stone-850">
+                        <span className="block text-[15px] font-semibold tracking-tight text-[#1D1D1F] md:text-[17px]">
                           {opt.subLabel}
                         </span>
                       </div>
                     </div>
-                    
-                    <p className="text-[11px] leading-relaxed text-stone-500 group-hover:text-stone-600 transition-colors">
+
+                    <p className="whitespace-normal text-[13px] leading-relaxed text-[#86868B] md:text-[14px]">
                       {opt.desc}
                     </p>
                   </button>
@@ -858,10 +724,14 @@ export default function WebsiteCreationWizard() {
               })}
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-stone-100">
-              <button 
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-3 pt-4 border-t border-[#d2d2d7]/40">
+              <p className="text-[13px] text-[#86868B]">
+                เว็บใหม่จะมีขั้นชำระเงิน ฿2,000 / ปี
+              </p>
+              <button
+                type="button"
                 onClick={() => setWizardStep(2)}
-                className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
+                className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-8 py-2.5 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98]"
               >
                 ถัดไป: ตั้งชื่อลิงก์ URL
               </button>
@@ -878,12 +748,12 @@ export default function WebsiteCreationWizard() {
             </header>
 
             <div className="space-y-4">
-              <div className="flex bg-stone-50 border border-stone-200 rounded-2xl overflow-hidden focus-within:border-emerald-600 transition">
-                <span className="bg-stone-100/80 px-4 py-3.5 text-sm text-stone-500 font-mono flex items-center border-r border-stone-200 select-none">
+              <div className="flex items-stretch overflow-hidden rounded-2xl border border-[#d2d2d7] bg-[#F5F5F7] transition focus-within:border-[#0071e3]/50 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0071e3]/20">
+                <span className="flex shrink-0 items-center border-r border-[#d2d2d7] px-4 font-mono text-sm text-[#86868B] select-none">
                   forever.co.th/
                 </span>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={slug}
                   onChange={(e) => {
                     setSlug(e.target.value.replace(/[^a-zA-Z0-9-]/g, ''));
@@ -898,36 +768,44 @@ export default function WebsiteCreationWizard() {
                     category === 'Pet Memorial' ? 'lucky-cat' :
                     'somsak-family'
                   }
-                  className="flex-1 px-4 py-3.5 bg-stone-50 text-stone-900 font-mono text-sm focus:outline-none focus:bg-white"
+                  className="min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 font-mono text-sm text-[#1D1D1F] outline-none placeholder:text-[#AEAEB2]"
                 />
               </div>
 
-              <button 
+              <button
+                type="button"
                 onClick={checkSlug}
                 disabled={slugChecking}
-                className="px-5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-bold transition border border-stone-250 shadow-sm active:scale-95"
+                className="inline-flex h-auto cursor-pointer items-center rounded-xl border border-[#d2d2d7] bg-white px-5 py-2.5 text-xs font-bold text-[#1D1D1F] shadow-sm transition hover:bg-[#F5F5F7] active:scale-95 disabled:pointer-events-none disabled:opacity-50"
               >
                 {slugChecking ? 'กำลังตรวจสอบ...' : 'ตรวจสอบสิทธิ์ว่าง'}
               </button>
 
               {slugValid === true && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                  <span>ชื่อลิงก์ "forever.co.th/{slug}" พร้อมใช้งาน</span>
+                <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-800">
+                  <Check className="size-4 shrink-0 text-emerald-600" />
+                  <span>ชื่อลิงก์ &quot;forever.co.th/{slug}&quot; พร้อมใช้งาน</span>
+                </div>
+              )}
+              {slugValid === false && (
+                <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-semibold text-rose-700">
+                  ชื่อลิงก์นี้ถูกใช้แล้ว หรือไม่สามารถใช้ได้ กรุณาลองชื่ออื่น
                 </div>
               )}
             </div>
 
-            <div className="flex justify-between pt-4 border-t border-stone-100">
-              <button 
-                onClick={() => setWizardStep(1)} 
-                className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold"
+            <div className="flex justify-between gap-3 border-t border-[#d2d2d7]/40 pt-4">
+              <button
+                type="button"
+                onClick={() => setWizardStep(1)}
+                className="rounded-full border border-[#d2d2d7] px-6 py-2.5 text-[13px] font-semibold text-[#86868B] transition hover:bg-[#F5F5F7] hover:text-[#1D1D1F]"
               >
                 ย้อนกลับ
               </button>
-              <button 
+              <button
+                type="button"
                 onClick={handleNextToInfo}
-                className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
+                className="inline-flex h-auto items-center justify-center rounded-full bg-[#0071e3] px-8 py-2.5 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98]"
               >
                 ถัดไป: กรอกข้อมูลเว็บ
               </button>
@@ -949,7 +827,7 @@ export default function WebsiteCreationWizard() {
                   <span>{defaults.nameLabel}</span>
                   <span className="text-rose-500 font-bold">*</span>
                 </label>
-                <input 
+                <Input 
                   type="text" 
                   value={name} 
                   onChange={(e) => setName(e.target.value)} 
@@ -961,7 +839,7 @@ export default function WebsiteCreationWizard() {
               {subjects.map((sub, index) => (
                 <div key={index} className="p-5 rounded-2xl border border-stone-250 bg-stone-50/20 space-y-4 relative animate-fade-in shadow-xs">
                   {subjects.length > 1 && category !== 'Couple' && category !== 'Wedding' && (
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => {
                         const newSubs = [...subjects];
@@ -971,7 +849,7 @@ export default function WebsiteCreationWizard() {
                       className="absolute top-4 right-4 text-xs font-bold text-red-650 hover:text-red-700 active:scale-95 transition cursor-pointer"
                     >
                       ลบออก
-                    </button>
+                    </Button>
                   )}
                   <h4 className="text-[10px] font-black text-stone-400 uppercase tracking-wider">
                     {category === 'Pet Memorial' ? `ข้อมูลสัตว์เลี้ยงตัวที่ ${index + 1}` :
@@ -984,7 +862,7 @@ export default function WebsiteCreationWizard() {
                       <span>{defaults.subjectLabel}</span>
                       <span className="text-rose-500 font-bold">*</span>
                     </label>
-                    <input 
+                    <Input 
                       type="text" 
                       value={sub.name} 
                       onChange={(e) => {
@@ -1002,14 +880,13 @@ export default function WebsiteCreationWizard() {
                       {/* Still Alive checkbox for Pet Memorial and Family Legacy */}
                       {(category === 'Pet Memorial' || category === 'Family Legacy') && (
                         <label className="flex items-center gap-1.5 cursor-pointer select-none pb-0.5">
-                          <input 
-                            type="checkbox" 
+                          <Checkbox 
                             checked={sub.isAlive || false}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
+                            onCheckedChange={(checked) => {
+                                const isChecked = !!checked;
                               const newSubs = [...subjects];
-                              newSubs[index].isAlive = checked;
-                              if (checked) {
+                              newSubs[index].isAlive = isChecked;
+                              if (isChecked) {
                                 newSubs[index].deathDate = null;
                                 newSubs[index].deathYear = null;
                                 newSubs[index].deathYearOnly = false;
@@ -1026,52 +903,46 @@ export default function WebsiteCreationWizard() {
 
                       <label className="text-sm font-bold text-stone-600 tracking-wide">{defaults.dateLabel}</label>
                       
-                      <div className={`grid gap-4 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                        {/* Birth Date column */}
+                      <div className={`grid gap-4 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
                         <div className="space-y-1">
                           <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateStartTitle}</span>
-                          {sub.birthYearOnly ? (
-                            <select
-                              value={sub.birthYear || ''}
-                              onChange={(e) => {
-                                const val = e.target.value ? parseInt(e.target.value, 10) : null;
-                                const newSubs = [...subjects];
-                                newSubs[index].birthYear = val;
-                                if (val) {
-                                  newSubs[index].birthDate = new Date(val, 0, 1);
-                                } else {
+                          <ThaiDatePicker
+                            variant="input"
+                            yearOnly={sub.birthYearOnly}
+                            value={
+                              sub.birthYearOnly
+                                ? sub.birthYear != null
+                                  ? `${sub.birthYear}-01-01`
+                                  : ''
+                                : dateToYmd(sub.birthDate)
+                            }
+                            onChange={(ymd) => {
+                              const newSubs = [...subjects];
+                              if (sub.birthYearOnly) {
+                                if (!ymd) {
+                                  newSubs[index].birthYear = null;
                                   newSubs[index].birthDate = null;
+                                } else {
+                                  const year = parseInt(ymd.slice(0, 4), 10);
+                                  newSubs[index].birthYear = year;
+                                  newSubs[index].birthDate = new Date(year, 0, 1);
                                 }
-                                setSubjects(newSubs);
-                              }}
-                              className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:outline-none cursor-pointer focus:border-emerald-500 transition"
-                            >
-                              <option value="">เลือกปี พ.ศ.</option>
-                              {yearsList.map((y) => (
-                                <option key={y} value={y}>พ.ศ. {y + 543}</option>
-                              ))}
-                            </select>
-                          ) : (
-                            <CalendarPicker
-                              selectedDate={sub.birthDate}
-                              onChange={(date) => {
-                                const newSubs = [...subjects];
-                                newSubs[index].birthDate = date;
-                                setSubjects(newSubs);
-                              }}
-                              placeholder={defaults.dateStartPlaceholder}
-                              align="left"
-                            />
-                          )}
+                              } else {
+                                newSubs[index].birthDate = ymdToDate(ymd);
+                              }
+                              setSubjects(newSubs);
+                            }}
+                            placeholder={sub.birthYearOnly ? 'เลือกปี พ.ศ.' : defaults.dateStartPlaceholder}
+                            align="left"
+                          />
                           <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
-                            <input 
-                              type="checkbox" 
+                            <Checkbox 
                               checked={sub.birthYearOnly}
-                              onChange={(e) => {
-                                const checked = e.target.checked;
+                              onCheckedChange={(checked) => {
+                                const isChecked = !!checked;
                                 const newSubs = [...subjects];
-                                newSubs[index].birthYearOnly = checked;
-                                if (checked) {
+                                newSubs[index].birthYearOnly = isChecked;
+                                if (isChecked) {
                                   const initialYear = sub.birthDate ? sub.birthDate.getFullYear() : new Date().getFullYear();
                                   newSubs[index].birthYear = initialYear;
                                   newSubs[index].birthDate = new Date(initialYear, 0, 1);
@@ -1096,48 +967,43 @@ export default function WebsiteCreationWizard() {
                         {!sub.isAlive && (
                           <div className="space-y-1">
                             <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateEndTitle}</span>
-                            {sub.deathYearOnly ? (
-                              <select
-                                value={sub.deathYear || ''}
-                                onChange={(e) => {
-                                  const val = e.target.value ? parseInt(e.target.value, 10) : null;
-                                  const newSubs = [...subjects];
-                                  newSubs[index].deathYear = val;
-                                  if (val) {
-                                    newSubs[index].deathDate = new Date(val, 0, 1);
-                                  } else {
+                            <ThaiDatePicker
+                              variant="input"
+                              yearOnly={sub.deathYearOnly}
+                              value={
+                                sub.deathYearOnly
+                                  ? sub.deathYear != null
+                                    ? `${sub.deathYear}-01-01`
+                                    : ''
+                                  : dateToYmd(sub.deathDate)
+                              }
+                              onChange={(ymd) => {
+                                const newSubs = [...subjects];
+                                if (sub.deathYearOnly) {
+                                  if (!ymd) {
+                                    newSubs[index].deathYear = null;
                                     newSubs[index].deathDate = null;
+                                  } else {
+                                    const year = parseInt(ymd.slice(0, 4), 10);
+                                    newSubs[index].deathYear = year;
+                                    newSubs[index].deathDate = new Date(year, 0, 1);
                                   }
-                                  setSubjects(newSubs);
-                                }}
-                                className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs sm:text-sm focus:outline-none cursor-pointer focus:border-emerald-500 transition"
-                              >
-                                <option value="">เลือกปี พ.ศ.</option>
-                                {yearsList.map((y) => (
-                                  <option key={y} value={y}>พ.ศ. {y + 543}</option>
-                                ))}
-                              </select>
-                            ) : (
-                              <CalendarPicker
-                                selectedDate={sub.deathDate}
-                                onChange={(date) => {
-                                  const newSubs = [...subjects];
-                                  newSubs[index].deathDate = date;
-                                  setSubjects(newSubs);
-                                }}
-                                placeholder={defaults.dateEndPlaceholder}
-                                align="right"
-                              />
-                            )}
+                                } else {
+                                  newSubs[index].deathDate = ymdToDate(ymd);
+                                }
+                                setSubjects(newSubs);
+                              }}
+                              placeholder={sub.deathYearOnly ? 'เลือกปี พ.ศ.' : defaults.dateEndPlaceholder}
+                              align="right"
+                            />
                             <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
-                              <input 
-                                type="checkbox" 
+                              <Checkbox 
                                 checked={sub.deathYearOnly}
-                                onChange={(e) => {
-                                  const checked = e.target.checked;
+                                onCheckedChange={(checked) => {
+                                const isChecked = !!checked;
                                   const newSubs = [...subjects];
-                                  newSubs[index].deathYearOnly = checked;
-                                  if (checked) {
+                                  newSubs[index].deathYearOnly = isChecked;
+                                  if (isChecked) {
                                     const initialYear = sub.deathDate ? sub.deathDate.getFullYear() : new Date().getFullYear();
                                     newSubs[index].deathYear = initialYear;
                                     newSubs[index].deathDate = new Date(initialYear, 0, 1);
@@ -1166,7 +1032,7 @@ export default function WebsiteCreationWizard() {
               ))}
 
               {category !== 'Couple' && category !== 'Wedding' && (
-                <button
+                <Button variant="ghost"
                   type="button"
                   onClick={() => {
                     setSubjects([
@@ -1187,7 +1053,7 @@ export default function WebsiteCreationWizard() {
                   {category === 'Pet Memorial' ? '+ เพิ่มสัตว์เลี้ยงอีกตัว' :
                    category === 'Memorial' || category === 'Family Legacy' ? '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน' :
                    '+ เพิ่มรายชื่อผู้ร่วมแสดงผล'}
-                </button>
+                </Button>
               )}
 
               {lifespan && (
@@ -1204,8 +1070,14 @@ export default function WebsiteCreationWizard() {
             </div>
 
             <div className="flex justify-between pt-4 border-t border-stone-100">
-              <button onClick={() => setWizardStep(2)} className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold">ย้อนกลับ</button>
-              <button onClick={handleNextToTheme} className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm">ถัดไป: เลือกธีมการจัดแสดง</button>
+              <Button variant="ghost" type="button" onClick={() => setWizardStep(2)} className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold">ย้อนกลับ</Button>
+              <button
+                type="button"
+                onClick={handleNextToTheme}
+                className="inline-flex h-auto items-center justify-center rounded-full bg-[#0071e3] px-8 py-2.5 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98]"
+              >
+                ถัดไป: เลือกธีมการจัดแสดง
+              </button>
             </div>
           </div>
         )}
@@ -1254,8 +1126,13 @@ export default function WebsiteCreationWizard() {
             </div>
 
             <div className="flex justify-between pt-4 border-t border-stone-100">
-              <button onClick={() => setWizardStep(3)} className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold">ย้อนกลับ</button>
-              <button onClick={handleNextToPayment} disabled={isLoading} className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm">
+              <Button variant="ghost" type="button" onClick={() => setWizardStep(3)} className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold">ย้อนกลับ</Button>
+              <button
+                type="button"
+                onClick={handleNextToPayment}
+                disabled={isLoading}
+                className="inline-flex h-auto items-center justify-center rounded-full bg-[#0071e3] px-8 py-2.5 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+              >
                 {isLoading ? 'กำลังสร้างร่างเว็บไซต์...' : 'ถัดไป: ขั้นตอนชำระเงิน'}
               </button>
             </div>
@@ -1287,19 +1164,20 @@ export default function WebsiteCreationWizard() {
             </div>
 
             <div className="pt-4 border-t border-stone-100 max-w-xs mx-auto space-y-3">
-              <button 
+              <button
+                type="button"
                 onClick={handleSimulatePaymentSuccess}
                 disabled={isLoading}
-                className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-md active:scale-95"
+                className="inline-flex h-auto w-full items-center justify-center rounded-full bg-[#0071e3] py-3 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
               >
                 {isLoading ? 'กำลังตรวจเช็กยอดเงิน...' : 'จำลองการชำระเงินสำเร็จ (Callback Simulator)'}
               </button>
-              <button 
+              <Button variant="ghost" type="button" 
                 onClick={() => setWizardStep(4)}
                 className="w-full py-2.5 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs font-semibold transition"
               >
                 ย้อนกลับไปแก้ไข
-              </button>
+              </Button>
             </div>
           </div>
         )}

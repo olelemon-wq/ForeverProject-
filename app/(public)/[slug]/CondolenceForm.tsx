@@ -22,6 +22,7 @@ export default function CondolenceForm({
 
   const allSubjectsAlive = subjects && subjects.length > 0 && subjects.every((s: any) => s.isAlive);
   const isHappy = category === 'Couple' || category === 'Wedding' || (category === 'Pet Memorial' && allSubjectsAlive);
+  const hideRelationship = category === 'Pet Memorial';
 
   const generateCaptcha = () => {
     const num1 = Math.floor(Math.random() * 9) + 1; // 1-9
@@ -94,13 +95,17 @@ export default function CondolenceForm({
       return;
     }
 
-    const finalRelationship = relationship === 'Other' ? customRelation.trim() : relationship;
-    if (!finalRelationship) {
+    const finalRelationship = hideRelationship
+      ? '—'
+      : relationship === 'Other'
+        ? customRelation.trim()
+        : relationship;
+    if (!hideRelationship && !finalRelationship) {
       setError('กรุณากรอกความสัมพันธ์ของท่าน');
       return;
     }
 
-    const isFamilyType = relationship === 'Family' || relationship === 'Relative';
+    const isFamilyType = !hideRelationship && (relationship === 'Family' || relationship === 'Relative');
     const condolenceType = isFamilyType ? 'FAMILY' : 'GENERAL';
 
     setIsLoading(true);
@@ -197,7 +202,7 @@ export default function CondolenceForm({
           {error && <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-medium">⚠️ {error}</div>}
           {success && <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">✓ {success}</div>}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className={`grid grid-cols-1 gap-4 ${hideRelationship ? '' : 'sm:grid-cols-2'}`}>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">
                 {isHappy ? 'ชื่อผู้เขียนข้อความ' : 'ชื่อผู้ส่งคำไว้อาลัย'}
@@ -212,25 +217,27 @@ export default function CondolenceForm({
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ความสัมพันธ์</label>
-              <select 
-                value={relationship} 
-                onChange={(e) => setRelationship(e.target.value)}
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none cursor-pointer"
-                disabled={isLoading}
-              >
-                <option value="Family">ครอบครัวใกล้ชิด</option>
-                <option value="Relative">ญาติพี่น้อง</option>
-                <option value="Friend">เพื่อน</option>
-                <option value="Colleague">เพื่อนร่วมงาน</option>
-                <option value="Other">อื่น ๆ (ระบุเอง)</option>
-              </select>
-            </div>
+            {!hideRelationship && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ความสัมพันธ์</label>
+                <select 
+                  value={relationship} 
+                  onChange={(e) => setRelationship(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none cursor-pointer"
+                  disabled={isLoading}
+                >
+                  <option value="Family">ครอบครัวใกล้ชิด</option>
+                  <option value="Relative">ญาติพี่น้อง</option>
+                  <option value="Friend">เพื่อน</option>
+                  <option value="Colleague">เพื่อนร่วมงาน</option>
+                  <option value="Other">อื่น ๆ (ระบุเอง)</option>
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Conditional custom relation input box */}
-          {relationship === 'Other' && (
+          {!hideRelationship && relationship === 'Other' && (
             <div className="space-y-1 animate-fade-in">
               <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ระบุความสัมพันธ์เพิ่มเติม</label>
               <input 

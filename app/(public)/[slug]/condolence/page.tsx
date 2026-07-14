@@ -148,7 +148,11 @@ export default async function PublicCondolencePage(props: {
                   {/* Clean row-based list separated by dividers */}
                   <div className="divide-y divide-stone-150">
                     {paginatedCondolences.map((c) => (
-                      <CondolenceItem key={c.id} condolence={c} />
+                      <CondolenceItem
+                        key={c.id}
+                        condolence={c}
+                        hideRelationship={tenant.category === 'Pet Memorial'}
+                      />
                     ))}
                   </div>
 

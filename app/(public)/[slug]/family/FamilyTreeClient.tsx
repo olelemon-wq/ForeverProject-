@@ -20,6 +20,7 @@ import { getInitialLetter } from '@/lib/utils';
 import Link from 'next/link';
 import { getFeatureLabel } from '@/lib/categories';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
+import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 
 interface FamilyMember {
   id: string;
@@ -121,8 +122,12 @@ function CustomFamilyNode({ data }: { data: any }) {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              transform: `translate(${((avatarX || 0) / 224) * 100}%, ${((avatarY || 0) / 224) * 100}%) rotate(${avatarRotate || 0}deg) scale(${(avatarScale || 1) * (300 / 224)})`,
-              transformOrigin: 'center center',
+              ...imageTransformStyle({
+                x: toRelativeOffset(avatarX || 0, 224),
+                y: toRelativeOffset(avatarY || 0, 224),
+                scale: avatarScale || 1,
+                rotate: avatarRotate || 0,
+              }),
             }}
             onError={() => {
               setImageError(true);

@@ -11,6 +11,7 @@ import {
   MANDATORY_FEATURES 
 } from '@/lib/categories';
 import { type FeatureMap } from '@/lib/features';
+import { Button } from '@/components/ui/button';
 
 function OnboardingSetupFeaturesInner() {
   const router = useRouter();
@@ -149,15 +150,15 @@ function OnboardingSetupFeaturesInner() {
         </div>
 
         <div className="pt-2">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={handleConfirm}
             disabled={isSubmitting}
-            className="w-full py-4 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-95 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="h-auto w-full py-4 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-95 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isSubmitting ? 'กำลังบันทึกและสร้างเว็บ...' : 'ยืนยันและเปิดใช้งานหน้าความทรงจำ'}
             {!isSubmitting && <ArrowRight className="w-4 h-4" />}
-          </button>
+          </Button>
         </div>
       </div>
     </main>
