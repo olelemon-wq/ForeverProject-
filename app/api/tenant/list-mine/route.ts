@@ -2,10 +2,13 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
+import {
+  ensureWebmasterForPhone,
+  healOwnedWebsiteLinks,
+} from '@/lib/auth/webmaster';
 
 export async function GET() {
   try {
-    // 1. Authenticate user from session token
     const cookieStore = await cookies();
     const session = cookieStore.get('session')?.value;
 
@@ -19,75 +22,13 @@ export async function GET() {
     }
 
     const cleanPhone = String(decoded.phone).replace(/[^0-9]/g, '');
+    const webmaster = await ensureWebmasterForPhone(cleanPhone);
 
-    // 2. Resolve Webmaster via WebmasterPhone (heal legacy Webmaster.phone if needed)
-    let phoneRecord = await db.webmasterPhone.findUnique({
-      where: { phone: cleanPhone },
-      include: {
-        webmaster: {
-          include: {
-            websites: {
-              include: {
-                website: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    const linkedIds = new Set(
+      (webmaster.websites || []).map((r: { websiteId: string }) => r.websiteId)
+    );
+    await healOwnedWebsiteLinks(webmaster.id, cleanPhone, linkedIds);
 
-    let webmaster = phoneRecord?.webmaster ?? null;
-
-    if (!webmaster) {
-      const legacy = await db.webmaster.findUnique({
-        where: { phone: cleanPhone },
-        include: {
-          websites: {
-            include: {
-              website: true,
-            },
-          },
-        },
-      });
-      if (legacy) {
-        webmaster = legacy;
-        await db.webmasterPhone
-          .create({
-            data: {
-              webmasterId: legacy.id,
-              phone: cleanPhone,
-              isPrimary: true,
-            },
-          })
-          .catch(() => {});
-      }
-    }
-
-    if (!webmaster) {
-      return NextResponse.json({ websites: [] });
-    }
-
-    // 3. Heal missing WebsiteWebmaster rows when Tenant.ownerPhone matches this phone
-    const ownedTenants = await db.tenant.findMany({
-      where: { ownerPhone: cleanPhone },
-      select: { id: true },
-    });
-    const linkedIds = new Set(webmaster.websites.map((r) => r.websiteId));
-    for (const tenant of ownedTenants) {
-      if (linkedIds.has(tenant.id)) continue;
-      await db.websiteWebmaster
-        .create({
-          data: {
-            websiteId: tenant.id,
-            webmasterId: webmaster.id,
-            role: 'MAIN',
-          },
-        })
-        .catch(() => {});
-      linkedIds.add(tenant.id);
-    }
-
-    // 4. Re-fetch relations after heal
     const fresh = await db.webmaster.findUnique({
       where: { id: webmaster.id },
       include: {
