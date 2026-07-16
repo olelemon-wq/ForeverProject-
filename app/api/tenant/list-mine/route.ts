@@ -18,9 +18,11 @@ export async function GET() {
       return NextResponse.json({ error: 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่อีกครั้ง' }, { status: 401 });
     }
 
-    // 2. Fetch all website relations for this Webmaster phone number via WebmasterPhone
-    const phoneRecord = await db.webmasterPhone.findUnique({
-      where: { phone: decoded.phone },
+    const cleanPhone = String(decoded.phone).replace(/[^0-9]/g, '');
+
+    // 2. Resolve Webmaster via WebmasterPhone (heal legacy Webmaster.phone if needed)
+    let phoneRecord = await db.webmasterPhone.findUnique({
+      where: { phone: cleanPhone },
       include: {
         webmaster: {
           include: {
@@ -34,13 +36,70 @@ export async function GET() {
       },
     });
 
-    if (!phoneRecord || !phoneRecord.webmaster) {
+    let webmaster = phoneRecord?.webmaster ?? null;
+
+    if (!webmaster) {
+      const legacy = await db.webmaster.findUnique({
+        where: { phone: cleanPhone },
+        include: {
+          websites: {
+            include: {
+              website: true,
+            },
+          },
+        },
+      });
+      if (legacy) {
+        webmaster = legacy;
+        await db.webmasterPhone
+          .create({
+            data: {
+              webmasterId: legacy.id,
+              phone: cleanPhone,
+              isPrimary: true,
+            },
+          })
+          .catch(() => {});
+      }
+    }
+
+    if (!webmaster) {
       return NextResponse.json({ websites: [] });
     }
 
-    const webmaster = phoneRecord.webmaster;
+    // 3. Heal missing WebsiteWebmaster rows when Tenant.ownerPhone matches this phone
+    const ownedTenants = await db.tenant.findMany({
+      where: { ownerPhone: cleanPhone },
+      select: { id: true },
+    });
+    const linkedIds = new Set(webmaster.websites.map((r) => r.websiteId));
+    for (const tenant of ownedTenants) {
+      if (linkedIds.has(tenant.id)) continue;
+      await db.websiteWebmaster
+        .create({
+          data: {
+            websiteId: tenant.id,
+            webmasterId: webmaster.id,
+            role: 'MAIN',
+          },
+        })
+        .catch(() => {});
+      linkedIds.add(tenant.id);
+    }
 
-    const managedSites = webmaster.websites.map((relation) => ({
+    // 4. Re-fetch relations after heal
+    const fresh = await db.webmaster.findUnique({
+      where: { id: webmaster.id },
+      include: {
+        websites: {
+          include: {
+            website: true,
+          },
+        },
+      },
+    });
+
+    const managedSites = (fresh?.websites || []).map((relation) => ({
       id: relation.website.id,
       slug: relation.website.slug,
       name: relation.website.name,
