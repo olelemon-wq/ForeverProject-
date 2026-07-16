@@ -546,15 +546,28 @@ export default function WebmasterDashboard() {
       try {
         const meRes = await fetch('/api/auth/me');
         const meData = await meRes.json();
-        if (meData.authenticated) {
-          setUserPhone(meData.phone);
+        if (!meData.authenticated) {
+          const next = encodeURIComponent(
+            `${window.location.pathname}${window.location.search}`
+          );
+          window.location.href = `/login?next=${next}`;
+          return;
         }
+        setUserPhone(meData.phone || '');
 
         const res = await fetch('/api/tenant/list-mine');
         const data = await res.json();
-        
+
+        if (res.status === 401) {
+          const next = encodeURIComponent(
+            `${window.location.pathname}${window.location.search}`
+          );
+          window.location.href = `/login?next=${next}`;
+          return;
+        }
+
         if (!res.ok) throw new Error(data.error);
-        
+
         const list = data.websites || [];
         setWebsites(list);
         if (list.length > 0) {
@@ -1717,59 +1730,7 @@ export default function WebmasterDashboard() {
   };
 
   if (isLoading) {
-    const handleTabClick = (tab: any) => {
-    setActiveTab(tab);
-    setIsMobileMenuOpen(false);
-  };
-
-  const handleSaveYoutubeLink = async () => {
-    if (!activeSite || !youtubeUrl) return;
-    setYoutubeSaving(true);
-    setError('');
-    setSuccess('');
-    try {
-      const res = await fetch('/api/media/video-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          websiteId: activeSite.id,
-          videoUrl: youtubeUrl,
-          title: '',
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-
-      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
-      setYoutubeUrl('');
-
-      // Refresh list
-      const listRes = await fetch(`/api/media/list?websiteId=${activeSite.id}`);
-      const listData = await listRes.json();
-      if (listRes.ok) {
-        setGalleryMedias(listData.mediaList || []);
-      }
-    } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
-    } finally {
-      setYoutubeSaving(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/login';
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  };
-
-  const photoMedias = galleryMedias.filter(m => !m.mimeType?.startsWith('video/') && m.mimeType !== 'video/youtube');
-  const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
-
-  return (
+    return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-600">
         <p className="text-sm font-semibold tracking-wider animate-pulse">กำลังโหลดแผงควบคุมหลังบ้าน...</p>
       </div>
@@ -1777,72 +1738,37 @@ export default function WebmasterDashboard() {
   }
 
   if (websites.length === 0) {
-    const handleTabClick = (tab: any) => {
-    setActiveTab(tab);
-    setIsMobileMenuOpen(false);
-  };
-
-  const handleSaveYoutubeLink = async () => {
-    if (!activeSite || !youtubeUrl) return;
-    setYoutubeSaving(true);
-    setError('');
-    setSuccess('');
-    try {
-      const res = await fetch('/api/media/video-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          websiteId: activeSite.id,
-          videoUrl: youtubeUrl,
-          title: '',
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-
-      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
-      setYoutubeUrl('');
-
-      // Refresh list
-      const listRes = await fetch(`/api/media/list?websiteId=${activeSite.id}`);
-      const listData = await listRes.json();
-      if (listRes.ok) {
-        setGalleryMedias(listData.mediaList || []);
-      }
-    } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
-    } finally {
-      setYoutubeSaving(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/login';
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  };
-
-  const photoMedias = galleryMedias.filter(m => !m.mimeType?.startsWith('video/') && m.mimeType !== 'video/youtube');
-  const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
-
-  return (
+    return (
       <main className="min-h-screen bg-stone-50 text-stone-850 flex flex-col items-center justify-center p-6 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
-          <Flame className="w-8 h-8 text-emerald-700 animate-pulse" />
+        <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
+          <Flame className="w-8 h-8 text-[#0071e3] animate-pulse" />
         </div>
         <div className="space-y-2">
           <h1 className="text-2xl font-black text-stone-900">ยินดีต้อนรับสู่ FOREVER</h1>
           <p className="text-stone-500 text-sm max-w-sm mx-auto">
-            คุณยังไม่มีเว็บไซต์ความทรงจำในระบบบัญชีของคุณในขณะนี้ มาสร้างหน้ารำลึกแด่ผู้ล่วงลับคนแรกของคุณกันเถอะ
+            {userPhone
+              ? `เข้าสู่ระบบด้วย ${userPhone} แล้ว แต่ยังไม่มีเว็บไซต์ในบัญชีนี้`
+              : 'คุณยังไม่มีเว็บไซต์ความทรงจำในระบบบัญชีของคุณในขณะนี้'}
           </p>
         </div>
-        <Link href="/manage/create" className="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
-          สร้างเว็บไซต์แรกของคุณ
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-3 items-center">
+          <Link
+            href="/manage/create"
+            className="px-6 py-3.5 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-95 shadow-sm"
+          >
+            สร้างเว็บไซต์แรกของคุณ
+          </Link>
+          <button
+            type="button"
+            onClick={async () => {
+              await fetch('/api/auth/logout', { method: 'POST' });
+              window.location.href = '/login';
+            }}
+            className="px-6 py-3.5 rounded-2xl border border-stone-200 bg-white text-stone-700 font-bold text-sm hover:bg-stone-50 transition cursor-pointer"
+          >
+            ออกจากระบบ / เปลี่ยนเบอร์
+          </button>
+        </div>
       </main>
     );
   }

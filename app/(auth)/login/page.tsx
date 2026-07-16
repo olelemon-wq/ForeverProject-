@@ -75,7 +75,8 @@ function MobileLoginInner() {
       if (data.draftTenantId) {
         router.push(`/manage/payment?site=${data.draftTenantId}`);
       } else {
-        router.push('/manage');
+        const next = searchParams.get('next');
+        router.push(next && next.startsWith('/') ? next : '/manage');
       }
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการยืนยันตัวตน');
