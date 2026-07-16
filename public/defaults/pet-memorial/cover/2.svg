@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="sunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffecd2"/>
+      <stop offset="50%" stop-color="#fcb69f"/>
+      <stop offset="100%" stop-color="#ee9ca7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sunset)"/>
+  <!-- Sun -->
+  <circle cx="800" cy="350" r="120" fill="#fff" opacity="0.35"/>
+  <circle cx="800" cy="350" r="80" fill="#fff" opacity="0.25"/>
+  <!-- Hills -->
+  <path d="M0 650 Q300 500 600 600 Q900 700 1200 550 Q1400 470 1600 580 L1600 900 L0 900Z" fill="#d4a089" opacity="0.3"/>
+  <path d="M0 750 Q400 650 800 720 Q1200 790 1600 700 L1600 900 L0 900Z" fill="#c48b73" opacity="0.25"/>
+  <!-- Scattered paw prints -->
+  <g opacity="0.15" fill="#8b5e3c">
+    <ellipse cx="300" cy="500" rx="12" ry="10"/><circle cx="286" cy="484" r="5"/><circle cx="314" cy="484" r="5"/><circle cx="296" cy="476" r="4"/>
+    <ellipse cx="700" cy="450" rx="12" ry="10"/><circle cx="686" cy="434" r="5"/><circle cx="714" cy="434" r="5"/><circle cx="696" cy="426" r="4"/>
+    <ellipse cx="1100" cy="480" rx="12" ry="10"/><circle cx="1086" cy="464" r="5"/><circle cx="1114" cy="464" r="5"/><circle cx="1096" cy="456" r="4"/>
+    <ellipse cx="1400" cy="420" rx="10" ry="8"/><circle cx="1388" cy="406" r="4"/><circle cx="1412" cy="406" r="4"/>
+  </g>
+  <!-- Stars -->
+  <circle cx="200" cy="150" r="3" fill="#fff" opacity="0.5"/>
+  <circle cx="500" cy="100" r="2" fill="#fff" opacity="0.4"/>
+  <circle cx="1000" cy="120" r="3" fill="#fff" opacity="0.45"/>
+  <circle cx="1350" cy="80" r="2" fill="#fff" opacity="0.35"/>
+</svg>

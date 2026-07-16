@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5e8f5"/>
+      <stop offset="100%" stop-color="#e8d8e8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#s)"/>
+  <!-- Abstract colorful dots (representing diversity of friendship) -->
+  <circle cx="200" cy="300" r="40" fill="#e87a9a" opacity="0.12"/>
+  <circle cx="400" cy="450" r="50" fill="#70a8c8" opacity="0.1"/>
+  <circle cx="600" cy="250" r="35" fill="#a0c880" opacity="0.12"/>
+  <circle cx="800" cy="400" r="55" fill="#f0a050" opacity="0.1"/>
+  <circle cx="1000" cy="300" r="45" fill="#c090d0" opacity="0.1"/>
+  <circle cx="1200" cy="500" r="40" fill="#70a8c8" opacity="0.12"/>
+  <circle cx="1400" cy="350" r="35" fill="#e87a9a" opacity="0.1"/>
+  <!-- Connection lines between dots -->
+  <line x1="230" y1="320" x2="370" y2="430" stroke="#c0b0d0" stroke-width="1.5" opacity="0.1"/>
+  <line x1="430" y1="420" x2="580" y2="270" stroke="#c0b0d0" stroke-width="1.5" opacity="0.1"/>
+  <line x1="620" y1="270" x2="770" y2="380" stroke="#c0b0d0" stroke-width="1.5" opacity="0.1"/>
+  <line x1="830" y1="380" x2="970" y2="320" stroke="#c0b0d0" stroke-width="1.5" opacity="0.1"/>
+  <line x1="1030" y1="320" x2="1170" y2="480" stroke="#c0b0d0" stroke-width="1.5" opacity="0.1"/>
+  <line x1="1230" y1="480" x2="1380" y2="370" stroke="#c0b0d0" stroke-width="1.5" opacity="0.1"/>
+</svg>

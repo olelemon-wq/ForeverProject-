@@ -59,7 +59,7 @@ export default function FeatureToggleList({
   const sortedFeatures = [...mandatoryFeatures, ...optionalFeatures];
 
   return (
-    <div className="grid max-w-2xl grid-cols-1 gap-3">
+    <div className="grid max-w-2xl grid-cols-1 gap-2.5">
       {sortedFeatures.map((feature) => {
         const Icon = ICONS[feature.icon] ?? Flame;
         const isMandatory = mandatoryKeys.includes(feature.key);
@@ -80,43 +80,42 @@ export default function FeatureToggleList({
             aria-label={displayLabel}
             onClick={() => toggle(feature.key)}
             disabled={disabled || isMandatory}
-            className={`flex h-auto w-full items-center gap-3 rounded-2xl border p-4 text-left transition-all disabled:cursor-not-allowed ${
+            className={`group flex h-auto w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-200 disabled:cursor-not-allowed ${
               isMandatory
-                ? 'border-emerald-300 bg-emerald-50/50'
+                ? 'border-[#0071e3]/20 bg-blue-50/40'
                 : active
-                  ? 'border-emerald-300 bg-emerald-50/70 shadow-[0_2px_10px_rgba(13,148,136,0.08)] hover:border-emerald-400'
+                  ? 'border-[#0071e3]/25 bg-blue-50/30 hover:border-[#0071e3]/40 hover:shadow-sm'
                   : 'border-stone-200 bg-white hover:border-stone-300 hover:bg-stone-50/60'
             }`}
           >
             <span
-              className={`flex size-5 shrink-0 items-center justify-center rounded-md border transition-colors ${
+              className={`flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                 active
-                  ? 'border-emerald-500 bg-emerald-500 text-white'
-                  : 'border-stone-300 bg-white text-transparent'
+                  ? 'border-[#0071e3] bg-[#0071e3] text-white'
+                  : 'border-stone-300 bg-white text-transparent group-hover:border-stone-400'
               }`}
             >
               <Check className="size-3.5" strokeWidth={3} />
             </span>
 
             <span className="min-w-0 flex-1">
-              <span className="flex items-center gap-2 text-sm font-semibold text-stone-900">
+              <span className="flex items-center gap-2 text-sm font-bold text-stone-900">
                 <span>{displayLabel}</span>
                 {isMandatory && (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-emerald-100 bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[#0071e3]/15 bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-[#0071e3]">
                     <Lock className="size-2.5" />
-                    <span className="font-black text-rose-500">*</span>
                     จำเป็น
                   </span>
                 )}
               </span>
-              <span className="mt-0.5 block text-xs leading-snug text-stone-500">
+              <span className="mt-0.5 block text-xs leading-snug text-stone-400">
                 {displayDesc}
               </span>
             </span>
 
             <span
-              className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${
-                active ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-400'
+              className={`flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                active ? 'bg-[#0071e3]/10 text-[#0071e3]' : 'bg-stone-100 text-stone-400'
               }`}
             >
               <Icon className="size-5" />

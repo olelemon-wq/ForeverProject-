@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="lavender" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8dff5"/>
+      <stop offset="100%" stop-color="#f5eef8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#lavender)"/>
+  <!-- Soft meadow -->
+  <path d="M0 600 Q200 550 500 580 Q800 610 1100 560 Q1400 520 1600 570 L1600 900 L0 900Z" fill="#d5c8e6" opacity="0.3"/>
+  <path d="M0 700 Q400 660 800 690 Q1200 720 1600 680 L1600 900 L0 900Z" fill="#c4b5d9" opacity="0.25"/>
+  <!-- Butterflies -->
+  <g transform="translate(400 350)" opacity="0.5">
+    <path d="M0 0 C-20-25-40-20-30 0 C-40 20-20 25 0 0Z" fill="#e8a4c8"/>
+    <path d="M0 0 C20-25 40-20 30 0 C40 20 20 25 0 0Z" fill="#d494b8"/>
+  </g>
+  <g transform="translate(1100 280) scale(0.7)" opacity="0.4">
+    <path d="M0 0 C-20-25-40-20-30 0 C-40 20-20 25 0 0Z" fill="#a8c8e8"/>
+    <path d="M0 0 C20-25 40-20 30 0 C40 20 20 25 0 0Z" fill="#98b8d8"/>
+  </g>
+  <g transform="translate(750 420) scale(0.5)" opacity="0.35">
+    <path d="M0 0 C-20-25-40-20-30 0 C-40 20-20 25 0 0Z" fill="#f0c878"/>
+    <path d="M0 0 C20-25 40-20 30 0 C40 20 20 25 0 0Z" fill="#e0b868"/>
+  </g>
+  <!-- Flowers -->
+  <circle cx="200" cy="720" r="10" fill="#e8a4c8" opacity="0.4"/>
+  <circle cx="220" cy="730" r="8" fill="#c9a8e8" opacity="0.35"/>
+  <circle cx="600" cy="710" r="12" fill="#a8c8e8" opacity="0.35"/>
+  <circle cx="1000" cy="700" r="9" fill="#e8a4c8" opacity="0.4"/>
+  <circle cx="1350" cy="690" r="11" fill="#f0c878" opacity="0.35"/>
+  <!-- Small hearts floating -->
+  <path d="M300 200 C300 200 292 190 292 184 C292 178 298 174 304 180 L300 186 L308 180 C298 174 308 178 308 184 C308 190 300 200 300 200Z" fill="#e8a4c8" opacity="0.3" transform="scale(1.5) translate(-100 -50)"/>
+  <path d="M1200 300 C1200 300 1192 290 1192 284 C1192 278 1198 274 1204 280 L1200 286 L1208 280 C1198 274 1208 278 1208 284 C1208 290 1200 300 1200 300Z" fill="#c9a8e8" opacity="0.25" transform="scale(1.3)"/>
+</svg>

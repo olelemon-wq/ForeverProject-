@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
+import { getSeedDefaultMedia } from '@/lib/defaultMedia';
 
 const MONTHS_THAI = [
   'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -432,6 +433,7 @@ export default function WebsiteCreationWizard() {
         'Lilac Dream': '#c8bfcb',
       };
       
+      const seedMedia = getSeedDefaultMedia(category);
       const res = await fetch('/api/tenant/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -445,6 +447,8 @@ export default function WebsiteCreationWizard() {
             secondaryColor: themeSecondaryColors[selectedTheme] || '#f59e0b',
             fontFamily: 'Inter',
             heroStyle: 'Classic',
+            avatarUrl: seedMedia.avatarUrl,
+            coverUrl: seedMedia.coverUrl,
             subjects: subjects.map(s => ({
               name: s.name,
               birthDate: s.birthDate ? s.birthDate.toISOString() : null,
@@ -1051,7 +1055,8 @@ export default function WebsiteCreationWizard() {
                   className="w-full py-3 border-2 border-dashed border-stone-300 hover:border-emerald-500 hover:text-emerald-700 text-stone-500 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer bg-stone-50/20 active:scale-99 hover:bg-emerald-50/10"
                 >
                   {category === 'Pet Memorial' ? '+ เพิ่มสัตว์เลี้ยงอีกตัว' :
-                   category === 'Memorial' || category === 'Family Legacy' ? '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน' :
+                   category === 'Family Legacy' ? '+ เพิ่มรายชื่อสมาชิกตระกูลอีกท่าน' :
+                   category === 'Memorial' ? '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน' :
                    '+ เพิ่มรายชื่อผู้ร่วมแสดงผล'}
                 </Button>
               )}

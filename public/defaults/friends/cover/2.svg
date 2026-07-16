@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f8e8"/>
+      <stop offset="100%" stop-color="#e0f0d5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#s)"/>
+  <!-- Mountain landscape -->
+  <polygon points="400,450 600,200 800,450" fill="#7a9e6a" opacity="0.2"/>
+  <polygon points="700,450 950,150 1200,450" fill="#6a8e5a" opacity="0.22"/>
+  <polygon points="1000,450 1150,250 1300,450" fill="#8aae7a" opacity="0.18"/>
+  <!-- Forest trees -->
+  <g opacity="0.2">
+    <rect x="200" y="500" width="8" height="50" rx="2" fill="#5a4a30"/>
+    <polygon points="204,430 175,500 233,500" fill="#5a7e3a"/>
+    <polygon points="204,460 185,510 223,510" fill="#6a8e4a"/>
+  </g>
+  <g opacity="0.18">
+    <rect x="350" y="480" width="8" height="50" rx="2" fill="#5a4a30"/>
+    <polygon points="354,410 325,480 383,480" fill="#5a7e3a"/>
+    <polygon points="354,440 335,490 373,490" fill="#6a8e4a"/>
+  </g>
+  <g opacity="0.15">
+    <rect x="1300" y="490" width="8" height="50" rx="2" fill="#5a4a30"/>
+    <polygon points="1304,420 1275,490 1333,490" fill="#5a7e3a"/>
+  </g>
+  <!-- Path -->
+  <path d="M0 700 Q400 650 800 680 Q1200 710 1600 670 L1600 900 L0 900Z" fill="#c8d0a0" opacity="0.2"/>
+</svg>

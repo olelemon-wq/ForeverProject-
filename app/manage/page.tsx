@@ -6,8 +6,11 @@ import FeatureToggleList from '@/components/FeatureToggleList';
 import ScrollableSubTabs from '@/components/ScrollableSubTabs';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
 import BackupPhoneSection from '@/components/BackupPhoneSection';
+import DefaultMediaPicker from '@/components/DefaultMediaPicker';
 import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categories';
 import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
+import type { DefaultMediaKind } from '@/lib/defaultMedia';
+import { getDefaultMediaForCategory } from '@/lib/defaultMedia';
 import {
   Select,
   SelectContent,
@@ -490,6 +493,8 @@ export default function WebmasterDashboard() {
   const [isCoverCropModalOpen, setIsCoverCropModalOpen] = useState(false);
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const [isCoverMenuOpen, setIsCoverMenuOpen] = useState(false);
+  const [defaultMediaPicker, setDefaultMediaPicker] = useState<DefaultMediaKind | null>(null);
+  const [quickPreview, setQuickPreview] = useState<{ kind: DefaultMediaKind; src: string } | null>(null);
   const [isCropModalOpen, setIsCropModalOpen] = useState(false);
   
   const [features, setFeatures] = useState<any>({
@@ -1303,15 +1308,16 @@ export default function WebmasterDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          fileName: `avatar-${Date.now()}-${file.name}`,
+          fileName: `family-avatar-${Date.now()}-${file.name}`,
           fileType: file.type,
           fileSize: file.size,
+          album: 'FAMILY',
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      if (data.uploadUrl && !data.uploadUrl.includes('upload-mock')) {
+      if (data.uploadUrl) {
         await fetch(data.uploadUrl, {
           method: 'PUT',
           headers: { 'Content-Type': file.type },
@@ -1620,20 +1626,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -1643,7 +1649,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -1680,20 +1686,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -1703,7 +1709,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -1768,20 +1774,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -1791,7 +1797,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -1813,26 +1819,32 @@ export default function WebmasterDashboard() {
     return (
       <main className="min-h-screen bg-stone-50 text-stone-850 p-6 md:p-12 font-sans relative flex items-center justify-center">
         {/* Decorative Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-blue-500/5 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-rose-500/3 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="max-w-5xl w-full mx-auto space-y-10 relative z-10">
+        <div className="max-w-5xl w-full mx-auto space-y-8 relative z-10">
           
           {/* Header */}
-          <header className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-3xl border border-stone-200 p-6 shadow-sm gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-black text-stone-900 tracking-wider">
+          <header className="flex flex-col sm:flex-row justify-between items-center bg-gradient-to-r from-white to-blue-50/80 rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-sm gap-5">
+            <div className="flex items-center gap-4">
+              <span className="text-2xl font-black text-stone-900 tracking-wider">
                 FOREVER <span className="text-[#0071e3] font-normal">เว็บของฉัน</span>
               </span>
             </div>
             
-            <div className="flex flex-wrap items-center gap-3 justify-center">
-              <div className="text-right pr-2">
-                <p className="text-[10px] text-stone-400 font-bold uppercase">บัญชีผู้ใช้งาน</p>
-                <p className="text-xs font-bold text-stone-700">{userPhone || 'กำลังโหลด...'}</p>
+            <div className="flex flex-wrap items-center gap-4 justify-center">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#0071e3]/10 flex items-center justify-center ring-2 ring-[#0071e3]/15">
+                  <User className="w-4 h-4 text-[#0071e3]" />
+                </div>
+                <div className="text-left">
+                  <p className="text-[10px] text-stone-400 font-bold uppercase">บัญชีผู้ใช้งาน</p>
+                  <p className="text-xs font-bold text-stone-700">{userPhone || 'กำลังโหลด...'}</p>
+                </div>
               </div>
               <Button variant="ghost" type="button" 
                 onClick={handleLogout}
-                className="h-auto px-4 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 hover:text-stone-900 text-stone-600 text-xs font-bold transition flex items-center gap-1.5 active:scale-[0.97] cursor-pointer"
+                className="h-auto px-4 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-100 hover:text-stone-900 text-stone-500 text-xs font-bold transition flex items-center gap-1.5 active:scale-[0.97] cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>ออกจากระบบ</span>
@@ -1840,27 +1852,40 @@ export default function WebmasterDashboard() {
             </div>
           </header>
 
+          <p className="text-sm text-stone-500 pl-1 -mt-2">จัดการเว็บไซต์ทั้งหมดของคุณได้จากที่นี่</p>
+
           {/* Backup Phones Section & Grid layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             {/* Left: Websites Grid */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="flex justify-between items-center pl-1">
-                <h2 className="text-sm font-black text-stone-900 flex items-center gap-2">
-                  <Grid className="w-4 h-4 text-[#0071e3]" />
-                  <span>เว็บไซต์อนุสรณ์ของฉัน ({websites.length})</span>
+              <div className="flex items-center gap-3 pl-1">
+                <h2 className="text-base font-black text-stone-900 flex items-center gap-2">
+                  <Grid className="w-4.5 h-4.5 text-[#0071e3]" />
+                  <span>เว็บไซต์อนุสรณ์ของฉัน</span>
                 </h2>
+                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-[#0071e3] text-white text-[10px] font-black">
+                  {websites.length}
+                </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {websites.map((site) => {
                   const isActive = site.status === 'ACTIVE';
+                  const accent = {
+                    'Memorial': { strip: 'bg-rose-500', badge: 'border-rose-100 bg-rose-50 text-rose-700 hover:bg-rose-50' },
+                    'Family Legacy': { strip: 'bg-amber-500', badge: 'border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-50' },
+                    'Pet Memorial': { strip: 'bg-teal-500', badge: 'border-teal-100 bg-teal-50 text-teal-700 hover:bg-teal-50' },
+                    'Couple': { strip: 'bg-pink-500', badge: 'border-pink-100 bg-pink-50 text-pink-700 hover:bg-pink-50' },
+                    'Wedding': { strip: 'bg-violet-500', badge: 'border-violet-100 bg-violet-50 text-violet-700 hover:bg-violet-50' },
+                    'Friends': { strip: 'bg-sky-500', badge: 'border-sky-100 bg-sky-50 text-sky-700 hover:bg-sky-50' },
+                  }[site.category] || { strip: 'bg-blue-500', badge: 'border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-50' };
                   
                   return (
-                    <div key={site.id} className="bg-white rounded-3xl border border-stone-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between h-48 group text-left animate-fade-in">
-                      <div className="space-y-2">
+                    <div key={site.id} className="bg-white rounded-3xl border border-stone-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between h-52 group text-left animate-fade-in">
+                      <div className="px-6 pt-5 pb-2 space-y-2.5 flex-1">
                         <div className="flex justify-between items-start">
-                          <Badge className="h-auto rounded-full border border-blue-100 bg-blue-50 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-[#0071e3] hover:bg-blue-50">
+                          <Badge className={`h-auto rounded-full border px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ${accent.badge}`}>
                             {site.category}
                           </Badge>
                           <Badge
@@ -1874,7 +1899,7 @@ export default function WebmasterDashboard() {
                             {isActive ? 'ใช้งานอยู่' : 'รอชำระเงิน'}
                           </Badge>
                         </div>
-                        <h3 className="text-sm font-bold text-stone-900 line-clamp-1 group-hover:text-[#0071e3] transition">{site.name}</h3>
+                        <h3 className="text-base font-bold text-stone-900 line-clamp-1 group-hover:text-[#0071e3] transition">{site.name}</h3>
                         
                         {isActive ? (
                           <a 
@@ -1891,11 +1916,11 @@ export default function WebmasterDashboard() {
                         )}
                       </div>
 
-                      <div className="pt-4 border-t border-stone-100 mt-2 flex gap-2">
+                      <div className="px-6 pb-5 pt-3 border-t border-stone-100 flex gap-2">
                         {isActive ? (
                           <Button variant="ghost" type="button"
                             onClick={() => selectWebsite(site)}
-                            className="w-full py-2.5 rounded-xl bg-stone-900 hover:bg-stone-850 text-white font-bold text-xs transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+                            className="w-full py-2.5 rounded-xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white font-bold text-xs transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
                           >
                             <Settings className="w-3.5 h-3.5" />
                             <span>จัดการเว็บไซต์</span>
@@ -1917,14 +1942,14 @@ export default function WebmasterDashboard() {
                 {/* Create New Website card button */}
                 <Link 
                   href="/"
-                  className="bg-stone-50 hover:bg-stone-100/70 border-2 border-dashed border-stone-250 rounded-3xl p-6 flex flex-col items-center justify-center h-48 transition group text-center space-y-2 select-none"
+                  className="bg-gradient-to-br from-blue-50/60 to-stone-50 hover:from-blue-50 hover:to-blue-50/30 border-2 border-dashed border-stone-300 hover:border-[#0071e3]/40 rounded-3xl p-6 flex flex-col items-center justify-center h-52 transition-all duration-200 group text-center space-y-3 select-none"
                 >
-                  <div className="w-12 h-12 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-xs group-hover:scale-105 transition">
-                    <Plus className="w-6 h-6 text-stone-500 group-hover:text-[#0071e3]" />
+                  <div className="w-14 h-14 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:border-blue-200 transition-all duration-200">
+                    <Plus className="w-7 h-7 text-stone-400 group-hover:text-[#0071e3] transition" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-stone-700 group-hover:text-stone-900">สร้างเว็บไซต์ความทรงจำใหม่</p>
-                    <p className="text-[10px] text-stone-400 mt-0.5">เลือกหัวข้อและรับรหัสผ่านมือถือ</p>
+                    <p className="text-sm font-bold text-stone-700 group-hover:text-stone-900 transition">สร้างเว็บไซต์ความทรงจำใหม่</p>
+                    <p className="text-[10px] text-stone-400 mt-1">เลือกหัวข้อและรับรหัสผ่านมือถือ</p>
                   </div>
                 </Link>
               </div>
@@ -1952,9 +1977,9 @@ export default function WebmasterDashboard() {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-850 flex flex-col md:flex-row font-sans">
       {/* Mobile Top Bar */}
-      <header className="md:hidden w-full bg-stone-100/90 backdrop-blur-md border-b border-stone-200/80 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-        <span className="text-lg font-black tracking-wider bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-          FOREVER MANAGE
+      <header className="md:hidden w-full bg-white/90 backdrop-blur-md border-b border-stone-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+        <span className="text-lg font-black tracking-wider text-stone-900">
+          FOREVER <span className="text-[#0071e3] font-normal">MANAGE</span>
         </span>
         <Button variant="ghost"
           type="button"
@@ -1976,8 +2001,8 @@ export default function WebmasterDashboard() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-stone-100 border-r border-stone-200/80 p-6 flex flex-col justify-between overflow-y-auto shrink-0 transition-transform duration-300 transform
-        md:relative md:translate-x-0 md:h-screen md:sticky md:top-0 md:bg-stone-100/60
+        fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-stone-200 p-6 flex flex-col justify-between overflow-y-auto shrink-0 transition-transform duration-300 transform
+        md:relative md:translate-x-0 md:h-screen md:sticky md:top-0
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div>
@@ -1991,14 +2016,14 @@ export default function WebmasterDashboard() {
                   window.history.replaceState({}, '', url.toString());
                 }
               }}
-              className="w-full py-2.5 bg-white border border-stone-250 hover:bg-stone-50 text-stone-700 hover:text-stone-900 rounded-xl text-[10px] font-black transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+              className="w-full py-2.5 bg-stone-50 border border-stone-200 hover:bg-stone-100 text-stone-600 hover:text-stone-900 rounded-xl text-[10px] font-black transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-stone-500" />
               <span>กลับไปหน้าเว็บของฉัน</span>
             </Button>
           </div>
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs font-black tracking-wider bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent truncate max-w-[200px]">
+            <span className="text-xs font-black tracking-wider text-[#0071e3] truncate max-w-[200px]">
               จัดการ: {activeSite?.name}
             </span>
           </div>
@@ -2009,8 +2034,8 @@ export default function WebmasterDashboard() {
                 onClick={() => handleTabClick('gallery')}
                 className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'gallery' 
-                    ? 'bg-emerald-600 font-bold text-white hover:bg-emerald-600 hover:text-white' 
-                    : 'bg-transparent text-stone-600 hover:bg-stone-200/40 hover:text-stone-900'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
                 <Camera className={`size-3.5 shrink-0 ${activeTab === 'gallery' ? 'text-white' : 'text-stone-500'}`} />
@@ -2023,8 +2048,8 @@ export default function WebmasterDashboard() {
                 onClick={() => handleTabClick('videos')}
                 className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'videos' 
-                    ? 'bg-emerald-600 font-bold text-white hover:bg-emerald-600 hover:text-white' 
-                    : 'bg-transparent text-stone-600 hover:bg-stone-200/40 hover:text-stone-900'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
                 <Video className={`size-3.5 shrink-0 ${activeTab === 'videos' ? 'text-white' : 'text-stone-500'}`} />
@@ -2037,8 +2062,8 @@ export default function WebmasterDashboard() {
                 onClick={() => handleTabClick('family')}
                 className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'family' 
-                    ? 'bg-emerald-600 font-bold text-white hover:bg-emerald-600 hover:text-white' 
-                    : 'bg-transparent text-stone-600 hover:bg-stone-200/40 hover:text-stone-900'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
                 <GitBranch className={`size-3.5 shrink-0 ${activeTab === 'family' ? 'text-white' : 'text-stone-500'}`} />
@@ -2051,8 +2076,8 @@ export default function WebmasterDashboard() {
                 onClick={() => handleTabClick('ebooks')}
                 className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'ebooks' 
-                    ? 'bg-emerald-600 font-bold text-white hover:bg-emerald-600 hover:text-white' 
-                    : 'bg-transparent text-stone-600 hover:bg-stone-200/40 hover:text-stone-900'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
                 <BookOpen className={`size-3.5 shrink-0 ${activeTab === 'ebooks' ? 'text-white' : 'text-stone-500'}`} />
@@ -2065,8 +2090,8 @@ export default function WebmasterDashboard() {
                 onClick={() => handleTabClick('condolences')}
                 className={`h-auto w-full justify-between gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'condolences' 
-                    ? 'bg-emerald-600 font-bold text-white hover:bg-emerald-600 hover:text-white' 
-                    : 'bg-transparent text-stone-600 hover:bg-stone-200/40 hover:text-stone-900'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
                 <div className="flex min-w-0 items-center gap-3">
@@ -2096,8 +2121,8 @@ export default function WebmasterDashboard() {
                 onClick={() => handleTabClick('settings')}
                 className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'settings' 
-                    ? 'bg-emerald-600 font-bold text-white hover:bg-emerald-600 hover:text-white' 
-                    : 'bg-transparent text-stone-600 hover:bg-stone-200/40 hover:text-stone-900'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
                 <Settings className={`size-3.5 shrink-0 ${activeTab === 'settings' ? 'text-white' : 'text-stone-500'}`} />
@@ -2115,8 +2140,8 @@ export default function WebmasterDashboard() {
         
         <div className="mt-8 border-t border-stone-200 pt-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-stone-250 flex items-center justify-center text-sm text-stone-650">
-              <User className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-full bg-[#0071e3]/10 flex items-center justify-center">
+              <User className="w-4 h-4 text-[#0071e3]" />
             </div>
             <div>
               <p className="text-xs font-bold text-stone-900">ผู้ใช้งานบัญชี</p>
@@ -2137,8 +2162,8 @@ export default function WebmasterDashboard() {
       {/* Main dashboard content */}
       <main className="flex-1 p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full overflow-y-auto">
         
-        {success && <div className="p-4 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 rounded-2xl font-semibold animate-fade-in">✓ {success}</div>}
-        {error && <div className="p-4 bg-red-50 border border-red-200 text-xs text-red-700 rounded-2xl font-semibold animate-fade-in">⚠️ {error}</div>}
+        {success && <div className="p-4 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 rounded-2xl font-semibold animate-fade-in flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 shrink-0" />{success}</div>}
+        {error && <div className="p-4 bg-red-50 border border-red-200 text-xs text-red-700 rounded-2xl font-semibold animate-fade-in flex items-center gap-2"><AlertCircle className="w-4 h-4 text-red-500 shrink-0" />{error}</div>}
 
         {/* Expiration warning banner (Phase 2 Expiration Banner alignment) */}
         {(() => {
@@ -2165,20 +2190,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -2188,7 +2213,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -2288,7 +2313,7 @@ export default function WebmasterDashboard() {
               <a 
                 href={`/${selectedSite.slug}`} 
                 target="_blank" 
-                className="text-emerald-700 font-semibold hover:text-emerald-855 underline"
+                className="text-[#0071e3] font-semibold hover:text-[#0071e3]/80 underline"
               >
                 forever.co.th/{selectedSite.slug}
               </a>
@@ -2343,7 +2368,7 @@ export default function WebmasterDashboard() {
             <a
               href={`/${selectedSite.slug}`}
               target="_blank"
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shadow-xs"
+              className="px-3 py-1.5 bg-[#0071e3] hover:bg-[#0071e3]/90 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shadow-xs"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>ดูหน้าเว็บ</span>
@@ -3254,13 +3279,46 @@ export default function WebmasterDashboard() {
               {/* 2. รูปโปรไฟล์ & รูปปกเด่น Tab */}
               {activeSubTab === 'media' && (
                 <div className="space-y-6 animate-fade-in text-left">
-                  <div className="space-y-1">
-                    <h4 className="flex items-center gap-1.5 text-sm font-bold text-stone-900">
-                      <ImageIcon className="size-4 text-emerald-700" />
-                      <span>อัปโหลดและจัดตำแหน่งภาพ</span>
-                    </h4>
-                    <p className="text-xs text-stone-500">จัดการรูปโปรไฟล์หลักและภาพหน้าปกด้านหลัง โดยการกดที่รูปกล้องเพื่ออัปโหลด ปรับเลื่อน หรือลบรูปภาพ</p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                      <ImageIcon className="w-4 h-4 text-[#0071e3]" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-stone-900">รูปโปรไฟล์ & หน้าปก</h4>
+                      <p className="text-xs text-stone-400">เลือกจากชุดธีม หรืออัปโหลดรูปของคุณเอง</p>
+                    </div>
                   </div>
+
+                  <DefaultMediaPicker
+                    open={defaultMediaPicker === 'avatar'}
+                    onOpenChange={(open) => setDefaultMediaPicker(open ? 'avatar' : null)}
+                    kind="avatar"
+                    category={activeSite?.category}
+                    selectedSrc={deceasedAvatarUrl}
+                    onSelect={(src) => {
+                      setDeceasedAvatarUrl(src);
+                      setDeceasedAvatarScale(1);
+                      setDeceasedAvatarX(0);
+                      setDeceasedAvatarY(0);
+                      setDeceasedAvatarRotate(0);
+                      setSuccess('เลือกรูปโปรไฟล์จากชุดธีมแล้ว — กดบันทึกเพื่อยืนยัน');
+                    }}
+                  />
+                  <DefaultMediaPicker
+                    open={defaultMediaPicker === 'cover'}
+                    onOpenChange={(open) => setDefaultMediaPicker(open ? 'cover' : null)}
+                    kind="cover"
+                    category={activeSite?.category}
+                    selectedSrc={deceasedCoverUrl}
+                    onSelect={(src) => {
+                      setDeceasedCoverUrl(src);
+                      setDeceasedCoverScale(1);
+                      setDeceasedCoverX(0);
+                      setDeceasedCoverY(0);
+                      setDeceasedCoverRotate(0);
+                      setSuccess('เลือกภาพหน้าปกจากชุดธีมแล้ว — กดบันทึกเพื่อยืนยัน');
+                    }}
+                  />
 
                   {/* Hidden input file fields */}
                   <Input
@@ -3287,8 +3345,8 @@ export default function WebmasterDashboard() {
                     className="hidden"
                   />
 
-                  {/* Unified LINE-style Live Preview Simulator Card */}
-                  <div className="relative w-full max-w-xl mx-auto h-48 sm:h-56 rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-sm flex items-center justify-center group select-none">
+                  {/* Live Preview Card */}
+                  <div className="relative w-full max-w-xl mx-auto h-52 sm:h-60 rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-sm flex items-center justify-center group select-none">
                     {/* Cover Photo Background */}
                     {deceasedCoverUrl ? (
                       <div className="absolute inset-0 w-full h-full">
@@ -3306,14 +3364,14 @@ export default function WebmasterDashboard() {
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-black/25 transition-colors" />
                       </div>
                     ) : (
-                      <div className="absolute inset-0 bg-stone-55/40 flex flex-col items-center justify-center gap-1.5 text-stone-400">
-                        <ImageIcon className="w-8 h-8 text-stone-300" />
-                        <span className="text-[10px] font-bold">ยังไม่ได้อัปโหลดรูปภาพหน้าปกหลัก</span>
+                      <div className="absolute inset-0 bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col items-center justify-center gap-2 text-stone-400">
+                        <ImageIcon className="w-10 h-10 text-stone-300" />
+                        <span className="text-xs font-medium text-stone-400">คลิกไอคอนกล้องเพื่อเพิ่มรูปปก</span>
                       </div>
                     )}
 
                     {/* Circular Avatar (Overlapping in the center) */}
-                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-stone-50 shadow-md flex items-center justify-center overflow-hidden z-10">
+                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-stone-50 shadow-lg flex items-center justify-center overflow-hidden z-10">
                       {deceasedAvatarUrl ? (
                         <div className="w-full h-full relative">
                           <img 
@@ -3353,16 +3411,26 @@ export default function WebmasterDashboard() {
                       {isAvatarMenuOpen && (
                         <>
                           <div className="fixed inset-0 z-10 cursor-default" onClick={() => setIsAvatarMenuOpen(false)} />
-                          <div className="absolute left-[calc(50%-88px)] bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-44 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
+                          <div className="absolute left-[calc(50%-88px)] bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-48 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
+                            <Button variant="ghost"
+                              type="button"
+                              onClick={() => {
+                                setIsAvatarMenuOpen(false);
+                                setDefaultMediaPicker('avatar');
+                              }}
+                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
+                            >
+                              เลือกจากชุดธีม
+                            </Button>
                             <Button variant="ghost"
                               type="button"
                               onClick={() => {
                                 setIsAvatarMenuOpen(false);
                                 document.getElementById('deceased-avatar-file-input')?.click();
                               }}
-                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
+                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
                             >
-                              📸 อัปโหลดรูปภาพใหม่
+                              อัปโหลดรูปภาพใหม่
                             </Button>
                             {deceasedAvatarUrl && (
                               <>
@@ -3374,7 +3442,7 @@ export default function WebmasterDashboard() {
                                   }}
                                   className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
                                 >
-                                  ⚙️ ปรับแต่งรูปโปรไฟล์
+                                  ปรับแต่งรูปโปรไฟล์
                                 </Button>
                                 <Button variant="ghost"
                                   type="button"
@@ -3388,7 +3456,7 @@ export default function WebmasterDashboard() {
                                   }}
                                   className="w-full px-4 py-2 hover:bg-red-50 text-red-650 cursor-pointer block text-left border-t border-stone-100 font-bold"
                                 >
-                                  🗑️ ลบรูปโปรไฟล์
+                                  ลบรูปโปรไฟล์
                                 </Button>
                               </>
                             )}
@@ -3415,16 +3483,26 @@ export default function WebmasterDashboard() {
                       {isCoverMenuOpen && (
                         <>
                           <div className="fixed inset-0 z-10 cursor-default" onClick={() => setIsCoverMenuOpen(false)} />
-                          <div className="absolute right-0 bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-44 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
+                          <div className="absolute right-0 bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-48 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
+                            <Button variant="ghost"
+                              type="button"
+                              onClick={() => {
+                                setIsCoverMenuOpen(false);
+                                setDefaultMediaPicker('cover');
+                              }}
+                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
+                            >
+                              เลือกจากชุดธีม
+                            </Button>
                             <Button variant="ghost"
                               type="button"
                               onClick={() => {
                                 setIsCoverMenuOpen(false);
                                 document.getElementById('deceased-cover-file-input')?.click();
                               }}
-                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
+                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
                             >
-                              📸 อัปโหลดรูปปกใหม่
+                              อัปโหลดรูปปกใหม่
                             </Button>
                             {deceasedCoverUrl && (
                               <>
@@ -3436,7 +3514,7 @@ export default function WebmasterDashboard() {
                                   }}
                                   className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
                                 >
-                                  ⚙️ ปรับแต่งหน้าปก
+                                  ปรับแต่งหน้าปก
                                 </Button>
                                 <Button variant="ghost"
                                   type="button"
@@ -3450,7 +3528,7 @@ export default function WebmasterDashboard() {
                                   }}
                                   className="w-full px-4 py-2 hover:bg-red-50 text-red-650 cursor-pointer block text-left border-t border-stone-100 font-bold"
                                 >
-                                  🗑️ ลบรูปหน้าปก
+                                  ลบรูปหน้าปก
                                 </Button>
                               </>
                             )}
@@ -3460,43 +3538,171 @@ export default function WebmasterDashboard() {
                     </div>
                   </div>
 
-                  {/* Image crop adjustment buttons under the preview card */}
-                  <div className="flex justify-center mt-3 gap-3">
-                    {deceasedAvatarUrl && (
-                      <Button variant="ghost"
-                        type="button"
-                        onClick={() => setIsCropModalOpen(true)}
-                        className="px-4 py-1.5 bg-stone-100 hover:bg-stone-200 border border-stone-250 text-stone-700 font-bold text-xs rounded-xl transition shadow-xs active:scale-95 flex items-center gap-1.5 justify-center w-full max-w-[200px] cursor-pointer"
-                      >
-                        <Settings className="w-3.5 h-3.5" />
-                        <span>ปรับรูปโปรไฟล์</span>
-                      </Button>
+                  {/* Quick default pickers under preview — with preview+confirm */}
+                  <div className="mx-auto w-full max-w-xl space-y-3">
+                    {/* Preview confirmation bar */}
+                    {quickPreview && (
+                      <div className="flex items-center gap-3 rounded-2xl border border-[#0071e3]/20 bg-blue-50/40 p-4 animate-fade-in">
+                        <div className={quickPreview.kind === 'avatar'
+                          ? 'size-14 shrink-0 overflow-hidden rounded-full border-2 border-[#0071e3]/30 shadow-sm'
+                          : 'h-14 w-24 shrink-0 overflow-hidden rounded-xl border-2 border-[#0071e3]/30 shadow-sm'
+                        }>
+                          <img src={quickPreview.src} alt="พรีวิว" className="h-full w-full object-cover" />
+                        </div>
+                        <div className="flex-1 text-sm text-stone-700 font-medium">
+                          {quickPreview.kind === 'avatar' ? 'ใช้รูปโปรไฟล์นี้?' : 'ใช้พื้นหลังนี้?'}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setQuickPreview(null)}
+                          className="rounded-xl px-4 py-2 text-xs font-medium text-stone-500 transition hover:bg-stone-100 active:scale-95"
+                        >
+                          ยกเลิก
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (quickPreview.kind === 'avatar') {
+                              setDeceasedAvatarUrl(quickPreview.src);
+                              setDeceasedAvatarScale(1);
+                              setDeceasedAvatarX(0);
+                              setDeceasedAvatarY(0);
+                              setDeceasedAvatarRotate(0);
+                            } else {
+                              setDeceasedCoverUrl(quickPreview.src);
+                              setDeceasedCoverScale(1);
+                              setDeceasedCoverX(0);
+                              setDeceasedCoverY(0);
+                              setDeceasedCoverRotate(0);
+                            }
+                            setQuickPreview(null);
+                          }}
+                          className="rounded-xl bg-[#0071e3] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#0071e3]/90 active:scale-95"
+                        >
+                          ยืนยัน
+                        </button>
+                      </div>
                     )}
-                    {deceasedCoverUrl && (
-                      <Button variant="ghost"
+
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-stone-400" />
+                        โปรไฟล์
+                      </span>
+                      <button
                         type="button"
-                        onClick={() => setIsCoverCropModalOpen(true)}
-                        className="px-4 py-1.5 bg-stone-100 hover:bg-stone-200 border border-stone-250 text-stone-700 font-bold text-xs rounded-xl transition shadow-xs active:scale-95 flex items-center gap-1.5 justify-center w-full max-w-[200px] cursor-pointer"
+                        onClick={() => setDefaultMediaPicker('avatar')}
+                        className="text-xs font-medium text-[#0071e3] hover:underline transition-colors"
                       >
-                        <Settings className="w-3.5 h-3.5" />
-                        <span>ปรับรูปหน้าปก</span>
-                      </Button>
-                    )}
+                        ดูทั้งหมด
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-4 gap-3">
+                      {getDefaultMediaForCategory(activeSite?.category, 'avatar').map((item) => {
+                        const isCurrent = deceasedAvatarUrl === item.src;
+                        const isPreviewing = quickPreview?.kind === 'avatar' && quickPreview.src === item.src;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => setQuickPreview({ kind: 'avatar', src: item.src })}
+                            className={`aspect-square overflow-hidden rounded-full border-2 transition-all duration-200 hover:scale-105 cursor-pointer ${
+                              isPreviewing
+                                ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20 scale-105'
+                                : isCurrent
+                                  ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20'
+                                  : 'border-stone-200 hover:border-stone-300 hover:shadow-md'
+                            }`}
+                            title={item.label}
+                          >
+                            <img src={item.src} alt="" className="h-full w-full object-cover" />
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-2">
+                      <span className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                        <ImageIcon className="w-3.5 h-3.5 text-stone-400" />
+                        พื้นหลัง
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setDefaultMediaPicker('cover')}
+                        className="text-xs font-medium text-[#0071e3] hover:underline transition-colors"
+                      >
+                        ดูทั้งหมด
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      {getDefaultMediaForCategory(activeSite?.category, 'cover').map((item) => {
+                        const isCurrent = deceasedCoverUrl === item.src;
+                        const isPreviewing = quickPreview?.kind === 'cover' && quickPreview.src === item.src;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => setQuickPreview({ kind: 'cover', src: item.src })}
+                            className={`aspect-[16/9] overflow-hidden rounded-2xl border-2 transition-all duration-200 hover:scale-105 cursor-pointer ${
+                              isPreviewing
+                                ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20 scale-105'
+                                : isCurrent
+                                  ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20'
+                                  : 'border-stone-200 hover:border-stone-300 hover:shadow-md'
+                            }`}
+                            title={item.label}
+                          >
+                            <img src={item.src} alt="" className="h-full w-full object-cover" />
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
+
+                  {/* Image crop adjustment buttons */}
+                  {(deceasedAvatarUrl || deceasedCoverUrl) && (
+                    <div className="flex justify-center gap-3 max-w-xl mx-auto">
+                      {deceasedAvatarUrl && (
+                        <Button variant="ghost"
+                          type="button"
+                          onClick={() => setIsCropModalOpen(true)}
+                          className="px-5 py-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-600 hover:text-stone-800 font-medium text-xs rounded-xl transition active:scale-95 flex items-center gap-2 justify-center flex-1 cursor-pointer"
+                        >
+                          <Settings className="w-3.5 h-3.5" />
+                          <span>ปรับรูปโปรไฟล์</span>
+                        </Button>
+                      )}
+                      {deceasedCoverUrl && (
+                        <Button variant="ghost"
+                          type="button"
+                          onClick={() => setIsCoverCropModalOpen(true)}
+                          className="px-5 py-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-600 hover:text-stone-800 font-medium text-xs rounded-xl transition active:scale-95 flex items-center gap-2 justify-center flex-1 cursor-pointer"
+                        >
+                          <Settings className="w-3.5 h-3.5" />
+                          <span>ปรับรูปหน้าปก</span>
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* 3. ธีม & สี & ฟอนต์ Tab */}
               {activeSubTab === 'theme' && (
-                <div className="space-y-6 animate-fade-in text-left">
-                  <div className="flex items-center gap-1.5">
-                    <Palette className="size-4 text-emerald-700" />
-                    <h3 className="text-sm font-bold text-stone-900">ธีม & สี & ฟอนต์</h3>
+                <div className="space-y-8 animate-fade-in text-left">
+                  <div className="space-y-1">
+                    <h3 className="flex items-center gap-1.5 text-sm font-bold text-stone-900">
+                      <Palette className="size-4 text-[#0071e3]" />
+                      <span>ธีม & สี & ฟอนต์</span>
+                    </h3>
+                    <p className="text-xs text-stone-500">เลือกโทนสีและฟอนต์ที่เข้ากับเว็บไซต์ของคุณ</p>
                   </div>
+
+                  {/* Theme Templates */}
                   <div className="space-y-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs font-bold uppercase tracking-wide text-stone-500">
-                        ธีมสำเร็จรูป (Theme Templates)
+                        เลือกธีมสำเร็จรูป
                       </label>
                       <button
                         type="button"
@@ -3504,104 +3710,113 @@ export default function WebmasterDashboard() {
                           setPrimaryColor('#0d9488');
                           setSecondaryColor('#f59e0b');
                         }}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-2.5 py-1 text-[10px] font-bold text-stone-600 transition hover:bg-stone-50 active:scale-95"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[10px] font-bold text-stone-500 transition hover:bg-stone-50 hover:text-stone-700 active:scale-95"
                       >
-                        <RotateCw className="size-3 text-stone-500" />
-                        <span>รีเซ็ตเป็นค่าเริ่มต้น</span>
+                        <RotateCw className="size-3" />
+                        <span>รีเซ็ต</span>
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                       {[
-                        { name: 'Peaceful Mint', primary: '#7ea18b', hover: '#668571', secondary: '#d4be95', light: '#f4f6f3', badge: 'ไว้อาลัย / รำลึกอย่างสงบ' },
-                        { name: 'Sweet Peach', primary: '#e09f9f', hover: '#c48282', secondary: '#e6c1a8', light: '#fff7f5', badge: 'งานแต่งงาน / คู่รักแสนรัก' },
-                        { name: 'Warm Caramel', primary: '#c29a7c', hover: '#a67f62', secondary: '#dcc6a8', light: '#fbf8f5', badge: 'สัตว์เลี้ยง / บันทึกการเดินทาง' },
-                        { name: 'Classic Olive', primary: '#96a288', hover: '#7a866d', secondary: '#cfc5b0', light: '#f7f8f5', badge: 'สายใยตระกูล / ครอบครัว' },
-                        { name: 'Ocean Breeze', primary: '#8ba8bd', hover: '#708d9e', secondary: '#ded2af', light: '#f5f7f9', badge: 'มิตรภาพ / ย้อนวันวาน' },
-                        { name: 'Lilac Dream', primary: '#a49cb5', hover: '#89819a', secondary: '#c8bfcb', light: '#f7f6f8', badge: 'หรูหรา / ทางการทั่วไป' }
+                        { name: 'Peaceful Mint', desc: 'สงบ รำลึก', primary: '#7ea18b', hover: '#668571', secondary: '#d4be95', light: '#f4f6f3' },
+                        { name: 'Sweet Peach', desc: 'อบอุ่น โรแมนติก', primary: '#e09f9f', hover: '#c48282', secondary: '#e6c1a8', light: '#fff7f5' },
+                        { name: 'Warm Caramel', desc: 'อ่อนโยน เป็นธรรมชาติ', primary: '#c29a7c', hover: '#a67f62', secondary: '#dcc6a8', light: '#fbf8f5' },
+                        { name: 'Classic Olive', desc: 'คลาสสิก ครอบครัว', primary: '#96a288', hover: '#7a866d', secondary: '#cfc5b0', light: '#f7f8f5' },
+                        { name: 'Ocean Breeze', desc: 'สดใส มิตรภาพ', primary: '#8ba8bd', hover: '#708d9e', secondary: '#ded2af', light: '#f5f7f9' },
+                        { name: 'Lilac Dream', desc: 'หรูหรา ทางการ', primary: '#a49cb5', hover: '#89819a', secondary: '#c8bfcb', light: '#f7f6f8' }
                       ].map(t => {
                         const isActive = primaryColor.toLowerCase() === t.primary.toLowerCase() && secondaryColor.toLowerCase() === t.secondary.toLowerCase();
                         return (
                           <button
                             key={t.name}
                             type="button"
-                            title={t.badge}
                             onClick={() => {
                               setPrimaryColor(t.primary);
                               setSecondaryColor(t.secondary);
                             }}
-                            className={`relative flex h-auto w-full flex-col items-start gap-3 rounded-2xl border-2 bg-white p-3 text-left transition hover:shadow-md ${
+                            className={`relative flex h-auto w-full flex-col rounded-2xl border-2 bg-white overflow-hidden transition-all duration-200 hover:shadow-md ${
                               isActive
-                                ? 'border-sky-500 shadow-xs ring-4 ring-sky-500/10'
+                                ? 'border-[#0071e3] shadow-sm ring-4 ring-[#0071e3]/10'
                                 : 'border-stone-200 hover:border-stone-300'
                             }`}
                           >
-                            {isActive && (
-                              <span className="absolute top-2 right-2 flex size-4 items-center justify-center rounded-full bg-sky-500 text-white shadow-xs">
-                                <Check className="size-2.5 stroke-[3]" />
-                              </span>
-                            )}
-                            <span className="pr-5 text-xs font-black leading-tight text-stone-900">
-                              {t.name}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <span className="block size-3.5 shrink-0 rounded-full border border-stone-200/50" style={{ backgroundColor: t.primary }} />
-                              <span className="block size-3.5 shrink-0 rounded-full border border-stone-200/50" style={{ backgroundColor: t.hover }} />
-                              <span className="block size-3.5 shrink-0 rounded-full border border-stone-200/50" style={{ backgroundColor: t.secondary }} />
-                              <span className="block size-3.5 shrink-0 rounded-full border border-stone-200/50" style={{ backgroundColor: t.light }} />
-                            </span>
+                            {/* Color preview bar */}
+                            <div className="flex h-12 w-full">
+                              <div className="flex-1" style={{ backgroundColor: t.primary }} />
+                              <div className="flex-1" style={{ backgroundColor: t.hover }} />
+                              <div className="flex-1" style={{ backgroundColor: t.secondary }} />
+                              <div className="flex-1" style={{ backgroundColor: t.light }} />
+                            </div>
+                            <div className="p-3 text-left">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-stone-900">{t.name}</span>
+                                {isActive && (
+                                  <span className="flex size-5 items-center justify-center rounded-full bg-[#0071e3] text-white">
+                                    <Check className="size-3 stroke-[3]" />
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[10px] text-stone-400">{t.desc}</span>
+                            </div>
                           </button>
                         );
                       })}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-wide text-stone-500">Primary Color (กำหนดสีเอง)</label>
-                      <div className="flex items-center gap-2">
+                  {/* Custom Colors */}
+                  <div className="space-y-4">
+                    <label className="text-xs font-bold uppercase tracking-wide text-stone-500">
+                      กำหนดสีเอง
+                    </label>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50/50 p-3">
                         <input
                           type="color"
                           value={primaryColor}
                           onChange={(e) => setPrimaryColor(e.target.value)}
-                          className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-1"
+                          className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-0.5"
                         />
-                        <Input
-                          type="text"
-                          value={primaryColor}
-                          onChange={(e) => setPrimaryColor(e.target.value)}
-                          className="h-10 flex-1 rounded-xl border border-stone-200 bg-stone-50/50 px-3 font-mono text-sm text-stone-900 focus-visible:border-emerald-500/80 focus-visible:ring-0"
-                        />
+                        <div className="flex-1 space-y-0.5">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase">Primary</p>
+                          <Input
+                            type="text"
+                            value={primaryColor}
+                            onChange={(e) => setPrimaryColor(e.target.value)}
+                            className="h-8 rounded-lg border border-stone-200 bg-white px-2.5 font-mono text-xs text-stone-900 focus-visible:border-[#0071e3]/50 focus-visible:ring-0"
+                          />
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-wide text-stone-500">Secondary Color (กำหนดสีเอง)</label>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50/50 p-3">
                         <input
                           type="color"
                           value={secondaryColor}
                           onChange={(e) => setSecondaryColor(e.target.value)}
-                          className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-1"
+                          className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-0.5"
                         />
-                        <Input
-                          type="text"
-                          value={secondaryColor}
-                          onChange={(e) => setSecondaryColor(e.target.value)}
-                          className="h-10 flex-1 rounded-xl border border-stone-200 bg-stone-50/50 px-3 font-mono text-sm text-stone-900 focus-visible:border-emerald-500/80 focus-visible:ring-0"
-                        />
+                        <div className="flex-1 space-y-0.5">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase">Secondary</p>
+                          <Input
+                            type="text"
+                            value={secondaryColor}
+                            onChange={(e) => setSecondaryColor(e.target.value)}
+                            className="h-8 rounded-lg border border-stone-200 bg-white px-2.5 font-mono text-xs text-stone-900 focus-visible:border-[#0071e3]/50 focus-visible:ring-0"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wide text-stone-500">Font Style (Family)</label>
+                  {/* Font */}
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold uppercase tracking-wide text-stone-500">ฟอนต์</label>
                     <Select
                       value={fontFamily}
                       onValueChange={(value) => setFontFamily(value)}
                     >
                       <SelectTrigger
-                        className="h-10 w-full rounded-xl border border-stone-200 bg-stone-50/50 px-4 text-sm font-bold text-stone-900 focus:border-emerald-500/80 focus:bg-white focus:outline-none"
+                        className="h-11 w-full rounded-xl border border-stone-200 bg-stone-50/50 px-4 text-sm font-bold text-stone-900 focus:border-[#0071e3]/50 focus:bg-white focus:outline-none"
                         style={{ fontFamily }}
                       >
                         <SelectValue />
@@ -3618,14 +3833,16 @@ export default function WebmasterDashboard() {
               )}
               {/* 4. ฟีเจอร์ที่เปิดใช้งาน Tab */}
               {activeSubTab === 'features' && (
-                <div className="pt-2 space-y-4 text-left animate-fade-in">
-                  <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
-                    <Grid className="w-4 h-4 text-emerald-700" />
-                    <span>ฟีเจอร์ที่เปิดใช้งาน (Features checklist)</span>
-                  </h3>
-                  <p className="text-[11px] text-stone-500">
-                    เลือกส่วนที่คุณต้องการแสดงบนหน้าเว็บไซต์อนุสรณ์ (สามารถเปิด-ปิดได้ทุกเมื่อ)
-                  </p>
+                <div className="pt-2 space-y-5 text-left animate-fade-in">
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
+                      <Grid className="w-4 h-4 text-[#0071e3]" />
+                      <span>ฟีเจอร์ที่เปิดใช้งาน</span>
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      เลือกส่วนที่ต้องการแสดงบนเว็บไซต์ เปิด-ปิดได้ทุกเมื่อ
+                    </p>
+                  </div>
                   <FeatureToggleList 
                     value={features}
                     onChange={setFeatures}
@@ -3640,115 +3857,138 @@ export default function WebmasterDashboard() {
               {/* 5. พื้นที่จัดเก็บ & การชำระเงิน Tab */}
               {activeSubTab === 'billing' && (
                 <div className="space-y-6 text-left animate-fade-in">
-                  <div className="flex items-center gap-1.5">
-                    <CreditCard className="size-4 text-emerald-700" />
-                    <h3 className="text-sm font-bold text-stone-900">พื้นที่จัดเก็บ & การชำระเงิน</h3>
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                      <CreditCard className="w-4 h-4 text-[#0071e3]" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-stone-900">พื้นที่จัดเก็บ & การชำระเงิน</h3>
+                      <p className="text-xs text-stone-400">จัดการพื้นที่เก็บไฟล์และดูประวัติการชำระเงิน</p>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Storage Quota Card */}
-                    <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/20 space-y-4">
-                      <h4 className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-                        <Database className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>พื้นที่จัดเก็บมีเดีย S3 / R2</span>
-                      </h4>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-[10px] text-stone-550 font-semibold font-mono">
-                          <span>{(storageUsedBytes / (1024 * 1024)).toFixed(1)}MB</span>
-                          <span>/ {(storageQuotaBytes / (1024 * 1024 * 1024)).toFixed(1)}GB</span>
+                    <div className="p-6 rounded-2xl border border-stone-200 bg-white space-y-5">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                          <Database className="w-4 h-4 text-[#0071e3]" />
+                          <span>พื้นที่จัดเก็บ</span>
+                        </h4>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          storagePercentage > 80 
+                            ? 'bg-rose-50 text-rose-600' 
+                            : storagePercentage > 50 
+                            ? 'bg-amber-50 text-amber-600' 
+                            : 'bg-emerald-50 text-emerald-600'
+                        }`}>
+                          {storagePercentage.toFixed(0)}%
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              storagePercentage > 80 ? 'bg-rose-500' : storagePercentage > 50 ? 'bg-amber-500' : 'bg-[#0071e3]'
+                            }`} 
+                            style={{ width: `${storagePercentage}%` }} 
+                          />
                         </div>
-                        <div className="w-full h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-600 rounded-full transition-all" style={{ width: `${storagePercentage}%` }} />
+                        <div className="flex justify-between text-xs text-stone-500 font-medium">
+                          <span>{(storageUsedBytes / (1024 * 1024)).toFixed(1)} MB ใช้แล้ว</span>
+                          <span>{(storageQuotaBytes / (1024 * 1024 * 1024)).toFixed(1)} GB ทั้งหมด</span>
                         </div>
                       </div>
                       
-                      <div className="border-t border-stone-100 pt-3 space-y-1.5">
-                        <p className="text-[9px] font-bold text-stone-500 uppercase tracking-wide">จำลองอัปโหลดไฟล์ทดสอบ</p>
-                        <div className="flex gap-1.5">
+                      <div className="border-t border-stone-100 pt-4 space-y-2">
+                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">ทดสอบอัปโหลด</p>
+                        <div className="flex gap-2">
                           <Button variant="ghost" 
                             type="button"
                             onClick={() => handleMockUpload(10)} 
                             disabled={uploadLoading}
-                            className="flex-1 py-1.5 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded-xl text-[9px] text-stone-700 font-bold transition cursor-pointer"
+                            className="flex-1 h-9 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs text-stone-600 font-medium transition cursor-pointer"
                           >
-                            รูป (10MB)
+                            <ImageIcon className="w-3.5 h-3.5 mr-1.5" />
+                            รูป 10MB
                           </Button>
                           <Button variant="ghost" 
                             type="button"
                             onClick={() => handleMockUpload(250)} 
                             disabled={uploadLoading}
-                            className="flex-1 py-1.5 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded-xl text-[9px] text-amber-850 font-bold transition cursor-pointer"
+                            className="flex-1 h-9 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs text-stone-600 font-medium transition cursor-pointer"
                           >
-                            วิดีโอ (250MB)
+                            <Video className="w-3.5 h-3.5 mr-1.5" />
+                            วิดีโอ 250MB
                           </Button>
                         </div>
                       </div>
                     </div>
 
                     {/* Export backups Card */}
-                    <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/20 space-y-3">
-                      <h4 className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-                        <Download className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>ส่งออกข้อมูลสำรอง (ZIP Export)</span>
+                    <div className="p-6 rounded-2xl border border-stone-200 bg-white space-y-4 flex flex-col">
+                      <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                        <Download className="w-4 h-4 text-[#0071e3]" />
+                        <span>สำรองข้อมูล</span>
                       </h4>
-                      <p className="text-[10px] text-stone-550 leading-normal">
-                        ดาวน์โหลดข้อมูลทั้งหมด ประวัติคำไว้อาลัย ผังครอบครัว และหนังสือที่ระลึกในเว็บเป็นไฟล์ ZIP สำรองเก็บไว้แบบออฟไลน์
+                      <p className="text-xs text-stone-500 leading-relaxed flex-1">
+                        ดาวน์โหลดข้อมูลทั้งหมด ประวัติคำไว้อาลัย ผังครอบครัว และหนังสือที่ระลึก เป็นไฟล์ ZIP สำรองเก็บไว้แบบออฟไลน์
                       </p>
-                      <Button variant="ghost" 
+                      <Button variant="default" 
                         type="button"
                         onClick={handleExportZip}
                         disabled={exportLoading}
-                        className="h-auto w-full py-2 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded-xl text-xs text-emerald-800 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+                        className="h-11 w-full bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                       >
-                        {exportLoading ? 'กำลังส่งออก...' : 'ดาวน์โหลด ZIP สำรองข้อมูล'}
+                        <Download className="w-4 h-4" />
+                        {exportLoading ? 'กำลังส่งออก...' : 'ดาวน์โหลด ZIP'}
                       </Button>
                     </div>
                   </div>
 
-                  {/* Billing invoice logs list */}
-                  <div className="p-5 rounded-2xl border border-stone-200 bg-white space-y-4">
-                    <h4 className="text-xs font-bold text-stone-900 flex items-center gap-1.5 border-b border-stone-100 pb-2">
-                      <CreditCard className="w-4 h-4 text-emerald-755" />
-                      <span>ประวัติการชำระเงินค่าบริการ (Payment History)</span>
-                    </h4>
-                    
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs border-collapse">
-                        <thead>
-                          <tr className="border-b border-stone-200 text-stone-500 font-bold uppercase tracking-wider">
-                            <th className="pb-3 pl-2">เลขที่ใบเสร็จ</th>
-                            <th className="pb-3">วันที่ชำระเงิน</th>
-                            <th className="pb-3">รายละเอียดสินค้า</th>
-                            <th className="pb-3">ยอดชำระ</th>
-                            <th className="pb-3 font-semibold">สถานะ</th>
-                            <th className="pb-3 pr-2 text-right">ดาวน์โหลด</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-stone-100">
-                          {invoiceLogs.map(log => (
-                            <tr key={log.id} className="hover:bg-stone-50/80 transition">
-                              <td className="py-4 pl-2 font-mono font-bold text-stone-700">{log.id}</td>
-                              <td className="py-4 text-stone-500">{log.date}</td>
-                              <td className="py-4 text-stone-650 max-w-[280px] truncate">{log.desc}</td>
-                              <td className="py-4 text-stone-900 font-bold">{log.amount}</td>
-                              <td className="py-4">
-                                <span className="px-2.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-250">
-                                  {log.status}
-                                </span>
-                              </td>
-                              <td className="py-4 pr-2 text-right">
-                                <a 
-                                  href={`/api/payment/invoice?refId=${log.refId}`}
-                                  download
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-250 text-[10px] font-bold transition active:scale-95 shadow-sm"
-                                >
-                                  <span>📥</span> PDF
-                                </a>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  {/* Billing invoice logs */}
+                  <div className="rounded-2xl border border-stone-200 bg-white overflow-hidden">
+                    <div className="px-6 py-4 border-b border-stone-100">
+                      <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-[#0071e3]" />
+                        <span>ประวัติการชำระเงิน</span>
+                        <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-stone-100 text-stone-500 text-[10px] font-bold">{invoiceLogs.length}</span>
+                      </h4>
                     </div>
+                    
+                    {invoiceLogs.length === 0 ? (
+                      <div className="py-16 text-center space-y-2">
+                        <FileText className="w-10 h-10 text-stone-300 mx-auto" />
+                        <p className="text-sm text-stone-500">ยังไม่มีประวัติการชำระเงิน</p>
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-stone-100">
+                        {invoiceLogs.map(log => (
+                          <div key={log.id} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 hover:bg-stone-50/50 transition-colors">
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-sm font-bold text-stone-900 font-mono">{log.id}</span>
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700">{log.status}</span>
+                              </div>
+                              <p className="text-xs text-stone-500 truncate">{log.desc}</p>
+                              <p className="text-[10px] text-stone-400">{log.date}</p>
+                            </div>
+                            <div className="flex items-center gap-3 shrink-0">
+                              <span className="text-sm font-bold text-stone-900">{log.amount}</span>
+                              <a 
+                                href={`/api/payment/invoice?refId=${log.refId}`}
+                                download
+                                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-xs text-stone-600 font-bold transition active:scale-95"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                PDF
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -3758,7 +3998,7 @@ export default function WebmasterDashboard() {
                 <button
                   type="submit"
                   disabled={saveLoading}
-                  className="inline-flex h-auto cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-6 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-emerald-700 hover:text-white active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+                  className="inline-flex h-auto cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#0071e3] px-6 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-[#0071e3]/90 hover:text-white active:scale-95 disabled:pointer-events-none disabled:opacity-50"
                 >
                   {saveLoading ? (
                     'กำลังบันทึกข้อมูล...'
@@ -4054,15 +4294,15 @@ export default function WebmasterDashboard() {
               {/* YouTube Link Form */}
               <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 text-left flex flex-col justify-between">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-stone-900">แนบลิงก์วิดีโอจาก YouTube</h4>
-                  <p className="text-[10px] text-stone-500">ใส่ลิงก์คลิปจาก YouTube เพื่อแสดงผลบนหน้าเว็บ</p>
+                  <h4 className="text-sm font-bold text-stone-900">แนบลิงก์วิดีโอจากโซเชียลมีเดีย</h4>
+                  <p className="text-[10px] text-stone-500">รองรับ YouTube, Facebook, TikTok, Instagram, Vimeo</p>
                 </div>
                 <div className="flex gap-2">
                   <Input
                     type="text"
                     value={youtubeUrl}
                     onChange={(e) => setYoutubeUrl(e.target.value)}
-                    placeholder="วางลิงก์ เช่น https://www.youtube.com/watch?v=..."
+                    placeholder="วางลิงก์ เช่น YouTube, Facebook, TikTok, Instagram, Vimeo"
                     className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
                   />
                   <Button variant="ghost"
@@ -4156,20 +4396,30 @@ export default function WebmasterDashboard() {
         {/* Family Tree Manager Section */}
         {activeTab === 'family' && (
           <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-          <div className="flex justify-between items-center border-b border-stone-100 pb-4">
-            <div>
-              <h3 className="text-lg font-black text-stone-900 font-sans flex items-center gap-1.5">
-                <GitBranch className="w-5 h-5 text-emerald-700" />
-                <span>ผังครอบครัวและเครือญาติ 3 รุ่น ({familyMembers.length})</span>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-stone-100 pb-4">
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                  <GitBranch className="w-4 h-4 text-[#0071e3]" />
+                </div>
+                <span>ผังครอบครัวและเครือญาติ</span>
+                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-stone-200 text-stone-600 text-[10px] font-black">{familyMembers.length}</span>
               </h3>
-              <p className="text-xs text-stone-500">เพิ่มรายละเอียดของบิดา มารดา คู่สมรส พี่น้อง และบุตรธิดาของผู้ล่วงลับ</p>
+              <p className="text-xs text-stone-400 pl-10">เพิ่มรายละเอียดของบิดา มารดา คู่สมรส พี่น้อง และบุตรธิดา</p>
             </div>
-            <Button variant="ghost" type="button" 
+            <Button variant="default" type="button" 
               onClick={() => { resetFamilyForm(); setFamilyFormOpen(!familyFormOpen); }}
-              className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1"
+              className={`shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 cursor-pointer ${
+                familyFormOpen 
+                  ? 'bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-700 border border-stone-200' 
+                  : 'bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white'
+              }`}
             >
               {familyFormOpen ? (
-                'ปิดหน้าต่าง'
+                <>
+                  <X className="w-3.5 h-3.5" />
+                  <span>ปิด</span>
+                </>
               ) : (
                 <>
                   <Plus className="w-3.5 h-3.5" />
@@ -4180,116 +4430,102 @@ export default function WebmasterDashboard() {
           </div>
 
           {familyFormOpen && (
-            <form onSubmit={handleSaveFamilyMember} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 max-w-xl animate-fade-in">
-              <h4 className="text-xs font-black uppercase text-emerald-800 flex items-center gap-1.5">
-                {familyId ? (
-                  <>
-                    <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>แก้ไขสมาชิกญาติ</span>
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>เพิ่มสมาชิกญาติใหม่</span>
-                  </>
-                )}
+            <form onSubmit={handleSaveFamilyMember} className="p-6 rounded-2xl border border-[#0071e3]/20 bg-blue-50/30 space-y-5 max-w-xl animate-fade-in">
+              <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-[#0071e3]/10">
+                  {familyId ? <Edit3 className="w-3.5 h-3.5 text-[#0071e3]" /> : <Plus className="w-3.5 h-3.5 text-[#0071e3]" />}
+                </div>
+                <span>{familyId ? 'แก้ไขสมาชิก' : 'เพิ่มสมาชิกใหม่'}</span>
               </h4>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-sm font-bold text-stone-600 block">ชื่อ-นามสกุล</label>
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">ชื่อ-นามสกุล</label>
                   <Input 
                     type="text" 
                     value={familyName} 
                     onChange={(e) => setFamilyName(e.target.value)}
                     required
                     placeholder="เช่น นายสมจิตร์ รักสงบ"
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full h-11 px-4 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-[#0071e3]/50 focus-visible:ring-2 focus-visible:ring-blue-500/20 transition"
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-bold text-stone-600 block">ความสัมพันธ์</label>
-                  <Select
-                              value={familyRelationship}
-                              onValueChange={(value) => setFamilyRelationship(value)}
-                            >
-                              <SelectTrigger className={"w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-<SelectItem value="PARENT_1">บิดา (Father)</SelectItem>
-                    <SelectItem value="PARENT_2">มารดา (Mother)</SelectItem>
-                    <SelectItem value="SPOUSE">คู่สมรส (Spouse)</SelectItem>
-                    <SelectItem value="SIBLING">พี่น้อง (Sibling)</SelectItem>
-                    <SelectItem value="CHILD">บุตร/ธิดา (Child)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <label className="text-sm font-bold text-stone-600 block">ปีเกิด (พ.ศ.)</label>
-                  <Input 
-                    type="text" 
-                    value={familyBirthYear} 
-                    onChange={(e) => setFamilyBirthYear(e.target.value)}
-                    placeholder="เช่น 2490"
-                    maxLength={4}
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base font-mono focus:outline-none focus:border-emerald-500/80 transition"
-                  />
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">ความสัมพันธ์</label>
+                  <Select value={familyRelationship} onValueChange={(value) => setFamilyRelationship(value)}>
+                    <SelectTrigger className="w-full h-11 px-4 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-[#0071e3]/50 transition">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectItem value="PARENT_1">บิดา (Father)</SelectItem>
+                      <SelectItem value="PARENT_2">มารดา (Mother)</SelectItem>
+                      <SelectItem value="SPOUSE">คู่สมรส (Spouse)</SelectItem>
+                      <SelectItem value="SIBLING">พี่น้อง (Sibling)</SelectItem>
+                      <SelectItem value="CHILD">บุตร/ธิดา (Child)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-bold text-stone-600 block">ปีที่ล่วงลับ (พ.ศ.)</label>
-                  <Input 
-                    type="text" 
-                    value={familyDeathYear} 
-                    onChange={(e) => setFamilyDeathYear(e.target.value)}
-                    disabled={!familyIsDeceased}
-                    placeholder="เช่น 2565"
-                    maxLength={4}
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base font-mono disabled:opacity-40 focus:outline-none focus:border-emerald-500/80 transition"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">ปีเกิด (พ.ศ.)</label>
+                    <Input 
+                      type="text" 
+                      value={familyBirthYear} 
+                      onChange={(e) => setFamilyBirthYear(e.target.value)}
+                      placeholder="2490"
+                      maxLength={4}
+                      className="w-full h-11 px-4 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm font-mono focus:outline-none focus:border-[#0071e3]/50 focus-visible:ring-2 focus-visible:ring-blue-500/20 transition"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">ปีที่ล่วงลับ (พ.ศ.)</label>
+                    <Input 
+                      type="text" 
+                      value={familyDeathYear} 
+                      onChange={(e) => setFamilyDeathYear(e.target.value)}
+                      disabled={!familyIsDeceased}
+                      placeholder="2565"
+                      maxLength={4}
+                      className="w-full h-11 px-4 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm font-mono disabled:opacity-40 disabled:bg-stone-50 focus:outline-none focus:border-[#0071e3]/50 focus-visible:ring-2 focus-visible:ring-blue-500/20 transition"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-5">
+                <label htmlFor="isDeceased" className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-stone-200 cursor-pointer select-none hover:bg-stone-50 transition-colors">
                   <Checkbox 
                     id="isDeceased"
                     checked={familyIsDeceased}
                     onCheckedChange={(checked) => setFamilyIsDeceased(!!checked)}
-                    className="w-4 h-4 cursor-pointer"
+                    className="w-4.5 h-4.5 cursor-pointer rounded"
                   />
-                  <label htmlFor="isDeceased" className="text-xs text-stone-750 font-bold cursor-pointer select-none">เสียชีวิตแล้ว (Deceased)</label>
-                </div>
+                  <span className="text-sm text-stone-700 font-medium">เสียชีวิตแล้ว</span>
+                </label>
 
-                <div className="space-y-1 sm:col-span-3">
-                  <label className="text-sm font-bold text-stone-600 block">รูปถ่ายประวัติเครือญาติ (แนะนำอัตราส่วน 1:1)</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">รูปถ่าย</label>
                   
-                  <div className="flex flex-col sm:flex-row gap-4 items-center">
-                    {/* Thumbnail Preview */}
+                  <div className="flex items-start gap-4">
                     {familyAvatarUrl && (
-                      <div className="relative w-20 h-20 rounded-full border border-stone-250 bg-stone-50 overflow-hidden flex-shrink-0 shadow-sm group">
+                      <div className="relative w-20 h-20 rounded-2xl border-2 border-stone-100 bg-stone-50 overflow-hidden flex-shrink-0 group">
                         <img 
                           src={familyAvatarUrl} 
                           alt="Avatar" 
                           className="w-full h-full object-cover" 
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`;
-                          }}
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                         />
-                        <Button variant="ghost"
+                        <button
                           type="button"
                           onClick={() => setFamilyAvatarUrl('')}
-                          className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10px] font-bold cursor-pointer border-0"
+                          className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
                         >
-                          ลบรูปภาพ
-                        </Button>
+                          <Trash2 className="w-4 h-4 text-white" />
+                        </button>
                       </div>
                     )}
 
-                    {/* Custom Dropzone */}
                     <div
                       onDragEnter={(e) => { e.preventDefault(); setFamilyIsDragActive(true); }}
                       onDragOver={(e) => { e.preventDefault(); setFamilyIsDragActive(true); }}
@@ -4302,10 +4538,10 @@ export default function WebmasterDashboard() {
                           uploadFamilyAvatar(file);
                         }
                       }}
-                      className={`flex-1 w-full border-2 border-dashed rounded-2xl p-6 text-center transition cursor-pointer relative ${
+                      className={`flex-1 border-2 border-dashed rounded-2xl p-5 text-center transition-all cursor-pointer ${
                         familyIsDragActive 
-                          ? 'border-emerald-500 bg-emerald-50/50 scale-[1.01]' 
-                          : 'border-stone-300 hover:border-emerald-500 bg-stone-50/30 hover:bg-stone-50/60'
+                          ? 'border-[#0071e3] bg-blue-50/50 scale-[1.01]' 
+                          : 'border-stone-200 hover:border-[#0071e3]/40 bg-white hover:bg-blue-50/20'
                       }`}
                     >
                       <Input
@@ -4319,34 +4555,36 @@ export default function WebmasterDashboard() {
                         disabled={avatarUploading}
                         className="hidden"
                       />
-                      <label htmlFor="avatar-file-input" className="cursor-pointer flex flex-col items-center gap-1">
-                        <User className={`w-8 h-8 mb-1 ${familyIsDragActive ? 'text-emerald-600' : 'text-stone-400'}`} />
-                        <span className="text-xs font-bold text-stone-700">
+                      <label htmlFor="avatar-file-input" className="cursor-pointer flex flex-col items-center gap-1.5">
+                        <div className={`size-10 rounded-full flex items-center justify-center ${familyIsDragActive ? 'bg-[#0071e3]/10' : 'bg-stone-100'}`}>
+                          <Camera className={`w-4.5 h-4.5 ${familyIsDragActive ? 'text-[#0071e3]' : 'text-stone-400'}`} />
+                        </div>
+                        <span className="text-xs font-medium text-stone-600">
                           {avatarUploading 
                             ? 'กำลังอัปโหลด...' 
                             : familyIsDragActive 
-                            ? 'วางรูปภาพที่นี่ได้เลย' 
-                            : 'ลากรูปภาพมาวางที่นี่ หรือคลิกเพื่ออัปโหลด'}
+                            ? 'วางรูปภาพที่นี่' 
+                            : 'คลิกหรือลากรูปมาวาง'}
                         </span>
-                        <span className="text-[10px] text-stone-400">รองรับไฟล์ PNG, JPG หรือ WEBP (ไม่เกิน 5MB)</span>
+                        <span className="text-[10px] text-stone-400">PNG, JPG, WEBP ไม่เกิน 5MB</span>
                       </label>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-2">
-                <Button variant="ghost" 
+              <div className="flex gap-2 pt-1">
+                <Button variant="default" 
                   type="submit" 
                   disabled={saveLoading}
-                  className="h-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
+                  className="h-auto px-5 py-2.5 rounded-xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white font-bold text-xs transition active:scale-95"
                 >
-                  {saveLoading ? 'กำลังบันทึก...' : '💾 บันทึกข้อมูลญาติ'}
+                  {saveLoading ? 'กำลังบันทึก...' : 'บันทึก'}
                 </Button>
                 <Button variant="ghost" 
                   type="button" 
                   onClick={resetFamilyForm}
-                  className="h-auto px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition"
+                  className="h-auto px-5 py-2.5 rounded-xl text-stone-500 hover:text-stone-700 hover:bg-stone-100 text-xs font-medium transition"
                 >
                   ยกเลิก
                 </Button>
@@ -4355,8 +4593,10 @@ export default function WebmasterDashboard() {
           )}
 
           {familyMembers.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-              ยังไม่มีการระบุข้อมูลสมาชิกครอบครัว
+            <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
+              <GitBranch className="w-10 h-10 text-stone-300 mx-auto" />
+              <p className="text-sm text-stone-500">ยังไม่มีสมาชิกครอบครัว</p>
+              <p className="text-xs text-stone-400">กดปุ่ม "เพิ่มสมาชิกครอบครัว" เพื่อเริ่มต้น</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -4377,20 +4617,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -4400,7 +4640,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -4419,44 +4659,45 @@ export default function WebmasterDashboard() {
   const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
 
   return (
-                  <div key={m.id} className="p-4 rounded-2xl border border-stone-200 bg-stone-50/40 flex justify-between items-start hover:border-stone-300 transition gap-3">
-                    <div className="flex items-center gap-3">
+                  <div key={m.id} className="group p-4 rounded-2xl border border-stone-200 bg-white flex justify-between items-center hover:border-stone-300 hover:shadow-sm transition-all duration-200 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       {m.avatarUrl ? (
                         <img 
                           src={m.avatarUrl} 
                           alt={m.name} 
-                          className="w-10 h-10 rounded-full object-cover border border-stone-200 flex-shrink-0"
+                          className="w-11 h-11 rounded-full object-cover border-2 border-stone-100 flex-shrink-0"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`;
+                            (e.target as HTMLImageElement).style.display = 'none';
                           }}
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center text-stone-650 font-bold text-xs flex-shrink-0 border border-stone-250">
+                        <div className="w-11 h-11 rounded-full bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3] font-bold text-sm flex-shrink-0">
                           {m.name.charAt(0)}
                         </div>
                       )}
-                      <div>
-                        <p className="text-xs font-bold text-stone-900">{m.name}</p>
-                        <span className="inline-block px-1.5 py-0.5 text-[8px] font-bold bg-stone-200/50 text-stone-605 rounded mt-1">
-                          ความสัมพันธ์: {relLabel}
-                        </span>
-                        <p className="text-[10px] text-stone-500 font-semibold mt-1 flex items-center gap-1">
-                          <span>อายุขัย: {m.birthYear || 'N/A'} - {m.deathYear || 'N/A'}</span>
-                          {m.isDeceased && <Flame className="w-3 h-3 text-stone-500 animate-pulse" />}
-                        </p>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-stone-900 truncate">{m.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold bg-stone-100 text-stone-500 rounded-full">
+                            {relLabel}
+                          </span>
+                          <span className="text-[10px] text-stone-400">
+                            {m.birthYear || '?'} – {m.isDeceased ? (m.deathYear || '?') : 'ปัจจุบัน'}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-1.5 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
                       <Button variant="ghost" type="button" 
                         onClick={() => editFamilyMember(m)}
-                        className="p-1.5 rounded-lg bg-white border border-stone-250 text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition"
+                        className="p-2 rounded-xl bg-stone-50 border border-stone-200 text-stone-500 hover:bg-stone-100 hover:text-stone-900 transition cursor-pointer"
                         title="แก้ไข"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                       </Button>
                       <Button variant="ghost" type="button" 
                         onClick={() => handleDeleteFamilyMember(m.id)}
-                        className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition flex items-center justify-center"
+                        className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-500 hover:text-rose-700 border border-rose-200 transition cursor-pointer"
                         title="ลบ"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -4635,43 +4876,57 @@ export default function WebmasterDashboard() {
           <div className="space-y-6">
             {features.condolence && (
               <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
-                  <Flame className="w-5 h-5 text-emerald-700 animate-pulse" />
-                  <span>คำไว้อาลัยรออนุมัติ ({condolences.length})</span>
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                      <Flame className="w-4 h-4 text-[#0071e3]" />
+                    </div>
+                    <span>คำไว้อาลัยรออนุมัติ</span>
+                    {condolences.length > 0 && (
+                      <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black">{condolences.length}</span>
+                    )}
+                  </h3>
+                </div>
 
                 {condolences.length === 0 ? (
-                  <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-                    ไม่มีข้อความไว้อาลัยค้างอนุมัติในเวลานี้
+                  <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
+                    <Flame className="w-10 h-10 text-stone-300 mx-auto" />
+                    <p className="text-sm text-stone-500">ไม่มีข้อความค้างอนุมัติ</p>
+                    <p className="text-xs text-stone-400">ข้อความไว้อาลัยใหม่จะแสดงที่นี่</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {condolences.map(c => (
-                      <div key={c.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-stone-900">{c.senderName}</span>
-                            {c.relationship && c.relationship !== '—' && (
-                              <span className="px-2 py-0.5 text-[9px] font-semibold bg-stone-200/50 text-stone-600 rounded">
-                                ความสัมพันธ์: {c.relationship}
-                              </span>
-                            )}
+                      <div key={c.id} className="p-5 rounded-2xl border border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm transition-all duration-200">
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                          <div className="space-y-2 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <div className="size-8 rounded-full bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3] text-xs font-bold shrink-0">
+                                {c.senderName?.charAt(0) || '?'}
+                              </div>
+                              <span className="text-sm font-bold text-stone-900">{c.senderName}</span>
+                              {c.relationship && c.relationship !== '—' && (
+                                <span className="px-2 py-0.5 text-[9px] font-bold bg-stone-100 text-stone-500 rounded-full">
+                                  {c.relationship}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-stone-600 leading-relaxed pl-10">"{c.message}"</p>
                           </div>
-                          <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{c.message}"</p>
-                        </div>
-                        <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
-                          <Button variant="ghost" type="button" 
-                            onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
-                            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
-                          >
-                            อนุมัติ
-                          </Button>
-                          <Button variant="ghost" type="button" 
-                            onClick={() => handleModerateCondolence(c.id, 'DELETE')}
-                            className="px-4 py-2 rounded-xl border border-red-300 text-red-755 hover:bg-red-50 text-xs font-bold transition active:scale-95"
-                          >
-                            ลบออก
-                          </Button>
+                          <div className="flex gap-2 self-end sm:self-start shrink-0">
+                            <Button variant="default" type="button" 
+                              onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
+                              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white text-xs font-bold transition active:scale-95"
+                            >
+                              อนุมัติ
+                            </Button>
+                            <Button variant="ghost" type="button" 
+                              onClick={() => handleModerateCondolence(c.id, 'DELETE')}
+                              className="px-4 py-2 rounded-xl text-rose-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition active:scale-95"
+                            >
+                              ลบออก
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -4682,40 +4937,63 @@ export default function WebmasterDashboard() {
 
             {features.memory && (
               <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
-                  <Camera className="w-5 h-5 text-emerald-700" />
-                  <span>เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</span>
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                      <Camera className="w-4 h-4 text-[#0071e3]" />
+                    </div>
+                    <span>Memory Wall รออนุมัติ</span>
+                    {pendingPosts.length > 0 && (
+                      <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black">{pendingPosts.length}</span>
+                    )}
+                  </h3>
+                </div>
 
                 {pendingPosts.length === 0 ? (
-                  <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-                    ไม่มีเรื่องราวหรือรูปถ่ายค้างอนุมัติในเวลานี้
+                  <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
+                    <Camera className="w-10 h-10 text-stone-300 mx-auto" />
+                    <p className="text-sm text-stone-500">ไม่มีเรื่องราวค้างอนุมัติ</p>
+                    <p className="text-xs text-stone-400">เรื่องราวและรูปถ่ายใหม่จะแสดงที่นี่</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {pendingPosts.map(p => (
-                      <div key={p.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-stone-900">ส่งโดย: {p.senderName}</span>
-                            {p.title && <span className="text-xs font-semibold text-stone-600">| หัวข้อ: {p.title}</span>}
+                      <div key={p.id} className="p-5 rounded-2xl border border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm transition-all duration-200">
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                          <div className="space-y-2 min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <div className="size-8 rounded-full bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3] text-xs font-bold shrink-0">
+                                {p.senderName?.charAt(0) || '?'}
+                              </div>
+                              <div>
+                                <span className="text-sm font-bold text-stone-900">{p.senderName}</span>
+                                {p.title && <span className="text-xs text-stone-400 ml-2">{p.title}</span>}
+                              </div>
+                            </div>
+                            {p.mediaUrl && (
+                              <div className="pl-10">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#0071e3]">
+                                  <ImageIcon className="w-3 h-3" />
+                                  แนบรูปภาพ
+                                </span>
+                              </div>
+                            )}
+                            {p.content && <p className="text-sm text-stone-600 leading-relaxed pl-10">"{p.content}"</p>}
                           </div>
-                          {p.mediaUrl && <p className="text-[10px] text-stone-500 font-mono">แนบไฟล์รูป: {p.mediaUrl}</p>}
-                          {p.content && <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{p.content}"</p>}
-                        </div>
-                        <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
-                          <Button variant="ghost" type="button" 
-                            onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
-                            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
-                          >
-                            อนุมัติลงบอร์ด
-                          </Button>
-                          <Button variant="ghost" type="button" 
-                            onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
-                            className="px-4 py-2 rounded-xl border border-red-300 text-red-755 hover:bg-red-50 text-xs font-bold transition active:scale-95"
-                          >
-                            ลบออก
-                          </Button>
+                          <div className="flex gap-2 self-end sm:self-start shrink-0">
+                            <Button variant="default" type="button" 
+                              onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
+                              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white text-xs font-bold transition active:scale-95"
+                            >
+                              อนุมัติ
+                            </Button>
+                            <Button variant="ghost" type="button" 
+                              onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
+                              className="px-4 py-2 rounded-xl text-rose-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition active:scale-95"
+                            >
+                              ลบออก
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0e8d8"/>
+      <stop offset="100%" stop-color="#e5d8c0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#s)"/>
+  <!-- Vintage border pattern -->
+  <rect x="60" y="60" width="1480" height="780" rx="20" fill="none" stroke="#c4a060" stroke-width="3" opacity="0.2"/>
+  <rect x="80" y="80" width="1440" height="740" rx="16" fill="none" stroke="#c4a060" stroke-width="1.5" opacity="0.15"/>
+  <!-- Corner ornaments -->
+  <circle cx="90" cy="90" r="15" fill="#c4a060" opacity="0.15"/>
+  <circle cx="1510" cy="90" r="15" fill="#c4a060" opacity="0.15"/>
+  <circle cx="90" cy="810" r="15" fill="#c4a060" opacity="0.15"/>
+  <circle cx="1510" cy="810" r="15" fill="#c4a060" opacity="0.15"/>
+  <!-- Decorative center -->
+  <circle cx="800" cy="450" r="100" fill="none" stroke="#c4a060" stroke-width="2" opacity="0.15"/>
+  <circle cx="800" cy="450" r="70" fill="none" stroke="#d4b070" stroke-width="1.5" opacity="0.12"/>
+  <!-- Flourish -->
+  <path d="M650 450 Q720 400 800 450 Q880 400 950 450" fill="none" stroke="#c4a060" stroke-width="2" opacity="0.2"/>
+  <path d="M650 450 Q720 500 800 450 Q880 500 950 450" fill="none" stroke="#c4a060" stroke-width="2" opacity="0.2"/>
+</svg>

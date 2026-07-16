@@ -19,12 +19,14 @@ interface GalleryClientProps {
 }
 
 /**
- * Classic masonry (natural heights), always spanning the full card width.
- * Keep 4 columns on large screens even when photos are few — matches the ✓ reference.
+ * Classic masonry (natural heights). Use fewer columns when the set is small
+ * so the card still reads full — avoid sparse 4-col with large empty bottoms.
  */
 function masonryColumnsClass(count: number) {
   if (count <= 1) return 'columns-1 max-w-2xl mx-auto';
   if (count === 2) return 'columns-2';
+  if (count <= 4) return 'columns-2';
+  if (count <= 8) return 'columns-2 md:columns-3';
   return 'columns-2 md:columns-3 lg:columns-4';
 }
 

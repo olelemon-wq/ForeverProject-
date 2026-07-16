@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5e8f0"/>
+      <stop offset="100%" stop-color="#e8d5e0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- Infinity symbol (eternal love) -->
+  <path d="M256 260 C220 220 160 220 160 260 C160 300 220 300 256 260 C292 220 352 220 352 260 C352 300 292 300 256 260Z" fill="none" stroke="#c87090" stroke-width="8" opacity="0.4"/>
+  <!-- Small hearts along the path -->
+  <path d="M180 245 C180 245 175 240 175 236 C175 232 178 230 182 234 L180 237 L184 234 C178 230 185 232 185 236 C185 240 180 245 180 245Z" fill="#e87a9a" opacity="0.5"/>
+  <path d="M332 245 C332 245 327 240 327 236 C327 232 330 230 334 234 L332 237 L336 234 C330 230 337 232 337 236 C337 240 332 245 332 245Z" fill="#e87a9a" opacity="0.5"/>
+</svg>

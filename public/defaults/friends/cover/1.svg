@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8f4f8"/>
+      <stop offset="100%" stop-color="#d5ecf5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#s)"/>
+  <!-- Beach/ocean waves -->
+  <path d="M0 550 Q200 500 400 540 Q600 580 800 530 Q1000 480 1200 530 Q1400 580 1600 540 L1600 900 L0 900Z" fill="#88c8e8" opacity="0.15"/>
+  <path d="M0 620 Q200 580 400 610 Q600 640 800 600 Q1000 560 1200 600 Q1400 640 1600 610 L1600 900 L0 900Z" fill="#78b8d8" opacity="0.12"/>
+  <path d="M0 700 Q200 680 400 700 Q600 720 800 700 Q1000 680 1200 700 Q1400 720 1600 700 L1600 900 L0 900Z" fill="#68a8c8" opacity="0.1"/>
+  <!-- Sun -->
+  <circle cx="800" cy="200" r="80" fill="#f0d060" opacity="0.15"/>
+  <circle cx="800" cy="200" r="50" fill="#f0d060" opacity="0.1"/>
+  <!-- Clouds -->
+  <ellipse cx="400" cy="180" rx="100" ry="40" fill="#fff" opacity="0.4"/>
+  <ellipse cx="1200" cy="220" rx="80" ry="35" fill="#fff" opacity="0.35"/>
+  <!-- Seagulls -->
+  <path d="M500 280 Q510 270 520 280" fill="none" stroke="#607080" stroke-width="2" opacity="0.2"/>
+  <path d="M540 270 Q548 262 556 270" fill="none" stroke="#607080" stroke-width="1.5" opacity="0.18"/>
+</svg>
