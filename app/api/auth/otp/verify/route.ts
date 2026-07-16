@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { signToken } from '@/lib/auth/jwt';
 import { getInitialFeatureMapForCategory } from '@/lib/categories';
 import { getSeedDefaultMedia } from '@/lib/defaultMedia';
+import { ensureWebmasterForPhone } from '@/lib/auth/webmaster';
 
 export async function POST(request: Request) {
   try {
@@ -66,49 +67,8 @@ export async function POST(request: Request) {
       where: { phone: cleanPhone },
     }).catch(() => {});
 
-    // 6. Auto-register / Retrieve Webmaster profile via WebmasterPhone
-    let phoneRecord = await db.webmasterPhone.findUnique({
-      where: { phone: cleanPhone },
-      include: { webmaster: true },
-    });
-
-    let webmaster;
-    if (phoneRecord) {
-      webmaster = phoneRecord.webmaster;
-    } else {
-      // Fallback: Check if a Webmaster already exists with this phone number (legacy record)
-      const existingWebmaster = await db.webmaster.findUnique({
-        where: { phone: cleanPhone },
-      });
-
-      if (existingWebmaster) {
-        webmaster = existingWebmaster;
-        // Create the WebmasterPhone relation so we heal the database automatically
-        await db.webmasterPhone.create({
-          data: {
-            webmasterId: webmaster.id,
-            phone: cleanPhone,
-            isPrimary: true,
-          },
-        }).catch((err) => {
-          console.warn('Failed to auto-heal WebmasterPhone record:', err);
-        });
-      } else {
-        // Create new Webmaster + WebmasterPhone
-        webmaster = await db.webmaster.create({
-          data: {
-            phone: cleanPhone,
-            name: '',
-            phones: {
-              create: {
-                phone: cleanPhone,
-                isPrimary: true,
-              },
-            },
-          },
-        });
-      }
-    }
+    // 6. Auto-register / Retrieve Webmaster (legacy-safe if WebmasterPhone table missing)
+    const webmaster = await ensureWebmasterForPhone(cleanPhone);
 
     // 7. If Category param is provided, create a PENDING_PAYMENT Draft website with temp slug (draft-<uuid>)
     let draftTenantId: string | null = null;
