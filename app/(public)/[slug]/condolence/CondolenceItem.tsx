@@ -18,14 +18,14 @@ interface CondolenceItemProps {
 }
 
 const RELATIONSHIP_BADGES: Record<string, { label: string; className: string }> = {
-  Family: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-800 border-amber-250/70' },
-  Spouse: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-800 border-amber-250/70' },
-  Son: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-800 border-amber-250/70' },
-  Daughter: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-800 border-amber-250/70' },
-  Grandchild: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-800 border-amber-250/70' },
-  Relative: { label: 'ญาติพี่น้อง', className: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
-  Friend: { label: 'ผู้ร่วมไว้อาลัย', className: 'bg-stone-50 text-stone-600 border-stone-200' },
-  Colleague: { label: 'ผู้ร่วมไว้อาลัย', className: 'bg-stone-50 text-stone-600 border-stone-200' },
+  Family: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-700 border-amber-200/60' },
+  Spouse: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-700 border-amber-200/60' },
+  Son: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-700 border-amber-200/60' },
+  Daughter: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-700 border-amber-200/60' },
+  Grandchild: { label: 'ครอบครัวใกล้ชิด', className: 'bg-amber-50 text-amber-700 border-amber-200/60' },
+  Relative: { label: 'ญาติพี่น้อง', className: 'bg-teal-50 text-teal-700 border-teal-200/60' },
+  Friend: { label: 'ผู้ร่วมไว้อาลัย (เพื่อน)', className: 'bg-stone-50 text-stone-500 border-stone-200/60' },
+  Colleague: { label: 'ผู้ร่วมไว้อาลัย (พนักงาน)', className: 'bg-stone-50 text-stone-500 border-stone-200/60' },
 };
 
 const getRelationshipBadge = (rel: string) => {
@@ -61,18 +61,19 @@ export default function CondolenceItem({ condolence, hideRelationship = false }:
   };
 
   return (
-    <div className="relative overflow-hidden py-6 transition pl-1">
-      <div className="flex flex-wrap items-center gap-2 mb-2">
-        <span className="text-sm font-bold text-stone-850">{condolence.senderName}</span>
+    <div className="relative py-7 first:pt-0 transition">
+      {/* Header row */}
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 mb-3">
+        <span className="text-sm sm:text-base font-bold text-stone-800">{condolence.senderName}</span>
         {showRelationship && (() => {
           const badge = getRelationshipBadge(condolence.relationship);
           return (
-            <span className={`px-2 py-0.5 text-[9px] font-bold border rounded ${badge.className}`}>
+            <span className={`px-2 py-0.5 text-[9px] font-bold border rounded-full ${badge.className}`}>
               {badge.label}
             </span>
           );
         })()}
-        <span className="text-[10px] text-stone-550 ml-auto">
+        <span className="text-[10px] text-stone-400 ml-auto tabular-nums">
           {new Date(condolence.createdAt).toLocaleDateString('th-TH', {
             day: 'numeric',
             month: 'short',
@@ -80,14 +81,16 @@ export default function CondolenceItem({ condolence, hideRelationship = false }:
           })}
         </span>
       </div>
-      <div className="space-y-1">
-        <p className="text-stone-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words">
-          "{parseMessage(displayText)}"
+      {/* Message body */}
+      <div className="space-y-1.5">
+        <p className="text-stone-600 text-xs sm:text-sm leading-relaxed sm:leading-loose whitespace-pre-line break-words">
+          &ldquo;{parseMessage(displayText)}&rdquo;
         </p>
         {shouldTruncate && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-[10px] sm:text-xs font-bold text-emerald-700 hover:text-emerald-850 transition cursor-pointer focus:outline-none flex items-center gap-0.5 pt-1.5"
+            className="text-xs font-medium transition cursor-pointer focus:outline-none flex items-center gap-0.5 pt-1 hover:opacity-70"
+            style={{ color: 'var(--theme-primary, #0d9488)' }}
           >
             <span>{isExpanded ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม'}</span>
             {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}

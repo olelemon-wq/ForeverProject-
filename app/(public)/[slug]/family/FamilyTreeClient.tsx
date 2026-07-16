@@ -719,7 +719,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
                 <div className="w-full flex items-center justify-center gap-4 pt-4 select-none">
                   <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-stone-200" />
                   <div className="flex-shrink-0">
-                    <CategoryOrnament category={tenant.category || 'Memorial'} />
+                    <CategoryOrnament category={tenant.category || 'Memorial'} count={1} />
                   </div>
                   <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-stone-200" />
                 </div>

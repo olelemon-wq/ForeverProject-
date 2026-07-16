@@ -4,136 +4,150 @@ import React from 'react';
 
 interface CategoryOrnamentProps {
   category: string;
+  /** Number of motifs in a centered row. Default 1. Use 9 for condolence band. */
+  count?: number;
 }
 
-export default function CategoryOrnament({ category }: CategoryOrnamentProps) {
-  // Select ornament based on category
+const baseProps = {
+  fill: 'none' as const,
+  stroke: 'currentColor',
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+  style: { color: 'var(--theme-primary, #8b7355)' },
+};
+
+function PawMotif({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" strokeWidth="2" {...baseProps}>
+      <circle cx="50" cy="58" r="12" />
+      <circle cx="32" cy="38" r="7" />
+      <circle cx="44" cy="28" r="7" />
+      <circle cx="56" cy="28" r="7" />
+      <circle cx="68" cy="38" r="7" />
+    </svg>
+  );
+}
+
+function HeartMotif({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" strokeWidth="2" {...baseProps}>
+      <path d="M50,78 C50,78 22,58 22,42 C22,30 32,24 42,30 C46,32 50,38 50,38 C50,38 54,32 58,30 C68,24 78,30 78,42 C78,58 50,78 50,78 Z" />
+    </svg>
+  );
+}
+
+function SparkleMotif({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" strokeWidth="2" {...baseProps}>
+      <path d="M50,18 C50,34 50,50 66,50 C50,50 50,66 50,82 C50,66 50,50 34,50 C50,50 50,34 50,18 Z" />
+      <path d="M72,28 C72,36 72,44 80,44 C72,44 72,52 72,60 C72,52 72,44 64,44 C72,44 72,36 72,28 Z" strokeWidth="1.5" />
+      <path d="M28,40 C28,46 28,52 34,52 C28,52 28,58 28,64 C28,58 28,52 22,52 C28,52 28,46 28,40 Z" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function FamilyMotif({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" strokeWidth="2" {...baseProps}>
+      <path d="M50,22 L50,78" />
+      <path d="M50,42 L28,58 M50,42 L72,58" />
+      <path d="M50,58 L34,74 M50,58 L66,74" />
+      <circle cx="50" cy="22" r="6" />
+      <circle cx="28" cy="58" r="5" />
+      <circle cx="72" cy="58" r="5" />
+      <circle cx="34" cy="74" r="4" />
+      <circle cx="66" cy="74" r="4" />
+    </svg>
+  );
+}
+
+function ThaiDiamondMotif({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 120 120" {...baseProps}>
+      <path d="M60,14 L96,60 L60,106 L24,60 Z" strokeWidth="1.5" />
+      <path d="M60,26 L84,60 L60,94 L36,60 Z" strokeWidth="1" />
+      <path d="M60,32 C64,40 68,48 60,52 C52,48 56,40 60,32 Z" strokeWidth="0.8" />
+      <path d="M60,88 C56,80 52,72 60,68 C68,72 64,80 60,88 Z" strokeWidth="0.8" />
+      <path d="M32,60 C40,56 48,52 52,60 C48,68 40,64 32,60 Z" strokeWidth="0.8" />
+      <path d="M88,60 C80,64 72,68 68,60 C72,52 80,56 88,60 Z" strokeWidth="0.8" />
+      <circle cx="60" cy="60" r="4" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function MotifSvg({ category, className }: { category: string; className?: string }) {
   switch (category) {
     case 'Pet Memorial':
-      return (
-        <svg 
-          className="w-12 h-12 opacity-30 text-emerald-800" 
-          viewBox="0 0 100 100" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          style={{ color: 'var(--theme-primary)' }}
-        >
-          {/* Paw pads */}
-          <circle cx="50" cy="55" r="10" />
-          <circle cx="34" cy="38" r="6" />
-          <circle cx="44" cy="29" r="6" />
-          <circle cx="56" cy="29" r="6" />
-          <circle cx="66" cy="38" r="6" />
-          {/* Leaves/Clover branches */}
-          <path d="M20,70 C15,55 18,38 30,28" />
-          <path d="M80,70 C85,55 82,38 70,28" />
-          <path d="M20,70 C30,75 40,77 50,77 C60,77 70,75 80,70" />
-        </svg>
-      );
-
+      return <PawMotif className={className} />;
     case 'Couple':
     case 'Wedding':
-      return (
-        <svg 
-          className="w-12 h-12 opacity-30 text-rose-800" 
-          viewBox="0 0 100 100" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          style={{ color: 'var(--theme-primary)' }}
-        >
-          {/* Intertwined heart shape */}
-          <path d="M50,48 C50,48 42,38 35,45 C28,52 35,65 50,75 C65,65 72,52 65,45 C58,38 50,48 50,48 Z" />
-          {/* Olive branch frame */}
-          <path d="M22,62 C18,48 27,28 50,23 C73,28 82,48 78,62" />
-          <path d="M22,62 C27,76 37,81 50,81 C63,81 73,76 78,62" />
-        </svg>
-      );
-
+      return <HeartMotif className={className} />;
     case 'Family Legacy':
-      return (
-        <svg 
-          className="w-12 h-12 opacity-30 text-amber-800" 
-          viewBox="0 0 100 100" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          style={{ color: 'var(--theme-primary)' }}
-        >
-          {/* Family Tree line art */}
-          <path d="M50,28 L50,72 M42,75 C46,73 50,72 50,72 C50,72 54,73 58,75" />
-          <path d="M50,58 C42,53 37,44 32,44 C27,44 22,48 22,48" />
-          <path d="M50,48 C58,44 63,35 68,35 C73,35 78,40 78,40" />
-          <path d="M50,38 C45,30 37,25 37,25" />
-          <path d="M50,42 C55,30 63,25 63,25" />
-          <circle cx="32" cy="44" r="3.5" />
-          <circle cx="22" cy="48" r="3.5" />
-          <circle cx="68" cy="35" r="3.5" />
-          <circle cx="78" cy="40" r="3.5" />
-          <circle cx="37" cy="25" r="3.5" />
-          <circle cx="63" cy="25" r="3.5" />
-        </svg>
-      );
-
+      return <FamilyMotif className={className} />;
     case 'Friends':
-      return (
-        <svg 
-          className="w-12 h-12 opacity-30 text-indigo-800" 
-          viewBox="0 0 100 100" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          style={{ color: 'var(--theme-primary)' }}
-        >
-          {/* Minimalist Twinkling Sparkles */}
-          <path d="M50,22 C50,35 50,48 63,48 C50,48 50,61 50,74 C50,61 50,48 37,48 C50,48 50,35 50,22 Z" />
-          <path d="M72,36 C72,42 72,49 79,49 C72,49 72,56 72,62 C72,56 72,49 65,49 C72,49 72,42 72,36 Z" />
-          <path d="M28,44 C28,48 28,53 33,53 C28,53 28,58 28,62 C28,58 28,53 23,53 C28,53 28,48 28,44 Z" />
-        </svg>
-      );
-
+      return <SparkleMotif className={className} />;
     case 'Memorial':
     default:
-      return (
-        <svg 
-          className="w-12 h-12 opacity-40 text-emerald-800" 
-          viewBox="0 0 100 100" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          style={{ color: 'var(--theme-primary)' }}
-        >
-          {/* Outer thin outline */}
-          <path 
-            d="M50,7 C56,16 64,24 68,32 C78,36 85,44 93,50 C85,56 78,64 68,68 C64,76 56,84 50,93 C44,84 36,76 32,68 C22,64 15,56 7,50 C15,44 22,36 32,32 C36,24 44,16 50,7 Z" 
-            strokeWidth="1" 
-          />
-          {/* Outer thick outline */}
-          <path 
-            d="M50,12 C55,20 62,26 66,34 C76,37 82,45 88,50 C82,55 76,63 66,66 C63,76 55,82 50,88 C45,82 37,76 34,66 C24,63 18,55 12,50 C18,45 24,37 34,34 C37,24 45,18 50,12 Z" 
-            strokeWidth="2.5" 
-          />
-          {/* Middle star outline */}
-          <path 
-            d="M50,24 C54,32 64,38 74,50 C64,52 54,58 50,74 C46,58 36,52 26,50 C36,38 46,32 50,24 Z" 
-            strokeWidth="1.2" 
-          />
-          {/* Center 4-lobed core */}
-          <path 
-            d="M50,44 C52,44 52,47 52,48 C52,47 55,47 56,50 C55,50 55,53 52,52 C52,53 52,55 50,56 C48,55 48,53 48,52 C48,53 45,53 44,50 C45,47 48,47 48,48 C48,47 48,44 50,44 Z" 
-            strokeWidth="1.2" 
-          />
-        </svg>
-      );
+      return <ThaiDiamondMotif className={className} />;
   }
+}
+
+export default function CategoryOrnament({ category, count = 1 }: CategoryOrnamentProps) {
+  const n = Math.max(1, Math.min(count, 11));
+
+  if (n === 1) {
+    return (
+      <MotifSvg
+        category={category}
+        className="w-14 h-14 opacity-45 select-none"
+      />
+    );
+  }
+
+  // Long band — used on condolence book across categories
+  return (
+    <div className="w-full max-w-lg mx-auto select-none" aria-hidden>
+      <div className="flex items-center justify-center gap-1 sm:gap-1.5 px-1">
+        <div
+          className="h-px flex-1 max-w-10 sm:max-w-16"
+          style={{
+            background: 'linear-gradient(to right, transparent, var(--theme-primary, #8b7355))',
+            opacity: 0.4,
+          }}
+        />
+        {Array.from({ length: n }).map((_, i) => {
+          const mid = Math.floor(n / 2);
+          const dist = Math.abs(i - mid);
+          const size =
+            dist === 0
+              ? 'w-8 h-8 sm:w-9 sm:h-9'
+              : dist === 1
+                ? 'w-7 h-7 sm:w-8 sm:h-8'
+                : 'w-6 h-6 sm:w-7 sm:h-7';
+          const opacity =
+            dist === 0
+              ? 'opacity-60'
+              : dist === 1
+                ? 'opacity-50'
+                : dist === 2
+                  ? 'opacity-40'
+                  : 'opacity-32';
+          return (
+            <MotifSvg
+              key={i}
+              category={category}
+              className={`${size} ${opacity} shrink-0`}
+            />
+          );
+        })}
+        <div
+          className="h-px flex-1 max-w-10 sm:max-w-16"
+          style={{
+            background: 'linear-gradient(to left, transparent, var(--theme-primary, #8b7355))',
+            opacity: 0.4,
+          }}
+        />
+      </div>
+    </div>
+  );
 }

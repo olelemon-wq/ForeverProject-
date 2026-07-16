@@ -442,6 +442,10 @@ export default function WebmasterDashboard() {
   const [galleryLoading, setGalleryLoading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [annActive, setAnnActive] = useState(true);
+  const [annCardMode, setAnnCardMode] = useState<'template' | 'custom'>('template');
+  const [annCustomCardUrl, setAnnCustomCardUrl] = useState('');
+  const [annCardUploading, setAnnCardUploading] = useState(false);
+  const [annCardUploadError, setAnnCardUploadError] = useState('');
   const [annText, setAnnText] = useState('');
   const [annStyle, setAnnStyle] = useState('ELEGANT_WHITE');
   const [annFontFamily, setAnnFontFamily] = useState('LINE Seed Sans TH');
@@ -660,6 +664,98 @@ export default function WebmasterDashboard() {
     }
   };
 
+  const uploadAnnouncementCard = async (file: File) => {
+    if (!activeSite?.id) {
+      const msg = 'ไม่พบเว็บไซต์ที่กำลังแก้ไข กรุณารีเฟรชหน้าแล้วลองใหม่';
+      setAnnCardUploadError(msg);
+      setError(msg);
+      return;
+    }
+
+    const rawExt = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const allowedExt = ['jpg', 'jpeg', 'png', 'webp'] as const;
+    const allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const extOk = allowedExt.includes(rawExt as (typeof allowedExt)[number]);
+    const mimeOk = allowedMime.includes(file.type);
+    // macOS / AI exports often have empty MIME — accept by extension
+    if (!extOk && !mimeOk) {
+      const msg = 'รองรับเฉพาะไฟล์รูปภาพ JPG, PNG หรือ WEBP';
+      setAnnCardUploadError(msg);
+      setError(msg);
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      const msg = 'ไฟล์ใหญ่เกิน 10MB กรุณาลดขนาดแล้วลองใหม่';
+      setAnnCardUploadError(msg);
+      setError(msg);
+      return;
+    }
+
+    const safeExt = extOk
+      ? (rawExt === 'jpeg' ? 'jpg' : rawExt)
+      : file.type.includes('png')
+        ? 'png'
+        : file.type.includes('webp')
+          ? 'webp'
+          : 'jpg';
+    const contentType = mimeOk
+      ? (file.type === 'image/jpg' ? 'image/jpeg' : file.type)
+      : `image/${safeExt === 'jpg' ? 'jpeg' : safeExt}`;
+    const safeName = `announcement-card-${Date.now()}.${safeExt}`;
+
+    setAnnCardUploading(true);
+    setAnnCardUploadError('');
+    setError('');
+    setSuccess('');
+
+    const localPreview = URL.createObjectURL(file);
+    setAnnCustomCardUrl(localPreview);
+    setAnnCardMode('custom');
+
+    try {
+      const res = await fetch('/api/media/upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          websiteId: activeSite.id,
+          fileName: safeName,
+          fileType: contentType,
+          fileSize: file.size,
+          album: 'PROFILE',
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'ขอ URL อัปโหลดไม่สำเร็จ');
+
+      if (data.uploadUrl) {
+        const putRes = await fetch(data.uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': contentType },
+          body: file,
+        });
+        if (!putRes.ok) {
+          const putErr = await putRes.json().catch(() => ({}));
+          throw new Error(putErr.error || `บันทึกไฟล์ลงเซิร์ฟเวอร์ไม่สำเร็จ (${putRes.status})`);
+        }
+      }
+
+      if (!data.filePath) throw new Error('ไม่ได้รับที่อยู่ไฟล์จากเซิร์ฟเวอร์');
+
+      URL.revokeObjectURL(localPreview);
+      setAnnCustomCardUrl(data.filePath);
+      setAnnCardUploadError('');
+      setSuccess('อัปโหลดการ์ดสำเร็จ — กดบันทึกเพื่อยืนยัน');
+    } catch (err: any) {
+      URL.revokeObjectURL(localPreview);
+      setAnnCustomCardUrl('');
+      const msg = err.message || 'การอัปโหลดการ์ดล้มเหลว';
+      setAnnCardUploadError(msg);
+      setError(msg);
+    } finally {
+      setAnnCardUploading(false);
+    }
+  };
+
   const uploadGalleryMedia = async (file: File): Promise<string | null> => {
     if (!activeSite) return null;
     setGalleryUploading(true);
@@ -776,6 +872,8 @@ export default function WebmasterDashboard() {
             features,
             announcement: {
               active: annActive,
+              mode: annCardMode,
+              customCardUrl: annCustomCardUrl.startsWith('blob:') ? '' : annCustomCardUrl,
               text: annText,
               style: annStyle,
               fontFamily: annFontFamily,
@@ -1032,6 +1130,8 @@ export default function WebmasterDashboard() {
 
       const ann = config.announcement || {};
       setAnnActive(ann.active !== false);
+      setAnnCardMode(ann.mode === 'custom' ? 'custom' : 'template');
+      setAnnCustomCardUrl(ann.customCardUrl || '');
       setAnnText(ann.text || '');
       setAnnStyle(ann.style || 'ELEGANT_WHITE');
       setAnnFontFamily(ann.fontFamily || 'LINE Seed Sans TH');
@@ -1149,6 +1249,8 @@ export default function WebmasterDashboard() {
             features,
             announcement: {
               active: annActive,
+              mode: annCardMode,
+              customCardUrl: annCustomCardUrl.startsWith('blob:') ? '' : annCustomCardUrl,
               text: annText,
               style: annStyle,
               fontFamily: annFontFamily,
@@ -2676,6 +2778,124 @@ export default function WebmasterDashboard() {
 
                         {annActive && (
                           <div className="space-y-4 text-xs">
+                            {/* Card mode: template vs custom upload */}
+                            <div className="space-y-2">
+                              <label className="font-bold text-stone-600">รูปแบบการ์ด</label>
+                              <div className="grid grid-cols-2 gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setAnnCardMode('template')}
+                                  className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition active:scale-95 cursor-pointer ${
+                                    annCardMode === 'template'
+                                      ? 'border-[#0071e3] bg-[#0071e3]/5 text-[#0071e3]'
+                                      : 'border-stone-200 bg-white text-stone-600 hover:bg-stone-50'
+                                  }`}
+                                >
+                                  ใช้เทมเพลตระบบ
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setAnnCardMode('custom');
+                                    setAnnCardUploadError('');
+                                  }}
+                                  className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition active:scale-95 cursor-pointer ${
+                                    annCardMode === 'custom'
+                                      ? 'border-[#0071e3] bg-[#0071e3]/5 text-[#0071e3]'
+                                      : 'border-stone-200 bg-white text-stone-600 hover:bg-stone-50'
+                                  }`}
+                                >
+                                  อัปโหลดการ์ดของฉัน
+                                </button>
+                              </div>
+                            </div>
+
+                            {annCardMode === 'custom' ? (
+                              <div className="space-y-3">
+                                <input
+                                  type="file"
+                                  id="announcement-card-file-input"
+                                  accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                  className="sr-only"
+                                  disabled={annCardUploading}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) void uploadAnnouncementCard(file);
+                                    e.target.value = '';
+                                  }}
+                                />
+                                {annCustomCardUrl ? (
+                                  <div className="relative rounded-2xl border border-stone-200 overflow-hidden bg-stone-50">
+                                    <img
+                                      src={annCustomCardUrl}
+                                      alt="การ์ดที่อัปโหลด"
+                                      className="w-full max-h-64 object-contain bg-stone-100"
+                                    />
+                                    {annCardUploading && (
+                                      <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-xs font-bold text-stone-600">
+                                        กำลังอัปโหลด...
+                                      </div>
+                                    )}
+                                    <div className="flex gap-2 p-3 border-t border-stone-100">
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => document.getElementById('announcement-card-file-input')?.click()}
+                                        disabled={annCardUploading}
+                                        className="flex-1 h-9 text-xs font-bold border border-stone-200 rounded-xl"
+                                      >
+                                        {annCardUploading ? 'กำลังอัปโหลด...' : 'เปลี่ยนรูป'}
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => {
+                                          setAnnCustomCardUrl('');
+                                          setAnnCardUploadError('');
+                                        }}
+                                        disabled={annCardUploading}
+                                        className="h-9 px-3 text-xs font-bold text-rose-500 hover:bg-rose-50 border border-rose-200 rounded-xl"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    disabled={annCardUploading}
+                                    onClick={() => document.getElementById('announcement-card-file-input')?.click()}
+                                    className={`flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-8 text-center transition ${
+                                      annCardUploading
+                                        ? 'border-[#0071e3]/40 bg-blue-50/40 cursor-wait'
+                                        : 'border-stone-300 bg-white hover:border-[#0071e3]/50 hover:bg-blue-50/20 cursor-pointer'
+                                    }`}
+                                  >
+                                    <div className="size-10 rounded-full bg-stone-100 flex items-center justify-center">
+                                      <Upload className="w-4 h-4 text-stone-500" />
+                                    </div>
+                                    <span className="text-xs font-bold text-stone-700">
+                                      {annCardUploading ? 'กำลังอัปโหลด...' : 'คลิกเพื่ออัปโหลดการ์ด'}
+                                    </span>
+                                    <span className="text-[10px] text-stone-400 leading-relaxed max-w-[240px]">
+                                      แนะนำขนาด <span className="font-semibold text-stone-500">1080 × 1920 px</span> (แนวตั้ง 9:16)
+                                      <br />
+                                      รองรับ JPG, PNG, WEBP ไม่เกิน 10MB
+                                    </span>
+                                  </button>
+                                )}
+                                {annCardUploadError && (
+                                  <p className="text-[11px] font-semibold text-rose-600 flex items-start gap-1.5">
+                                    <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                                    <span>{annCardUploadError}</span>
+                                  </p>
+                                )}
+                                <p className="text-[10px] text-stone-400 leading-relaxed">
+                                  เหมาะกับการ์ดที่ออกแบบเองหรือสร้างจาก AI — การ์ดจะแสดงเป็นรูปเต็มใบบนหน้าเว็บ
+                                </p>
+                              </div>
+                            ) : (
+                              <>
                             {/* Theme and Font selection */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <div className="space-y-1">
@@ -3065,17 +3285,35 @@ export default function WebmasterDashboard() {
                             </Select>
                               </div>
                             </div>
+                              </>
+                            )}
                           </div>
                         )}
                       </div>
 
                       {/* Right: Live Preview Card */}
                       <div className="sticky top-6 space-y-4">
-                        <p className="text-xs font-bold text-stone-500 text-left uppercase tracking-wider">💡 ตัวอย่างแสดงผลการ์ดจริงบนหน้าเว็บ (Live Preview)</p>
+                        <p className="text-xs font-bold text-stone-500 text-left uppercase tracking-wider">ตัวอย่างแสดงผลการ์ดจริงบนหน้าเว็บ (Live Preview)</p>
                         
                         {!annActive ? (
                           <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-xs bg-stone-50">
                             การ์ดปิดการแสดงผลอยู่ จะไม่ถูกแสดงในหน้าแรกของเว็บไซต์สาธารณะ
+                          </div>
+                        ) : annCardMode === 'custom' ? (
+                          <div className="w-full max-w-md mx-auto rounded-3xl border border-stone-200 overflow-hidden shadow-lg bg-stone-50">
+                            {annCustomCardUrl ? (
+                              <img
+                                src={annCustomCardUrl}
+                                alt="พรีวิวการ์ด"
+                                className="w-full object-contain"
+                              />
+                            ) : (
+                              <div className="aspect-[9/16] flex flex-col items-center justify-center gap-2 text-stone-400 p-8">
+                                <Upload className="w-8 h-8 text-stone-300" />
+                                <p className="text-xs font-medium">ยังไม่มีรูปการ์ด</p>
+                                <p className="text-[10px] text-center">อัปโหลดการ์ดด้านซ้ายเพื่อดูตัวอย่าง</p>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div 
