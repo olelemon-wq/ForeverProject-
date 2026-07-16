@@ -20,6 +20,7 @@ import { getInitialLetter } from '@/lib/utils';
 import Link from 'next/link';
 import { getFeatureLabel } from '@/lib/categories';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
+import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 
 interface FamilyMember {
   id: string;
@@ -121,8 +122,12 @@ function CustomFamilyNode({ data }: { data: any }) {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              transform: `translate(${((avatarX || 0) / 224) * 100}%, ${((avatarY || 0) / 224) * 100}%) rotate(${avatarRotate || 0}deg) scale(${(avatarScale || 1) * (300 / 224)})`,
-              transformOrigin: 'center center',
+              ...imageTransformStyle({
+                x: toRelativeOffset(avatarX || 0, 224),
+                y: toRelativeOffset(avatarY || 0, 224),
+                scale: avatarScale || 1,
+                rotate: avatarRotate || 0,
+              }),
             }}
             onError={() => {
               setImageError(true);
@@ -244,9 +249,34 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
   // Find any orphan grandchildren (not linked to any existing child)
   const orphanGrandchildren = grandchildren.filter(g => !children.some(c => c.id === g.parentId));
 
-  // Deceased Lifespan Extract from default strings (Mock years or mock defaults)
-  const deceasedBirthYear = '2488';
-  const deceasedDeathYear = '2569';
+  // Extract birth/death year from first subject in themeConfig
+  const firstSubject = (tenant.themeConfig as any)?.subjects?.[0];
+  const subjectIsAlive = !!firstSubject?.isAlive;
+
+  const deceasedBirthYear = (() => {
+    if (!firstSubject) return null;
+    if (firstSubject.birthYearOnly && firstSubject.birthYear != null) {
+      return String(firstSubject.birthYear + 543);
+    }
+    if (firstSubject.birthDate) {
+      const d = new Date(firstSubject.birthDate);
+      return isNaN(d.getTime()) ? null : String(d.getFullYear() + 543);
+    }
+    return null;
+  })();
+
+  const deceasedDeathYear = (() => {
+    if (subjectIsAlive) return null;
+    if (!firstSubject) return null;
+    if (firstSubject.deathYearOnly && firstSubject.deathYear != null) {
+      return String(firstSubject.deathYear + 543);
+    }
+    if (firstSubject.deathDate) {
+      const d = new Date(firstSubject.deathDate);
+      return isNaN(d.getTime()) ? null : String(d.getFullYear() + 543);
+    }
+    return null;
+  })();
 
   // Bottom-up layout solver to generate nodes & edges with dynamic coordinates
   const buildReactFlowElements = () => {
@@ -444,15 +474,15 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
           relationship: 'DECEASED',
           birthYear: deceasedBirthYear,
           deathYear: deceasedDeathYear,
-          isDeceased: true,
+          isDeceased: !subjectIsAlive,
           isMain: true,
           avatarUrl: deceasedAvatarUrl,
           avatarScale: deceasedAvatarScale,
           avatarX: deceasedAvatarX,
           avatarY: deceasedAvatarY,
           avatarRotate: deceasedAvatarRotate,
-          ringColor: 'border-rose-500',
-          placeholderBg: 'bg-rose-50 text-rose-600'
+          ringColor: subjectIsAlive ? 'border-amber-500' : 'border-rose-500',
+          placeholderBg: subjectIsAlive ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
         }
       });
 
@@ -483,15 +513,15 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
           relationship: 'DECEASED',
           birthYear: deceasedBirthYear,
           deathYear: deceasedDeathYear,
-          isDeceased: true,
+          isDeceased: !subjectIsAlive,
           isMain: true,
           avatarUrl: deceasedAvatarUrl,
           avatarScale: deceasedAvatarScale,
           avatarX: deceasedAvatarX,
           avatarY: deceasedAvatarY,
           avatarRotate: deceasedAvatarRotate,
-          ringColor: 'border-rose-500',
-          placeholderBg: 'bg-rose-50 text-rose-600'
+          ringColor: subjectIsAlive ? 'border-amber-500' : 'border-rose-500',
+          placeholderBg: subjectIsAlive ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
         }
       });
     }
@@ -689,7 +719,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
                 <div className="w-full flex items-center justify-center gap-4 pt-4 select-none">
                   <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-stone-200" />
                   <div className="flex-shrink-0">
-                    <CategoryOrnament category={tenant.category || 'Memorial'} />
+                    <CategoryOrnament category={tenant.category || 'Memorial'} count={1} />
                   </div>
                   <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-stone-200" />
                 </div>

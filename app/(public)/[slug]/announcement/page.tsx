@@ -113,6 +113,36 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
     );
   }
 
+  // Custom uploaded card (AI / own design)
+  if (announcement.mode === 'custom' && announcement.customCardUrl) {
+    return (
+      <div className="space-y-8 animate-fade-in print:p-0 print:m-0 print:bg-white print:shadow-none print-outer-container">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
+          <div>
+            <h4 className="text-sm font-bold text-stone-800 flex items-center gap-1.5">
+              <Calendar className="w-4 h-4" style={{ color: 'var(--theme-primary)' }} />
+              <span>การ์ดกำหนดการ</span>
+            </h4>
+            <p className="text-[10px] text-stone-500">คุณสามารถพิมพ์ เซฟเป็น PDF หรือคัดลอกลิงก์เพื่อส่งต่อทาง LINE/Facebook ได้ทันทีค่ะ</p>
+          </div>
+          <AnnouncementControls slug={slug} />
+        </div>
+
+        <section
+          id="announcement-card"
+          className="max-w-2xl mx-auto rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white print-card-section"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={announcement.customCardUrl}
+            alt="การ์ดกำหนดการ"
+            className="w-full h-auto object-contain block"
+          />
+        </section>
+      </div>
+    );
+  }
+
   // Parse template colors
   let cardBgClass = 'bg-white border-stone-200 text-stone-900';
   let textMutedClass = 'text-stone-500';
@@ -279,6 +309,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
               avatarX={avatarX}
               avatarY={avatarY}
               avatarRotate={avatarRotate}
+              imageCoordSpace={themeConfig?.imageCoordSpace}
               tenantName={tenant.name}
               primaryColor="var(--theme-primary, #0d9488)"
             />

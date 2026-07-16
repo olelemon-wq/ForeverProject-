@@ -3,14 +3,31 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import FeatureToggleList from '@/components/FeatureToggleList';
+import ScrollableSubTabs from '@/components/ScrollableSubTabs';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
 import BackupPhoneSection from '@/components/BackupPhoneSection';
+import DefaultMediaPicker from '@/components/DefaultMediaPicker';
 import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categories';
+import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
+import type { DefaultMediaKind } from '@/lib/defaultMedia';
+import { getDefaultMediaForCategory } from '@/lib/defaultMedia';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { 
   Flame, BookOpen, Camera, GitBranch, Settings, Plus, Minus, Trash2, Edit3, 
   CreditCard, Smartphone, Check, AlertCircle, ArrowLeft, ArrowRight, 
-  LogOut, Upload, User, Calendar, Heart, Sparkles, DollarSign, Download, RotateCw
+  LogOut, Upload, User, Calendar, Heart, DollarSign, Download, RotateCw
 , X, Lock, Database, Search, Save, Palette, ChevronUp, ChevronDown, LayoutDashboard, AlertTriangle, MapPin, Clock, Phone, Info, Droplets, Image as ImageIcon, Video, Menu as MenuIcon, Copy, ExternalLink, Globe, Grid, History, FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 
 interface Website {
   id: string;
@@ -23,6 +40,156 @@ interface Website {
   donationAccountName: string | null;
   donationActive: boolean;
   role: string;
+}
+
+type ManageSubject = {
+  name: string;
+  birthDate: Date | null;
+  deathDate: Date | null;
+  birthYearOnly: boolean;
+  deathYearOnly: boolean;
+  birthYear: number | null;
+  deathYear: number | null;
+  isAlive?: boolean;
+};
+
+const emptyManageSubject = (): ManageSubject => ({
+  name: '',
+  birthDate: null,
+  deathDate: null,
+  birthYearOnly: false,
+  deathYearOnly: false,
+  birthYear: null,
+  deathYear: null,
+  isAlive: false,
+});
+
+function dateToYmd(d: Date | null): string {
+  if (!d || isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function ymdToDate(s: string): Date | null {
+  if (!s) return null;
+  const d = new Date(`${s}T00:00:00`);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function normalizeManageSubjects(raw: any[], category: string): ManageSubject[] {
+  const list = Array.isArray(raw)
+    ? raw.map((s) => ({
+        name: s?.name || '',
+        birthDate: s?.birthDate ? new Date(s.birthDate) : null,
+        deathDate: s?.deathDate ? new Date(s.deathDate) : null,
+        birthYearOnly: !!s?.birthYearOnly,
+        deathYearOnly: !!s?.deathYearOnly,
+        birthYear: s?.birthYear ?? null,
+        deathYear: s?.deathYear ?? null,
+        isAlive: !!s?.isAlive,
+      }))
+    : [];
+
+  if (list.length === 0) {
+    if (category === 'Couple' || category === 'Wedding') {
+      return [emptyManageSubject(), emptyManageSubject()];
+    }
+    return [emptyManageSubject()];
+  }
+  return list;
+}
+
+function getSubjectEditorCopy(category: string) {
+  if (category === 'Pet Memorial') {
+    return {
+      sectionTitle: 'รายชื่อสัตว์เลี้ยง',
+      sectionHint: 'เพิ่มหรือแก้ไขข้อมูลน้อง ๆ ที่แสดงบนหน้าเว็บ แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      cardTitle: (i: number) => `ข้อมูลสัตว์เลี้ยงตัวที่ ${i + 1}`,
+      nameLabel: 'ชื่อสัตว์เลี้ยงแสนรัก',
+      namePlaceholder: 'เช่น เจ้าปุยฝ้าย',
+      aliveLabel: 'น้องยังมีชีวิตอยู่',
+      dateLabel: 'วันเกิด – วันที่เดินทางไปดาวหมาแมว',
+      startTitle: 'วันเกิด',
+      endTitle: 'วันที่เดินทางกลับดาว',
+      yearOnlyBirth: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีเกิด)',
+      yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เดินทางกลับดาว)',
+      addLabel: '+ เพิ่มสัตว์เลี้ยงอีกตัว',
+      showAlive: true,
+      canAdd: true,
+    };
+  }
+  if (category === 'Family Legacy') {
+    return {
+      sectionTitle: 'รายชื่อต้นตระกูล / ผู้ได้รับการรำลึก',
+      sectionHint: 'เพิ่มหรือแก้ไขรายชื่อที่เกี่ยวข้องกับหน้านี้ แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      cardTitle: (i: number) => `ข้อมูลท่านที่ ${i + 1}`,
+      nameLabel: 'ชื่อ-นามสกุล',
+      namePlaceholder: 'เช่น คุณปู่บุญส่ง รักดี',
+      aliveLabel: 'ท่านยังมีชีวิตอยู่',
+      dateLabel: 'วันเกิด – วันเสียชีวิต',
+      startTitle: 'วันเกิด',
+      endTitle: 'วันเสียชีวิต',
+      yearOnlyBirth: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีเกิด)',
+      yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)',
+      addLabel: '+ เพิ่มรายชื่ออีกท่าน',
+      showAlive: true,
+      canAdd: true,
+    };
+  }
+  if (category === 'Couple' || category === 'Wedding') {
+    return {
+      sectionTitle: category === 'Wedding' ? 'ข้อมูลคู่บ่าวสาว' : 'ข้อมูลคู่รัก',
+      sectionHint: 'แก้ไขชื่อและวันที่สำคัญของทั้งสองคน แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      cardTitle: (i: number) => `ข้อมูลคนที่ ${i + 1}`,
+      nameLabel: 'ชื่อ-นามสกุล',
+      namePlaceholder: 'เช่น สมศรี',
+      aliveLabel: '',
+      dateLabel: category === 'Wedding' ? 'วันเริ่มต้นคบหา – วันแต่งงาน' : 'วันแรกที่พบกัน – วันครบรอบ',
+      startTitle: category === 'Wedding' ? 'วันเริ่มต้นคบหา' : 'วันแรกที่พบกัน',
+      endTitle: category === 'Wedding' ? 'วันแต่งงาน' : 'วันครบรอบ',
+      yearOnlyBirth: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปี)',
+      yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปี)',
+      addLabel: '',
+      showAlive: false,
+      canAdd: false,
+    };
+  }
+  if (category === 'Friends') {
+    return {
+      sectionTitle: 'รายชื่อผู้ร่วมแสดงผล',
+      sectionHint: 'เพิ่มหรือแก้ไขรายชื่อในกลุ่มเพื่อน แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      cardTitle: (i: number) => `ข้อมูลคนที่ ${i + 1}`,
+      nameLabel: 'ชื่อ',
+      namePlaceholder: 'เช่น เพื่อนซี้ ม.ศ.3',
+      aliveLabel: '',
+      dateLabel: 'วันก่อตั้ง – วันรวมตัวล่าสุด',
+      startTitle: 'วันก่อตั้ง',
+      endTitle: 'วันรวมตัวล่าสุด',
+      yearOnlyBirth: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปี)',
+      yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปี)',
+      addLabel: '+ เพิ่มรายชื่อ',
+      showAlive: false,
+      canAdd: true,
+    };
+  }
+  return {
+    sectionTitle: 'รายชื่อผู้ล่วงลับ',
+    sectionHint: 'เพิ่มหรือแก้ไขรายชื่อผู้ล่วงลับที่แสดงบนหน้าเว็บ แล้วกดบันทึกการตั้งค่าด้านล่าง',
+    cardTitle: (i: number) => `ข้อมูลผู้ล่วงลับท่านที่ ${i + 1}`,
+    nameLabel: 'ชื่อ-นามสกุล ผู้ล่วงลับ',
+    namePlaceholder: 'เช่น คุณยาย มาลี อบอุ่นยิ่ง',
+    aliveLabel: '',
+    dateLabel: 'วันเกิด – วันเสียชีวิต',
+    startTitle: 'วันเกิด',
+    endTitle: 'วันเสียชีวิต',
+    yearOnlyBirth: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีเกิด)',
+    yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)',
+    addLabel: '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน',
+    showAlive: false,
+    canAdd: true,
+  };
 }
 
 const TIME_PRESETS = [
@@ -275,6 +442,10 @@ export default function WebmasterDashboard() {
   const [galleryLoading, setGalleryLoading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [annActive, setAnnActive] = useState(true);
+  const [annCardMode, setAnnCardMode] = useState<'template' | 'custom'>('template');
+  const [annCustomCardUrl, setAnnCustomCardUrl] = useState('');
+  const [annCardUploading, setAnnCardUploading] = useState(false);
+  const [annCardUploadError, setAnnCardUploadError] = useState('');
   const [annText, setAnnText] = useState('');
   const [annStyle, setAnnStyle] = useState('ELEGANT_WHITE');
   const [annFontFamily, setAnnFontFamily] = useState('LINE Seed Sans TH');
@@ -326,6 +497,8 @@ export default function WebmasterDashboard() {
   const [isCoverCropModalOpen, setIsCoverCropModalOpen] = useState(false);
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const [isCoverMenuOpen, setIsCoverMenuOpen] = useState(false);
+  const [defaultMediaPicker, setDefaultMediaPicker] = useState<DefaultMediaKind | null>(null);
+  const [quickPreview, setQuickPreview] = useState<{ kind: DefaultMediaKind; src: string } | null>(null);
   const [isCropModalOpen, setIsCropModalOpen] = useState(false);
   
   const [features, setFeatures] = useState<any>({
@@ -491,6 +664,98 @@ export default function WebmasterDashboard() {
     }
   };
 
+  const uploadAnnouncementCard = async (file: File) => {
+    if (!activeSite?.id) {
+      const msg = 'ไม่พบเว็บไซต์ที่กำลังแก้ไข กรุณารีเฟรชหน้าแล้วลองใหม่';
+      setAnnCardUploadError(msg);
+      setError(msg);
+      return;
+    }
+
+    const rawExt = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const allowedExt = ['jpg', 'jpeg', 'png', 'webp'] as const;
+    const allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const extOk = allowedExt.includes(rawExt as (typeof allowedExt)[number]);
+    const mimeOk = allowedMime.includes(file.type);
+    // macOS / AI exports often have empty MIME — accept by extension
+    if (!extOk && !mimeOk) {
+      const msg = 'รองรับเฉพาะไฟล์รูปภาพ JPG, PNG หรือ WEBP';
+      setAnnCardUploadError(msg);
+      setError(msg);
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      const msg = 'ไฟล์ใหญ่เกิน 10MB กรุณาลดขนาดแล้วลองใหม่';
+      setAnnCardUploadError(msg);
+      setError(msg);
+      return;
+    }
+
+    const safeExt = extOk
+      ? (rawExt === 'jpeg' ? 'jpg' : rawExt)
+      : file.type.includes('png')
+        ? 'png'
+        : file.type.includes('webp')
+          ? 'webp'
+          : 'jpg';
+    const contentType = mimeOk
+      ? (file.type === 'image/jpg' ? 'image/jpeg' : file.type)
+      : `image/${safeExt === 'jpg' ? 'jpeg' : safeExt}`;
+    const safeName = `announcement-card-${Date.now()}.${safeExt}`;
+
+    setAnnCardUploading(true);
+    setAnnCardUploadError('');
+    setError('');
+    setSuccess('');
+
+    const localPreview = URL.createObjectURL(file);
+    setAnnCustomCardUrl(localPreview);
+    setAnnCardMode('custom');
+
+    try {
+      const res = await fetch('/api/media/upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          websiteId: activeSite.id,
+          fileName: safeName,
+          fileType: contentType,
+          fileSize: file.size,
+          album: 'PROFILE',
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'ขอ URL อัปโหลดไม่สำเร็จ');
+
+      if (data.uploadUrl) {
+        const putRes = await fetch(data.uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': contentType },
+          body: file,
+        });
+        if (!putRes.ok) {
+          const putErr = await putRes.json().catch(() => ({}));
+          throw new Error(putErr.error || `บันทึกไฟล์ลงเซิร์ฟเวอร์ไม่สำเร็จ (${putRes.status})`);
+        }
+      }
+
+      if (!data.filePath) throw new Error('ไม่ได้รับที่อยู่ไฟล์จากเซิร์ฟเวอร์');
+
+      URL.revokeObjectURL(localPreview);
+      setAnnCustomCardUrl(data.filePath);
+      setAnnCardUploadError('');
+      setSuccess('อัปโหลดการ์ดสำเร็จ — กดบันทึกเพื่อยืนยัน');
+    } catch (err: any) {
+      URL.revokeObjectURL(localPreview);
+      setAnnCustomCardUrl('');
+      const msg = err.message || 'การอัปโหลดการ์ดล้มเหลว';
+      setAnnCardUploadError(msg);
+      setError(msg);
+    } finally {
+      setAnnCardUploading(false);
+    }
+  };
+
   const uploadGalleryMedia = async (file: File): Promise<string | null> => {
     if (!activeSite) return null;
     setGalleryUploading(true);
@@ -599,6 +864,7 @@ export default function WebmasterDashboard() {
             coverX: deceasedCoverX,
             coverY: deceasedCoverY,
             coverRotate: deceasedCoverRotate,
+            imageCoordSpace: 'relative',
             biography,
             subjects,
             albums: updatedAlbums,
@@ -606,6 +872,8 @@ export default function WebmasterDashboard() {
             features,
             announcement: {
               active: annActive,
+              mode: annCardMode,
+              customCardUrl: annCustomCardUrl.startsWith('blob:') ? '' : annCustomCardUrl,
               text: annText,
               style: annStyle,
               fontFamily: annFontFamily,
@@ -841,23 +1109,29 @@ export default function WebmasterDashboard() {
       const loadedFont = config.fontFamily || 'Inter';
       setFontFamily(scriptFonts.includes(loadedFont) ? 'LINE Seed Sans TH' : loadedFont);
       setBiography(config.biography || '');
-      setSubjects(config.subjects || []);
+      setSubjects(normalizeManageSubjects(config.subjects || [], site.category));
       setAlbums(config.albums || []);
       setMediaAlbums(config.mediaAlbums || {});
       setDefaultFontSize(config.defaultFontSize || 'NORMAL');
       setDeceasedAvatarUrl(config.avatarUrl || '');
-      setDeceasedAvatarScale(config.avatarScale || 1);
-      setDeceasedAvatarX(config.avatarX || 0);
-      setDeceasedAvatarY(config.avatarY || 0);
-      setDeceasedAvatarRotate(config.avatarRotate || 0);
-      setDeceasedCoverUrl(config.coverUrl || '');
-      setDeceasedCoverScale(config.coverScale || 1);
-      setDeceasedCoverX(config.coverX || 0);
-      setDeceasedCoverY(config.coverY || 0);
-      setDeceasedCoverRotate(config.coverRotate || 0);
+      {
+        const avatarScale = config.avatarScale || 1;
+        const coverScale = config.coverScale || 1;
+        setDeceasedAvatarScale(avatarScale);
+        setDeceasedAvatarX(clampImagePan(toRelativeOffset(config.avatarX || 0, 224, config.imageCoordSpace), avatarScale));
+        setDeceasedAvatarY(clampImagePan(toRelativeOffset(config.avatarY || 0, 224, config.imageCoordSpace), avatarScale));
+        setDeceasedAvatarRotate(config.avatarRotate || 0);
+        setDeceasedCoverUrl(config.coverUrl || '');
+        setDeceasedCoverScale(coverScale);
+        setDeceasedCoverX(clampImagePan(toRelativeOffset(config.coverX || 0, 320, config.imageCoordSpace), coverScale));
+        setDeceasedCoverY(clampImagePan(toRelativeOffset(config.coverY || 0, 160, config.imageCoordSpace), coverScale));
+        setDeceasedCoverRotate(config.coverRotate || 0);
+      }
 
       const ann = config.announcement || {};
       setAnnActive(ann.active !== false);
+      setAnnCardMode(ann.mode === 'custom' ? 'custom' : 'template');
+      setAnnCustomCardUrl(ann.customCardUrl || '');
       setAnnText(ann.text || '');
       setAnnStyle(ann.style || 'ELEGANT_WHITE');
       setAnnFontFamily(ann.fontFamily || 'LINE Seed Sans TH');
@@ -967,6 +1241,7 @@ export default function WebmasterDashboard() {
             coverX: deceasedCoverX,
             coverY: deceasedCoverY,
             coverRotate: deceasedCoverRotate,
+            imageCoordSpace: 'relative',
             biography,
             subjects,
             albums,
@@ -974,6 +1249,8 @@ export default function WebmasterDashboard() {
             features,
             announcement: {
               active: annActive,
+              mode: annCardMode,
+              customCardUrl: annCustomCardUrl.startsWith('blob:') ? '' : annCustomCardUrl,
               text: annText,
               style: annStyle,
               fontFamily: annFontFamily,
@@ -1133,15 +1410,16 @@ export default function WebmasterDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          fileName: `avatar-${Date.now()}-${file.name}`,
+          fileName: `family-avatar-${Date.now()}-${file.name}`,
           fileType: file.type,
           fileSize: file.size,
+          album: 'FAMILY',
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      if (data.uploadUrl && !data.uploadUrl.includes('upload-mock')) {
+      if (data.uploadUrl) {
         await fetch(data.uploadUrl, {
           method: 'PUT',
           headers: { 'Content-Type': file.type },
@@ -1450,20 +1728,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -1473,7 +1751,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -1510,20 +1788,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -1533,7 +1811,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -1598,20 +1876,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -1621,7 +1899,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -1643,63 +1921,87 @@ export default function WebmasterDashboard() {
     return (
       <main className="min-h-screen bg-stone-50 text-stone-850 p-6 md:p-12 font-sans relative flex items-center justify-center">
         {/* Decorative Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-blue-500/5 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-rose-500/3 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="max-w-5xl w-full mx-auto space-y-10 relative z-10">
+        <div className="max-w-5xl w-full mx-auto space-y-8 relative z-10">
           
           {/* Header */}
-          <header className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-3xl border border-stone-200 p-6 shadow-sm gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-black text-stone-900 tracking-wider">
+          <header className="flex flex-col sm:flex-row justify-between items-center bg-gradient-to-r from-white to-blue-50/80 rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-sm gap-5">
+            <div className="flex items-center gap-4">
+              <span className="text-2xl font-black text-stone-900 tracking-wider">
                 FOREVER <span className="text-[#0071e3] font-normal">เว็บของฉัน</span>
               </span>
             </div>
             
-            <div className="flex flex-wrap items-center gap-3 justify-center">
-              <div className="text-right pr-2">
-                <p className="text-[10px] text-stone-400 font-bold uppercase">บัญชีผู้ใช้งาน</p>
-                <p className="text-xs font-bold text-stone-700">{userPhone || 'กำลังโหลด...'}</p>
+            <div className="flex flex-wrap items-center gap-4 justify-center">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#0071e3]/10 flex items-center justify-center ring-2 ring-[#0071e3]/15">
+                  <User className="w-4 h-4 text-[#0071e3]" />
+                </div>
+                <div className="text-left">
+                  <p className="text-[10px] text-stone-400 font-bold uppercase">บัญชีผู้ใช้งาน</p>
+                  <p className="text-xs font-bold text-stone-700">{userPhone || 'กำลังโหลด...'}</p>
+                </div>
               </div>
-              <button 
+              <Button variant="ghost" type="button" 
                 onClick={handleLogout}
-                className="px-4 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 hover:text-stone-900 text-stone-600 text-xs font-bold transition flex items-center gap-1.5 active:scale-[0.97] cursor-pointer"
+                className="h-auto px-4 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-100 hover:text-stone-900 text-stone-500 text-xs font-bold transition flex items-center gap-1.5 active:scale-[0.97] cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>ออกจากระบบ</span>
-              </button>
+              </Button>
             </div>
           </header>
+
+          <p className="text-sm text-stone-500 pl-1 -mt-2">จัดการเว็บไซต์ทั้งหมดของคุณได้จากที่นี่</p>
 
           {/* Backup Phones Section & Grid layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             {/* Left: Websites Grid */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="flex justify-between items-center pl-1">
-                <h2 className="text-sm font-black text-stone-900 flex items-center gap-2">
-                  <Grid className="w-4 h-4 text-[#0071e3]" />
-                  <span>เว็บไซต์อนุสรณ์ของฉัน ({websites.length})</span>
+              <div className="flex items-center gap-3 pl-1">
+                <h2 className="text-base font-black text-stone-900 flex items-center gap-2">
+                  <Grid className="w-4.5 h-4.5 text-[#0071e3]" />
+                  <span>เว็บไซต์อนุสรณ์ของฉัน</span>
                 </h2>
+                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-[#0071e3] text-white text-[10px] font-black">
+                  {websites.length}
+                </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {websites.map((site) => {
                   const isActive = site.status === 'ACTIVE';
+                  const accent = {
+                    'Memorial': { strip: 'bg-rose-500', badge: 'border-rose-100 bg-rose-50 text-rose-700 hover:bg-rose-50' },
+                    'Family Legacy': { strip: 'bg-amber-500', badge: 'border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-50' },
+                    'Pet Memorial': { strip: 'bg-teal-500', badge: 'border-teal-100 bg-teal-50 text-teal-700 hover:bg-teal-50' },
+                    'Couple': { strip: 'bg-pink-500', badge: 'border-pink-100 bg-pink-50 text-pink-700 hover:bg-pink-50' },
+                    'Wedding': { strip: 'bg-violet-500', badge: 'border-violet-100 bg-violet-50 text-violet-700 hover:bg-violet-50' },
+                    'Friends': { strip: 'bg-sky-500', badge: 'border-sky-100 bg-sky-50 text-sky-700 hover:bg-sky-50' },
+                  }[site.category] || { strip: 'bg-blue-500', badge: 'border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-50' };
                   
                   return (
-                    <div key={site.id} className="bg-white rounded-3xl border border-stone-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between h-48 group text-left animate-fade-in">
-                      <div className="space-y-2">
+                    <div key={site.id} className="bg-white rounded-3xl border border-stone-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between h-52 group text-left animate-fade-in">
+                      <div className="px-6 pt-5 pb-2 space-y-2.5 flex-1">
                         <div className="flex justify-between items-start">
-                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-50 text-[#0071e3] border border-blue-100">
+                          <Badge className={`h-auto rounded-full border px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ${accent.badge}`}>
                             {site.category}
-                          </span>
-                          <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black ${
-                            isActive ? 'bg-emerald-50 text-emerald-800 border border-emerald-100' : 'bg-amber-50 text-amber-800 border border-amber-100'
-                          }`}>
-                            {isActive ? '● ใช้งานอยู่' : '● รอชำระเงิน'}
-                          </span>
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className={`h-auto rounded-full px-2.5 py-0.5 text-[9px] font-black ${
+                              isActive
+                                ? 'border-emerald-100 bg-emerald-50 text-emerald-800 hover:bg-emerald-50'
+                                : 'border-amber-100 bg-amber-50 text-amber-800 hover:bg-amber-50'
+                            }`}
+                          >
+                            {isActive ? 'ใช้งานอยู่' : 'รอชำระเงิน'}
+                          </Badge>
                         </div>
-                        <h3 className="text-sm font-bold text-stone-900 line-clamp-1 group-hover:text-[#0071e3] transition">{site.name}</h3>
+                        <h3 className="text-base font-bold text-stone-900 line-clamp-1 group-hover:text-[#0071e3] transition">{site.name}</h3>
                         
                         {isActive ? (
                           <a 
@@ -1716,15 +2018,15 @@ export default function WebmasterDashboard() {
                         )}
                       </div>
 
-                      <div className="pt-4 border-t border-stone-100 mt-2 flex gap-2">
+                      <div className="px-6 pb-5 pt-3 border-t border-stone-100 flex gap-2">
                         {isActive ? (
-                          <button
+                          <Button variant="ghost" type="button"
                             onClick={() => selectWebsite(site)}
-                            className="w-full py-2.5 rounded-xl bg-stone-900 hover:bg-stone-850 text-white font-bold text-xs transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+                            className="w-full py-2.5 rounded-xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white font-bold text-xs transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
                           >
                             <Settings className="w-3.5 h-3.5" />
                             <span>จัดการเว็บไซต์</span>
-                          </button>
+                          </Button>
                         ) : (
                           <Link
                             href={`/manage/payment?site=${site.id}`}
@@ -1742,14 +2044,14 @@ export default function WebmasterDashboard() {
                 {/* Create New Website card button */}
                 <Link 
                   href="/"
-                  className="bg-stone-50 hover:bg-stone-100/70 border-2 border-dashed border-stone-250 rounded-3xl p-6 flex flex-col items-center justify-center h-48 transition group text-center space-y-2 select-none"
+                  className="bg-gradient-to-br from-blue-50/60 to-stone-50 hover:from-blue-50 hover:to-blue-50/30 border-2 border-dashed border-stone-300 hover:border-[#0071e3]/40 rounded-3xl p-6 flex flex-col items-center justify-center h-52 transition-all duration-200 group text-center space-y-3 select-none"
                 >
-                  <div className="w-12 h-12 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-xs group-hover:scale-105 transition">
-                    <Plus className="w-6 h-6 text-stone-500 group-hover:text-[#0071e3]" />
+                  <div className="w-14 h-14 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:border-blue-200 transition-all duration-200">
+                    <Plus className="w-7 h-7 text-stone-400 group-hover:text-[#0071e3] transition" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-stone-700 group-hover:text-stone-900">สร้างเว็บไซต์ความทรงจำใหม่</p>
-                    <p className="text-[10px] text-stone-400 mt-0.5">เลือกหัวข้อและรับรหัสผ่านมือถือ</p>
+                    <p className="text-sm font-bold text-stone-700 group-hover:text-stone-900 transition">สร้างเว็บไซต์ความทรงจำใหม่</p>
+                    <p className="text-[10px] text-stone-400 mt-1">เลือกหัวข้อและรับรหัสผ่านมือถือ</p>
                   </div>
                 </Link>
               </div>
@@ -1777,18 +2079,18 @@ export default function WebmasterDashboard() {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-850 flex flex-col md:flex-row font-sans">
       {/* Mobile Top Bar */}
-      <header className="md:hidden w-full bg-stone-100/90 backdrop-blur-md border-b border-stone-200/80 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-        <span className="text-lg font-black tracking-wider bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-          FOREVER MANAGE
+      <header className="md:hidden w-full bg-white/90 backdrop-blur-md border-b border-stone-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+        <span className="text-lg font-black tracking-wider text-stone-900">
+          FOREVER <span className="text-[#0071e3] font-normal">MANAGE</span>
         </span>
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-1.5 rounded-xl border border-stone-200 text-stone-650 hover:bg-stone-50 transition cursor-pointer active:scale-95"
           aria-label="Toggle Menu"
         >
           {isMobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
-        </button>
+        </Button>
       </header>
 
       {/* Backdrop overlay for mobile menu */}
@@ -1801,13 +2103,13 @@ export default function WebmasterDashboard() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-stone-100 border-r border-stone-200/80 p-6 flex flex-col justify-between overflow-y-auto shrink-0 transition-transform duration-300 transform
-        md:relative md:translate-x-0 md:h-screen md:sticky md:top-0 md:bg-stone-100/60
+        fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-stone-200 p-6 flex flex-col justify-between overflow-y-auto shrink-0 transition-transform duration-300 transform
+        md:relative md:translate-x-0 md:h-screen md:sticky md:top-0
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div>
           <div className="mb-6">
-            <button
+            <Button variant="ghost" type="button"
               onClick={() => {
                 setActiveSite(null);
                 if (typeof window !== 'undefined') {
@@ -1816,86 +2118,86 @@ export default function WebmasterDashboard() {
                   window.history.replaceState({}, '', url.toString());
                 }
               }}
-              className="w-full py-2.5 bg-white border border-stone-250 hover:bg-stone-50 text-stone-700 hover:text-stone-900 rounded-xl text-[10px] font-black transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+              className="w-full py-2.5 bg-stone-50 border border-stone-200 hover:bg-stone-100 text-stone-600 hover:text-stone-900 rounded-xl text-[10px] font-black transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-stone-500" />
               <span>กลับไปหน้าเว็บของฉัน</span>
-            </button>
+            </Button>
           </div>
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs font-black tracking-wider bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent truncate max-w-[200px]">
+            <span className="text-xs font-black tracking-wider text-[#0071e3] truncate max-w-[200px]">
               จัดการ: {activeSite?.name}
             </span>
           </div>
           <nav className="space-y-1">
             {features.gallery && (
-              <button 
+              <Button variant="ghost" 
                 type="button"
                 onClick={() => handleTabClick('gallery')}
-                className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition font-semibold cursor-pointer ${
+                className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'gallery' 
-                    ? 'bg-emerald-600 shadow-sm border border-emerald-700 text-white font-bold' 
-                    : 'text-stone-600 hover:text-stone-955 hover:bg-stone-200/30'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
-                <Camera className={`w-3.5 h-3.5 ${activeTab === 'gallery' ? 'text-white' : 'text-stone-500'}`} />
+                <Camera className={`size-3.5 shrink-0 ${activeTab === 'gallery' ? 'text-white' : 'text-stone-500'}`} />
                 <span>คลังภาพรำลึก ({photoMedias.length})</span>
-              </button>
+              </Button>
             )}
             {features.videos && (
-              <button 
+              <Button variant="ghost" 
                 type="button"
                 onClick={() => handleTabClick('videos')}
-                className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition font-semibold cursor-pointer ${
+                className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'videos' 
-                    ? 'bg-emerald-600 shadow-sm border border-emerald-700 text-white font-bold' 
-                    : 'text-stone-600 hover:text-stone-955 hover:bg-stone-200/30'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
-                <Video className={`w-3.5 h-3.5 ${activeTab === 'videos' ? 'text-white' : 'text-stone-500'}`} />
+                <Video className={`size-3.5 shrink-0 ${activeTab === 'videos' ? 'text-white' : 'text-stone-500'}`} />
                 <span>คลังวิดีโอ ({videoMedias.length})</span>
-              </button>
+              </Button>
             )}
             {features.family && (
-              <button 
+              <Button variant="ghost" 
                 type="button"
                 onClick={() => handleTabClick('family')}
-                className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition font-semibold cursor-pointer ${
+                className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'family' 
-                    ? 'bg-emerald-600 shadow-sm border border-emerald-700 text-white font-bold' 
-                    : 'text-stone-600 hover:text-stone-955 hover:bg-stone-200/30'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
-                <GitBranch className={`w-3.5 h-3.5 ${activeTab === 'family' ? 'text-white' : 'text-stone-500'}`} />
+                <GitBranch className={`size-3.5 shrink-0 ${activeTab === 'family' ? 'text-white' : 'text-stone-500'}`} />
                 <span>ผังครอบครัว ({familyMembers.length})</span>
-              </button>
+              </Button>
             )}
             {features.ebooks && (
-              <button 
+              <Button variant="ghost" 
                 type="button"
                 onClick={() => handleTabClick('ebooks')}
-                className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition font-semibold cursor-pointer ${
+                className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'ebooks' 
-                    ? 'bg-emerald-600 shadow-sm border border-emerald-700 text-white font-bold' 
-                    : 'text-stone-600 hover:text-stone-955 hover:bg-stone-200/30'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
-                <BookOpen className={`w-3.5 h-3.5 ${activeTab === 'ebooks' ? 'text-white' : 'text-stone-500'}`} />
+                <BookOpen className={`size-3.5 shrink-0 ${activeTab === 'ebooks' ? 'text-white' : 'text-stone-500'}`} />
                 <span>หนังสือของชำร่วย ({ebooks.length})</span>
-              </button>
+              </Button>
             )}
             {(features.condolence || features.memory) && (
-              <button 
+              <Button variant="ghost" 
                 type="button"
                 onClick={() => handleTabClick('condolences')}
-                className={`w-full text-left flex items-center justify-between px-4 py-2.5 rounded-xl text-xs transition font-semibold cursor-pointer ${
+                className={`h-auto w-full justify-between gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'condolences' 
-                    ? 'bg-emerald-600 shadow-sm border border-emerald-700 text-white font-bold' 
-                    : 'text-stone-600 hover:text-stone-955 hover:bg-stone-200/30'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <Flame className={`w-3.5 h-3.5 ${activeTab === 'condolences' ? 'text-white' : 'text-stone-500'}`} />
+                <div className="flex min-w-0 items-center gap-3">
+                  <Flame className={`size-3.5 shrink-0 ${activeTab === 'condolences' ? 'text-white' : 'text-stone-500'}`} />
                   <span>
                     {features.condolence && features.memory
                       ? 'กลั่นกรองเนื้อหา'
@@ -1911,23 +2213,23 @@ export default function WebmasterDashboard() {
                     {condolences.length + pendingPosts.length}
                   </span>
                 )}
-              </button>
+              </Button>
             )}
 
             <div className="pt-4 mt-4 border-t border-stone-200/60">
               <label className="text-[9px] font-bold text-stone-400 uppercase tracking-widest block mb-2 px-4">SYSTEM CONFIG</label>
-              <button 
+              <Button variant="ghost" 
                 type="button"
                 onClick={() => handleTabClick('settings')}
-                className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition font-semibold cursor-pointer ${
+                className={`h-auto w-full justify-start gap-3 rounded-xl border-transparent px-4 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
                   activeTab === 'settings' 
-                    ? 'bg-emerald-600 shadow-sm border border-emerald-700 text-white font-bold' 
-                    : 'text-stone-600 hover:text-stone-955 hover:bg-stone-200/30'
+                    ? 'bg-[#0071e3] font-bold text-white hover:bg-[#0071e3] hover:text-white' 
+                    : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
                 }`}
               >
-                <Settings className={`w-3.5 h-3.5 ${activeTab === 'settings' ? 'text-white' : 'text-stone-500'}`} />
+                <Settings className={`size-3.5 shrink-0 ${activeTab === 'settings' ? 'text-white' : 'text-stone-500'}`} />
                 <span>ตั้งค่าเว็บไซต์</span>
-              </button>
+              </Button>
               <Link href="/manage/create" className="w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-stone-600 hover:text-stone-955 hover:bg-stone-200/30 text-xs transition font-semibold mt-1">
                 <Plus className="w-3.5 h-3.5 text-stone-400" />
                 <span>สร้างเว็บไซต์เพิ่ม</span>
@@ -1940,30 +2242,30 @@ export default function WebmasterDashboard() {
         
         <div className="mt-8 border-t border-stone-200 pt-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-stone-250 flex items-center justify-center text-sm text-stone-650">
-              <User className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-full bg-[#0071e3]/10 flex items-center justify-center">
+              <User className="w-4 h-4 text-[#0071e3]" />
             </div>
             <div>
               <p className="text-xs font-bold text-stone-900">ผู้ใช้งานบัญชี</p>
               <p className="text-[10px] text-stone-555 font-mono font-medium">{userPhone}</p>
             </div>
           </div>
-          <button 
+          <Button variant="ghost" 
             type="button"
             onClick={handleLogout}
-            className="p-1.5 rounded-lg text-stone-400 hover:text-red-655 hover:bg-stone-200/50 transition cursor-pointer active:scale-95 border-0"
+            className="h-auto p-1.5 rounded-lg text-stone-400 hover:text-red-655 hover:bg-stone-200/50 transition cursor-pointer active:scale-95 border-0"
             title="ออกจากระบบ"
           >
             <LogOut className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
       </aside>
 
       {/* Main dashboard content */}
       <main className="flex-1 p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full overflow-y-auto">
         
-        {success && <div className="p-4 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 rounded-2xl font-semibold animate-fade-in">✓ {success}</div>}
-        {error && <div className="p-4 bg-red-50 border border-red-200 text-xs text-red-700 rounded-2xl font-semibold animate-fade-in">⚠️ {error}</div>}
+        {success && <div className="p-4 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 rounded-2xl font-semibold animate-fade-in flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 shrink-0" />{success}</div>}
+        {error && <div className="p-4 bg-red-50 border border-red-200 text-xs text-red-700 rounded-2xl font-semibold animate-fade-in flex items-center gap-2"><AlertCircle className="w-4 h-4 text-red-500 shrink-0" />{error}</div>}
 
         {/* Expiration warning banner (Phase 2 Expiration Banner alignment) */}
         {(() => {
@@ -1990,20 +2292,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -2013,7 +2315,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -2039,15 +2341,15 @@ export default function WebmasterDashboard() {
                   เว็บไซต์รำลึก /{selectedSite.slug} จะหมดอายุลงในอีก {remainingDays} วัน (ในวันที่ {new Date(selectedSite.expiredAt).toLocaleDateString('th-TH')}) กรุณาต่ออายุเพื่อหลีกเลี่ยงการระงับบริการชั่วคราว
                 </p>
               </div>
-              <button 
+              <Button variant="ghost" 
                 type="button"
                 onClick={handleRequestRenewal}
                 disabled={renewLoading}
-                className="px-4 py-2.5 bg-amber-650 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-xl transition flex-shrink-0 text-[10px] shadow-sm flex items-center gap-1"
+                className="h-auto px-4 py-2.5 bg-amber-650 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-xl transition flex-shrink-0 text-[10px] shadow-sm flex items-center gap-1"
               >
                 <CreditCard className="w-3.5 h-3.5" />
                 <span>ต่ออายุบริการ 1 ปี (2,000 บาท)</span>
-              </button>
+              </Button>
             </div>
           );
         })()}
@@ -2084,22 +2386,22 @@ export default function WebmasterDashboard() {
               </div>
 
               <div className="flex gap-2">
-                <button 
+                <Button variant="ghost" 
                   type="button"
                   onClick={handleSimulateRenewSuccess}
                   disabled={renewLoading}
-                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-sm active:scale-95"
+                  className="h-auto flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-sm active:scale-95"
                 >
                   {renewLoading ? 'กำลังจำลอง...' : '✓ จำลองต่ออายุสำเร็จ'}
-                </button>
-                <button 
+                </Button>
+                <Button variant="ghost" 
                   type="button"
                   onClick={() => setRenewModalOpen(false)}
                   disabled={renewLoading}
                   className="px-4 py-2.5 border border-stone-300 text-stone-600 hover:bg-stone-50 font-bold rounded-xl text-xs transition"
                 >
                   ปิด
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -2113,11 +2415,11 @@ export default function WebmasterDashboard() {
               <a 
                 href={`/${selectedSite.slug}`} 
                 target="_blank" 
-                className="text-emerald-700 font-semibold hover:text-emerald-855 underline"
+                className="text-[#0071e3] font-semibold hover:text-[#0071e3]/80 underline"
               >
                 forever.co.th/{selectedSite.slug}
               </a>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => {
                   navigator.clipboard.writeText(`forever.co.th/${selectedSite.slug}`);
@@ -2127,39 +2429,48 @@ export default function WebmasterDashboard() {
                 title="คัดลอกลิงก์"
               >
                 <Copy className="w-3.5 h-3.5" />
-              </button>
+              </Button>
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             {/* Website Selector Dropdown */}
-            <select 
-              value={selectedSite.id} 
-              onChange={(e) => {
-                const site = websites.find(w => w.id === e.target.value);
+            <Select
+              value={selectedSite.id}
+              onValueChange={(value) => {
+                const site = websites.find(w => w.id === value);
                 if (site) selectWebsite(site);
               }}
-              className="px-3 py-1.5 bg-white border border-stone-250 rounded-xl text-xs text-stone-850 focus:outline-none focus:border-emerald-500 font-bold cursor-pointer shadow-xs"
             >
-              {websites.map(w => (
-                <option key={w.id} value={w.id}>/{w.slug} ({w.name.substring(0, 10)})</option>
-              ))}
-            </select>
+              <SelectTrigger
+                size="sm"
+                className="h-auto min-h-8 w-auto max-w-[240px] gap-2 rounded-xl border-stone-250 bg-white px-3 py-1.5 text-xs font-bold text-stone-850 shadow-xs"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent align="end" position="popper">
+                {websites.map(w => (
+                  <SelectItem key={w.id} value={w.id}>
+                    /{w.slug} ({w.name.substring(0, 10)})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {/* Quick settings button */}
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => handleTabClick('settings')}
               className="px-3 py-1.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs text-stone-700 font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-xs"
             >
               <Settings className="w-3.5 h-3.5 text-stone-500" />
               <span>ตั้งค่า</span>
-            </button>
+            </Button>
 
             {/* Live website link */}
             <a
               href={`/${selectedSite.slug}`}
               target="_blank"
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shadow-xs"
+              className="px-3 py-1.5 bg-[#0071e3] hover:bg-[#0071e3]/90 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shadow-xs"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>ดูหน้าเว็บ</span>
@@ -2172,38 +2483,26 @@ export default function WebmasterDashboard() {
             {/* Settings Customizer */}
             <form onSubmit={handleSaveConfig} className="w-full p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
               
-              {/* Settings Sub-Tabs Header (Capsule-style horizontal scroll list) */}
-              <div className="w-full bg-stone-100/60 p-1.5 rounded-2xl flex items-center gap-1 overflow-x-auto scrollbar-none mb-6 select-none border border-stone-200/30">
-                {[
+              <ScrollableSubTabs
+                className="mb-6"
+                value={activeSubTab}
+                onChange={(id) => setActiveSubTab(id as typeof activeSubTab)}
+                tabs={[
                   { id: 'general', label: 'ข้อมูลทั่วไป & ประกาศ', icon: Globe },
                   { id: 'media', label: 'รูปโปรไฟล์ & หน้าปก', icon: ImageIcon },
                   { id: 'theme', label: 'ธีม & สี & ฟอนต์', icon: Palette },
                   { id: 'features', label: 'ฟีเจอร์ที่เปิดใช้งาน', icon: Grid },
                   { id: 'billing', label: 'พื้นที่จัดเก็บ & การชำระเงิน', icon: CreditCard },
-                ].map(sub => {
-                  const Icon = sub.icon;
-                  const isActive = activeSubTab === sub.id;
-                  return (
-                    <button
-                      key={sub.id}
-                      type="button"
-                      onClick={() => setActiveSubTab(sub.id as any)}
-                      className={`px-4 py-2 flex items-center gap-2 rounded-xl text-xs font-bold transition select-none cursor-pointer whitespace-nowrap ${
-                        isActive
-                          ? 'bg-white shadow-xs text-stone-900 border border-stone-200/40 font-extrabold'
-                          : 'text-stone-500 hover:text-stone-900 hover:bg-white/40'
-                      }`}
-                    >
-                      <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-600' : 'text-stone-400'}`} />
-                      <span>{sub.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+                ]}
+              />
 
               {/* 1. ข้อมูลทั่วไป & ประกาศ Tab */}
               {activeSubTab === 'general' && (
                 <div className="space-y-6 animate-fade-in text-left">
+                  <div className="mb-1 flex items-center gap-1.5">
+                    <Globe className="size-4 text-emerald-700" />
+                    <h3 className="text-sm font-bold text-stone-900">ข้อมูลทั่วไป & ประกาศ</h3>
+                  </div>
                   <div className="space-y-1">
                     <label className="text-sm font-bold text-stone-600 tracking-wide">
                       {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
@@ -2212,7 +2511,7 @@ export default function WebmasterDashboard() {
                         ? 'ชื่อสัตว์เลี้ยง / หน้าความทรงจำ'
                         : 'ชื่อหน้ารำลึก'}
                     </label>
-                    <input 
+                    <Input 
                       type="text" 
                       value={siteName} 
                       onChange={(e) => setSiteName(e.target.value)} 
@@ -2228,7 +2527,7 @@ export default function WebmasterDashboard() {
                         ? 'คำอำลาและประวัติสัตว์เลี้ยงโดยย่อ'
                         : 'คำอาลัยและคำรำลึก (ประวัติโดยย่อ)'}
                     </label>
-                    <textarea 
+                    <Textarea 
                       value={biography} 
                       onChange={(e) => setBiography(e.target.value)} 
                       rows={4}
@@ -2243,6 +2542,220 @@ export default function WebmasterDashboard() {
                     />
                   </div>
 
+                  {/* Subjects editor (pets / memorial people / couple, etc.) */}
+                  {(() => {
+                    const cat = selectedSite.category;
+                    const copy = getSubjectEditorCopy(cat);
+                    const updateSubject = (index: number, patch: Partial<ManageSubject>) => {
+                      setSubjects((prev) => {
+                        const next = [...prev];
+                        next[index] = { ...next[index], ...patch };
+                        return next;
+                      });
+                    };
+
+                    return (
+                      <div className="space-y-4 border-t border-stone-150 pt-6">
+                        <div className="space-y-1">
+                          <h4 className="flex items-center gap-1.5 text-sm font-bold text-stone-900">
+                            <User className="size-4 text-emerald-700" />
+                            <span>{copy.sectionTitle}</span>
+                          </h4>
+                          <p className="text-xs text-stone-500">{copy.sectionHint}</p>
+                        </div>
+
+                        {subjects.map((sub, index) => (
+                          <div
+                            key={index}
+                            className="relative space-y-4 rounded-2xl border border-stone-200 bg-stone-50/30 p-5 shadow-xs"
+                          >
+                            {subjects.length > 1 && copy.canAdd && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSubjects((prev) => prev.filter((_, i) => i !== index));
+                                }}
+                                className="absolute top-4 right-4 cursor-pointer text-xs font-bold text-rose-600 transition hover:text-rose-700"
+                              >
+                                ลบออก
+                              </button>
+                            )}
+
+                            <h5 className="pr-12 text-[10px] font-black uppercase tracking-wider text-stone-400">
+                              {copy.cardTitle(index)}
+                            </h5>
+
+                            <div className="space-y-1">
+                              <label className="text-sm font-bold tracking-wide text-stone-600">
+                                {copy.nameLabel}
+                              </label>
+                              <Input
+                                type="text"
+                                value={sub.name || ''}
+                                onChange={(e) => updateSubject(index, { name: e.target.value })}
+                                placeholder={copy.namePlaceholder}
+                                className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-900"
+                              />
+                            </div>
+
+                            {!(index > 0 && (cat === 'Couple' || cat === 'Wedding')) && (
+                              <div className="space-y-2.5">
+                                {copy.showAlive && (
+                                  <label className="flex cursor-pointer select-none items-center gap-1.5">
+                                    <Checkbox
+                                      checked={!!sub.isAlive}
+                                      onCheckedChange={(checked) => {
+                                        const isAlive = !!checked;
+                                        updateSubject(index, {
+                                          isAlive,
+                                          ...(isAlive
+                                            ? { deathDate: null, deathYear: null, deathYearOnly: false }
+                                            : {}),
+                                        });
+                                      }}
+                                      className="size-3.5"
+                                    />
+                                    <span className="text-xs font-bold text-emerald-800">{copy.aliveLabel}</span>
+                                  </label>
+                                )}
+
+                                <label className="text-sm font-bold tracking-wide text-stone-600">
+                                  {copy.dateLabel}
+                                </label>
+
+                                <div className={`grid gap-4 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
+                                  <div className="space-y-1">
+                                    <span className="block text-[9px] font-semibold text-stone-500">{copy.startTitle}</span>
+                                    <ThaiDatePicker
+                                      variant="input"
+                                      yearOnly={!!sub.birthYearOnly}
+                                      value={
+                                        sub.birthYearOnly
+                                          ? sub.birthYear != null
+                                            ? `${sub.birthYear}-01-01`
+                                            : ''
+                                          : dateToYmd(sub.birthDate)
+                                      }
+                                      onChange={(ymd) => {
+                                        if (sub.birthYearOnly) {
+                                          if (!ymd) {
+                                            updateSubject(index, { birthYear: null, birthDate: null });
+                                            return;
+                                          }
+                                          const year = parseInt(ymd.slice(0, 4), 10);
+                                          updateSubject(index, {
+                                            birthYear: year,
+                                            birthDate: new Date(year, 0, 1),
+                                          });
+                                          return;
+                                        }
+                                        updateSubject(index, { birthDate: ymdToDate(ymd) });
+                                      }}
+                                      placeholder={sub.birthYearOnly ? 'เลือกปี พ.ศ.' : copy.startTitle}
+                                      align="left"
+                                    />
+                                    <label className="mt-1 flex cursor-pointer select-none items-center gap-1.5">
+                                      <Checkbox
+                                        checked={!!sub.birthYearOnly}
+                                        onCheckedChange={(checked) => {
+                                          const birthYearOnly = !!checked;
+                                          if (birthYearOnly) {
+                                            const year = sub.birthDate?.getFullYear() ?? new Date().getFullYear();
+                                            updateSubject(index, {
+                                              birthYearOnly: true,
+                                              birthYear: year,
+                                              birthDate: new Date(year, 0, 1),
+                                            });
+                                          } else {
+                                            updateSubject(index, {
+                                              birthYearOnly: false,
+                                              birthYear: null,
+                                              birthDate: null,
+                                            });
+                                          }
+                                        }}
+                                        className="size-3"
+                                      />
+                                      <span className="text-[9px] font-semibold text-stone-500">{copy.yearOnlyBirth}</span>
+                                    </label>
+                                  </div>
+
+                                  {!sub.isAlive && (
+                                    <div className="space-y-1">
+                                      <span className="block text-[9px] font-semibold text-stone-500">{copy.endTitle}</span>
+                                      <ThaiDatePicker
+                                        variant="input"
+                                        yearOnly={!!sub.deathYearOnly}
+                                        value={
+                                          sub.deathYearOnly
+                                            ? sub.deathYear != null
+                                              ? `${sub.deathYear}-01-01`
+                                              : ''
+                                            : dateToYmd(sub.deathDate)
+                                        }
+                                        onChange={(ymd) => {
+                                          if (sub.deathYearOnly) {
+                                            if (!ymd) {
+                                              updateSubject(index, { deathYear: null, deathDate: null });
+                                              return;
+                                            }
+                                            const year = parseInt(ymd.slice(0, 4), 10);
+                                            updateSubject(index, {
+                                              deathYear: year,
+                                              deathDate: new Date(year, 0, 1),
+                                            });
+                                            return;
+                                          }
+                                          updateSubject(index, { deathDate: ymdToDate(ymd) });
+                                        }}
+                                        placeholder={sub.deathYearOnly ? 'เลือกปี พ.ศ.' : copy.endTitle}
+                                        align="right"
+                                      />
+                                      <label className="mt-1 flex cursor-pointer select-none items-center gap-1.5">
+                                        <Checkbox
+                                          checked={!!sub.deathYearOnly}
+                                          onCheckedChange={(checked) => {
+                                            const deathYearOnly = !!checked;
+                                            if (deathYearOnly) {
+                                              const year = sub.deathDate?.getFullYear() ?? new Date().getFullYear();
+                                              updateSubject(index, {
+                                                deathYearOnly: true,
+                                                deathYear: year,
+                                                deathDate: new Date(year, 0, 1),
+                                              });
+                                            } else {
+                                              updateSubject(index, {
+                                                deathYearOnly: false,
+                                                deathYear: null,
+                                                deathDate: null,
+                                              });
+                                            }
+                                          }}
+                                          className="size-3"
+                                        />
+                                        <span className="text-[9px] font-semibold text-stone-500">{copy.yearOnlyDeath}</span>
+                                      </label>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+
+                        {copy.canAdd && (
+                          <button
+                            type="button"
+                            onClick={() => setSubjects((prev) => [...prev, emptyManageSubject()])}
+                            className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-stone-300 bg-stone-50/40 py-3 text-xs font-bold text-stone-500 transition hover:border-emerald-500 hover:bg-emerald-50/20 hover:text-emerald-700"
+                          >
+                            {copy.addLabel}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   {/* Announcement settings cards */}
                   {features.announcement && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start border-t border-stone-150 pt-6">
@@ -2254,11 +2767,10 @@ export default function WebmasterDashboard() {
                             <span>ข้อมูลการ์ดกำหนดการดิจิทัล</span>
                           </h4>
                           <label className="flex items-center gap-2 text-xs font-bold text-stone-600 cursor-pointer">
-                            <input
-                              type="checkbox"
+                            <Checkbox
                               checked={annActive}
-                              onChange={() => setAnnActive(!annActive)}
-                              className="w-4 h-4 accent-emerald-650 cursor-pointer"
+                              onCheckedChange={(c) => setAnnActive(!!c)}
+                              className="w-4 h-4 cursor-pointer"
                             />
                             <span>เปิดแสดงผลการ์ด</span>
                           </label>
@@ -2266,54 +2778,184 @@ export default function WebmasterDashboard() {
 
                         {annActive && (
                           <div className="space-y-4 text-xs">
+                            {/* Card mode: template vs custom upload */}
+                            <div className="space-y-2">
+                              <label className="font-bold text-stone-600">รูปแบบการ์ด</label>
+                              <div className="grid grid-cols-2 gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setAnnCardMode('template')}
+                                  className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition active:scale-95 cursor-pointer ${
+                                    annCardMode === 'template'
+                                      ? 'border-[#0071e3] bg-[#0071e3]/5 text-[#0071e3]'
+                                      : 'border-stone-200 bg-white text-stone-600 hover:bg-stone-50'
+                                  }`}
+                                >
+                                  ใช้เทมเพลตระบบ
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setAnnCardMode('custom');
+                                    setAnnCardUploadError('');
+                                  }}
+                                  className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition active:scale-95 cursor-pointer ${
+                                    annCardMode === 'custom'
+                                      ? 'border-[#0071e3] bg-[#0071e3]/5 text-[#0071e3]'
+                                      : 'border-stone-200 bg-white text-stone-600 hover:bg-stone-50'
+                                  }`}
+                                >
+                                  อัปโหลดการ์ดของฉัน
+                                </button>
+                              </div>
+                            </div>
+
+                            {annCardMode === 'custom' ? (
+                              <div className="space-y-3">
+                                <input
+                                  type="file"
+                                  id="announcement-card-file-input"
+                                  accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                  className="sr-only"
+                                  disabled={annCardUploading}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) void uploadAnnouncementCard(file);
+                                    e.target.value = '';
+                                  }}
+                                />
+                                {annCustomCardUrl ? (
+                                  <div className="relative rounded-2xl border border-stone-200 overflow-hidden bg-stone-50">
+                                    <img
+                                      src={annCustomCardUrl}
+                                      alt="การ์ดที่อัปโหลด"
+                                      className="w-full max-h-64 object-contain bg-stone-100"
+                                    />
+                                    {annCardUploading && (
+                                      <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-xs font-bold text-stone-600">
+                                        กำลังอัปโหลด...
+                                      </div>
+                                    )}
+                                    <div className="flex gap-2 p-3 border-t border-stone-100">
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => document.getElementById('announcement-card-file-input')?.click()}
+                                        disabled={annCardUploading}
+                                        className="flex-1 h-9 text-xs font-bold border border-stone-200 rounded-xl"
+                                      >
+                                        {annCardUploading ? 'กำลังอัปโหลด...' : 'เปลี่ยนรูป'}
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => {
+                                          setAnnCustomCardUrl('');
+                                          setAnnCardUploadError('');
+                                        }}
+                                        disabled={annCardUploading}
+                                        className="h-9 px-3 text-xs font-bold text-rose-500 hover:bg-rose-50 border border-rose-200 rounded-xl"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    disabled={annCardUploading}
+                                    onClick={() => document.getElementById('announcement-card-file-input')?.click()}
+                                    className={`flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-8 text-center transition ${
+                                      annCardUploading
+                                        ? 'border-[#0071e3]/40 bg-blue-50/40 cursor-wait'
+                                        : 'border-stone-300 bg-white hover:border-[#0071e3]/50 hover:bg-blue-50/20 cursor-pointer'
+                                    }`}
+                                  >
+                                    <div className="size-10 rounded-full bg-stone-100 flex items-center justify-center">
+                                      <Upload className="w-4 h-4 text-stone-500" />
+                                    </div>
+                                    <span className="text-xs font-bold text-stone-700">
+                                      {annCardUploading ? 'กำลังอัปโหลด...' : 'คลิกเพื่ออัปโหลดการ์ด'}
+                                    </span>
+                                    <span className="text-[10px] text-stone-400 leading-relaxed max-w-[240px]">
+                                      แนะนำขนาด <span className="font-semibold text-stone-500">1080 × 1920 px</span> (แนวตั้ง 9:16)
+                                      <br />
+                                      รองรับ JPG, PNG, WEBP ไม่เกิน 10MB
+                                    </span>
+                                  </button>
+                                )}
+                                {annCardUploadError && (
+                                  <p className="text-[11px] font-semibold text-rose-600 flex items-start gap-1.5">
+                                    <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                                    <span>{annCardUploadError}</span>
+                                  </p>
+                                )}
+                                <p className="text-[10px] text-stone-400 leading-relaxed">
+                                  เหมาะกับการ์ดที่ออกแบบเองหรือสร้างจาก AI — การ์ดจะแสดงเป็นรูปเต็มใบบนหน้าเว็บ
+                                </p>
+                              </div>
+                            ) : (
+                              <>
                             {/* Theme and Font selection */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <div className="space-y-1">
                                 <label className="font-bold text-stone-600">รูปแบบธีมการ์ด</label>
-                                <select
-                                  value={annStyle}
-                                  onChange={(e) => setAnnStyle(e.target.value)}
-                                  className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
-                                >
-                                  <option value="ELEGANT_WHITE">Classic White (สีขาวเรียบหรู)</option>
-                                  <option value="WARM_CREAM">Warm Cream (สีครีมวินเทจ)</option>
-                                  <option value="CHARCOAL_SLATE">{getStyle3Label(selectedSite?.category || 'Memorial')}</option>
-                                </select>
+                                <Select
+                              value={annStyle}
+                              onValueChange={(value) => setAnnStyle(value)}
+                            >
+                              <SelectTrigger className={"w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="ELEGANT_WHITE">Classic White (สีขาวเรียบหรู)</SelectItem>
+                                  <SelectItem value="WARM_CREAM">Warm Cream (สีครีมวินเทจ)</SelectItem>
+                                  <SelectItem value="CHARCOAL_SLATE">{getStyle3Label(selectedSite?.category || 'Memorial')}</SelectItem>
+                              </SelectContent>
+                            </Select>
                               </div>
                               <div className="space-y-1">
                                 <label className="font-bold text-stone-600">แบบอักษร (Font)</label>
-                                <select
-                                  value={annFontFamily}
-                                  onChange={(e) => setAnnFontFamily(e.target.value)}
-                                  className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
-                                >
-                                  <option value="LINE Seed Sans TH">LINE Seed (ตัวหนา ทันสมัย)</option>
-                                  <option value="Charmonman">Charmonman (ตัวเขียนทางการ)</option>
-                                  <option value="Srisakdi">Srisakdi (ตัวอักษรไทยคลาสสิก)</option>
-                                  <option value="Charm">Charm (ตัวเขียนอ่อนช้อย)</option>
-                                  <option value="Thasadith">Thasadith (ตัวพิมพ์ทางการ)</option>
-                                </select>
+                                <Select
+                              value={annFontFamily}
+                              onValueChange={(value) => setAnnFontFamily(value)}
+                            >
+                              <SelectTrigger className={"w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="LINE Seed Sans TH">LINE Seed (ตัวหนา ทันสมัย)</SelectItem>
+                                  <SelectItem value="Charmonman">Charmonman (ตัวเขียนทางการ)</SelectItem>
+                                  <SelectItem value="Srisakdi">Srisakdi (ตัวอักษรไทยคลาสสิก)</SelectItem>
+                                  <SelectItem value="Charm">Charm (ตัวเขียนอ่อนช้อย)</SelectItem>
+                                  <SelectItem value="Thasadith">Thasadith (ตัวพิมพ์ทางการ)</SelectItem>
+                              </SelectContent>
+                            </Select>
                               </div>
                             </div>
 
                             {/* Default Font Size selector */}
                             <div className="space-y-1">
                               <label className="font-bold text-stone-600">ขนาดตัวอักษรเริ่มต้นของเว็บไซต์</label>
-                              <select
-                                value={defaultFontSize}
-                                onChange={(e) => setDefaultFontSize(e.target.value as any)}
-                                className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
-                              >
-                                <option value="NORMAL">ขนาดปกติ (100% - มาตรฐานทั่วไป)</option>
-                                <option value="MEDIUM">ขนาดค่อนข้างใหญ่ (112% - อ่านง่ายสบายตา)</option>
-                                <option value="LARGE">ขนาดใหญ่พิเศษ (125% - แนะนำสำหรับผู้สูงอายุ)</option>
-                              </select>
+                              <Select
+                              value={defaultFontSize}
+                              onValueChange={(value) => setDefaultFontSize(value as any)}
+                            >
+                              <SelectTrigger className={"w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="NORMAL">ขนาดปกติ (100% - มาตรฐานทั่วไป)</SelectItem>
+                                <SelectItem value="MEDIUM">ขนาดค่อนข้างใหญ่ (112% - อ่านง่ายสบายตา)</SelectItem>
+                                <SelectItem value="LARGE">ขนาดใหญ่พิเศษ (125% - แนะนำสำหรับผู้สูงอายุ)</SelectItem>
+                              </SelectContent>
+                            </Select>
                             </div>
 
                             {/* Header Text */}
                             <div className="space-y-1">
                               <label className="font-bold text-stone-600">คำเชิญชวนหลักด้านบน</label>
-                              <input
+                              <Input
                                 type="text"
                                 value={annText}
                                 onChange={(e) => setAnnText(e.target.value)}
@@ -2331,7 +2973,7 @@ export default function WebmasterDashboard() {
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">วันที่จัด</label>
                                     <div className="flex gap-1.5 items-center relative">
-                                      <input
+                                      <Input
                                         type="text"
                                         value={annWaterDate}
                                         onChange={(e) => setAnnWaterDate(e.target.value)}
@@ -2353,10 +2995,11 @@ export default function WebmasterDashboard() {
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">เวลาเริ่ม</label>
                                     <div className="space-y-1.5">
-                                      <select
-                                        value={isCustomWaterTime ? 'CUSTOM' : annWaterTime}
-                                        onChange={(e) => {
-                                          const val = e.target.value;
+                                      <Select
+                              value={(isCustomWaterTime ? 'CUSTOM' : annWaterTime) || '__empty__'}
+                              onValueChange={(raw) => {
+                                const value = raw === '__empty__' ? '' : raw;
+                                const val = value;
                                           if (val === 'CUSTOM') {
                                             setIsCustomWaterTime(true);
                                             if (!annWaterTime || TIME_PRESETS.includes(annWaterTime)) {
@@ -2366,17 +3009,21 @@ export default function WebmasterDashboard() {
                                             setIsCustomWaterTime(false);
                                             setAnnWaterTime(val);
                                           }
-                                        }}
-                                        className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"
-                                      >
-                                        <option value="">เลือกเวลา</option>
+                              }}
+                            >
+                              <SelectTrigger className={"w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="__empty__">เลือกเวลา</SelectItem>
                                         {TIME_PRESETS.map((preset) => (
-                                          <option key={preset} value={preset}>{preset}</option>
+                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                                         ))}
-                                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
-                                      </select>
+                                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
+                              </SelectContent>
+                            </Select>
                                       {isCustomWaterTime && (
-                                        <input
+                                        <Input
                                           type="text"
                                           value={annWaterTime}
                                           onChange={(e) => setAnnWaterTime(e.target.value)}
@@ -2394,7 +3041,7 @@ export default function WebmasterDashboard() {
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">ช่วงวันที่จัด</label>
                                     <div className="flex gap-1.5 items-center relative">
-                                      <input
+                                      <Input
                                         type="text"
                                         value={annAbhidhammaDateRange}
                                         onChange={(e) => setAnnAbhidhammaDateRange(e.target.value)}
@@ -2421,10 +3068,11 @@ export default function WebmasterDashboard() {
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">เวลาเริ่มงาน</label>
                                     <div className="space-y-1.5">
-                                      <select
-                                        value={isCustomAbhidhammaTime ? 'CUSTOM' : annAbhidhammaTime}
-                                        onChange={(e) => {
-                                          const val = e.target.value;
+                                      <Select
+                              value={(isCustomAbhidhammaTime ? 'CUSTOM' : annAbhidhammaTime) || '__empty__'}
+                              onValueChange={(raw) => {
+                                const value = raw === '__empty__' ? '' : raw;
+                                const val = value;
                                           if (val === 'CUSTOM') {
                                             setIsCustomAbhidhammaTime(true);
                                             if (!annAbhidhammaTime || TIME_PRESETS.includes(annAbhidhammaTime)) {
@@ -2434,17 +3082,21 @@ export default function WebmasterDashboard() {
                                             setIsCustomAbhidhammaTime(false);
                                             setAnnAbhidhammaTime(val);
                                           }
-                                        }}
-                                        className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"
-                                      >
-                                        <option value="">เลือกเวลา</option>
+                              }}
+                            >
+                              <SelectTrigger className={"w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="__empty__">เลือกเวลา</SelectItem>
                                         {TIME_PRESETS.map((preset) => (
-                                          <option key={preset} value={preset}>{preset}</option>
+                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                                         ))}
-                                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
-                                      </select>
+                                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
+                              </SelectContent>
+                            </Select>
                                       {isCustomAbhidhammaTime && (
-                                        <input
+                                        <Input
                                           type="text"
                                           value={annAbhidhammaTime}
                                           onChange={(e) => setAnnAbhidhammaTime(e.target.value)}
@@ -2462,7 +3114,7 @@ export default function WebmasterDashboard() {
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">วันที่จัด</label>
                                     <div className="flex gap-1.5 items-center relative">
-                                      <input
+                                      <Input
                                         type="text"
                                         value={annCremationDate}
                                         onChange={(e) => setAnnCremationDate(e.target.value)}
@@ -2484,10 +3136,11 @@ export default function WebmasterDashboard() {
                                   <div className="space-y-1">
                                     <label className="text-stone-500 font-medium">เวลาเริ่มพิธี</label>
                                     <div className="space-y-1.5">
-                                      <select
-                                        value={isCustomCremationTime ? 'CUSTOM' : annCremationTime}
-                                        onChange={(e) => {
-                                          const val = e.target.value;
+                                      <Select
+                              value={(isCustomCremationTime ? 'CUSTOM' : annCremationTime) || '__empty__'}
+                              onValueChange={(raw) => {
+                                const value = raw === '__empty__' ? '' : raw;
+                                const val = value;
                                           if (val === 'CUSTOM') {
                                             setIsCustomCremationTime(true);
                                             if (!annCremationTime || TIME_PRESETS.includes(annCremationTime)) {
@@ -2497,17 +3150,21 @@ export default function WebmasterDashboard() {
                                             setIsCustomCremationTime(false);
                                             setAnnCremationTime(val);
                                           }
-                                        }}
-                                        className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"
-                                      >
-                                        <option value="">เลือกเวลา</option>
+                              }}
+                            >
+                              <SelectTrigger className={"w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="__empty__">เลือกเวลา</SelectItem>
                                         {TIME_PRESETS.map((preset) => (
-                                          <option key={preset} value={preset}>{preset}</option>
+                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                                         ))}
-                                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
-                                      </select>
+                                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
+                              </SelectContent>
+                            </Select>
                                       {isCustomCremationTime && (
-                                        <input
+                                        <Input
                                           type="text"
                                           value={annCremationTime}
                                           onChange={(e) => setAnnCremationTime(e.target.value)}
@@ -2531,7 +3188,7 @@ export default function WebmasterDashboard() {
                                       ? 'สถานที่จัดงาน (เช่น โรงแรม/โบสถ์)'
                                       : 'ชื่อวัด / สถานที่จัดงาน'}
                                   </label>
-                                  <input
+                                  <Input
                                     type="text"
                                     value={annTempleName}
                                     onChange={(e) => setAnnTempleName(e.target.value)}
@@ -2541,7 +3198,7 @@ export default function WebmasterDashboard() {
                                 </div>
                                 <div className="space-y-1">
                                   <label className="text-stone-600 font-semibold">{sLabels.pavilionLabel}</label>
-                                  <input
+                                  <Input
                                     type="text"
                                     value={annPavilion}
                                     onChange={(e) => setAnnPavilion(e.target.value)}
@@ -2552,7 +3209,7 @@ export default function WebmasterDashboard() {
                               </div>
                               <div className="space-y-1">
                                 <label className="text-stone-600 font-semibold">ลิงก์ Google Maps สำหรับนำทาง (ถ้ามี)</label>
-                                <input
+                                <Input
                                   type="text"
                                   value={annMapLink}
                                   onChange={(e) => setAnnMapLink(e.target.value)}
@@ -2572,7 +3229,7 @@ export default function WebmasterDashboard() {
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div className="space-y-1">
                                   <label className="text-stone-600 font-semibold">การแต่งกาย</label>
-                                  <input
+                                  <Input
                                     type="text"
                                     value={annDressCode}
                                     onChange={(e) => setAnnDressCode(e.target.value)}
@@ -2586,7 +3243,7 @@ export default function WebmasterDashboard() {
                                 </div>
                                 <div className="space-y-1">
                                   <label className="text-stone-600 font-semibold">เบอร์โทรติดต่อประสานงาน</label>
-                                  <input
+                                  <Input
                                     type="text"
                                     value={annContactPhone}
                                     onChange={(e) => setAnnContactPhone(e.target.value)}
@@ -2601,40 +3258,62 @@ export default function WebmasterDashboard() {
                                     ? 'นโยบายการรับซอง/ของขวัญ'
                                     : 'นโยบายการรับพวงหรีด'}
                                 </label>
-                                <select
-                                  value={annWreathPolicy}
-                                  onChange={(e) => setAnnWreathPolicy(e.target.value)}
-                                  className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"
-                                >
-                                  {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding' ? (
+                                <Select
+                              value={annWreathPolicy}
+                              onValueChange={(value) => setAnnWreathPolicy(value)}
+                            >
+                              <SelectTrigger className={"w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+{selectedSite.category === 'Couple' || selectedSite.category === 'Wedding' ? (
                                     <>
-                                      <option value="NORMAL">ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ</option>
-                                      <option value="NO_FLOWERS">ขออภัย งดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)</option>
-                                      <option value="DONATION_ONLY">ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)</option>
-                                      <option value="NO_WREATH">ขออภัย งดรับซองและของขวัญทุกประเภท</option>
+                                      <SelectItem value="NORMAL">ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ</SelectItem>
+                                      <SelectItem value="NO_FLOWERS">ขออภัย งดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)</SelectItem>
+                                      <SelectItem value="DONATION_ONLY">ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)</SelectItem>
+                                      <SelectItem value="NO_WREATH">ขออภัย งดรับซองและของขวัญทุกประเภท</SelectItem>
                                     </>
                                   ) : (
                                     <>
-                                      <option value="NORMAL">รับพวงหรีดตามปกติ</option>
-                                      <option value="NO_FLOWERS">งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)</option>
-                                      <option value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</option>
-                                      <option value="NO_WREATH">งดรับพวงหรีดทุกประเภท</option>
+                                      <SelectItem value="NORMAL">รับพวงหรีดตามปกติ</SelectItem>
+                                      <SelectItem value="NO_FLOWERS">งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)</SelectItem>
+                                      <SelectItem value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</SelectItem>
+                                      <SelectItem value="NO_WREATH">งดรับพวงหรีดทุกประเภท</SelectItem>
                                     </>
                                   )}
-                                </select>
+                              </SelectContent>
+                            </Select>
                               </div>
                             </div>
+                              </>
+                            )}
                           </div>
                         )}
                       </div>
 
                       {/* Right: Live Preview Card */}
                       <div className="sticky top-6 space-y-4">
-                        <p className="text-xs font-bold text-stone-500 text-left uppercase tracking-wider">💡 ตัวอย่างแสดงผลการ์ดจริงบนหน้าเว็บ (Live Preview)</p>
+                        <p className="text-xs font-bold text-stone-500 text-left uppercase tracking-wider">ตัวอย่างแสดงผลการ์ดจริงบนหน้าเว็บ (Live Preview)</p>
                         
                         {!annActive ? (
                           <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-xs bg-stone-50">
                             การ์ดปิดการแสดงผลอยู่ จะไม่ถูกแสดงในหน้าแรกของเว็บไซต์สาธารณะ
+                          </div>
+                        ) : annCardMode === 'custom' ? (
+                          <div className="w-full max-w-md mx-auto rounded-3xl border border-stone-200 overflow-hidden shadow-lg bg-stone-50">
+                            {annCustomCardUrl ? (
+                              <img
+                                src={annCustomCardUrl}
+                                alt="พรีวิวการ์ด"
+                                className="w-full object-contain"
+                              />
+                            ) : (
+                              <div className="aspect-[9/16] flex flex-col items-center justify-center gap-2 text-stone-400 p-8">
+                                <Upload className="w-8 h-8 text-stone-300" />
+                                <p className="text-xs font-medium">ยังไม่มีรูปการ์ด</p>
+                                <p className="text-[10px] text-center">อัปโหลดการ์ดด้านซ้ายเพื่อดูตัวอย่าง</p>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div 
@@ -2800,11 +3479,10 @@ export default function WebmasterDashboard() {
                         <DollarSign className="w-4 h-4 text-emerald-700" />
                         <span>เปิดใช้บริการรับเงินทำบุญ (Donation QR Settings)</span>
                       </h4>
-                      <input 
-                        type="checkbox" 
+                      <Checkbox 
                         checked={donationActive}
-                        onChange={() => setDonationActive(!donationActive)}
-                        className="w-5 h-5 accent-emerald-650 cursor-pointer"
+                        onCheckedChange={(c) => setDonationActive(!!c)}
+                        className="w-5 h-5 cursor-pointer"
                       />
                     </div>
 
@@ -2812,7 +3490,7 @@ export default function WebmasterDashboard() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
                         <div className="space-y-1">
                           <label className="text-sm font-bold text-stone-600 tracking-wide">หมายเลขพร้อมเพย์ (PromptPay)</label>
-                          <input 
+                          <Input 
                             type="text" 
                             value={donationPromptPay} 
                             onChange={(e) => setDonationPromptPay(e.target.value)} 
@@ -2822,7 +3500,7 @@ export default function WebmasterDashboard() {
                         </div>
                         <div className="space-y-1">
                           <label className="text-sm font-bold text-stone-600 tracking-wide">ชื่อบัญชีผู้รับเงิน</label>
-                          <input 
+                          <Input 
                             type="text" 
                             value={donationAccountName} 
                             onChange={(e) => setDonationAccountName(e.target.value)} 
@@ -2839,13 +3517,49 @@ export default function WebmasterDashboard() {
               {/* 2. รูปโปรไฟล์ & รูปปกเด่น Tab */}
               {activeSubTab === 'media' && (
                 <div className="space-y-6 animate-fade-in text-left">
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-bold text-stone-900">อัปโหลดและจัดตำแหน่งภาพ</h4>
-                    <p className="text-xs text-stone-500">จัดการรูปโปรไฟล์หลักและภาพหน้าปกด้านหลัง โดยการกดที่รูปกล้องเพื่ออัปโหลด ปรับเลื่อน หรือลบรูปภาพ</p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                      <ImageIcon className="w-4 h-4 text-[#0071e3]" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-stone-900">รูปโปรไฟล์ & หน้าปก</h4>
+                      <p className="text-xs text-stone-400">เลือกจากชุดธีม หรืออัปโหลดรูปของคุณเอง</p>
+                    </div>
                   </div>
 
+                  <DefaultMediaPicker
+                    open={defaultMediaPicker === 'avatar'}
+                    onOpenChange={(open) => setDefaultMediaPicker(open ? 'avatar' : null)}
+                    kind="avatar"
+                    category={activeSite?.category}
+                    selectedSrc={deceasedAvatarUrl}
+                    onSelect={(src) => {
+                      setDeceasedAvatarUrl(src);
+                      setDeceasedAvatarScale(1);
+                      setDeceasedAvatarX(0);
+                      setDeceasedAvatarY(0);
+                      setDeceasedAvatarRotate(0);
+                      setSuccess('เลือกรูปโปรไฟล์จากชุดธีมแล้ว — กดบันทึกเพื่อยืนยัน');
+                    }}
+                  />
+                  <DefaultMediaPicker
+                    open={defaultMediaPicker === 'cover'}
+                    onOpenChange={(open) => setDefaultMediaPicker(open ? 'cover' : null)}
+                    kind="cover"
+                    category={activeSite?.category}
+                    selectedSrc={deceasedCoverUrl}
+                    onSelect={(src) => {
+                      setDeceasedCoverUrl(src);
+                      setDeceasedCoverScale(1);
+                      setDeceasedCoverX(0);
+                      setDeceasedCoverY(0);
+                      setDeceasedCoverRotate(0);
+                      setSuccess('เลือกภาพหน้าปกจากชุดธีมแล้ว — กดบันทึกเพื่อยืนยัน');
+                    }}
+                  />
+
                   {/* Hidden input file fields */}
-                  <input
+                  <Input
                     type="file"
                     id="deceased-avatar-file-input"
                     accept="image/*"
@@ -2857,7 +3571,7 @@ export default function WebmasterDashboard() {
                     className="hidden"
                   />
 
-                  <input
+                  <Input
                     type="file"
                     id="deceased-cover-file-input"
                     accept="image/*"
@@ -2869,8 +3583,8 @@ export default function WebmasterDashboard() {
                     className="hidden"
                   />
 
-                  {/* Unified LINE-style Live Preview Simulator Card */}
-                  <div className="relative w-full max-w-xl mx-auto h-48 sm:h-56 rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-sm flex items-center justify-center group select-none">
+                  {/* Live Preview Card */}
+                  <div className="relative w-full max-w-xl mx-auto h-52 sm:h-60 rounded-3xl overflow-hidden bg-stone-100 border border-stone-200 shadow-sm flex items-center justify-center group select-none">
                     {/* Cover Photo Background */}
                     {deceasedCoverUrl ? (
                       <div className="absolute inset-0 w-full h-full">
@@ -2878,32 +3592,36 @@ export default function WebmasterDashboard() {
                           src={deceasedCoverUrl} 
                           alt="Cover Preview" 
                           className="w-full h-full object-cover" 
-                          style={{
-                            transform: `translate(${((deceasedCoverX || 0) / 320) * 100}%, ${((deceasedCoverY || 0) / 160) * 100}%) rotate(${deceasedCoverRotate || 0}deg) scale(${deceasedCoverScale || 1})`,
-                            transformOrigin: 'center center',
-                          }}
+                          style={imageTransformStyle({
+                            x: deceasedCoverX || 0,
+                            y: deceasedCoverY || 0,
+                            scale: deceasedCoverScale || 1,
+                            rotate: deceasedCoverRotate || 0,
+                          })}
                         />
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-black/25 transition-colors" />
                       </div>
                     ) : (
-                      <div className="absolute inset-0 bg-stone-55/40 flex flex-col items-center justify-center gap-1.5 text-stone-400">
-                        <ImageIcon className="w-8 h-8 text-stone-300" />
-                        <span className="text-[10px] font-bold">ยังไม่ได้อัปโหลดรูปภาพหน้าปกหลัก</span>
+                      <div className="absolute inset-0 bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col items-center justify-center gap-2 text-stone-400">
+                        <ImageIcon className="w-10 h-10 text-stone-300" />
+                        <span className="text-xs font-medium text-stone-400">คลิกไอคอนกล้องเพื่อเพิ่มรูปปก</span>
                       </div>
                     )}
 
                     {/* Circular Avatar (Overlapping in the center) */}
-                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-stone-50 shadow-md flex items-center justify-center overflow-hidden z-10">
+                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-stone-50 shadow-lg flex items-center justify-center overflow-hidden z-10">
                       {deceasedAvatarUrl ? (
                         <div className="w-full h-full relative">
                           <img 
                             src={deceasedAvatarUrl} 
                             alt="Avatar Preview" 
                             className="pointer-events-none w-full h-full object-cover" 
-                            style={{
-                              transform: `translate(${((deceasedAvatarX || 0) / 224) * 100}%, ${((deceasedAvatarY || 0) / 224) * 100}%) rotate(${deceasedAvatarRotate}deg) scale(${(deceasedAvatarScale || 1) * (300 / 224)})`,
-                              transformOrigin: 'center center',
-                            }}
+                            style={imageTransformStyle({
+                              x: deceasedAvatarX || 0,
+                              y: deceasedAvatarY || 0,
+                              scale: deceasedAvatarScale || 1,
+                              rotate: deceasedAvatarRotate || 0,
+                            })}
                           />
                         </div>
                       ) : (
@@ -2915,7 +3633,7 @@ export default function WebmasterDashboard() {
 
                     {/* LINE-Style camera icon trigger overlay on Circular Avatar */}
                     <div className="absolute bottom-6 left-[calc(50%+26px)] sm:left-[calc(50%+32px)] z-20">
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => {
                           setIsAvatarMenuOpen(!isAvatarMenuOpen);
@@ -2925,26 +3643,36 @@ export default function WebmasterDashboard() {
                         title="จัดการรูปโปรไฟล์"
                       >
                         <Camera className="w-3.5 h-3.5" />
-                      </button>
+                      </Button>
 
                       {/* Avatar Menu Popover */}
                       {isAvatarMenuOpen && (
                         <>
                           <div className="fixed inset-0 z-10 cursor-default" onClick={() => setIsAvatarMenuOpen(false)} />
-                          <div className="absolute left-[calc(50%-88px)] bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-44 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
-                            <button
+                          <div className="absolute left-[calc(50%-88px)] bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-48 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
+                            <Button variant="ghost"
+                              type="button"
+                              onClick={() => {
+                                setIsAvatarMenuOpen(false);
+                                setDefaultMediaPicker('avatar');
+                              }}
+                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
+                            >
+                              เลือกจากชุดธีม
+                            </Button>
+                            <Button variant="ghost"
                               type="button"
                               onClick={() => {
                                 setIsAvatarMenuOpen(false);
                                 document.getElementById('deceased-avatar-file-input')?.click();
                               }}
-                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
+                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
                             >
-                              📸 อัปโหลดรูปภาพใหม่
-                            </button>
+                              อัปโหลดรูปภาพใหม่
+                            </Button>
                             {deceasedAvatarUrl && (
                               <>
-                                <button
+                                <Button variant="ghost"
                                   type="button"
                                   onClick={() => {
                                     setIsAvatarMenuOpen(false);
@@ -2952,9 +3680,9 @@ export default function WebmasterDashboard() {
                                   }}
                                   className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
                                 >
-                                  ⚙️ ปรับแต่งรูปโปรไฟล์
-                                </button>
-                                <button
+                                  ปรับแต่งรูปโปรไฟล์
+                                </Button>
+                                <Button variant="ghost"
                                   type="button"
                                   onClick={() => {
                                     setIsAvatarMenuOpen(false);
@@ -2966,8 +3694,8 @@ export default function WebmasterDashboard() {
                                   }}
                                   className="w-full px-4 py-2 hover:bg-red-50 text-red-650 cursor-pointer block text-left border-t border-stone-100 font-bold"
                                 >
-                                  🗑️ ลบรูปโปรไฟล์
-                                </button>
+                                  ลบรูปโปรไฟล์
+                                </Button>
                               </>
                             )}
                           </div>
@@ -2977,7 +3705,7 @@ export default function WebmasterDashboard() {
 
                     {/* LINE-Style camera icon trigger overlay on Cover Banner */}
                     <div className="absolute bottom-3 right-3 z-20">
-                      <button 
+                      <Button variant="ghost" 
                         type="button" 
                         onClick={() => {
                           setIsCoverMenuOpen(!isCoverMenuOpen);
@@ -2987,26 +3715,36 @@ export default function WebmasterDashboard() {
                         title="จัดการรูปหน้าปก"
                       >
                         <Camera className="w-3.5 h-3.5" />
-                      </button>
+                      </Button>
 
                       {/* Cover Menu Popover */}
                       {isCoverMenuOpen && (
                         <>
                           <div className="fixed inset-0 z-10 cursor-default" onClick={() => setIsCoverMenuOpen(false)} />
-                          <div className="absolute right-0 bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-44 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
-                            <button
+                          <div className="absolute right-0 bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-48 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
+                            <Button variant="ghost"
+                              type="button"
+                              onClick={() => {
+                                setIsCoverMenuOpen(false);
+                                setDefaultMediaPicker('cover');
+                              }}
+                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
+                            >
+                              เลือกจากชุดธีม
+                            </Button>
+                            <Button variant="ghost"
                               type="button"
                               onClick={() => {
                                 setIsCoverMenuOpen(false);
                                 document.getElementById('deceased-cover-file-input')?.click();
                               }}
-                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
+                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
                             >
-                              📸 อัปโหลดรูปปกใหม่
-                            </button>
+                              อัปโหลดรูปปกใหม่
+                            </Button>
                             {deceasedCoverUrl && (
                               <>
-                                <button
+                                <Button variant="ghost"
                                   type="button"
                                   onClick={() => {
                                     setIsCoverMenuOpen(false);
@@ -3014,9 +3752,9 @@ export default function WebmasterDashboard() {
                                   }}
                                   className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
                                 >
-                                  ⚙️ ปรับแต่งหน้าปก
-                                </button>
-                                <button
+                                  ปรับแต่งหน้าปก
+                                </Button>
+                                <Button variant="ghost"
                                   type="button"
                                   onClick={() => {
                                     setIsCoverMenuOpen(false);
@@ -3028,8 +3766,8 @@ export default function WebmasterDashboard() {
                                   }}
                                   className="w-full px-4 py-2 hover:bg-red-50 text-red-650 cursor-pointer block text-left border-t border-stone-100 font-bold"
                                 >
-                                  🗑️ ลบรูปหน้าปก
-                                </button>
+                                  ลบรูปหน้าปก
+                                </Button>
                               </>
                             )}
                           </div>
@@ -3038,49 +3776,193 @@ export default function WebmasterDashboard() {
                     </div>
                   </div>
 
-                  {/* Image crop adjustment buttons under the preview card */}
-                  <div className="flex justify-center mt-3 gap-3">
-                    {deceasedAvatarUrl && (
+                  {/* Quick default pickers under preview — with preview+confirm */}
+                  <div className="mx-auto w-full max-w-xl space-y-3">
+                    {/* Preview confirmation bar */}
+                    {quickPreview && (
+                      <div className="flex items-center gap-3 rounded-2xl border border-[#0071e3]/20 bg-blue-50/40 p-4 animate-fade-in">
+                        <div className={quickPreview.kind === 'avatar'
+                          ? 'size-14 shrink-0 overflow-hidden rounded-full border-2 border-[#0071e3]/30 shadow-sm'
+                          : 'h-14 w-24 shrink-0 overflow-hidden rounded-xl border-2 border-[#0071e3]/30 shadow-sm'
+                        }>
+                          <img src={quickPreview.src} alt="พรีวิว" className="h-full w-full object-cover" />
+                        </div>
+                        <div className="flex-1 text-sm text-stone-700 font-medium">
+                          {quickPreview.kind === 'avatar' ? 'ใช้รูปโปรไฟล์นี้?' : 'ใช้พื้นหลังนี้?'}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setQuickPreview(null)}
+                          className="rounded-xl px-4 py-2 text-xs font-medium text-stone-500 transition hover:bg-stone-100 active:scale-95"
+                        >
+                          ยกเลิก
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (quickPreview.kind === 'avatar') {
+                              setDeceasedAvatarUrl(quickPreview.src);
+                              setDeceasedAvatarScale(1);
+                              setDeceasedAvatarX(0);
+                              setDeceasedAvatarY(0);
+                              setDeceasedAvatarRotate(0);
+                            } else {
+                              setDeceasedCoverUrl(quickPreview.src);
+                              setDeceasedCoverScale(1);
+                              setDeceasedCoverX(0);
+                              setDeceasedCoverY(0);
+                              setDeceasedCoverRotate(0);
+                            }
+                            setQuickPreview(null);
+                          }}
+                          className="rounded-xl bg-[#0071e3] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#0071e3]/90 active:scale-95"
+                        >
+                          ยืนยัน
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-stone-400" />
+                        โปรไฟล์
+                      </span>
                       <button
                         type="button"
-                        onClick={() => setIsCropModalOpen(true)}
-                        className="px-4 py-1.5 bg-stone-100 hover:bg-stone-200 border border-stone-250 text-stone-700 font-bold text-xs rounded-xl transition shadow-xs active:scale-95 flex items-center gap-1.5 justify-center w-full max-w-[200px] cursor-pointer"
+                        onClick={() => setDefaultMediaPicker('avatar')}
+                        className="text-xs font-medium text-[#0071e3] hover:underline transition-colors"
                       >
-                        <Settings className="w-3.5 h-3.5" />
-                        <span>ปรับรูปโปรไฟล์</span>
+                        ดูทั้งหมด
                       </button>
-                    )}
-                    {deceasedCoverUrl && (
+                    </div>
+                    <div className="grid grid-cols-4 gap-3">
+                      {getDefaultMediaForCategory(activeSite?.category, 'avatar').map((item) => {
+                        const isCurrent = deceasedAvatarUrl === item.src;
+                        const isPreviewing = quickPreview?.kind === 'avatar' && quickPreview.src === item.src;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => setQuickPreview({ kind: 'avatar', src: item.src })}
+                            className={`aspect-square overflow-hidden rounded-full border-2 transition-all duration-200 hover:scale-105 cursor-pointer ${
+                              isPreviewing
+                                ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20 scale-105'
+                                : isCurrent
+                                  ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20'
+                                  : 'border-stone-200 hover:border-stone-300 hover:shadow-md'
+                            }`}
+                            title={item.label}
+                          >
+                            <img src={item.src} alt="" className="h-full w-full object-cover" />
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-2">
+                      <span className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                        <ImageIcon className="w-3.5 h-3.5 text-stone-400" />
+                        พื้นหลัง
+                      </span>
                       <button
                         type="button"
-                        onClick={() => setIsCoverCropModalOpen(true)}
-                        className="px-4 py-1.5 bg-stone-100 hover:bg-stone-200 border border-stone-250 text-stone-700 font-bold text-xs rounded-xl transition shadow-xs active:scale-95 flex items-center gap-1.5 justify-center w-full max-w-[200px] cursor-pointer"
+                        onClick={() => setDefaultMediaPicker('cover')}
+                        className="text-xs font-medium text-[#0071e3] hover:underline transition-colors"
                       >
-                        <Settings className="w-3.5 h-3.5" />
-                        <span>ปรับรูปหน้าปก</span>
+                        ดูทั้งหมด
                       </button>
-                    )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      {getDefaultMediaForCategory(activeSite?.category, 'cover').map((item) => {
+                        const isCurrent = deceasedCoverUrl === item.src;
+                        const isPreviewing = quickPreview?.kind === 'cover' && quickPreview.src === item.src;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => setQuickPreview({ kind: 'cover', src: item.src })}
+                            className={`aspect-[16/9] overflow-hidden rounded-2xl border-2 transition-all duration-200 hover:scale-105 cursor-pointer ${
+                              isPreviewing
+                                ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20 scale-105'
+                                : isCurrent
+                                  ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20'
+                                  : 'border-stone-200 hover:border-stone-300 hover:shadow-md'
+                            }`}
+                            title={item.label}
+                          >
+                            <img src={item.src} alt="" className="h-full w-full object-cover" />
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
+
+                  {/* Image crop adjustment buttons */}
+                  {(deceasedAvatarUrl || deceasedCoverUrl) && (
+                    <div className="flex justify-center gap-3 max-w-xl mx-auto">
+                      {deceasedAvatarUrl && (
+                        <Button variant="ghost"
+                          type="button"
+                          onClick={() => setIsCropModalOpen(true)}
+                          className="px-5 py-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-600 hover:text-stone-800 font-medium text-xs rounded-xl transition active:scale-95 flex items-center gap-2 justify-center flex-1 cursor-pointer"
+                        >
+                          <Settings className="w-3.5 h-3.5" />
+                          <span>ปรับรูปโปรไฟล์</span>
+                        </Button>
+                      )}
+                      {deceasedCoverUrl && (
+                        <Button variant="ghost"
+                          type="button"
+                          onClick={() => setIsCoverCropModalOpen(true)}
+                          className="px-5 py-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-600 hover:text-stone-800 font-medium text-xs rounded-xl transition active:scale-95 flex items-center gap-2 justify-center flex-1 cursor-pointer"
+                        >
+                          <Settings className="w-3.5 h-3.5" />
+                          <span>ปรับรูปหน้าปก</span>
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* 3. ธีม & สี & ฟอนต์ Tab */}
               {activeSubTab === 'theme' && (
-                <div className="space-y-6 animate-fade-in text-left">
+                <div className="space-y-8 animate-fade-in text-left">
+                  <div className="space-y-1">
+                    <h3 className="flex items-center gap-1.5 text-sm font-bold text-stone-900">
+                      <Palette className="size-4 text-[#0071e3]" />
+                      <span>ธีม & สี & ฟอนต์</span>
+                    </h3>
+                    <p className="text-xs text-stone-500">เลือกโทนสีและฟอนต์ที่เข้ากับเว็บไซต์ของคุณ</p>
+                  </div>
+
+                  {/* Theme Templates */}
                   <div className="space-y-4">
-                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
-                      <Palette className="w-4 h-4 text-stone-500" />
-                      <span>ธีมสำเร็จรูป (Theme Templates)</span>
-                    </label>
-                    
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label className="text-xs font-bold uppercase tracking-wide text-stone-500">
+                        เลือกธีมสำเร็จรูป
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPrimaryColor('#0d9488');
+                          setSecondaryColor('#f59e0b');
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[10px] font-bold text-stone-500 transition hover:bg-stone-50 hover:text-stone-700 active:scale-95"
+                      >
+                        <RotateCw className="size-3" />
+                        <span>รีเซ็ต</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                       {[
-                        { name: 'Peaceful Mint', primary: '#7ea18b', hover: '#668571', secondary: '#d4be95', light: '#f4f6f3', badge: 'ไว้อาลัย / รำลึกอย่างสงบ' },
-                        { name: 'Sweet Peach', primary: '#e09f9f', hover: '#c48282', secondary: '#e6c1a8', light: '#fff7f5', badge: 'งานแต่งงาน / คู่รักแสนรัก' },
-                        { name: 'Warm Caramel', primary: '#c29a7c', hover: '#a67f62', secondary: '#dcc6a8', light: '#fbf8f5', badge: 'สัตว์เลี้ยง / บันทึกการเดินทาง' },
-                        { name: 'Classic Olive', primary: '#96a288', hover: '#7a866d', secondary: '#cfc5b0', light: '#f7f8f5', badge: 'สายใยตระกูล / ครอบครัว' },
-                        { name: 'Ocean Breeze', primary: '#8ba8bd', hover: '#708d9e', secondary: '#ded2af', light: '#f5f7f9', badge: 'มิตรภาพ / ย้อนวันวาน' },
-                        { name: 'Lilac Dream', primary: '#a49cb5', hover: '#89819a', secondary: '#c8bfcb', light: '#f7f6f8', badge: 'หรูหรา / ทางการทั่วไป' }
+                        { name: 'Peaceful Mint', desc: 'สงบ รำลึก', primary: '#7ea18b', hover: '#668571', secondary: '#d4be95', light: '#f4f6f3' },
+                        { name: 'Sweet Peach', desc: 'อบอุ่น โรแมนติก', primary: '#e09f9f', hover: '#c48282', secondary: '#e6c1a8', light: '#fff7f5' },
+                        { name: 'Warm Caramel', desc: 'อ่อนโยน เป็นธรรมชาติ', primary: '#c29a7c', hover: '#a67f62', secondary: '#dcc6a8', light: '#fbf8f5' },
+                        { name: 'Classic Olive', desc: 'คลาสสิก ครอบครัว', primary: '#96a288', hover: '#7a866d', secondary: '#cfc5b0', light: '#f7f8f5' },
+                        { name: 'Ocean Breeze', desc: 'สดใส มิตรภาพ', primary: '#8ba8bd', hover: '#708d9e', secondary: '#ded2af', light: '#f5f7f9' },
+                        { name: 'Lilac Dream', desc: 'หรูหรา ทางการ', primary: '#a49cb5', hover: '#89819a', secondary: '#c8bfcb', light: '#f7f6f8' }
                       ].map(t => {
                         const isActive = primaryColor.toLowerCase() === t.primary.toLowerCase() && secondaryColor.toLowerCase() === t.secondary.toLowerCase();
                         return (
@@ -3091,116 +3973,114 @@ export default function WebmasterDashboard() {
                               setPrimaryColor(t.primary);
                               setSecondaryColor(t.secondary);
                             }}
-                            className={`p-4 rounded-2xl bg-white border-2 text-left relative transition-all duration-200 cursor-pointer flex flex-col justify-between hover:shadow-md ${
-                              isActive 
-                                ? 'border-sky-500 ring-4 ring-sky-500/10 scale-102 shadow-xs' 
+                            className={`relative flex h-auto w-full flex-col rounded-2xl border-2 bg-white overflow-hidden transition-all duration-200 hover:shadow-md ${
+                              isActive
+                                ? 'border-[#0071e3] shadow-sm ring-4 ring-[#0071e3]/10'
                                 : 'border-stone-200 hover:border-stone-300'
                             }`}
                           >
-                            {isActive && (
-                              <div className="absolute top-2.5 right-2.5 w-4 h-4 bg-sky-500 rounded-full flex items-center justify-center text-white shadow-xs">
-                                <Check className="w-2.5 h-2.5 stroke-[3]" />
+                            {/* Color preview bar */}
+                            <div className="flex h-12 w-full">
+                              <div className="flex-1" style={{ backgroundColor: t.primary }} />
+                              <div className="flex-1" style={{ backgroundColor: t.hover }} />
+                              <div className="flex-1" style={{ backgroundColor: t.secondary }} />
+                              <div className="flex-1" style={{ backgroundColor: t.light }} />
+                            </div>
+                            <div className="p-3 text-left">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-stone-900">{t.name}</span>
+                                {isActive && (
+                                  <span className="flex size-5 items-center justify-center rounded-full bg-[#0071e3] text-white">
+                                    <Check className="size-3 stroke-[3]" />
+                                  </span>
+                                )}
                               </div>
-                            )}
-                            <div className="space-y-3">
-                              <div className="space-y-1">
-                                <h5 className="text-xs font-black text-stone-900 leading-tight">
-                                  {t.name}
-                                </h5>
-                                <span className="text-[9px] text-stone-400 font-semibold block leading-none">
-                                  {t.badge}
-                                </span>
-                              </div>
-                              
-                              {/* Color dots row */}
-                              <div className="flex gap-1 items-center">
-                                <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.primary }} />
-                                <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.hover }} />
-                                <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.secondary }} />
-                                <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.light }} />
-                              </div>
+                              <span className="text-[10px] text-stone-400">{t.desc}</span>
                             </div>
                           </button>
                         );
                       })}
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPrimaryColor('#0d9488');
-                        setSecondaryColor('#f59e0b');
-                      }}
-                      className="px-3.5 py-2 border border-stone-250 hover:bg-stone-50 rounded-xl text-[10px] sm:text-xs font-bold text-stone-600 transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-2xs"
-                    >
-                      <RotateCw className="w-3.5 h-3.5 text-stone-500" />
-                      <span>รีเซ็ตเป็นธีมเริ่มต้น (Reset to Default)</span>
-                    </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">Primary Color (กำหนดสีเอง)</label>
-                      <div className="flex gap-3 items-center">
-                        <input 
-                          type="color" 
-                          value={primaryColor} 
-                          onChange={(e) => setPrimaryColor(e.target.value)} 
-                          className="w-10 h-10 rounded-xl border border-stone-200 cursor-pointer"
+                  {/* Custom Colors */}
+                  <div className="space-y-4">
+                    <label className="text-xs font-bold uppercase tracking-wide text-stone-500">
+                      กำหนดสีเอง
+                    </label>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50/50 p-3">
+                        <input
+                          type="color"
+                          value={primaryColor}
+                          onChange={(e) => setPrimaryColor(e.target.value)}
+                          className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-0.5"
                         />
-                        <input 
-                          type="text" 
-                          value={primaryColor} 
-                          onChange={(e) => setPrimaryColor(e.target.value)} 
-                          className="flex-1 px-4 py-2 text-sm bg-stone-50/50 border border-stone-200 rounded-xl text-stone-905 font-mono focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
-                        />
+                        <div className="flex-1 space-y-0.5">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase">Primary</p>
+                          <Input
+                            type="text"
+                            value={primaryColor}
+                            onChange={(e) => setPrimaryColor(e.target.value)}
+                            className="h-8 rounded-lg border border-stone-200 bg-white px-2.5 font-mono text-xs text-stone-900 focus-visible:border-[#0071e3]/50 focus-visible:ring-0"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">Secondary Color (กำหนดสีเอง)</label>
-                      <div className="flex gap-3 items-center">
-                        <input 
-                          type="color" 
-                          value={secondaryColor} 
-                          onChange={(e) => setSecondaryColor(e.target.value)} 
-                          className="w-10 h-10 rounded-xl border border-stone-200 cursor-pointer"
+                      <div className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50/50 p-3">
+                        <input
+                          type="color"
+                          value={secondaryColor}
+                          onChange={(e) => setSecondaryColor(e.target.value)}
+                          className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-0.5"
                         />
-                        <input 
-                          type="text" 
-                          value={secondaryColor} 
-                          onChange={(e) => setSecondaryColor(e.target.value)} 
-                          className="flex-1 px-4 py-2 text-sm bg-stone-50/50 border border-stone-200 rounded-xl text-stone-905 font-mono focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
-                        />
+                        <div className="flex-1 space-y-0.5">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase">Secondary</p>
+                          <Input
+                            type="text"
+                            value={secondaryColor}
+                            onChange={(e) => setSecondaryColor(e.target.value)}
+                            className="h-8 rounded-lg border border-stone-200 bg-white px-2.5 font-mono text-xs text-stone-900 focus-visible:border-[#0071e3]/50 focus-visible:ring-0"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">Font Style (Family)</label>
-                    <select 
-                      value={fontFamily} 
-                      onChange={(e) => setFontFamily(e.target.value)} 
-                      className="w-full px-4 py-2.5 text-sm bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-emerald-500/80 transition font-bold"
+                  {/* Font */}
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold uppercase tracking-wide text-stone-500">ฟอนต์</label>
+                    <Select
+                      value={fontFamily}
+                      onValueChange={(value) => setFontFamily(value)}
                     >
-                      <option value="LINE Seed Sans TH" style={{ fontFamily: 'LINE Seed Sans TH' }}>LINE Seed Sans TH (แนะนำ)</option>
-                      <option value="Inter">Inter (เรียบหรูสากล)</option>
-                      <option value="Sarabun">Sarabun (ไทยทางการ)</option>
-                      <option value="Niramit">Niramit (ไทยร่วมสมัย)</option>
-                    </select>
+                      <SelectTrigger
+                        className="h-11 w-full rounded-xl border border-stone-200 bg-stone-50/50 px-4 text-sm font-bold text-stone-900 focus:border-[#0071e3]/50 focus:bg-white focus:outline-none"
+                        style={{ fontFamily }}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent position="popper">
+                        <SelectItem value="LINE Seed Sans TH" style={{ fontFamily: 'LINE Seed Sans TH' }}>LINE Seed Sans TH (แนะนำ)</SelectItem>
+                        <SelectItem value="Inter" style={{ fontFamily: 'Inter' }}>Inter (เรียบหรูสากล)</SelectItem>
+                        <SelectItem value="Sarabun" style={{ fontFamily: 'Sarabun' }}>Sarabun (ไทยทางการ)</SelectItem>
+                        <SelectItem value="Niramit" style={{ fontFamily: 'Niramit' }}>Niramit (ไทยร่วมสมัย)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               )}
               {/* 4. ฟีเจอร์ที่เปิดใช้งาน Tab */}
               {activeSubTab === 'features' && (
-                <div className="pt-2 space-y-4 text-left animate-fade-in">
-                  <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-emerald-700" />
-                    <span>ฟีเจอร์ที่เปิดใช้งาน (Features checklist)</span>
-                  </h3>
-                  <p className="text-[11px] text-stone-500">
-                    เลือกส่วนที่คุณต้องการแสดงบนหน้าเว็บไซต์อนุสรณ์ (สามารถเปิด-ปิดได้ทุกเมื่อ)
-                  </p>
+                <div className="pt-2 space-y-5 text-left animate-fade-in">
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
+                      <Grid className="w-4 h-4 text-[#0071e3]" />
+                      <span>ฟีเจอร์ที่เปิดใช้งาน</span>
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      เลือกส่วนที่ต้องการแสดงบนเว็บไซต์ เปิด-ปิดได้ทุกเมื่อ
+                    </p>
+                  </div>
                   <FeatureToggleList 
                     value={features}
                     onChange={setFeatures}
@@ -3215,127 +4095,154 @@ export default function WebmasterDashboard() {
               {/* 5. พื้นที่จัดเก็บ & การชำระเงิน Tab */}
               {activeSubTab === 'billing' && (
                 <div className="space-y-6 text-left animate-fade-in">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                      <CreditCard className="w-4 h-4 text-[#0071e3]" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-stone-900">พื้นที่จัดเก็บ & การชำระเงิน</h3>
+                      <p className="text-xs text-stone-400">จัดการพื้นที่เก็บไฟล์และดูประวัติการชำระเงิน</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Storage Quota Card */}
-                    <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/20 space-y-4">
-                      <h4 className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-                        <Database className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>พื้นที่จัดเก็บมีเดีย S3 / R2</span>
-                      </h4>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-[10px] text-stone-550 font-semibold font-mono">
-                          <span>{(storageUsedBytes / (1024 * 1024)).toFixed(1)}MB</span>
-                          <span>/ {(storageQuotaBytes / (1024 * 1024 * 1024)).toFixed(1)}GB</span>
+                    <div className="p-6 rounded-2xl border border-stone-200 bg-white space-y-5">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                          <Database className="w-4 h-4 text-[#0071e3]" />
+                          <span>พื้นที่จัดเก็บ</span>
+                        </h4>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          storagePercentage > 80 
+                            ? 'bg-rose-50 text-rose-600' 
+                            : storagePercentage > 50 
+                            ? 'bg-amber-50 text-amber-600' 
+                            : 'bg-emerald-50 text-emerald-600'
+                        }`}>
+                          {storagePercentage.toFixed(0)}%
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              storagePercentage > 80 ? 'bg-rose-500' : storagePercentage > 50 ? 'bg-amber-500' : 'bg-[#0071e3]'
+                            }`} 
+                            style={{ width: `${storagePercentage}%` }} 
+                          />
                         </div>
-                        <div className="w-full h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-600 rounded-full transition-all" style={{ width: `${storagePercentage}%` }} />
+                        <div className="flex justify-between text-xs text-stone-500 font-medium">
+                          <span>{(storageUsedBytes / (1024 * 1024)).toFixed(1)} MB ใช้แล้ว</span>
+                          <span>{(storageQuotaBytes / (1024 * 1024 * 1024)).toFixed(1)} GB ทั้งหมด</span>
                         </div>
                       </div>
                       
-                      <div className="border-t border-stone-100 pt-3 space-y-1.5">
-                        <p className="text-[9px] font-bold text-stone-500 uppercase tracking-wide">จำลองอัปโหลดไฟล์ทดสอบ</p>
-                        <div className="flex gap-1.5">
-                          <button 
+                      <div className="border-t border-stone-100 pt-4 space-y-2">
+                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">ทดสอบอัปโหลด</p>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" 
                             type="button"
                             onClick={() => handleMockUpload(10)} 
                             disabled={uploadLoading}
-                            className="flex-1 py-1.5 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded-xl text-[9px] text-stone-700 font-bold transition cursor-pointer"
+                            className="flex-1 h-9 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs text-stone-600 font-medium transition cursor-pointer"
                           >
-                            รูป (10MB)
-                          </button>
-                          <button 
+                            <ImageIcon className="w-3.5 h-3.5 mr-1.5" />
+                            รูป 10MB
+                          </Button>
+                          <Button variant="ghost" 
                             type="button"
                             onClick={() => handleMockUpload(250)} 
                             disabled={uploadLoading}
-                            className="flex-1 py-1.5 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded-xl text-[9px] text-amber-850 font-bold transition cursor-pointer"
+                            className="flex-1 h-9 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs text-stone-600 font-medium transition cursor-pointer"
                           >
-                            วิดีโอ (250MB)
-                          </button>
+                            <Video className="w-3.5 h-3.5 mr-1.5" />
+                            วิดีโอ 250MB
+                          </Button>
                         </div>
                       </div>
                     </div>
 
                     {/* Export backups Card */}
-                    <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/20 space-y-3">
-                      <h4 className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-                        <Download className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>ส่งออกข้อมูลสำรอง (ZIP Export)</span>
+                    <div className="p-6 rounded-2xl border border-stone-200 bg-white space-y-4 flex flex-col">
+                      <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                        <Download className="w-4 h-4 text-[#0071e3]" />
+                        <span>สำรองข้อมูล</span>
                       </h4>
-                      <p className="text-[10px] text-stone-550 leading-normal">
-                        ดาวน์โหลดข้อมูลทั้งหมด ประวัติคำไว้อาลัย ผังครอบครัว และหนังสือที่ระลึกในเว็บเป็นไฟล์ ZIP สำรองเก็บไว้แบบออฟไลน์
+                      <p className="text-xs text-stone-500 leading-relaxed flex-1">
+                        ดาวน์โหลดข้อมูลทั้งหมด ประวัติคำไว้อาลัย ผังครอบครัว และหนังสือที่ระลึก เป็นไฟล์ ZIP สำรองเก็บไว้แบบออฟไลน์
                       </p>
-                      <button 
+                      <Button variant="default" 
                         type="button"
                         onClick={handleExportZip}
                         disabled={exportLoading}
-                        className="w-full py-2 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded-xl text-xs text-emerald-800 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+                        className="h-11 w-full bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                       >
-                        {exportLoading ? 'กำลังส่งออก...' : 'ดาวน์โหลด ZIP สำรองข้อมูล'}
-                      </button>
+                        <Download className="w-4 h-4" />
+                        {exportLoading ? 'กำลังส่งออก...' : 'ดาวน์โหลด ZIP'}
+                      </Button>
                     </div>
                   </div>
 
-                  {/* Billing invoice logs list */}
-                  <div className="p-5 rounded-2xl border border-stone-200 bg-white space-y-4">
-                    <h4 className="text-xs font-bold text-stone-900 flex items-center gap-1.5 border-b border-stone-100 pb-2">
-                      <CreditCard className="w-4 h-4 text-emerald-755" />
-                      <span>ประวัติการชำระเงินค่าบริการ (Payment History)</span>
-                    </h4>
-                    
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs border-collapse">
-                        <thead>
-                          <tr className="border-b border-stone-200 text-stone-500 font-bold uppercase tracking-wider">
-                            <th className="pb-3 pl-2">เลขที่ใบเสร็จ</th>
-                            <th className="pb-3">วันที่ชำระเงิน</th>
-                            <th className="pb-3">รายละเอียดสินค้า</th>
-                            <th className="pb-3">ยอดชำระ</th>
-                            <th className="pb-3 font-semibold">สถานะ</th>
-                            <th className="pb-3 pr-2 text-right">ดาวน์โหลด</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-stone-100">
-                          {invoiceLogs.map(log => (
-                            <tr key={log.id} className="hover:bg-stone-50/80 transition">
-                              <td className="py-4 pl-2 font-mono font-bold text-stone-700">{log.id}</td>
-                              <td className="py-4 text-stone-500">{log.date}</td>
-                              <td className="py-4 text-stone-650 max-w-[280px] truncate">{log.desc}</td>
-                              <td className="py-4 text-stone-900 font-bold">{log.amount}</td>
-                              <td className="py-4">
-                                <span className="px-2.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-250">
-                                  {log.status}
-                                </span>
-                              </td>
-                              <td className="py-4 pr-2 text-right">
-                                <a 
-                                  href={`/api/payment/invoice?refId=${log.refId}`}
-                                  download
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-250 text-[10px] font-bold transition active:scale-95 shadow-sm"
-                                >
-                                  <span>📥</span> PDF
-                                </a>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  {/* Billing invoice logs */}
+                  <div className="rounded-2xl border border-stone-200 bg-white overflow-hidden">
+                    <div className="px-6 py-4 border-b border-stone-100">
+                      <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-[#0071e3]" />
+                        <span>ประวัติการชำระเงิน</span>
+                        <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-stone-100 text-stone-500 text-[10px] font-bold">{invoiceLogs.length}</span>
+                      </h4>
                     </div>
+                    
+                    {invoiceLogs.length === 0 ? (
+                      <div className="py-16 text-center space-y-2">
+                        <FileText className="w-10 h-10 text-stone-300 mx-auto" />
+                        <p className="text-sm text-stone-500">ยังไม่มีประวัติการชำระเงิน</p>
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-stone-100">
+                        {invoiceLogs.map(log => (
+                          <div key={log.id} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 hover:bg-stone-50/50 transition-colors">
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-sm font-bold text-stone-900 font-mono">{log.id}</span>
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700">{log.status}</span>
+                              </div>
+                              <p className="text-xs text-stone-500 truncate">{log.desc}</p>
+                              <p className="text-[10px] text-stone-400">{log.date}</p>
+                            </div>
+                            <div className="flex items-center gap-3 shrink-0">
+                              <span className="text-sm font-bold text-stone-900">{log.amount}</span>
+                              <a 
+                                href={`/api/payment/invoice?refId=${log.refId}`}
+                                download
+                                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-xs text-stone-600 font-bold transition active:scale-95"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                PDF
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
               {/* Conditionally display Save Button only on configuration sub-tabs */}
               {activeSubTab !== 'billing' && (
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={saveLoading}
-                  className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl transition shadow-sm flex items-center gap-1.5 justify-center"
+                  className="inline-flex h-auto cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#0071e3] px-6 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-[#0071e3]/90 hover:text-white active:scale-95 disabled:pointer-events-none disabled:opacity-50"
                 >
                   {saveLoading ? (
                     'กำลังบันทึกข้อมูล...'
                   ) : (
                     <>
-                      <Save className="w-4 h-4" />
+                      <Save className="size-4 shrink-0 text-white" />
                       <span>บันทึกการตั้งค่าเว็บไซต์</span>
                     </>
                   )}
@@ -3362,7 +4269,7 @@ export default function WebmasterDashboard() {
                 <label className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
                   <Plus className="w-3.5 h-3.5" />
                   <span>อัปโหลดรูปภาพใหม่</span>
-                  <input 
+                  <Input 
                     type="file" 
                     accept="image/*" 
                     multiple 
@@ -3399,7 +4306,7 @@ export default function WebmasterDashboard() {
 
               {/* Albums manager bar */}
               <div className="flex flex-wrap items-center gap-2 border-b border-stone-100 pb-4 select-none">
-                <button
+                <Button variant="ghost"
                   type="button"
                   onClick={() => setSelectedAlbumFilter('ALL')}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
@@ -3409,7 +4316,7 @@ export default function WebmasterDashboard() {
                   }`}
                 >
                   ทั้งหมด ({photoMedias.length})
-                </button>
+                </Button>
 
                 {albums.map((albumName) => {
                   const albumPhotosCount = photoMedias.filter(m => mediaAlbums[m.id] === albumName).length;
@@ -3417,7 +4324,7 @@ export default function WebmasterDashboard() {
                   
                   return (
                     <div key={albumName} className="flex items-center gap-1">
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => setSelectedAlbumFilter(albumName)}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
@@ -3427,12 +4334,12 @@ export default function WebmasterDashboard() {
                         }`}
                       >
                         {albumName} ({albumPhotosCount})
-                      </button>
+                      </Button>
                       
                       {isSelected && (
                         <div className="flex items-center gap-1 bg-stone-100 p-0.5 rounded-lg border border-stone-200">
                           {/* Rename */}
-                          <button
+                          <Button variant="ghost"
                             type="button"
                             onClick={() => {
                               const newName = prompt('เปลี่ยนชื่ออัลบั้มใหม่:', albumName);
@@ -3444,9 +4351,9 @@ export default function WebmasterDashboard() {
                             title="เปลี่ยนชื่ออัลบั้ม"
                           >
                             <Edit3 className="w-3 h-3" />
-                          </button>
+                          </Button>
                           {/* Delete */}
-                          <button
+                          <Button variant="ghost"
                             type="button"
                             onClick={() => {
                               if (confirm(`คุณต้องการลบอัลบั้ม "${albumName}" ใช่หรือไม่?\n(รูปภาพภายในอัลบั้มจะยังคงอยู่ในระบบแต่จะถูกย้ายออกจากอัลบั้มนี้)`)) {
@@ -3457,7 +4364,7 @@ export default function WebmasterDashboard() {
                             title="ลบอัลบั้ม"
                           >
                             <Trash2 className="w-3 h-3" />
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -3467,7 +4374,7 @@ export default function WebmasterDashboard() {
                 {/* Add Album Button */}
                 {isCreatingAlbum ? (
                   <div className="flex items-center gap-1.5 bg-stone-50 border border-stone-200 rounded-xl p-1">
-                    <input
+                    <Input
                       type="text"
                       autoFocus
                       placeholder="ชื่ออัลบั้ม..."
@@ -3485,7 +4392,7 @@ export default function WebmasterDashboard() {
                       }}
                       className="px-2 py-1 text-xs border border-stone-200 rounded-lg text-stone-900 bg-white focus:outline-none focus:border-emerald-500 max-w-[120px]"
                     />
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => {
                         handleAddAlbum(tempAlbumName);
@@ -3495,8 +4402,8 @@ export default function WebmasterDashboard() {
                       className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold transition"
                     >
                       เพิ่ม
-                    </button>
-                    <button
+                    </Button>
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => {
                         setIsCreatingAlbum(false);
@@ -3505,17 +4412,17 @@ export default function WebmasterDashboard() {
                       className="px-2 py-1 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-[10px] font-bold transition"
                     >
                       ยกเลิก
-                    </button>
+                    </Button>
                   </div>
                 ) : (
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => setIsCreatingAlbum(true)}
                     className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-250 border-dashed rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>สร้างอัลบั้มใหม่</span>
-                  </button>
+                  </Button>
                 )}
               </div>
 
@@ -3560,7 +4467,7 @@ export default function WebmasterDashboard() {
                           className="w-full h-full object-cover group-hover:scale-105 transition duration-300 pointer-events-none"
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center p-2 gap-2">
-                          <button
+                          <Button variant="ghost"
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -3570,27 +4477,32 @@ export default function WebmasterDashboard() {
                             title="ลบรูปภาพ"
                           >
                             <Trash2 className="w-4 h-4" />
-                          </button>
+                          </Button>
 
                           {/* Move to Album Dropdown */}
                           {albums.length > 0 && (
                             <div className="w-full px-1" onClick={(e) => e.stopPropagation()}>
-                              <select
-                                value={mediaAlbums[m.id] || ''}
-                                onChange={(e) => {
-                                  const nextMediaAlbums = { ...mediaAlbums, [m.id]: e.target.value };
+                              <Select
+                              value={(mediaAlbums[m.id] || '') || '__empty__'}
+                              onValueChange={(raw) => {
+                                const value = raw === '__empty__' ? '' : raw;
+                                const nextMediaAlbums = { ...mediaAlbums, [m.id]: value };
                                   setMediaAlbums(nextMediaAlbums);
                                   saveAlbumConfig(albums, nextMediaAlbums);
-                                }}
-                                className="w-full px-1.5 py-1 bg-white hover:bg-stone-50 text-stone-900 border border-stone-300 rounded-lg text-[10px] font-bold focus:outline-none cursor-pointer"
-                              >
-                                <option value="">(ไม่มีอัลบั้ม)</option>
+                              }}
+                            >
+                              <SelectTrigger className={"w-full px-1.5 py-1 bg-white hover:bg-stone-50 text-stone-900 border border-stone-300 rounded-lg text-[10px] font-bold focus:outline-none cursor-pointer"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="__empty__">(ไม่มีอัลบั้ม)</SelectItem>
                                 {albums.map((a) => (
-                                  <option key={a} value={a}>
+                                          <SelectItem key={a} value={a}>
                                     ย้ายไป: {a}
-                                  </option>
+                                  </SelectItem>
                                 ))}
-                              </select>
+                              </SelectContent>
+                            </Select>
                             </div>
                           )}
                         </div>
@@ -3620,25 +4532,25 @@ export default function WebmasterDashboard() {
               {/* YouTube Link Form */}
               <div className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 text-left flex flex-col justify-between">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-stone-900">แนบลิงก์วิดีโอจาก YouTube</h4>
-                  <p className="text-[10px] text-stone-500">ใส่ลิงก์คลิปจาก YouTube เพื่อแสดงผลบนหน้าเว็บ</p>
+                  <h4 className="text-sm font-bold text-stone-900">แนบลิงก์วิดีโอจากโซเชียลมีเดีย</h4>
+                  <p className="text-[10px] text-stone-500">รองรับ YouTube, Facebook, TikTok, Instagram, Vimeo</p>
                 </div>
                 <div className="flex gap-2">
-                  <input
+                  <Input
                     type="text"
                     value={youtubeUrl}
                     onChange={(e) => setYoutubeUrl(e.target.value)}
-                    placeholder="วางลิงก์ เช่น https://www.youtube.com/watch?v=..."
+                    placeholder="วางลิงก์ เช่น YouTube, Facebook, TikTok, Instagram, Vimeo"
                     className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500/80 transition"
                   />
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={handleSaveYoutubeLink}
                     disabled={youtubeSaving}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition active:scale-95 flex-shrink-0 cursor-pointer"
+                    className="h-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition active:scale-95 flex-shrink-0 cursor-pointer"
                   >
                     {youtubeSaving ? 'บันทึก...' : 'บันทึกลิงก์'}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -3652,7 +4564,7 @@ export default function WebmasterDashboard() {
                   <label className="w-full py-2 bg-white border border-stone-250 hover:bg-stone-50 text-stone-700 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-2xs">
                     <Upload className="w-4 h-4 text-stone-500" />
                     <span>เลือกไฟล์วิดีโอเพื่ออัปโหลด</span>
-                    <input 
+                    <Input 
                       type="file" 
                       accept="video/*" 
                       className="hidden" 
@@ -3703,13 +4615,13 @@ export default function WebmasterDashboard() {
                         <video src={m.filePath} controls className="w-full h-full object-cover" />
                       )}
                       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition">
-                        <button
+                        <Button variant="ghost" type="button"
                           onClick={() => deleteGalleryMedia(m.id)}
                           className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition shadow-md cursor-pointer"
                           title="ลบวิดีโอ"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );
@@ -3722,137 +4634,136 @@ export default function WebmasterDashboard() {
         {/* Family Tree Manager Section */}
         {activeTab === 'family' && (
           <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-          <div className="flex justify-between items-center border-b border-stone-100 pb-4">
-            <div>
-              <h3 className="text-lg font-black text-stone-900 font-sans flex items-center gap-1.5">
-                <GitBranch className="w-5 h-5 text-emerald-700" />
-                <span>ผังครอบครัวและเครือญาติ 3 รุ่น ({familyMembers.length})</span>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-stone-100 pb-4">
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                  <GitBranch className="w-4 h-4 text-[#0071e3]" />
+                </div>
+                <span>ผังครอบครัวและเครือญาติ</span>
+                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-stone-200 text-stone-600 text-[10px] font-black">{familyMembers.length}</span>
               </h3>
-              <p className="text-xs text-stone-500">เพิ่มรายละเอียดของบิดา มารดา คู่สมรส พี่น้อง และบุตรธิดาของผู้ล่วงลับ</p>
+              <p className="text-xs text-stone-400 pl-10">เพิ่มรายละเอียดของบิดา มารดา คู่สมรส พี่น้อง และบุตรธิดา</p>
             </div>
-            <button 
+            <Button variant="default" type="button" 
               onClick={() => { resetFamilyForm(); setFamilyFormOpen(!familyFormOpen); }}
-              className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1"
+              className={`shrink-0 px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 cursor-pointer ${
+                familyFormOpen 
+                  ? 'bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-700 border border-stone-200' 
+                  : 'bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white'
+              }`}
             >
               {familyFormOpen ? (
-                'ปิดหน้าต่าง'
+                <>
+                  <X className="w-3.5 h-3.5" />
+                  <span>ปิด</span>
+                </>
               ) : (
                 <>
                   <Plus className="w-3.5 h-3.5" />
                   <span>เพิ่มสมาชิกครอบครัว</span>
                 </>
               )}
-            </button>
+            </Button>
           </div>
 
           {familyFormOpen && (
-            <form onSubmit={handleSaveFamilyMember} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 space-y-4 max-w-xl animate-fade-in">
-              <h4 className="text-xs font-black uppercase text-emerald-800 flex items-center gap-1.5">
-                {familyId ? (
-                  <>
-                    <Edit3 className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>แก้ไขสมาชิกญาติ</span>
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>เพิ่มสมาชิกญาติใหม่</span>
-                  </>
-                )}
+            <form onSubmit={handleSaveFamilyMember} className="p-6 rounded-2xl border border-[#0071e3]/20 bg-blue-50/30 space-y-5 max-w-xl animate-fade-in">
+              <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-[#0071e3]/10">
+                  {familyId ? <Edit3 className="w-3.5 h-3.5 text-[#0071e3]" /> : <Plus className="w-3.5 h-3.5 text-[#0071e3]" />}
+                </div>
+                <span>{familyId ? 'แก้ไขสมาชิก' : 'เพิ่มสมาชิกใหม่'}</span>
               </h4>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-sm font-bold text-stone-600 block">ชื่อ-นามสกุล</label>
-                  <input 
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">ชื่อ-นามสกุล</label>
+                  <Input 
                     type="text" 
                     value={familyName} 
                     onChange={(e) => setFamilyName(e.target.value)}
                     required
                     placeholder="เช่น นายสมจิตร์ รักสงบ"
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
+                    className="w-full h-11 px-4 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-[#0071e3]/50 focus-visible:ring-2 focus-visible:ring-blue-500/20 transition"
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-bold text-stone-600 block">ความสัมพันธ์</label>
-                  <select
-                    value={familyRelationship}
-                    onChange={(e) => setFamilyRelationship(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
-                  >
-                    <option value="PARENT_1">บิดา (Father)</option>
-                    <option value="PARENT_2">มารดา (Mother)</option>
-                    <option value="SPOUSE">คู่สมรส (Spouse)</option>
-                    <option value="SIBLING">พี่น้อง (Sibling)</option>
-                    <option value="CHILD">บุตร/ธิดา (Child)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <label className="text-sm font-bold text-stone-600 block">ปีเกิด (พ.ศ.)</label>
-                  <input 
-                    type="text" 
-                    value={familyBirthYear} 
-                    onChange={(e) => setFamilyBirthYear(e.target.value)}
-                    placeholder="เช่น 2490"
-                    maxLength={4}
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base font-mono focus:outline-none focus:border-emerald-500/80 transition"
-                  />
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">ความสัมพันธ์</label>
+                  <Select value={familyRelationship} onValueChange={(value) => setFamilyRelationship(value)}>
+                    <SelectTrigger className="w-full h-11 px-4 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-[#0071e3]/50 transition">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectItem value="PARENT_1">บิดา (Father)</SelectItem>
+                      <SelectItem value="PARENT_2">มารดา (Mother)</SelectItem>
+                      <SelectItem value="SPOUSE">คู่สมรส (Spouse)</SelectItem>
+                      <SelectItem value="SIBLING">พี่น้อง (Sibling)</SelectItem>
+                      <SelectItem value="CHILD">บุตร/ธิดา (Child)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-bold text-stone-600 block">ปีที่ล่วงลับ (พ.ศ.)</label>
-                  <input 
-                    type="text" 
-                    value={familyDeathYear} 
-                    onChange={(e) => setFamilyDeathYear(e.target.value)}
-                    disabled={!familyIsDeceased}
-                    placeholder="เช่น 2565"
-                    maxLength={4}
-                    className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base font-mono disabled:opacity-40 focus:outline-none focus:border-emerald-500/80 transition"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">ปีเกิด (พ.ศ.)</label>
+                    <Input 
+                      type="text" 
+                      value={familyBirthYear} 
+                      onChange={(e) => setFamilyBirthYear(e.target.value)}
+                      placeholder="2490"
+                      maxLength={4}
+                      className="w-full h-11 px-4 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm font-mono focus:outline-none focus:border-[#0071e3]/50 focus-visible:ring-2 focus-visible:ring-blue-500/20 transition"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">ปีที่ล่วงลับ (พ.ศ.)</label>
+                    <Input 
+                      type="text" 
+                      value={familyDeathYear} 
+                      onChange={(e) => setFamilyDeathYear(e.target.value)}
+                      disabled={!familyIsDeceased}
+                      placeholder="2565"
+                      maxLength={4}
+                      className="w-full h-11 px-4 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm font-mono disabled:opacity-40 disabled:bg-stone-50 focus:outline-none focus:border-[#0071e3]/50 focus-visible:ring-2 focus-visible:ring-blue-500/20 transition"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-5">
-                  <input 
-                    type="checkbox" 
+                <label htmlFor="isDeceased" className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-stone-200 cursor-pointer select-none hover:bg-stone-50 transition-colors">
+                  <Checkbox 
                     id="isDeceased"
                     checked={familyIsDeceased}
-                    onChange={(e) => setFamilyIsDeceased(e.target.checked)}
-                    className="w-4 h-4 accent-emerald-600 cursor-pointer"
+                    onCheckedChange={(checked) => setFamilyIsDeceased(!!checked)}
+                    className="w-4.5 h-4.5 cursor-pointer rounded"
                   />
-                  <label htmlFor="isDeceased" className="text-xs text-stone-750 font-bold cursor-pointer select-none">เสียชีวิตแล้ว (Deceased)</label>
-                </div>
+                  <span className="text-sm text-stone-700 font-medium">เสียชีวิตแล้ว</span>
+                </label>
 
-                <div className="space-y-1 sm:col-span-3">
-                  <label className="text-sm font-bold text-stone-600 block">รูปถ่ายประวัติเครือญาติ (แนะนำอัตราส่วน 1:1)</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-stone-500 uppercase tracking-wider block">รูปถ่าย</label>
                   
-                  <div className="flex flex-col sm:flex-row gap-4 items-center">
-                    {/* Thumbnail Preview */}
+                  <div className="flex items-start gap-4">
                     {familyAvatarUrl && (
-                      <div className="relative w-20 h-20 rounded-full border border-stone-250 bg-stone-50 overflow-hidden flex-shrink-0 shadow-sm group">
+                      <div className="relative w-20 h-20 rounded-2xl border-2 border-stone-100 bg-stone-50 overflow-hidden flex-shrink-0 group">
                         <img 
                           src={familyAvatarUrl} 
                           alt="Avatar" 
                           className="w-full h-full object-cover" 
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`;
-                          }}
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                         />
                         <button
                           type="button"
                           onClick={() => setFamilyAvatarUrl('')}
-                          className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-[10px] font-bold cursor-pointer border-0"
+                          className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
                         >
-                          ลบรูปภาพ
+                          <Trash2 className="w-4 h-4 text-white" />
                         </button>
                       </div>
                     )}
 
-                    {/* Custom Dropzone */}
                     <div
                       onDragEnter={(e) => { e.preventDefault(); setFamilyIsDragActive(true); }}
                       onDragOver={(e) => { e.preventDefault(); setFamilyIsDragActive(true); }}
@@ -3865,13 +4776,13 @@ export default function WebmasterDashboard() {
                           uploadFamilyAvatar(file);
                         }
                       }}
-                      className={`flex-1 w-full border-2 border-dashed rounded-2xl p-6 text-center transition cursor-pointer relative ${
+                      className={`flex-1 border-2 border-dashed rounded-2xl p-5 text-center transition-all cursor-pointer ${
                         familyIsDragActive 
-                          ? 'border-emerald-500 bg-emerald-50/50 scale-[1.01]' 
-                          : 'border-stone-300 hover:border-emerald-500 bg-stone-50/30 hover:bg-stone-50/60'
+                          ? 'border-[#0071e3] bg-blue-50/50 scale-[1.01]' 
+                          : 'border-stone-200 hover:border-[#0071e3]/40 bg-white hover:bg-blue-50/20'
                       }`}
                     >
-                      <input
+                      <Input
                         type="file"
                         id="avatar-file-input"
                         accept="image/*"
@@ -3882,44 +4793,48 @@ export default function WebmasterDashboard() {
                         disabled={avatarUploading}
                         className="hidden"
                       />
-                      <label htmlFor="avatar-file-input" className="cursor-pointer flex flex-col items-center gap-1">
-                        <User className={`w-8 h-8 mb-1 ${familyIsDragActive ? 'text-emerald-600' : 'text-stone-400'}`} />
-                        <span className="text-xs font-bold text-stone-700">
+                      <label htmlFor="avatar-file-input" className="cursor-pointer flex flex-col items-center gap-1.5">
+                        <div className={`size-10 rounded-full flex items-center justify-center ${familyIsDragActive ? 'bg-[#0071e3]/10' : 'bg-stone-100'}`}>
+                          <Camera className={`w-4.5 h-4.5 ${familyIsDragActive ? 'text-[#0071e3]' : 'text-stone-400'}`} />
+                        </div>
+                        <span className="text-xs font-medium text-stone-600">
                           {avatarUploading 
                             ? 'กำลังอัปโหลด...' 
                             : familyIsDragActive 
-                            ? 'วางรูปภาพที่นี่ได้เลย' 
-                            : 'ลากรูปภาพมาวางที่นี่ หรือคลิกเพื่ออัปโหลด'}
+                            ? 'วางรูปภาพที่นี่' 
+                            : 'คลิกหรือลากรูปมาวาง'}
                         </span>
-                        <span className="text-[10px] text-stone-400">รองรับไฟล์ PNG, JPG หรือ WEBP (ไม่เกิน 5MB)</span>
+                        <span className="text-[10px] text-stone-400">PNG, JPG, WEBP ไม่เกิน 5MB</span>
                       </label>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-2">
-                <button 
+              <div className="flex gap-2 pt-1">
+                <Button variant="default" 
                   type="submit" 
                   disabled={saveLoading}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
+                  className="h-auto px-5 py-2.5 rounded-xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white font-bold text-xs transition active:scale-95"
                 >
-                  {saveLoading ? 'กำลังบันทึก...' : '💾 บันทึกข้อมูลญาติ'}
-                </button>
-                <button 
+                  {saveLoading ? 'กำลังบันทึก...' : 'บันทึก'}
+                </Button>
+                <Button variant="ghost" 
                   type="button" 
                   onClick={resetFamilyForm}
-                  className="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition"
+                  className="h-auto px-5 py-2.5 rounded-xl text-stone-500 hover:text-stone-700 hover:bg-stone-100 text-xs font-medium transition"
                 >
                   ยกเลิก
-                </button>
+                </Button>
               </div>
             </form>
           )}
 
           {familyMembers.length === 0 ? (
-            <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-              ยังไม่มีการระบุข้อมูลสมาชิกครอบครัว
+            <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
+              <GitBranch className="w-10 h-10 text-stone-300 mx-auto" />
+              <p className="text-sm text-stone-500">ยังไม่มีสมาชิกครอบครัว</p>
+              <p className="text-xs text-stone-400">กดปุ่ม "เพิ่มสมาชิกครอบครัว" เพื่อเริ่มต้น</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -3940,20 +4855,20 @@ export default function WebmasterDashboard() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/media/youtube', {
+      const res = await fetch('/api/media/video-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           websiteId: activeSite.id,
-          youtubeUrl,
-          title: 'วิดีโอ YouTube',
+          videoUrl: youtubeUrl,
+          title: '',
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('แนบลิงก์วิดีโอ YouTube สำเร็จ');
+      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
       setYoutubeUrl('');
 
       // Refresh list
@@ -3963,7 +4878,7 @@ export default function WebmasterDashboard() {
         setGalleryMedias(listData.mediaList || []);
       }
     } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์ YouTube ล้มเหลว');
+      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
     } finally {
       setYoutubeSaving(false);
     }
@@ -3982,48 +4897,49 @@ export default function WebmasterDashboard() {
   const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
 
   return (
-                  <div key={m.id} className="p-4 rounded-2xl border border-stone-200 bg-stone-50/40 flex justify-between items-start hover:border-stone-300 transition gap-3">
-                    <div className="flex items-center gap-3">
+                  <div key={m.id} className="group p-4 rounded-2xl border border-stone-200 bg-white flex justify-between items-center hover:border-stone-300 hover:shadow-sm transition-all duration-200 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       {m.avatarUrl ? (
                         <img 
                           src={m.avatarUrl} 
                           alt={m.name} 
-                          className="w-10 h-10 rounded-full object-cover border border-stone-200 flex-shrink-0"
+                          className="w-11 h-11 rounded-full object-cover border-2 border-stone-100 flex-shrink-0"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`;
+                            (e.target as HTMLImageElement).style.display = 'none';
                           }}
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center text-stone-650 font-bold text-xs flex-shrink-0 border border-stone-250">
+                        <div className="w-11 h-11 rounded-full bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3] font-bold text-sm flex-shrink-0">
                           {m.name.charAt(0)}
                         </div>
                       )}
-                      <div>
-                        <p className="text-xs font-bold text-stone-900">{m.name}</p>
-                        <span className="inline-block px-1.5 py-0.5 text-[8px] font-bold bg-stone-200/50 text-stone-605 rounded mt-1">
-                          ความสัมพันธ์: {relLabel}
-                        </span>
-                        <p className="text-[10px] text-stone-500 font-semibold mt-1 flex items-center gap-1">
-                          <span>อายุขัย: {m.birthYear || 'N/A'} - {m.deathYear || 'N/A'}</span>
-                          {m.isDeceased && <Flame className="w-3 h-3 text-stone-500 animate-pulse" />}
-                        </p>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-stone-900 truncate">{m.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold bg-stone-100 text-stone-500 rounded-full">
+                            {relLabel}
+                          </span>
+                          <span className="text-[10px] text-stone-400">
+                            {m.birthYear || '?'} – {m.isDeceased ? (m.deathYear || '?') : 'ปัจจุบัน'}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex gap-1.5">
-                      <button 
+                    <div className="flex gap-1.5 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" type="button" 
                         onClick={() => editFamilyMember(m)}
-                        className="p-1.5 rounded-lg bg-white border border-stone-250 text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition"
+                        className="p-2 rounded-xl bg-stone-50 border border-stone-200 text-stone-500 hover:bg-stone-100 hover:text-stone-900 transition cursor-pointer"
                         title="แก้ไข"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
-                      </button>
-                      <button 
+                      </Button>
+                      <Button variant="ghost" type="button" 
                         onClick={() => handleDeleteFamilyMember(m.id)}
-                        className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition flex items-center justify-center"
+                        className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-500 hover:text-rose-700 border border-rose-200 transition cursor-pointer"
                         title="ลบ"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -4042,7 +4958,7 @@ export default function WebmasterDashboard() {
               </h3>
               <p className="text-xs text-stone-500">อัปโหลดหนังสือธรรมะ บทสวดมนต์ หรือหนังสือชีวประวัติ (PDF) พร้อมระบบอ่านในเว็บ</p>
             </div>
-            <button 
+            <Button variant="ghost" type="button" 
               onClick={() => { resetEbookForm(); setEbookFormOpen(!ebookFormOpen); }}
               className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1"
             >
@@ -4054,7 +4970,7 @@ export default function WebmasterDashboard() {
                   <span>อัปโหลดหนังสือใหม่</span>
                 </>
               )}
-            </button>
+            </Button>
           </div>
 
           {ebookFormOpen && (
@@ -4076,7 +4992,7 @@ export default function WebmasterDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-sm font-bold text-stone-600 block">ชื่อหนังสือ</label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={ebookTitle} 
                     onChange={(e) => setEbookTitle(e.target.value)}
@@ -4088,7 +5004,7 @@ export default function WebmasterDashboard() {
 
                 <div className="space-y-1">
                   <label className="text-sm font-bold text-stone-600 block">ผู้แต่ง / คณะผู้จัดทำ</label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={ebookAuthor} 
                     onChange={(e) => setEbookAuthor(e.target.value)}
@@ -4102,7 +5018,7 @@ export default function WebmasterDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-sm font-bold text-stone-600 block">จำนวนหน้าทั้งหมด</label>
-                  <input 
+                  <Input 
                     type="number" 
                     min={1}
                     value={ebookTotalPages} 
@@ -4114,7 +5030,7 @@ export default function WebmasterDashboard() {
 
                 <div className="space-y-1">
                   <label className="text-sm font-bold text-stone-600 block">เลือกไฟล์หนังสือ PDF</label>
-                  <input 
+                  <Input 
                     type="file" 
                     accept="application/pdf"
                     onChange={(e) => setEbookFile(e.target.files ? e.target.files[0] : null)}
@@ -4125,7 +5041,7 @@ export default function WebmasterDashboard() {
 
               <div className="space-y-1">
                 <label className="text-sm font-bold text-stone-600 block">ข้อความเนื้อหาในแต่ละหน้า (แยกหน้าโดยใช้เครื่องหมาย `[PAGE]`)</label>
-                <textarea 
+                <Textarea 
                   value={ebookPagesText} 
                   onChange={(e) => setEbookPagesText(e.target.value)}
                   rows={6}
@@ -4135,20 +5051,20 @@ export default function WebmasterDashboard() {
               </div>
 
               <div className="flex gap-2 pt-2">
-                <button 
+                <Button variant="ghost" 
                   type="submit" 
                   disabled={saveLoading}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
+                  className="h-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition active:scale-95 shadow-sm"
                 >
                   {saveLoading ? 'กำลังบันทึกและอัปโหลด...' : '💾 บันทึกและออกบริการ'}
-                </button>
-                <button 
+                </Button>
+                <Button variant="ghost" 
                   type="button" 
                   onClick={resetEbookForm}
-                  className="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition"
+                  className="h-auto px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-50 text-xs font-semibold transition"
                 >
                   ยกเลิก
-                </button>
+                </Button>
               </div>
             </form>
           )}
@@ -4173,20 +5089,20 @@ export default function WebmasterDashboard() {
                     </span>
                   </div>
                   <div className="flex gap-1">
-                    <button 
+                    <Button variant="ghost" type="button" 
                       onClick={() => editEbook(b)}
                       className="p-2 rounded-xl bg-white border border-stone-250 text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition text-[10px]"
                       title="แก้ไข"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
-                    </button>
-                    <button 
+                    </Button>
+                    <Button variant="ghost" type="button" 
                       onClick={() => handleDeleteEbook(b.id)}
                       className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition text-[10px] flex items-center justify-center"
                       title="ลบ"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -4198,41 +5114,57 @@ export default function WebmasterDashboard() {
           <div className="space-y-6">
             {features.condolence && (
               <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
-                  <Flame className="w-5 h-5 text-emerald-700 animate-pulse" />
-                  <span>คำไว้อาลัยรออนุมัติ ({condolences.length})</span>
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                      <Flame className="w-4 h-4 text-[#0071e3]" />
+                    </div>
+                    <span>คำไว้อาลัยรออนุมัติ</span>
+                    {condolences.length > 0 && (
+                      <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black">{condolences.length}</span>
+                    )}
+                  </h3>
+                </div>
 
                 {condolences.length === 0 ? (
-                  <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-                    ไม่มีข้อความไว้อาลัยค้างอนุมัติในเวลานี้
+                  <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
+                    <Flame className="w-10 h-10 text-stone-300 mx-auto" />
+                    <p className="text-sm text-stone-500">ไม่มีข้อความค้างอนุมัติ</p>
+                    <p className="text-xs text-stone-400">ข้อความไว้อาลัยใหม่จะแสดงที่นี่</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {condolences.map(c => (
-                      <div key={c.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-stone-900">{c.senderName}</span>
-                            <span className="px-2 py-0.5 text-[9px] font-semibold bg-stone-200/50 text-stone-600 rounded">
-                              ความสัมพันธ์: {c.relationship}
-                            </span>
+                      <div key={c.id} className="p-5 rounded-2xl border border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm transition-all duration-200">
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                          <div className="space-y-2 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <div className="size-8 rounded-full bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3] text-xs font-bold shrink-0">
+                                {c.senderName?.charAt(0) || '?'}
+                              </div>
+                              <span className="text-sm font-bold text-stone-900">{c.senderName}</span>
+                              {c.relationship && c.relationship !== '—' && (
+                                <span className="px-2 py-0.5 text-[9px] font-bold bg-stone-100 text-stone-500 rounded-full">
+                                  {c.relationship}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-stone-600 leading-relaxed pl-10">"{c.message}"</p>
                           </div>
-                          <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{c.message}"</p>
-                        </div>
-                        <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
-                          <button 
-                            onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
-                            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
-                          >
-                            อนุมัติ
-                          </button>
-                          <button 
-                            onClick={() => handleModerateCondolence(c.id, 'DELETE')}
-                            className="px-4 py-2 rounded-xl border border-red-300 text-red-755 hover:bg-red-50 text-xs font-bold transition active:scale-95"
-                          >
-                            ลบออก
-                          </button>
+                          <div className="flex gap-2 self-end sm:self-start shrink-0">
+                            <Button variant="default" type="button" 
+                              onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
+                              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white text-xs font-bold transition active:scale-95"
+                            >
+                              อนุมัติ
+                            </Button>
+                            <Button variant="ghost" type="button" 
+                              onClick={() => handleModerateCondolence(c.id, 'DELETE')}
+                              className="px-4 py-2 rounded-xl text-rose-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition active:scale-95"
+                            >
+                              ลบออก
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -4243,40 +5175,63 @@ export default function WebmasterDashboard() {
 
             {features.memory && (
               <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-                <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
-                  <Camera className="w-5 h-5 text-emerald-700" />
-                  <span>เรื่องราวรออนุมัติบน Memory Wall ({pendingPosts.length})</span>
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
+                      <Camera className="w-4 h-4 text-[#0071e3]" />
+                    </div>
+                    <span>Memory Wall รออนุมัติ</span>
+                    {pendingPosts.length > 0 && (
+                      <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black">{pendingPosts.length}</span>
+                    )}
+                  </h3>
+                </div>
 
                 {pendingPosts.length === 0 ? (
-                  <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-                    ไม่มีเรื่องราวหรือรูปถ่ายค้างอนุมัติในเวลานี้
+                  <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
+                    <Camera className="w-10 h-10 text-stone-300 mx-auto" />
+                    <p className="text-sm text-stone-500">ไม่มีเรื่องราวค้างอนุมัติ</p>
+                    <p className="text-xs text-stone-400">เรื่องราวและรูปถ่ายใหม่จะแสดงที่นี่</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {pendingPosts.map(p => (
-                      <div key={p.id} className="p-5 rounded-2xl border border-stone-200 bg-stone-50/45 hover:bg-stone-50/75 transition flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-stone-900">ส่งโดย: {p.senderName}</span>
-                            {p.title && <span className="text-xs font-semibold text-stone-600">| หัวข้อ: {p.title}</span>}
+                      <div key={p.id} className="p-5 rounded-2xl border border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm transition-all duration-200">
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                          <div className="space-y-2 min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <div className="size-8 rounded-full bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3] text-xs font-bold shrink-0">
+                                {p.senderName?.charAt(0) || '?'}
+                              </div>
+                              <div>
+                                <span className="text-sm font-bold text-stone-900">{p.senderName}</span>
+                                {p.title && <span className="text-xs text-stone-400 ml-2">{p.title}</span>}
+                              </div>
+                            </div>
+                            {p.mediaUrl && (
+                              <div className="pl-10">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#0071e3]">
+                                  <ImageIcon className="w-3 h-3" />
+                                  แนบรูปภาพ
+                                </span>
+                              </div>
+                            )}
+                            {p.content && <p className="text-sm text-stone-600 leading-relaxed pl-10">"{p.content}"</p>}
                           </div>
-                          {p.mediaUrl && <p className="text-[10px] text-stone-500 font-mono">แนบไฟล์รูป: {p.mediaUrl}</p>}
-                          {p.content && <p className="text-xs sm:text-sm text-stone-705 leading-relaxed font-semibold">"{p.content}"</p>}
-                        </div>
-                        <div className="flex gap-2 self-end sm:self-auto flex-shrink-0">
-                          <button 
-                            onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
-                            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm"
-                          >
-                            อนุมัติลงบอร์ด
-                          </button>
-                          <button 
-                            onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
-                            className="px-4 py-2 rounded-xl border border-red-300 text-red-755 hover:bg-red-50 text-xs font-bold transition active:scale-95"
-                          >
-                            ลบออก
-                          </button>
+                          <div className="flex gap-2 self-end sm:self-start shrink-0">
+                            <Button variant="default" type="button" 
+                              onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
+                              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white text-xs font-bold transition active:scale-95"
+                            >
+                              อนุมัติ
+                            </Button>
+                            <Button variant="ghost" type="button" 
+                              onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
+                              className="px-4 py-2 rounded-xl text-rose-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition active:scale-95"
+                            >
+                              ลบออก
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -4294,13 +5249,13 @@ export default function WebmasterDashboard() {
                 <Settings className="w-4 h-4 text-emerald-650" />
                 <span>ปรับแต่งรูปภาพหน้าปก (Cover Editor)</span>
               </h3>
-              <button 
+              <Button variant="ghost" 
                 type="button" 
                 onClick={() => setIsCoverCropModalOpen(false)}
                 className="text-stone-400 hover:text-stone-700 transition p-1 cursor-pointer"
               >
                 <X className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Repositioning viewport Container */}
@@ -4310,22 +5265,17 @@ export default function WebmasterDashboard() {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const viewportWidth = rect.width;
                 const viewportHeight = rect.height;
-                const startX = e.clientX - deceasedCoverX;
-                const startY = e.clientY - deceasedCoverY;
+                const startNX = deceasedCoverX;
+                const startNY = deceasedCoverY;
+                const startClientX = e.clientX;
+                const startClientY = e.clientY;
+                const scale = deceasedCoverScale;
                 
                 const handleMouseMove = (ev: MouseEvent) => {
-                  let newX = ev.clientX - startX;
-                  let newY = ev.clientY - startY;
-                  
-                  // Calculate dynamic viewport limits
-                  const limitX = Math.max(0, (viewportWidth * deceasedCoverScale - viewportWidth) / 2);
-                  const limitY = Math.max(0, (viewportHeight * deceasedCoverScale - viewportHeight) / 2);
-                  
-                  newX = Math.min(limitX, Math.max(-limitX, newX));
-                  newY = Math.min(limitY, Math.max(-limitY, newY));
-                  
-                  setDeceasedCoverX(newX);
-                  setDeceasedCoverY(newY);
+                  const dx = (ev.clientX - startClientX) / viewportWidth;
+                  const dy = (ev.clientY - startClientY) / viewportHeight;
+                  setDeceasedCoverX(clampImagePan(startNX + dx, scale));
+                  setDeceasedCoverY(clampImagePan(startNY + dy, scale));
                 };
                 const handleMouseUp = () => {
                   window.removeEventListener('mousemove', handleMouseMove);
@@ -4339,23 +5289,18 @@ export default function WebmasterDashboard() {
                 const viewportWidth = rect.width;
                 const viewportHeight = rect.height;
                 const touch = e.touches[0];
-                const startX = touch.clientX - deceasedCoverX;
-                const startY = touch.clientY - deceasedCoverY;
+                const startNX = deceasedCoverX;
+                const startNY = deceasedCoverY;
+                const startClientX = touch.clientX;
+                const startClientY = touch.clientY;
+                const scale = deceasedCoverScale;
                 
                 const handleTouchMove = (ev: TouchEvent) => {
                   const t = ev.touches[0];
-                  let newX = t.clientX - startX;
-                  let newY = t.clientY - startY;
-                  
-                  // Calculate dynamic viewport limits
-                  const limitX = Math.max(0, (viewportWidth * deceasedCoverScale - viewportWidth) / 2);
-                  const limitY = Math.max(0, (viewportHeight * deceasedCoverScale - viewportHeight) / 2);
-                  
-                  newX = Math.min(limitX, Math.max(-limitX, newX));
-                  newY = Math.min(limitY, Math.max(-limitY, newY));
-                  
-                  setDeceasedCoverX(newX);
-                  setDeceasedCoverY(newY);
+                  const dx = (t.clientX - startClientX) / viewportWidth;
+                  const dy = (t.clientY - startClientY) / viewportHeight;
+                  setDeceasedCoverX(clampImagePan(startNX + dx, scale));
+                  setDeceasedCoverY(clampImagePan(startNY + dy, scale));
                 };
                 const handleTouchEnd = () => {
                   window.removeEventListener('touchmove', handleTouchMove);
@@ -4368,12 +5313,17 @@ export default function WebmasterDashboard() {
               <img
                 src={deceasedCoverUrl}
                 alt="Cover Repositioning"
-                className="pointer-events-none max-w-none origin-center"
+                className="pointer-events-none max-w-none"
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  transform: `translate(${deceasedCoverX}px, ${deceasedCoverY}px) rotate(${deceasedCoverRotate}deg) scale(${deceasedCoverScale})`,
+                  ...imageTransformStyle({
+                    x: deceasedCoverX,
+                    y: deceasedCoverY,
+                    scale: deceasedCoverScale,
+                    rotate: deceasedCoverRotate,
+                  }),
                 }}
               />
               {/* Center crosshair reference indicator lines */}
@@ -4390,46 +5340,61 @@ export default function WebmasterDashboard() {
                 <span className="font-mono">{deceasedCoverScale.toFixed(2)}x</span>
               </label>
               <div className="flex items-center gap-3">
-                <button
+                <Button variant="ghost"
                   type="button"
-                  onClick={() => setDeceasedCoverScale(Math.max(1, deceasedCoverScale - 0.05))}
+                  onClick={() => {
+                    const next = Math.max(1, deceasedCoverScale - 0.05);
+                    setDeceasedCoverScale(next);
+                    setDeceasedCoverX((x) => clampImagePan(x, next));
+                    setDeceasedCoverY((y) => clampImagePan(y, next));
+                  }}
                   className="p-1 rounded-lg text-stone-500 hover:text-stone-900 transition active:scale-90 cursor-pointer hover:bg-stone-100"
                   title="ลดขนาด"
                 >
                   <Minus className="w-3.5 h-3.5" />
-                </button>
-                <input
+                </Button>
+                <Input
                   type="range"
                   min="1"
                   max="4"
                   step="0.05"
                   value={deceasedCoverScale}
-                  onChange={(e) => setDeceasedCoverScale(parseFloat(e.target.value))}
+                  onChange={(e) => {
+                    const next = parseFloat(e.target.value);
+                    setDeceasedCoverScale(next);
+                    setDeceasedCoverX((x) => clampImagePan(x, next));
+                    setDeceasedCoverY((y) => clampImagePan(y, next));
+                  }}
                   className="flex-1 accent-emerald-600 cursor-pointer h-1.5 bg-stone-250 rounded-lg appearance-none"
                 />
-                <button
+                <Button variant="ghost"
                   type="button"
-                  onClick={() => setDeceasedCoverScale(Math.min(4, deceasedCoverScale + 0.05))}
+                  onClick={() => {
+                    const next = Math.min(4, deceasedCoverScale + 0.05);
+                    setDeceasedCoverScale(next);
+                    setDeceasedCoverX((x) => clampImagePan(x, next));
+                    setDeceasedCoverY((y) => clampImagePan(y, next));
+                  }}
                   className="p-1 rounded-lg text-stone-500 hover:text-stone-900 transition active:scale-90 cursor-pointer hover:bg-stone-100"
                   title="เพิ่มขนาด"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Rotator controls */}
             <div className="flex justify-between items-center gap-4">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setDeceasedCoverRotate((deceasedCoverRotate + 90) % 360)}
                 className="px-4 py-2 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded-xl text-xs font-bold text-stone-700 transition flex items-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RotateCw className="w-3.5 h-3.5" />
                 <span>หมุนภาพ 90°</span>
-              </button>
+              </Button>
 
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => {
                   setDeceasedCoverScale(1);
@@ -4440,18 +5405,18 @@ export default function WebmasterDashboard() {
                 className="text-xs text-stone-505 hover:text-stone-900 transition cursor-pointer font-semibold"
               >
                 รีเซ็ตค่าเริ่มต้น
-              </button>
+              </Button>
             </div>
 
             {/* Save Crop button */}
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setIsCoverCropModalOpen(false)}
               className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>เสร็จสิ้นและนำไปใช้</span>
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -4464,13 +5429,13 @@ export default function WebmasterDashboard() {
                 <Settings className="w-4 h-4 text-emerald-650" />
                 <span>ปรับแต่งรูปโปรไฟล์ (Profile Editor)</span>
               </h3>
-              <button 
+              <Button variant="ghost" 
                 type="button" 
                 onClick={() => setIsCropModalOpen(false)}
                 className="text-stone-400 hover:text-stone-700 transition p-1 cursor-pointer"
               >
                 <X className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Viewport Container with Circular Overlay mask */}
@@ -4480,20 +5445,17 @@ export default function WebmasterDashboard() {
                 onMouseDown={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const viewportWidth = rect.width;
-                  const startX = e.clientX - deceasedAvatarX;
-                  const startY = e.clientY - deceasedAvatarY;
+                  const startNX = deceasedAvatarX;
+                  const startNY = deceasedAvatarY;
+                  const startClientX = e.clientX;
+                  const startClientY = e.clientY;
+                  const scale = deceasedAvatarScale;
                   
                   const handleMouseMove = (ev: MouseEvent) => {
-                    let newX = ev.clientX - startX;
-                    let newY = ev.clientY - startY;
-                    
-                    // Boundary constraint for circular mask (192px size)
-                    const limit = Math.max(0, (viewportWidth * deceasedAvatarScale - viewportWidth) / 2);
-                    newX = Math.min(limit, Math.max(-limit, newX));
-                    newY = Math.min(limit, Math.max(-limit, newY));
-                    
-                    setDeceasedAvatarX(newX);
-                    setDeceasedAvatarY(newY);
+                    const dx = (ev.clientX - startClientX) / viewportWidth;
+                    const dy = (ev.clientY - startClientY) / viewportWidth;
+                    setDeceasedAvatarX(clampImagePan(startNX + dx, scale));
+                    setDeceasedAvatarY(clampImagePan(startNY + dy, scale));
                   };
                   const handleMouseUp = () => {
                     window.removeEventListener('mousemove', handleMouseMove);
@@ -4506,21 +5468,18 @@ export default function WebmasterDashboard() {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const viewportWidth = rect.width;
                   const touch = e.touches[0];
-                  const startX = touch.clientX - deceasedAvatarX;
-                  const startY = touch.clientY - deceasedAvatarY;
+                  const startNX = deceasedAvatarX;
+                  const startNY = deceasedAvatarY;
+                  const startClientX = touch.clientX;
+                  const startClientY = touch.clientY;
+                  const scale = deceasedAvatarScale;
                   
                   const handleTouchMove = (ev: TouchEvent) => {
                     const t = ev.touches[0];
-                    let newX = t.clientX - startX;
-                    let newY = t.clientY - startY;
-                    
-                    // Boundary constraint for circular mask (192px size)
-                    const limit = Math.max(0, (viewportWidth * deceasedAvatarScale - viewportWidth) / 2);
-                    newX = Math.min(limit, Math.max(-limit, newX));
-                    newY = Math.min(limit, Math.max(-limit, newY));
-                    
-                    setDeceasedAvatarX(newX);
-                    setDeceasedAvatarY(newY);
+                    const dx = (t.clientX - startClientX) / viewportWidth;
+                    const dy = (t.clientY - startClientY) / viewportWidth;
+                    setDeceasedAvatarX(clampImagePan(startNX + dx, scale));
+                    setDeceasedAvatarY(clampImagePan(startNY + dy, scale));
                   };
                   const handleTouchEnd = () => {
                     window.removeEventListener('touchmove', handleTouchMove);
@@ -4533,12 +5492,17 @@ export default function WebmasterDashboard() {
                 <img
                   src={deceasedAvatarUrl}
                   alt="Avatar Repositioning"
-                  className="pointer-events-none max-w-none origin-center"
+                  className="pointer-events-none max-w-none"
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    transform: `translate(${deceasedAvatarX}px, ${deceasedAvatarY}px) rotate(${deceasedAvatarRotate}deg) scale(${deceasedAvatarScale})`,
+                    ...imageTransformStyle({
+                      x: deceasedAvatarX,
+                      y: deceasedAvatarY,
+                      scale: deceasedAvatarScale,
+                      rotate: deceasedAvatarRotate,
+                    }),
                   }}
                 />
               </div>
@@ -4551,46 +5515,61 @@ export default function WebmasterDashboard() {
                 <span className="font-mono">{deceasedAvatarScale.toFixed(2)}x</span>
               </label>
               <div className="flex items-center gap-3">
-                <button
+                <Button variant="ghost"
                   type="button"
-                  onClick={() => setDeceasedAvatarScale(Math.max(1, deceasedAvatarScale - 0.05))}
+                  onClick={() => {
+                    const next = Math.max(1, deceasedAvatarScale - 0.05);
+                    setDeceasedAvatarScale(next);
+                    setDeceasedAvatarX((x) => clampImagePan(x, next));
+                    setDeceasedAvatarY((y) => clampImagePan(y, next));
+                  }}
                   className="p-1 rounded-lg text-stone-500 hover:text-stone-900 transition active:scale-90 cursor-pointer hover:bg-stone-100"
                   title="ลดขนาด"
                 >
                   <Minus className="w-3.5 h-3.5" />
-                </button>
-                <input
+                </Button>
+                <Input
                   type="range"
                   min="1"
                   max="4"
                   step="0.05"
                   value={deceasedAvatarScale}
-                  onChange={(e) => setDeceasedAvatarScale(parseFloat(e.target.value))}
+                  onChange={(e) => {
+                    const next = parseFloat(e.target.value);
+                    setDeceasedAvatarScale(next);
+                    setDeceasedAvatarX((x) => clampImagePan(x, next));
+                    setDeceasedAvatarY((y) => clampImagePan(y, next));
+                  }}
                   className="flex-1 accent-emerald-600 cursor-pointer h-1.5 bg-stone-250 rounded-lg appearance-none"
                 />
-                <button
+                <Button variant="ghost"
                   type="button"
-                  onClick={() => setDeceasedAvatarScale(Math.min(4, deceasedAvatarScale + 0.05))}
+                  onClick={() => {
+                    const next = Math.min(4, deceasedAvatarScale + 0.05);
+                    setDeceasedAvatarScale(next);
+                    setDeceasedAvatarX((x) => clampImagePan(x, next));
+                    setDeceasedAvatarY((y) => clampImagePan(y, next));
+                  }}
                   className="p-1 rounded-lg text-stone-500 hover:text-stone-900 transition active:scale-90 cursor-pointer hover:bg-stone-100"
                   title="เพิ่มขนาด"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Rotator controls */}
             <div className="flex justify-between items-center gap-4">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setDeceasedAvatarRotate((deceasedAvatarRotate + 90) % 360)}
                 className="px-4 py-2 bg-stone-50 hover:bg-stone-100 border border-stone-250 rounded-xl text-xs font-bold text-stone-700 transition flex items-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RotateCw className="w-3.5 h-3.5" />
                 <span>หมุนภาพ 90°</span>
-              </button>
+              </Button>
 
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => {
                   setDeceasedAvatarScale(1);
@@ -4601,18 +5580,18 @@ export default function WebmasterDashboard() {
                 className="text-xs text-stone-505 hover:text-stone-900 transition cursor-pointer font-semibold"
               >
                 รีเซ็ตค่าเริ่มต้น
-              </button>
+              </Button>
             </div>
 
             {/* Save Crop button */}
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setIsCropModalOpen(false)}
               className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>เสร็จสิ้นและนำไปใช้</span>
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -4631,7 +5610,7 @@ export default function WebmasterDashboard() {
               </p>
             </div>
             <div className="flex gap-2">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => {
                   setConfirmOpen(false);
@@ -4640,8 +5619,8 @@ export default function WebmasterDashboard() {
                 className="flex-1 py-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-250 text-stone-700 font-bold rounded-xl text-xs transition active:scale-95 cursor-pointer"
               >
                 ยกเลิก
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={async () => {
                   setConfirmOpen(false);
@@ -4652,7 +5631,7 @@ export default function WebmasterDashboard() {
                 className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition active:scale-95 cursor-pointer"
               >
                 ยืนยันการลบ
-              </button>
+              </Button>
             </div>
           </div>
         </div>

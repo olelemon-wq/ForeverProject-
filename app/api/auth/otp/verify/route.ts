@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { signToken } from '@/lib/auth/jwt';
 import { getInitialFeatureMapForCategory } from '@/lib/categories';
+import { getSeedDefaultMedia } from '@/lib/defaultMedia';
 
 export async function POST(request: Request) {
   try {
@@ -116,11 +117,14 @@ export async function POST(request: Request) {
       const tempSlug = `draft-${uuid}`;
       const expiredAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 1 year
       
+      const seedMedia = getSeedDefaultMedia(category);
       const defaultThemeConfig = {
         primaryColor: '#0071e3', // New royal blue accent default (spec)
         secondaryColor: '#f59e0b',
         fontFamily: 'Inter',
         heroStyle: 'Classic',
+        avatarUrl: seedMedia.avatarUrl,
+        coverUrl: seedMedia.coverUrl,
         features: getInitialFeatureMapForCategory(category),
       };
 

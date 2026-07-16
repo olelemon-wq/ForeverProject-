@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8f0e5"/>
+      <stop offset="50%" stop-color="#f0e5d5"/>
+      <stop offset="100%" stop-color="#e8dcc8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#s)"/>
+  <!-- Antique paper texture effect -->
+  <rect x="100" y="100" width="1400" height="700" rx="10" fill="#f5edd8" opacity="0.5"/>
+  <!-- Decorative lines -->
+  <line x1="200" y1="250" x2="1400" y2="250" stroke="#c4a060" stroke-width="1" opacity="0.15"/>
+  <line x1="200" y1="450" x2="1400" y2="450" stroke="#c4a060" stroke-width="1" opacity="0.15"/>
+  <line x1="200" y1="650" x2="1400" y2="650" stroke="#c4a060" stroke-width="1" opacity="0.15"/>
+  <!-- Ink drop decorations -->
+  <circle cx="200" cy="250" r="5" fill="#c4a060" opacity="0.2"/>
+  <circle cx="1400" cy="250" r="5" fill="#c4a060" opacity="0.2"/>
+  <circle cx="200" cy="450" r="5" fill="#c4a060" opacity="0.2"/>
+  <circle cx="1400" cy="450" r="5" fill="#c4a060" opacity="0.2"/>
+  <!-- Feather quill -->
+  <path d="M1300 150 Q1310 200 1305 300" fill="none" stroke="#8b6f47" stroke-width="2" opacity="0.2"/>
+  <path d="M1300 150 Q1292 140 1308 125 Q1315 138 1300 150Z" fill="#8b6f47" opacity="0.25"/>
+</svg>

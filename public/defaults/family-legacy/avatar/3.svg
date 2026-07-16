@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8f0e8"/>
+      <stop offset="100%" stop-color="#d8e8d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- Interlinked circles (family bond) -->
+  <circle cx="220" cy="240" r="55" fill="none" stroke="#6a8e5a" stroke-width="6" opacity="0.35"/>
+  <circle cx="292" cy="240" r="55" fill="none" stroke="#8aae6a" stroke-width="6" opacity="0.35"/>
+  <circle cx="256" cy="300" r="55" fill="none" stroke="#5a7e4a" stroke-width="6" opacity="0.3"/>
+  <!-- Leaves at intersection -->
+  <ellipse cx="256" cy="250" rx="10" ry="18" fill="#7a9e5a" opacity="0.4" transform="rotate(20 256 250)"/>
+  <ellipse cx="250" cy="260" rx="10" ry="18" fill="#6a8e4a" opacity="0.35" transform="rotate(-20 250 260)"/>
+</svg>

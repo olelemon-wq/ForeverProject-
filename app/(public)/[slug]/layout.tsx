@@ -64,10 +64,13 @@ export default async function PublicMemorialLayout(props: {
   }
 
   const themeConfig = tenant.themeConfig as any;
+  const fontFamily = themeConfig?.fontFamily || 'Inter';
+  const themeFont = fontFamily.includes(' ') ? `"${fontFamily}"` : fontFamily;
   const themeStyles = {
     '--theme-primary': themeConfig?.primaryColor || '#0d9488',
     '--theme-secondary': themeConfig?.secondaryColor || '#f59e0b',
-    '--theme-font': themeConfig?.fontFamily || 'Inter',
+    '--theme-font': themeFont,
+    fontFamily: `${themeFont}, ui-sans-serif, system-ui, sans-serif`,
   } as React.CSSProperties;
 
   // Filter out menus that are not visible (Step 7 logic)

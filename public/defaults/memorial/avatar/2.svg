@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8eef5"/>
+      <stop offset="100%" stop-color="#dce5f0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- Candle -->
+  <rect x="242" y="260" width="28" height="100" rx="4" fill="#f5e6c8" opacity="0.8"/>
+  <rect x="247" y="265" width="8" height="90" rx="2" fill="#e8d5a8" opacity="0.3"/>
+  <!-- Flame -->
+  <path d="M256 260 C248 240 240 220 256 195 C272 220 264 240 256 260Z" fill="#f0a030" opacity="0.7"/>
+  <path d="M256 258 C252 245 248 232 256 215 C264 232 260 245 256 258Z" fill="#f0c860" opacity="0.8"/>
+  <!-- Glow -->
+  <circle cx="256" cy="230" r="50" fill="#f0c860" opacity="0.1"/>
+  <circle cx="256" cy="230" r="30" fill="#f0c860" opacity="0.12"/>
+  <!-- Base -->
+  <ellipse cx="256" cy="365" rx="35" ry="8" fill="#c4b090" opacity="0.5"/>
+</svg>

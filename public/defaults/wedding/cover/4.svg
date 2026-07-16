@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef8f0"/>
+      <stop offset="100%" stop-color="#f8ede0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#s)"/>
+  <!-- Lace pattern top -->
+  <path d="M0 100 Q100 60 200 100 Q300 140 400 100 Q500 60 600 100 Q700 140 800 100 Q900 60 1000 100 Q1100 140 1200 100 Q1300 60 1400 100 Q1500 140 1600 100" fill="none" stroke="#d4c0a8" stroke-width="2" opacity="0.2"/>
+  <path d="M0 120 Q100 80 200 120 Q300 160 400 120 Q500 80 600 120 Q700 160 800 120 Q900 80 1000 120 Q1100 160 1200 120 Q1300 80 1400 120 Q1500 160 1600 120" fill="none" stroke="#d4c0a8" stroke-width="1.5" opacity="0.15"/>
+  <!-- Central wreath -->
+  <circle cx="800" cy="450" r="120" fill="none" stroke="#c4a870" stroke-width="2" opacity="0.15"/>
+  <!-- Wreath flowers -->
+  <circle cx="680" cy="450" r="10" fill="#e8a0b0" opacity="0.25"/>
+  <circle cx="920" cy="450" r="10" fill="#e8a0b0" opacity="0.25"/>
+  <circle cx="800" cy="330" r="10" fill="#f0b0c0" opacity="0.25"/>
+  <circle cx="800" cy="570" r="10" fill="#f0b0c0" opacity="0.25"/>
+  <circle cx="715" cy="370" r="8" fill="#d49098" opacity="0.2"/>
+  <circle cx="885" cy="370" r="8" fill="#d49098" opacity="0.2"/>
+  <circle cx="715" cy="530" r="8" fill="#d49098" opacity="0.2"/>
+  <circle cx="885" cy="530" r="8" fill="#d49098" opacity="0.2"/>
+  <!-- Wreath leaves -->
+  <ellipse cx="700" cy="410" rx="10" ry="5" fill="#8aae6a" opacity="0.18" transform="rotate(50 700 410)"/>
+  <ellipse cx="900" cy="410" rx="10" ry="5" fill="#8aae6a" opacity="0.18" transform="rotate(-50 900 410)"/>
+  <ellipse cx="700" cy="490" rx="10" ry="5" fill="#8aae6a" opacity="0.18" transform="rotate(-50 700 490)"/>
+  <ellipse cx="900" cy="490" rx="10" ry="5" fill="#8aae6a" opacity="0.18" transform="rotate(50 900 490)"/>
+</svg>

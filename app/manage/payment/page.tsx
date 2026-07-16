@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CreditCard, AlertCircle, CheckCircle2, QrCode, RotateCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 function PaymentPageInner() {
   const router = useRouter();
@@ -156,11 +157,11 @@ function PaymentPageInner() {
 
             {/* Action simulation trigger */}
             <div className="space-y-3 pt-4">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={handleSimulatePayment}
                 disabled={isVerifying}
-                className="w-full py-4 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-[0.98] disabled:opacity-60 shadow-md cursor-pointer flex items-center justify-center gap-2"
+                className="h-auto w-full py-4 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-[0.98] disabled:opacity-60 shadow-md cursor-pointer flex items-center justify-center gap-2"
               >
                 {isVerifying ? (
                   <>
@@ -173,7 +174,7 @@ function PaymentPageInner() {
                     <span>จำลองการจ่ายเงินผ่านแอปธนาคาร</span>
                   </>
                 )}
-              </button>
+              </Button>
               <p className="text-[10px] text-stone-400">
                 * หลังจากชำระเงินสำเร็จ ระบบจะนำทางไปยังขั้นตอนการตั้งชื่อลิงก์เว็บไซต์ต่อทันที
               </p>

@@ -22,6 +22,7 @@ export default function CondolenceForm({
 
   const allSubjectsAlive = subjects && subjects.length > 0 && subjects.every((s: any) => s.isAlive);
   const isHappy = category === 'Couple' || category === 'Wedding' || (category === 'Pet Memorial' && allSubjectsAlive);
+  const hideRelationship = category === 'Pet Memorial';
 
   const generateCaptcha = () => {
     const num1 = Math.floor(Math.random() * 9) + 1; // 1-9
@@ -94,13 +95,17 @@ export default function CondolenceForm({
       return;
     }
 
-    const finalRelationship = relationship === 'Other' ? customRelation.trim() : relationship;
-    if (!finalRelationship) {
+    const finalRelationship = hideRelationship
+      ? '—'
+      : relationship === 'Other'
+        ? customRelation.trim()
+        : relationship;
+    if (!hideRelationship && !finalRelationship) {
       setError('กรุณากรอกความสัมพันธ์ของท่าน');
       return;
     }
 
-    const isFamilyType = relationship === 'Family' || relationship === 'Relative';
+    const isFamilyType = !hideRelationship && (relationship === 'Family' || relationship === 'Relative');
     const condolenceType = isFamilyType ? 'FAMILY' : 'GENERAL';
 
     setIsLoading(true);
@@ -163,41 +168,41 @@ export default function CondolenceForm({
   return (
     <div className="mt-8 text-center">
       {!isOpen ? (
-        <div className="p-8 rounded-3xl border border-dashed border-stone-300 bg-white shadow-sm">
-          <h3 className="text-base sm:text-lg font-semibold text-stone-850 mb-2">
+        <div className="py-12 px-8 rounded-3xl border border-stone-200/60 bg-white shadow-sm text-center">
+          <h3 className="text-base sm:text-lg font-bold text-stone-800 mb-2">
             {isHappy ? 'ร่วมส่งความคิดถึงและบันทึกข้อความ' : 'ร่วมส่งคำไว้อาลัยและแสดงความระลึกถึง'}
           </h3>
-          <p className="text-stone-500 text-xs mb-6 max-w-md mx-auto leading-normal">
+          <p className="text-stone-400 text-xs sm:text-sm mb-8 max-w-sm mx-auto leading-relaxed">
             {isHappy 
-              ? 'คุณสามารถเลือกรูปแบบข้อความ ส่งความรักและอวยพร เพื่อรวบรวมเป็นสมุดบันทึกความทรงจำแสนอบอุ่น'
-              : 'คุณสามารถร่วมจุดเทียนออนไลน์และเขียนคำไว้อาลัย เพื่อรวบรวมเป็นสมุดบันทึกส่งต่อให้ครอบครัวผู้ล่วงลับ'}
+              ? 'เขียนข้อความส่งความรักและอวยพร เพื่อรวบรวมเป็นสมุดบันทึกความทรงจำ'
+              : 'ร่วมจุดเทียนออนไลน์และเขียนคำไว้อาลัย ส่งต่อให้ครอบครัวผู้ล่วงลับ'}
           </p>
           <button 
             onClick={() => setIsOpen(true)}
-            className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-white hover:brightness-105 active:scale-95 transition shadow-md flex items-center gap-1.5 mx-auto"
+            className="px-8 py-3 text-sm font-bold rounded-full text-white hover:brightness-105 active:scale-95 transition shadow-md flex items-center gap-2 mx-auto"
             style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
           >
-            <Flame className="w-4 h-4 animate-pulse" />
-            <span>{isHappy ? 'ร่วมบันทึกข้อความ' : 'ร่วมแสดงความไว้อาลัย'}</span>
+            <Flame className="w-4 h-4" />
+            <span>{isHappy ? 'เขียนข้อความ' : 'เขียนคำไว้อาลัย'}</span>
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-stone-200/80 bg-white text-left space-y-5 w-full shadow-xl relative animate-fade-in">
-          <header className="flex justify-between items-center border-b border-stone-200 pb-3">
-            <h3 className="text-base font-bold text-stone-900">{isHappy ? 'สมุดบันทึกข้อความและคำยินดี' : 'เขียนคำไว้อาลัย'}</h3>
+        <form onSubmit={handleSubmit} className="p-8 sm:p-10 rounded-3xl border border-stone-200/60 bg-white text-left space-y-6 w-full shadow-sm relative animate-fade-in">
+          <header className="flex justify-between items-center border-b border-stone-100 pb-4">
+            <h3 className="text-base font-bold text-stone-900">{isHappy ? 'เขียนข้อความ' : 'เขียนคำไว้อาลัย'}</h3>
             <button 
               type="button" 
               onClick={() => setIsOpen(false)} 
-              className="text-xs text-stone-400 hover:text-stone-700 transition border-0 bg-transparent cursor-pointer"
+              className="text-xs text-stone-400 hover:text-stone-600 transition border-0 bg-transparent cursor-pointer"
             >
               ปิดฟอร์ม [x]
             </button>
           </header>
 
-          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-medium">⚠️ {error}</div>}
-          {success && <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">✓ {success}</div>}
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-medium flex items-center gap-2"><span className="shrink-0 w-4 h-4 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-[10px] font-black">!</span>{error}</div>}
+          {success && <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium flex items-center gap-2"><span className="shrink-0 w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-[10px] font-black">✓</span>{success}</div>}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className={`grid grid-cols-1 gap-4 ${hideRelationship ? '' : 'sm:grid-cols-2'}`}>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">
                 {isHappy ? 'ชื่อผู้เขียนข้อความ' : 'ชื่อผู้ส่งคำไว้อาลัย'}
@@ -207,30 +212,32 @@ export default function CondolenceForm({
                 value={senderName} 
                 onChange={(e) => setSenderName(e.target.value)} 
                 placeholder="เช่น สมพร รักดี"
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
+                className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-800 text-sm focus:bg-white focus:outline-none focus:border-stone-300 transition"
                 disabled={isLoading}
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ความสัมพันธ์</label>
-              <select 
-                value={relationship} 
-                onChange={(e) => setRelationship(e.target.value)}
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none cursor-pointer"
-                disabled={isLoading}
-              >
-                <option value="Family">ครอบครัวใกล้ชิด</option>
-                <option value="Relative">ญาติพี่น้อง</option>
-                <option value="Friend">เพื่อน</option>
-                <option value="Colleague">เพื่อนร่วมงาน</option>
-                <option value="Other">อื่น ๆ (ระบุเอง)</option>
-              </select>
-            </div>
+            {!hideRelationship && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ความสัมพันธ์</label>
+                <select 
+                  value={relationship} 
+                  onChange={(e) => setRelationship(e.target.value)}
+                  className="w-full pl-4 pr-10 py-3 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-800 text-sm focus:bg-white focus:outline-none focus:border-stone-300 transition cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23a8a29e%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px] bg-[right_1rem_center] bg-no-repeat"
+                  disabled={isLoading}
+                >
+                  <option value="Family">ครอบครัวใกล้ชิด</option>
+                  <option value="Relative">ญาติพี่น้อง</option>
+                  <option value="Friend">เพื่อน</option>
+                  <option value="Colleague">เพื่อนร่วมงาน</option>
+                  <option value="Other">อื่น ๆ (ระบุเอง)</option>
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Conditional custom relation input box */}
-          {relationship === 'Other' && (
+          {!hideRelationship && relationship === 'Other' && (
             <div className="space-y-1 animate-fade-in">
               <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ระบุความสัมพันธ์เพิ่มเติม</label>
               <input 
@@ -238,7 +245,7 @@ export default function CondolenceForm({
                 value={customRelation} 
                 onChange={(e) => setCustomRelation(e.target.value)} 
                 placeholder="เช่น เพื่อนสมัยประถม, เพื่อนบ้าน"
-                className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
+                className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-800 text-sm focus:bg-white focus:outline-none focus:border-stone-300 transition"
                 disabled={isLoading}
               />
             </div>
@@ -248,11 +255,11 @@ export default function CondolenceForm({
             <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-1">
               {isHappy ? 'ข้อความถึงน้อง ๆ / เจ้าของแคมเปญ' : 'ข้อความไว้อาลัย'}
             </label>
-            <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+            <div className="flex items-center gap-1 mb-2 flex-wrap">
               <button
                 type="button"
                 onClick={() => insertFormatting('bold')}
-                className="px-2.5 py-1 text-xs font-black rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-850 transition active:scale-95 cursor-pointer shadow-sm"
+                className="w-8 h-8 flex items-center justify-center text-xs font-black rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition active:scale-95 cursor-pointer"
                 title="ตัวหนา (Bold)"
               >
                 B
@@ -260,22 +267,21 @@ export default function CondolenceForm({
               <button
                 type="button"
                 onClick={() => insertFormatting('italic')}
-                className="px-2.5 py-1 text-xs italic font-semibold rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-850 transition active:scale-95 cursor-pointer shadow-sm"
+                className="w-8 h-8 flex items-center justify-center text-xs italic font-semibold rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition active:scale-95 cursor-pointer"
                 title="ตัวเอียง (Italic)"
               >
                 I
               </button>
 
-              <div className="h-4 w-px bg-stone-250 mx-1"></div>
+              <div className="h-5 w-px bg-stone-200 mx-1.5"></div>
 
-              {/* Dynamic Emojis List */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5">
                 {emojiList.map((item) => (
                   <button
                     key={item.char}
                     type="button"
                     onClick={() => insertEmoji(item.char)}
-                    className="p-1 text-sm hover:bg-stone-100 rounded-md transition active:scale-90 cursor-pointer border-0 bg-transparent"
+                    className="w-8 h-8 flex items-center justify-center text-sm hover:bg-stone-100 rounded-lg transition active:scale-90 cursor-pointer border-0 bg-transparent"
                     title={item.label}
                   >
                     {item.char}
@@ -284,7 +290,7 @@ export default function CondolenceForm({
               </div>
 
               <span className="text-[10px] text-stone-400 ml-auto select-none hidden sm:inline">
-                {isHappy ? 'เลือกรูปแบบข้อความหรือใส่อีโมจิน่ารัก ๆ' : 'เลือกรูปแบบข้อความหรือใส่อีโมจิไว้อาลัย'}
+                {isHappy ? 'เลือกรูปแบบข้อความหรือใส่อีโมจิไว้อาลัย' : 'เลือกรูปแบบข้อความหรือใส่อีโมจิไว้อาลัย'}
               </span>
             </div>
             <textarea 
@@ -292,27 +298,27 @@ export default function CondolenceForm({
               value={message} 
               onChange={(e) => setMessage(e.target.value)} 
               placeholder={isHappy ? "เขียนส่งความรัก ความคิดถึง หรือข้อความสมุดเยี่ยมเยียน..." : "เขียนคำรำลึกและแสดงความไว้อาลัยแด่ผู้ล่วงลับ..."}
-              rows={4}
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs resize-none focus:bg-white focus:outline-none"
+              rows={5}
+              className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-800 text-sm resize-none focus:bg-white focus:outline-none focus:border-stone-300 transition leading-relaxed"
               disabled={isLoading}
             />
           </div>
 
-          {/* Math Captcha Challenge for Bot Protection */}
-          <div className="p-4 bg-stone-50 border border-stone-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 shadow-2xs">
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block">การป้องกันสแปมบอท (Security Challenge)</span>
+          {/* Captcha */}
+          <div className="p-5 bg-stone-50/50 border border-stone-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">ยืนยันตัวตน</span>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black text-stone-850 bg-stone-200/60 px-3 py-1.5 rounded-lg border border-stone-300/40">
+                <span className="text-sm font-black text-stone-700 bg-white px-4 py-2 rounded-xl border border-stone-200">
                   {captchaQuestion.num1} + {captchaQuestion.num2} = ?
                 </span>
                 <button
                   type="button"
                   onClick={generateCaptcha}
-                  className="p-1.5 hover:bg-stone-200 text-stone-400 hover:text-stone-700 rounded-lg transition active:rotate-45 cursor-pointer border-0 bg-transparent"
-                  title="เปลี่ยนโจทย์คำถาม"
+                  className="p-2 hover:bg-stone-200 text-stone-400 hover:text-stone-600 rounded-xl transition active:rotate-45 cursor-pointer border-0 bg-transparent"
+                  title="เปลี่ยนโจทย์"
                 >
-                  <RotateCw className="w-3.5 h-3.5" />
+                  <RotateCw className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -321,23 +327,23 @@ export default function CondolenceForm({
               value={userAnswer} 
               onChange={(e) => setUserAnswer(e.target.value)} 
               placeholder="กรอกคำตอบเป็นตัวเลข..."
-              className="w-full sm:w-48 px-3.5 py-2.5 bg-white border border-stone-200 rounded-xl text-stone-850 text-xs focus:outline-none focus:border-emerald-500"
+              className="w-full sm:w-48 px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:border-stone-300 transition"
               disabled={isLoading}
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-stone-200">
+          <div className="flex justify-end gap-3 pt-4 border-t border-stone-100">
             <button 
               type="button" 
               onClick={() => setIsOpen(false)} 
-              className="px-4 py-2 text-xs border border-stone-300 hover:bg-stone-100 rounded-xl text-stone-500 hover:text-stone-850 transition cursor-pointer bg-white"
+              className="px-5 py-2.5 text-sm border border-stone-200 hover:bg-stone-50 rounded-xl text-stone-500 hover:text-stone-700 transition cursor-pointer bg-white"
               disabled={isLoading}
             >
               ยกเลิก
             </button>
             <button 
               type="submit" 
-              className="px-5 py-2 text-xs font-bold rounded-xl text-white hover:brightness-105 transition flex items-center gap-1.5 cursor-pointer"
+              className="px-6 py-2.5 text-sm font-bold rounded-xl text-white hover:brightness-105 transition flex items-center gap-2 cursor-pointer active:scale-95"
               style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
               disabled={isLoading}
             >

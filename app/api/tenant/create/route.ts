@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
 import { getInitialFeatureMapForCategory } from '@/lib/categories';
+import { getSeedDefaultMedia } from '@/lib/defaultMedia';
 
 export async function POST(request: Request) {
   try {
@@ -52,15 +53,22 @@ export async function POST(request: Request) {
 
     // 5. Calculate default values
     const expiredAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // Default 1 year subscription duration
+    const seedMedia = getSeedDefaultMedia(category);
     const defaultThemeConfig = {
       primaryColor: '#0d9488',
       secondaryColor: '#f59e0b',
       fontFamily: 'Inter',
       heroStyle: 'Classic',
+      avatarUrl: seedMedia.avatarUrl,
+      coverUrl: seedMedia.coverUrl,
       ...(themeConfig || {}),
       // Seed sensible default feature visibility based on selected category journey
       features: getInitialFeatureMapForCategory(category),
     };
+
+    // Keep avatar/cover if client omitted them
+    if (!defaultThemeConfig.avatarUrl) defaultThemeConfig.avatarUrl = seedMedia.avatarUrl;
+    if (!defaultThemeConfig.coverUrl) defaultThemeConfig.coverUrl = seedMedia.coverUrl;
 
     // 6. DB Transaction to create Tenant, default Menu pages, Webmaster connection, and pending payment
     const result = await db.$transaction(async (tx) => {

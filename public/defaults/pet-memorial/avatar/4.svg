@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f3e8ff"/>
+      <stop offset="100%" stop-color="#e8d5f5"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg4)"/>
+  <!-- Wing left -->
+  <path d="M180 260 C140 200 120 160 160 140 C200 120 230 180 256 220Z" fill="#c9a8e8" opacity="0.5"/>
+  <!-- Wing right -->
+  <path d="M332 260 C372 200 392 160 352 140 C312 120 282 180 256 220Z" fill="#c9a8e8" opacity="0.5"/>
+  <!-- Halo -->
+  <ellipse cx="256" cy="190" rx="50" ry="14" fill="none" stroke="#f0c860" stroke-width="6" opacity="0.6"/>
+  <!-- Paw with heart -->
+  <ellipse cx="256" cy="310" rx="55" ry="48" fill="#c9a8e8" opacity="0.6"/>
+  <circle cx="210" cy="255" r="22" fill="#c9a8e8" opacity="0.55"/>
+  <circle cx="256" cy="240" r="20" fill="#c9a8e8" opacity="0.55"/>
+  <circle cx="302" cy="255" r="22" fill="#c9a8e8" opacity="0.55"/>
+  <!-- Heart in center -->
+  <path d="M256 330 C256 330 232 312 232 300 C232 290 242 284 252 290 L256 296 L260 290 C270 284 280 290 280 300 C280 312 256 330 256 330Z" fill="#e87aa0" opacity="0.65"/>
+</svg>

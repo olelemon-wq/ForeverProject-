@@ -14,6 +14,17 @@ import {
   Palette, RefreshCw, Eye, Calendar
 } from 'lucide-react';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const TIME_PRESETS = [
   "09:00 น.", "10:00 น.", "11:00 น.", "13:00 น.", "14:00 น.", "15:00 น.", 
@@ -649,7 +660,7 @@ function EditorWorkspace() {
       {/* 1. Left Sidebar: Card Settings Form & Layers */}
       <aside className="w-full lg:w-96 bg-white border-b lg:border-b-0 lg:border-r border-stone-200 flex flex-col shadow-xs overflow-hidden shrink-0 z-10">
         <div className="flex border-b border-stone-100 bg-stone-50/50 p-2 gap-1 shrink-0">
-          <button
+          <Button variant="ghost" type="button"
             onClick={() => setActiveTab('info')}
             className={`flex-1 py-2 px-3 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition select-none cursor-pointer ${
               activeTab === 'info' 
@@ -659,8 +670,8 @@ function EditorWorkspace() {
           >
             <FileText className="w-3.5 h-3.5" />
             <span>กรอกข้อมูลกำหนดการ</span>
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost" type="button"
             onClick={() => setActiveTab('layers')}
             className={`flex-1 py-2 px-3 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition select-none cursor-pointer ${
               activeTab === 'layers' 
@@ -670,7 +681,7 @@ function EditorWorkspace() {
           >
             <Layers className="w-3.5 h-3.5" />
             <span>องค์ประกอบเลเยอร์</span>
-          </button>
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -686,11 +697,10 @@ function EditorWorkspace() {
                   </h4>
                   <p className="text-[10px] text-stone-500 leading-normal">เปิดให้แขกเข้าชมกำหนดการออนไลน์ได้</p>
                 </div>
-                <input 
-                  type="checkbox" 
+                <Checkbox 
                   checked={formData.announcementActive}
-                  onChange={(e) => handleFieldChange('announcementActive', e.target.checked)}
-                  className="w-5 h-5 accent-emerald-650 cursor-pointer rounded"
+                  onCheckedChange={(checked) => handleFieldChange('announcementActive', !!checked)}
+                  className="w-5 h-5 cursor-pointer rounded"
                 />
               </div>
 
@@ -703,7 +713,7 @@ function EditorWorkspace() {
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-stone-600 block">ข้อความเกริ่นนำแจ้งข่าว</label>
-                  <textarea 
+                  <Textarea 
                     value={formData.announcementText} 
                     onChange={(e) => handleFieldChange('announcementText', e.target.value)} 
                     rows={2}
@@ -720,7 +730,7 @@ function EditorWorkspace() {
                       ? 'ชื่อสัตว์เลี้ยง'
                       : 'ชื่อผู้ล่วงลับ'}
                   </label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={formData.siteName} 
                     onChange={(e) => handleFieldChange('siteName', e.target.value)} 
@@ -745,7 +755,7 @@ function EditorWorkspace() {
                        'รายชื่อผู้ล่วงลับ'}
                     </span>
                     {!(siteCategory === 'Couple' || siteCategory === 'Wedding') && (
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => {
                           const nextSubjects = [...(formData.subjects || [])];
@@ -765,18 +775,24 @@ function EditorWorkspace() {
                       >
                         <Plus className="w-3 h-3" />
                         <span>เพิ่มรายชื่อ</span>
-                      </button>
+                      </Button>
                     )}
                   </div>
 
                   {(formData.subjects || []).map((sub: any, index: number) => {
-                    const yearsList = Array.from({ length: 150 }, (_, i) => new Date().getFullYear() - i);
-                    
+                    const toPickerYmd = (raw: unknown) => {
+                      if (!raw) return '';
+                      if (typeof raw === 'string') return raw.slice(0, 10);
+                      const d = new Date(raw as string | number | Date);
+                      if (isNaN(d.getTime())) return '';
+                      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                    };
+
                     return (
                       <div key={index} className="p-3 bg-stone-50/50 rounded-2xl border border-stone-200 space-y-2.5 relative">
                         {/* Remove button */}
                         {!(siteCategory === 'Couple' || siteCategory === 'Wedding') && (formData.subjects || []).length > 1 && (
-                          <button
+                          <Button variant="ghost"
                             type="button"
                             onClick={() => {
                               const nextSubjects = (formData.subjects || []).filter((_, idx) => idx !== index);
@@ -786,13 +802,13 @@ function EditorWorkspace() {
                             title="ลบรายชื่อ"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          </Button>
                         )}
 
                         {/* Name Input */}
                         <div className="space-y-1 pr-6">
                           <label className="text-[9px] font-bold text-stone-500 block">ชื่อ</label>
-                          <input
+                          <Input
                             type="text"
                             value={sub.name || ''}
                             onChange={(e) => {
@@ -808,18 +824,17 @@ function EditorWorkspace() {
                         {/* Still Alive checkbox for Pet and Family Legacy */}
                         {(siteCategory === 'Pet Memorial' || siteCategory === 'Family Legacy') && (
                           <label className="flex items-center gap-1.5 cursor-pointer select-none py-0.5">
-                            <input
-                              type="checkbox"
+                            <Checkbox
                               checked={sub.isAlive || false}
-                              onChange={(e) => {
+                              onCheckedChange={(checked) => {
                                 const nextSubjects = [...(formData.subjects || [])];
-                                const checked = e.target.checked;
+                                const isChecked = !!checked;
                                 nextSubjects[index] = {
                                   ...nextSubjects[index],
-                                  isAlive: checked,
-                                  deathDate: checked ? null : nextSubjects[index].deathDate,
-                                  deathYear: checked ? null : nextSubjects[index].deathYear,
-                                  deathYearOnly: checked ? false : nextSubjects[index].deathYearOnly,
+                                  isAlive: isChecked,
+                                  deathDate: isChecked ? null : nextSubjects[index].deathDate,
+                                  deathYear: isChecked ? null : nextSubjects[index].deathYear,
+                                  deathYearOnly: isChecked ? false : nextSubjects[index].deathYearOnly,
                                 };
                                 handleFieldChange('subjects', nextSubjects);
                               }}
@@ -832,33 +847,38 @@ function EditorWorkspace() {
                         )}
 
                         {/* Dates grid */}
-                        <div className={`grid gap-3.5 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                          {/* Birth Date */}
+                        <div className={`grid gap-3.5 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
                           <div className="space-y-1">
                             <span className="text-[9px] text-stone-500 font-semibold block">วันเกิด</span>
                             {sub.birthYearOnly ? (
-                              <select
-                                value={sub.birthYear || ''}
-                                onChange={(e) => {
+                              <ThaiDatePicker
+                                variant="input"
+                                yearOnly
+                                value={sub.birthYear != null ? `${sub.birthYear}-01-01` : ''}
+                                onChange={(ymd) => {
                                   const nextSubjects = [...(formData.subjects || [])];
-                                  const val = e.target.value ? parseInt(e.target.value, 10) : null;
-                                  nextSubjects[index] = {
-                                    ...nextSubjects[index],
-                                    birthYear: val,
-                                    birthDate: val ? new Date(val, 0, 1) : null
-                                  };
+                                  if (!ymd) {
+                                    nextSubjects[index] = {
+                                      ...nextSubjects[index],
+                                      birthYear: null,
+                                      birthDate: null,
+                                    };
+                                  } else {
+                                    const year = parseInt(ymd.slice(0, 4), 10);
+                                    nextSubjects[index] = {
+                                      ...nextSubjects[index],
+                                      birthYear: year,
+                                      birthDate: new Date(year, 0, 1),
+                                    };
+                                  }
                                   handleFieldChange('subjects', nextSubjects);
                                 }}
-                                className="w-full px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none cursor-pointer focus:border-emerald-500"
-                              >
-                                <option value="">เลือกปี พ.ศ.</option>
-                                {yearsList.map((y) => (
-                                  <option key={y} value={y}>พ.ศ. {y + 543}</option>
-                                ))}
-                              </select>
+                                placeholder="เลือกปี พ.ศ."
+                                align="left"
+                              />
                             ) : (
                               <div className="flex gap-1 items-center relative">
-                                <input
+                                <Input
                                   type="text"
                                   readOnly
                                   value={sub.birthDate ? new Date(sub.birthDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
@@ -866,6 +886,7 @@ function EditorWorkspace() {
                                   className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none min-w-0"
                                 />
                                 <ThaiDatePicker
+                                  value={toPickerYmd(sub.birthDate)}
                                   buttonClassName="p-1 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer"
                                   iconClassName="w-3 h-3"
                                   onChange={(val) => {
@@ -877,19 +898,18 @@ function EditorWorkspace() {
                               </div>
                             )}
                             <label className="flex items-center gap-1 cursor-pointer select-none">
-                              <input
-                                  type="checkbox"
+                              <Checkbox
                                   checked={sub.birthYearOnly || false}
-                                  onChange={(e) => {
+                                  onCheckedChange={(checked) => {
                                     const nextSubjects = [...(formData.subjects || [])];
-                                    const checked = e.target.checked;
+                                    const isChecked = !!checked;
                                     const bDateObj = sub.birthDate ? new Date(sub.birthDate) : null;
                                     const initialYear = bDateObj ? bDateObj.getFullYear() : new Date().getFullYear();
                                     nextSubjects[index] = {
                                       ...nextSubjects[index],
-                                      birthYearOnly: checked,
-                                      birthYear: checked ? initialYear : null,
-                                      birthDate: checked ? new Date(initialYear, 0, 1) : null
+                                      birthYearOnly: isChecked,
+                                      birthYear: isChecked ? initialYear : null,
+                                      birthDate: isChecked ? new Date(initialYear, 0, 1) : null
                                     };
                                     handleFieldChange('subjects', nextSubjects);
                                   }}
@@ -904,28 +924,34 @@ function EditorWorkspace() {
                             <div className="space-y-1">
                               <span className="text-[9px] text-stone-550 font-semibold block">วันเสียชีวิต</span>
                               {sub.deathYearOnly ? (
-                                <select
-                                  value={sub.deathYear || ''}
-                                  onChange={(e) => {
+                                <ThaiDatePicker
+                                  variant="input"
+                                  yearOnly
+                                  value={sub.deathYear != null ? `${sub.deathYear}-01-01` : ''}
+                                  onChange={(ymd) => {
                                     const nextSubjects = [...(formData.subjects || [])];
-                                    const val = e.target.value ? parseInt(e.target.value, 10) : null;
-                                    nextSubjects[index] = {
-                                      ...nextSubjects[index],
-                                      deathYear: val,
-                                      deathDate: val ? new Date(val, 0, 1) : null
-                                    };
+                                    if (!ymd) {
+                                      nextSubjects[index] = {
+                                        ...nextSubjects[index],
+                                        deathYear: null,
+                                        deathDate: null,
+                                      };
+                                    } else {
+                                      const year = parseInt(ymd.slice(0, 4), 10);
+                                      nextSubjects[index] = {
+                                        ...nextSubjects[index],
+                                        deathYear: year,
+                                        deathDate: new Date(year, 0, 1),
+                                      };
+                                    }
                                     handleFieldChange('subjects', nextSubjects);
                                   }}
-                                  className="w-full px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none cursor-pointer focus:border-emerald-500"
-                                >
-                                  <option value="">เลือกปี พ.ศ.</option>
-                                  {yearsList.map((y) => (
-                                    <option key={y} value={y}>พ.ศ. {y + 543}</option>
-                                  ))}
-                                </select>
+                                  placeholder="เลือกปี พ.ศ."
+                                  align="right"
+                                />
                               ) : (
                                 <div className="flex gap-1 items-center relative">
-                                  <input
+                                  <Input
                                     type="text"
                                     readOnly
                                     value={sub.deathDate ? new Date(sub.deathDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
@@ -933,6 +959,7 @@ function EditorWorkspace() {
                                     className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none min-w-0"
                                   />
                                   <ThaiDatePicker
+                                    value={toPickerYmd(sub.deathDate)}
                                     buttonClassName="p-1 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer"
                                     iconClassName="w-3 h-3"
                                     onChange={(val) => {
@@ -944,19 +971,18 @@ function EditorWorkspace() {
                                 </div>
                               )}
                               <label className="flex items-center gap-1 cursor-pointer select-none">
-                                <input
-                                  type="checkbox"
+                                <Checkbox
                                   checked={sub.deathYearOnly || false}
-                                  onChange={(e) => {
+                                  onCheckedChange={(checked) => {
                                     const nextSubjects = [...(formData.subjects || [])];
-                                    const checked = e.target.checked;
+                                    const isChecked = !!checked;
                                     const dDateObj = sub.deathDate ? new Date(sub.deathDate) : null;
                                     const initialYear = dDateObj ? dDateObj.getFullYear() : new Date().getFullYear();
                                     nextSubjects[index] = {
                                       ...nextSubjects[index],
-                                      deathYearOnly: checked,
-                                      deathYear: checked ? initialYear : null,
-                                      deathDate: checked ? new Date(initialYear, 0, 1) : null
+                                      deathYearOnly: isChecked,
+                                      deathYear: isChecked ? initialYear : null,
+                                      deathDate: isChecked ? new Date(initialYear, 0, 1) : null
                                     };
                                     handleFieldChange('subjects', nextSubjects);
                                   }}
@@ -977,7 +1003,7 @@ function EditorWorkspace() {
                     <label className="text-[10px] font-bold text-stone-600 block">
                       {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'สถานที่จัดงาน' : 'ชื่อวัด'}
                     </label>
-                    <input 
+                    <Input 
                       type="text" 
                       value={formData.announcementTempleName} 
                       onChange={(e) => handleFieldChange('announcementTempleName', e.target.value)} 
@@ -993,7 +1019,7 @@ function EditorWorkspace() {
                     <label className="text-[10px] font-bold text-stone-600 block">
                       {labels.pavilionLabel}
                     </label>
-                    <input 
+                    <Input 
                       type="text" 
                       value={formData.announcementPavilion} 
                       onChange={(e) => handleFieldChange('announcementPavilion', e.target.value)} 
@@ -1006,19 +1032,23 @@ function EditorWorkspace() {
                 <div className="space-y-3">
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-stone-600 block">สไตล์การ์ดประกาศ</label>
-                    <select 
-                      value={formData.announcementStyle} 
-                      onChange={(e) => handleFieldChange('announcementStyle', e.target.value)} 
-                      className="w-full px-2.5 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
-                    >
-                      <option value="ELEGANT_WHITE">ขาวหรูหรา (Elegant White)</option>
-                      <option value="CHARCOAL_SLATE">{getStyle3Config(siteCategory).name}</option>
-                      <option value="WARM_CREAM">ครีมทอง (Warm Cream)</option>
-                    </select>
+                    <Select
+                              value={formData.announcementStyle}
+                              onValueChange={(value) => handleFieldChange('announcementStyle', value)}
+                            >
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="ELEGANT_WHITE">ขาวหรูหรา (Elegant White)</SelectItem>
+                      <SelectItem value="CHARCOAL_SLATE">{getStyle3Config(siteCategory).name}</SelectItem>
+                      <SelectItem value="WARM_CREAM">ครีมทอง (Warm Cream)</SelectItem>
+                              </SelectContent>
+                            </Select>
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-stone-600 block">แผนที่ Google Maps</label>
-                    <input 
+                    <Input 
                       type="text" 
                       value={formData.announcementMapLink} 
                       onChange={(e) => handleFieldChange('announcementMapLink', e.target.value)} 
@@ -1044,7 +1074,7 @@ function EditorWorkspace() {
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex gap-1.5 items-center relative">
-                      <input 
+                      <Input 
                         type="text" 
                         value={formData.announcementWaterDate} 
                         onChange={(e) => handleFieldChange('announcementWaterDate', e.target.value)} 
@@ -1062,10 +1092,11 @@ function EditorWorkspace() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <select
-                        value={isCustomWaterTime ? 'CUSTOM' : formData.announcementWaterTime}
-                        onChange={(e) => {
-                          const val = e.target.value;
+                      <Select
+                              value={(isCustomWaterTime ? 'CUSTOM' : formData.announcementWaterTime) || '__empty__'}
+                              onValueChange={(raw) => {
+                                const value = raw === '__empty__' ? '' : raw;
+                                const val = value;
                           if (val === 'CUSTOM') {
                             setIsCustomWaterTime(true);
                             if (!formData.announcementWaterTime || TIME_PRESETS.includes(formData.announcementWaterTime)) {
@@ -1075,17 +1106,21 @@ function EditorWorkspace() {
                             setIsCustomWaterTime(false);
                             handleFieldChange('announcementWaterTime', val);
                           }
-                        }}
-                        className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"
-                      >
-                        <option value="">เลือกเวลา</option>
+                              }}
+                            >
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="__empty__">เลือกเวลา</SelectItem>
                         {TIME_PRESETS.map((preset) => (
-                          <option key={preset} value={preset}>{preset}</option>
+                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                         ))}
-                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
-                      </select>
+                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
+                              </SelectContent>
+                            </Select>
                       {isCustomWaterTime && (
-                        <input 
+                        <Input 
                           type="text" 
                           value={formData.announcementWaterTime} 
                           onChange={(e) => handleFieldChange('announcementWaterTime', e.target.value)} 
@@ -1105,7 +1140,7 @@ function EditorWorkspace() {
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex gap-1.5 items-center relative">
-                      <input 
+                      <Input 
                         type="text" 
                         value={formData.announcementAbhidhammaDateRange} 
                         onChange={(e) => handleFieldChange('announcementAbhidhammaDateRange', e.target.value)} 
@@ -1129,10 +1164,11 @@ function EditorWorkspace() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <select
-                        value={isCustomAbhidhammaTime ? 'CUSTOM' : formData.announcementAbhidhammaTime}
-                        onChange={(e) => {
-                          const val = e.target.value;
+                      <Select
+                              value={(isCustomAbhidhammaTime ? 'CUSTOM' : formData.announcementAbhidhammaTime) || '__empty__'}
+                              onValueChange={(raw) => {
+                                const value = raw === '__empty__' ? '' : raw;
+                                const val = value;
                           if (val === 'CUSTOM') {
                             setIsCustomAbhidhammaTime(true);
                             if (!formData.announcementAbhidhammaTime || TIME_PRESETS.includes(formData.announcementAbhidhammaTime)) {
@@ -1142,17 +1178,21 @@ function EditorWorkspace() {
                             setIsCustomAbhidhammaTime(false);
                             handleFieldChange('announcementAbhidhammaTime', val);
                           }
-                        }}
-                        className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"
-                      >
-                        <option value="">เลือกเวลา</option>
+                              }}
+                            >
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="__empty__">เลือกเวลา</SelectItem>
                         {TIME_PRESETS.map((preset) => (
-                          <option key={preset} value={preset}>{preset}</option>
+                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                         ))}
-                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
-                      </select>
+                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
+                              </SelectContent>
+                            </Select>
                       {isCustomAbhidhammaTime && (
-                        <input 
+                        <Input 
                           type="text" 
                           value={formData.announcementAbhidhammaTime} 
                           onChange={(e) => handleFieldChange('announcementAbhidhammaTime', e.target.value)} 
@@ -1172,7 +1212,7 @@ function EditorWorkspace() {
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex gap-1.5 items-center relative">
-                      <input 
+                      <Input 
                         type="text" 
                         value={formData.announcementCremationDate} 
                         onChange={(e) => handleFieldChange('announcementCremationDate', e.target.value)} 
@@ -1190,10 +1230,11 @@ function EditorWorkspace() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <select
-                        value={isCustomCremationTime ? 'CUSTOM' : formData.announcementCremationTime}
-                        onChange={(e) => {
-                          const val = e.target.value;
+                      <Select
+                              value={(isCustomCremationTime ? 'CUSTOM' : formData.announcementCremationTime) || '__empty__'}
+                              onValueChange={(raw) => {
+                                const value = raw === '__empty__' ? '' : raw;
+                                const val = value;
                           if (val === 'CUSTOM') {
                             setIsCustomCremationTime(true);
                             if (!formData.announcementCremationTime || TIME_PRESETS.includes(formData.announcementCremationTime)) {
@@ -1203,17 +1244,21 @@ function EditorWorkspace() {
                             setIsCustomCremationTime(false);
                             handleFieldChange('announcementCremationTime', val);
                           }
-                        }}
-                        className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"
-                      >
-                        <option value="">เลือกเวลา</option>
+                              }}
+                            >
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="__empty__">เลือกเวลา</SelectItem>
                         {TIME_PRESETS.map((preset) => (
-                          <option key={preset} value={preset}>{preset}</option>
+                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                         ))}
-                        <option value="CUSTOM">พิมพ์ระบุเวลาเอง...</option>
-                      </select>
+                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
+                              </SelectContent>
+                            </Select>
                       {isCustomCremationTime && (
-                        <input 
+                        <Input 
                           type="text" 
                           value={formData.announcementCremationTime} 
                           onChange={(e) => handleFieldChange('announcementCremationTime', e.target.value)} 
@@ -1235,7 +1280,7 @@ function EditorWorkspace() {
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-stone-600 block">การแต่งกายเข้าร่วมงาน</label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={formData.announcementDressCode} 
                     onChange={(e) => handleFieldChange('announcementDressCode', e.target.value)} 
@@ -1252,32 +1297,36 @@ function EditorWorkspace() {
                   <label className="text-[10px] font-bold text-stone-600 block">
                     {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'นโยบายการรับซอง/ของขวัญ' : 'นโยบายพวงหรีด'}
                   </label>
-                  <select 
-                    value={formData.announcementWreathPolicy} 
-                    onChange={(e) => handleFieldChange('announcementWreathPolicy', e.target.value)} 
-                    className="w-full px-2.5 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
-                  >
-                    {siteCategory === 'Couple' || siteCategory === 'Wedding' ? (
+                  <Select
+                              value={formData.announcementWreathPolicy}
+                              onValueChange={(value) => handleFieldChange('announcementWreathPolicy', value)}
+                            >
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+{siteCategory === 'Couple' || siteCategory === 'Wedding' ? (
                       <>
-                        <option value="NORMAL">ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ</option>
-                        <option value="NO_FLOWERS">ขออภัย งดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)</option>
-                        <option value="DONATION_ONLY">ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)</option>
-                        <option value="NO_WREATH">ขออภัย งดรับซองและของขวัญทุกประเภท</option>
+                        <SelectItem value="NORMAL">ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ</SelectItem>
+                        <SelectItem value="NO_FLOWERS">ขออภัย งดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)</SelectItem>
+                        <SelectItem value="DONATION_ONLY">ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)</SelectItem>
+                        <SelectItem value="NO_WREATH">ขออภัย งดรับซองและของขวัญทุกประเภท</SelectItem>
                       </>
                     ) : (
                       <>
-                        <option value="NORMAL">เปิดรับพวงหรีดตามปกติ</option>
-                        <option value="NO_FLOWERS">งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)</option>
-                        <option value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</option>
-                        <option value="NO_WREATH">งดรับพวงหรีดทุกประเภท</option>
+                        <SelectItem value="NORMAL">เปิดรับพวงหรีดตามปกติ</SelectItem>
+                        <SelectItem value="NO_FLOWERS">งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)</SelectItem>
+                        <SelectItem value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</SelectItem>
+                        <SelectItem value="NO_WREATH">งดรับพวงหรีดทุกประเภท</SelectItem>
                       </>
                     )}
-                  </select>
+                              </SelectContent>
+                            </Select>
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-stone-600 block">เบอร์ติดต่อประสานงานเจ้าภาพ</label>
-                  <input 
+                  <Input 
                     type="text" 
                     value={formData.announcementContactPhone} 
                     onChange={(e) => handleFieldChange('announcementContactPhone', e.target.value)} 
@@ -1293,13 +1342,13 @@ function EditorWorkspace() {
             <div className="space-y-4">
               <div className="flex justify-between items-center border-b border-stone-100 pb-2">
                 <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">เลเยอร์อักษรบนการ์ด ({elements.length})</span>
-                <button
+                <Button variant="ghost" type="button"
                   onClick={handleAddText}
-                  className="py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-lg border border-emerald-200/55 transition flex items-center gap-1 select-none cursor-pointer"
+                  className="h-auto py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-lg border border-emerald-200/55 transition flex items-center gap-1 select-none cursor-pointer"
                 >
                   <Plus className="w-3 h-3" />
                   <span>เพิ่มข้อความอิสระ</span>
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-2">
@@ -1317,7 +1366,7 @@ function EditorWorkspace() {
                     >
                       <span className="truncate pr-2">{el.type === 'text' ? (el as TextElement).text : 'รูปภาพ'}</span>
                       <div className="flex items-center gap-1 shrink-0">
-                        <button
+                        <Button variant="ghost" type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             updateElement(el.id, { locked: !el.locked });
@@ -1325,8 +1374,8 @@ function EditorWorkspace() {
                           className={`p-1 hover:bg-stone-200/50 rounded transition ${el.locked ? 'text-amber-600' : 'text-stone-400'}`}
                         >
                           {el.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
-                        </button>
-                        <button
+                        </Button>
+                        <Button variant="ghost" type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             removeElement(el.id);
@@ -1334,7 +1383,7 @@ function EditorWorkspace() {
                           className="p-1 hover:bg-stone-200/50 rounded transition text-stone-400 hover:text-rose-600"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );
@@ -1382,7 +1431,7 @@ function EditorWorkspace() {
             {/* Raw edit textarea */}
             <div className="space-y-1.5">
               <label className="font-bold text-stone-600 block">เนื้อหาข้อความ</label>
-              <textarea
+              <Textarea
                 value={selectedElement.text}
                 onChange={(e) => {
                   const text = e.target.value;
@@ -1399,26 +1448,30 @@ function EditorWorkspace() {
             {/* Font Family Selection */}
             <div className="space-y-1.5">
               <label className="font-bold text-stone-600 block">แบบตัวอักษร (Font Family)</label>
-              <select
-                value={selectedElement.fontFamily}
-                onChange={(e) => {
-                  const fontFamily = e.target.value;
+              <Select
+                              value={selectedElement.fontFamily}
+                              onValueChange={(value) => {
+                  const fontFamily = value;
                   updateElement(selectedElement.id, { 
                     fontFamily,
                     width: measureTextWidth(selectedElement.text, selectedElement.fontSize, fontFamily, selectedElement.fontStyle) + 10
                   });
                 }}
-                className="w-full px-2.5 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500 transition"
-              >
-                <option value="LINE Seed Sans TH" style={{ fontFamily: 'LINE Seed Sans TH' }}>LINE Seed Sans TH (แนะนำ)</option>
-                <option value="Sarabun" style={{ fontFamily: 'Sarabun' }}>Sarabun (ทางการสุภาพ)</option>
-                <option value="Niramit" style={{ fontFamily: 'Niramit' }}>Niramit (คลาสสิกเรียบหรู)</option>
-                <option value="Inter" style={{ fontFamily: 'Inter' }}>Inter (โมเดิร์น)</option>
-                <option value="Charm" style={{ fontFamily: 'Charm' }}>Charm (เขียนมือ อ่อนช้อย)</option>
-                <option value="Charmonman" style={{ fontFamily: 'Charmonman' }}>Charmonman (คัดลายมือ อ่อนช้อย)</option>
-                <option value="Srisakdi" style={{ fontFamily: 'Srisakdi' }}>Srisakdi (สวยหรู วิจิตร)</option>
-                <option value="Thasadith" style={{ fontFamily: 'Thasadith' }}>Thasadith (โมเดิร์น เรียบง่าย)</option>
-              </select>
+                            >
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500 transition"}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+<SelectItem value="LINE Seed Sans TH" style={{ fontFamily: 'LINE Seed Sans TH' }}>LINE Seed Sans TH (แนะนำ)</SelectItem>
+                <SelectItem value="Sarabun" style={{ fontFamily: 'Sarabun' }}>Sarabun (ทางการสุภาพ)</SelectItem>
+                <SelectItem value="Niramit" style={{ fontFamily: 'Niramit' }}>Niramit (คลาสสิกเรียบหรู)</SelectItem>
+                <SelectItem value="Inter" style={{ fontFamily: 'Inter' }}>Inter (โมเดิร์น)</SelectItem>
+                <SelectItem value="Charm" style={{ fontFamily: 'Charm' }}>Charm (เขียนมือ อ่อนช้อย)</SelectItem>
+                <SelectItem value="Charmonman" style={{ fontFamily: 'Charmonman' }}>Charmonman (คัดลายมือ อ่อนช้อย)</SelectItem>
+                <SelectItem value="Srisakdi" style={{ fontFamily: 'Srisakdi' }}>Srisakdi (สวยหรู วิจิตร)</SelectItem>
+                <SelectItem value="Thasadith" style={{ fontFamily: 'Thasadith' }}>Thasadith (โมเดิร์น เรียบง่าย)</SelectItem>
+                              </SelectContent>
+                            </Select>
             </div>
 
             {/* Font Size Selector */}
@@ -1427,7 +1480,7 @@ function EditorWorkspace() {
                 <label className="font-bold text-stone-600">ขนาดตัวอักษร ({selectedElement.fontSize}px)</label>
               </div>
               <div className="flex items-center gap-3">
-                <input
+                <Input
                   type="range"
                   min="8"
                   max="72"
@@ -1441,7 +1494,7 @@ function EditorWorkspace() {
                   }}
                   className="flex-1 accent-emerald-650 cursor-pointer"
                 />
-                <input
+                <Input
                   type="number"
                   min="8"
                   max="72"
@@ -1462,13 +1515,13 @@ function EditorWorkspace() {
             <div className="space-y-1.5">
               <label className="font-bold text-stone-600 block">สีตัวอักษร (Text Color)</label>
               <div className="flex items-center gap-3">
-                <input
+                <Input
                   type="color"
                   value={selectedElement.fill}
                   onChange={(e) => updateElement(selectedElement.id, { fill: e.target.value })}
                   className="w-8 h-8 border border-stone-200 rounded-lg cursor-pointer shrink-0"
                 />
-                <input
+                <Input
                   type="text"
                   value={selectedElement.fill}
                   onChange={(e) => updateElement(selectedElement.id, { fill: e.target.value })}
@@ -1487,7 +1540,7 @@ function EditorWorkspace() {
                   '#d6d3d1', // Gray slate
                   '#000000', // Black
                 ].map((color) => (
-                  <button
+                  <Button variant="ghost" type="button"
                     key={color}
                     onClick={() => updateElement(selectedElement.id, { fill: color })}
                     style={{ backgroundColor: color }}
@@ -1510,7 +1563,7 @@ function EditorWorkspace() {
                     const isAlign = selectedElement.align === align;
                     const Icon = align === 'left' ? AlignLeft : align === 'center' ? AlignCenter : AlignRight;
                     return (
-                      <button
+                      <Button variant="ghost" type="button"
                         key={align}
                         onClick={() => updateElement(selectedElement.id, { align })}
                         className={`flex-1 py-1.5 flex justify-center items-center transition select-none cursor-pointer ${
@@ -1518,7 +1571,7 @@ function EditorWorkspace() {
                         }`}
                       >
                         <Icon className="w-3.5 h-3.5" />
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
@@ -1528,7 +1581,7 @@ function EditorWorkspace() {
               <div className="space-y-1.5">
                 <label className="font-bold text-stone-600 block">สไตล์ตัวหนังสือ</label>
                 <div className="flex border border-stone-200 rounded-lg overflow-hidden divide-x divide-stone-200 bg-stone-50/50">
-                  <button
+                  <Button variant="ghost" type="button"
                     onClick={() => {
                       const isBold = selectedElement.fontStyle.includes('bold');
                       const isItalic = selectedElement.fontStyle.includes('italic');
@@ -1545,8 +1598,8 @@ function EditorWorkspace() {
                     }`}
                   >
                     <Bold className="w-3.5 h-3.5" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button variant="ghost" type="button"
                     onClick={() => {
                       const isBold = selectedElement.fontStyle.includes('bold');
                       const isItalic = selectedElement.fontStyle.includes('italic');
@@ -1563,7 +1616,7 @@ function EditorWorkspace() {
                     }`}
                   >
                     <Italic className="w-3.5 h-3.5" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -1571,7 +1624,7 @@ function EditorWorkspace() {
             {/* Opacity slider */}
             <div className="space-y-1.5 pt-1">
               <label className="font-bold text-stone-600 block">ความโปร่งใส (Opacity: {Math.round(selectedElement.opacity * 100)}%)</label>
-              <input
+              <Input
                 type="range"
                 min="10"
                 max="100"
@@ -1585,25 +1638,25 @@ function EditorWorkspace() {
             <div className="space-y-2 border-t border-stone-100 pt-3.5">
               <label className="font-bold text-stone-600 block">จัดตำแหน่งการทับซ้อน (Layers)</label>
               <div className="grid grid-cols-2 gap-2">
-                <button
+                <Button variant="ghost" type="button"
                   onClick={handleBringToFront}
-                  className="py-1.5 px-3 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-lg flex items-center justify-center gap-1 shadow-2xs hover:text-stone-900 transition cursor-pointer select-none"
+                  className="h-auto py-1.5 px-3 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-lg flex items-center justify-center gap-1 shadow-2xs hover:text-stone-900 transition cursor-pointer select-none"
                 >
                   <BringToFront className="w-3.5 h-3.5 text-stone-500" />
                   <span>นำไว้หน้าสุด</span>
-                </button>
-                <button
+                </Button>
+                <Button variant="ghost" type="button"
                   onClick={handleSendToBack}
-                  className="py-1.5 px-3 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-lg flex items-center justify-center gap-1 shadow-2xs hover:text-stone-900 transition cursor-pointer select-none"
+                  className="h-auto py-1.5 px-3 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-lg flex items-center justify-center gap-1 shadow-2xs hover:text-stone-900 transition cursor-pointer select-none"
                 >
                   <SendToBack className="w-3.5 h-3.5 text-stone-500" />
                   <span>ส่งไว้หลังสุด</span>
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Lock / Unlock Toggle */}
-            <button
+            <Button variant="ghost" type="button"
               onClick={() => updateElement(selectedElement.id, { locked: !selectedElement.locked })}
               className={`w-full py-2 px-4 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 select-none cursor-pointer ${
                 selectedElement.locked 
@@ -1613,16 +1666,16 @@ function EditorWorkspace() {
             >
               {selectedElement.locked ? <Lock className="w-3.5 h-3.5 shrink-0" /> : <Unlock className="w-3.5 h-3.5 shrink-0" />}
               <span>{selectedElement.locked ? 'ปลดล็อกข้อความ (Unlock)' : 'ล็อกตำแหน่งบนการ์ด (Lock)'}</span>
-            </button>
+            </Button>
 
             {/* Delete element button */}
-            <button
+            <Button variant="ghost" type="button"
               onClick={handleRemoveSelected}
-              className="w-full py-2 px-4 bg-rose-50 hover:bg-rose-100 border border-rose-200 hover:border-rose-300 text-rose-800 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 select-none cursor-pointer"
+              className="h-auto w-full py-2 px-4 bg-rose-50 hover:bg-rose-100 border border-rose-200 hover:border-rose-300 text-rose-800 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 select-none cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>ลบข้อความนี้ออก (Delete)</span>
-            </button>
+            </Button>
 
           </div>
         ) : (
@@ -1639,7 +1692,7 @@ function EditorWorkspace() {
               {/* Grid of Templates & Colors */}
               <div className="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
                 {/* 1. White Color */}
-                <button
+                <Button variant="ghost" type="button"
                   onClick={() => setBackground('#ffffff')}
                   className={`p-2 rounded-xl border text-center transition cursor-pointer hover:bg-stone-55 ${
                     background === '#ffffff' ? 'border-emerald-500 bg-emerald-50/15 font-bold text-emerald-800' : 'border-stone-200 text-stone-600 bg-white'
@@ -1649,10 +1702,10 @@ function EditorWorkspace() {
                     White
                   </div>
                   <span className="text-[10px] block">ขาวสุภาพ</span>
-                </button>
+                </Button>
 
                 {/* 2. Charcoal Slate Color */}
-                <button
+                <Button variant="ghost" type="button"
                   onClick={() => setBackground('/Template-cards/charcoal_gold.png')}
                   className={`p-2 rounded-xl border text-center transition cursor-pointer hover:bg-stone-55 ${
                     background === '/Template-cards/charcoal_gold.png' ? 'border-emerald-500 bg-emerald-50/15 font-bold text-emerald-800' : 'border-stone-200 text-stone-600 bg-white'
@@ -1663,10 +1716,10 @@ function EditorWorkspace() {
                     className="w-full h-14 rounded-lg bg-cover bg-center border border-stone-250 shadow-2xs mb-1.5"
                   />
                   <span className="text-[10px] block font-bold text-stone-700">เทาสุภาพ (ทอง)</span>
-                </button>
+                </Button>
 
                 {/* 3. Warm Cream Color */}
-                <button
+                <Button variant="ghost" type="button"
                   onClick={() => setBackground('#FAF6EE')}
                   className={`p-2 rounded-xl border text-center transition cursor-pointer hover:bg-stone-55 ${
                     background === '#FAF6EE' ? 'border-emerald-500 bg-emerald-50/15 font-bold text-emerald-800' : 'border-stone-200 text-stone-600 bg-white'
@@ -1676,14 +1729,14 @@ function EditorWorkspace() {
                     Cream
                   </div>
                   <span className="text-[10px] block">ครีมทอง</span>
-                </button>
+                </Button>
 
                 {/* 10 Image Templates */}
                 {Array.from({ length: 10 }).map((_, i) => {
                   const num = String(i + 1).padStart(2, '0');
                   const path = `/Template-cards/Template-${num}.jpeg`;
                   return (
-                    <button
+                    <Button variant="ghost" type="button"
                       key={num}
                       onClick={() => setBackground(path)}
                       className={`p-2 rounded-xl border text-center transition cursor-pointer hover:bg-stone-55 ${
@@ -1695,7 +1748,7 @@ function EditorWorkspace() {
                         className="w-full h-14 rounded-lg bg-cover bg-center border border-stone-250 shadow-2xs mb-1.5"
                       />
                       <span className="text-[10px] block">สไตล์ {num}</span>
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -1759,13 +1812,13 @@ function EditorWorkspaceContainer() {
             </span>
           )}
           
-          <button
+          <Button variant="ghost" type="button"
             onClick={saveCard}
-            className="py-2 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs hover:shadow-sm transition cursor-pointer select-none"
+            className="h-auto py-2 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs hover:shadow-sm transition cursor-pointer select-none"
           >
             <Save className="w-3.5 h-3.5" />
             <span>บันทึกกำหนดการและการ์ด</span>
-          </button>
+          </Button>
         </div>
       </header>
 

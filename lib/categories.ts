@@ -137,7 +137,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
   'Pet Memorial': {
     label: 'Pet Memorial (สัตว์เลี้ยงแสนรัก)',
     tagline: 'อนุสรณ์สถานรำลึกถึงสัตว์เลี้ยงสมาชิกในครอบครัว',
-    optional: ['announcement', 'condolence', 'memory', 'feed', 'ebooks', 'donation'],
+    optional: ['announcement', 'condolence', 'memory', 'feed', 'donation'],
     defaultOn: ['condolence', 'memory'],
     featureLabels: {
       announcement: { label: 'การ์ดส่งน้องกลับดาว', description: 'การ์ดแจ้งข่าวส่งน้องกันกลับดาวดึงดูดความรักและความคิดถึง' },
@@ -147,7 +147,6 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
       memory: { label: 'ไดอารี่ความสุข', description: 'พื้นที่โพสต์รูปถ่ายและเขียนบอกเล่าเรื่องราวความสุขระหว่างเรา' },
       feed: { label: 'ฟีดรักสัตว์เลี้ยง', description: 'ฟีดคอมเมนต์ส่งความระลึกถึง ส่งกอดอุ่น ๆ และแสดงความรู้สึกดี ๆ' },
       family: { label: 'สมาชิกสี่ขา', description: 'แผนผังพี่น้องและเพื่อนแก๊งสี่ขาของเจ้าตัวน้อย' },
-      ebooks: { label: 'บันทึกการเดินทางน้อง', description: 'สมุดภาพบันทึกการเดินทางและไดอารี่ออนไลน์ของเด็ก ๆ' },
       donation: { label: 'สมทบกองทุนสี่ขา', description: 'ร่วมบริจาคสมทบทุนเพื่อช่วยเหลือสัตว์ยากไร้/สัตว์พิการ' },
     },
     home: {

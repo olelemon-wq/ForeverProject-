@@ -38,17 +38,24 @@ async function getGalleryMedia(websiteId: string) {
 }
 
 function getDisplayUrl(filePath: string, mimeType: string, index: number) {
+  // Encode path segments so spaces / parentheses in filenames load reliably
+  if (filePath.startsWith('/')) {
+    return filePath
+      .split('/')
+      .map((seg, i) => (i === 0 ? seg : encodeURIComponent(seg)))
+      .join('/');
+  }
   if (filePath.startsWith('https://storage.forever.co.th')) {
-    const placeholders = [
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80',
-    ];
-    return placeholders[index % placeholders.length];
+    try {
+      const u = new URL(filePath);
+      u.pathname = u.pathname
+        .split('/')
+        .map((seg) => (seg ? encodeURIComponent(decodeURIComponent(seg)) : ''))
+        .join('/');
+      return u.toString();
+    } catch {
+      return filePath;
+    }
   }
   return filePath;
 }
@@ -86,7 +93,7 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
               <div className="w-full flex items-center justify-center gap-4 pt-4 select-none">
                 <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-stone-200" />
                 <div className="flex-shrink-0">
-                  <CategoryOrnament category={tenant.category} />
+                  <CategoryOrnament category={tenant.category} count={1} />
                 </div>
                 <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-stone-200" />
               </div>

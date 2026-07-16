@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8f5ff"/>
+      <stop offset="100%" stop-color="#efe8f8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- Wedding rings -->
+  <circle cx="230" cy="260" r="50" fill="none" stroke="#d4a030" stroke-width="8" opacity="0.45"/>
+  <circle cx="282" cy="260" r="50" fill="none" stroke="#c89828" stroke-width="8" opacity="0.4"/>
+  <!-- Diamond on left ring -->
+  <polygon points="215,210 208,222 222,222" fill="#e0d8f0" opacity="0.5"/>
+  <polygon points="215,210 208,222 215,218 222,222" fill="#c8c0e0" opacity="0.4"/>
+  <!-- Sparkles -->
+  <circle cx="180" cy="200" r="2.5" fill="#f0d860" opacity="0.4"/>
+  <circle cx="330" cy="210" r="2" fill="#f0d860" opacity="0.35"/>
+  <circle cx="256" cy="180" r="2" fill="#f0d860" opacity="0.3"/>
+</svg>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#87CEEB"/>
+      <stop offset="60%" stop-color="#E0F0FF"/>
+      <stop offset="100%" stop-color="#f8ede3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <!-- Rainbow bridge -->
+  <path d="M200 700 Q800 200 1400 700" fill="none" stroke="#ff9999" stroke-width="30" opacity="0.3"/>
+  <path d="M200 700 Q800 230 1400 700" fill="none" stroke="#ffcc80" stroke-width="26" opacity="0.3"/>
+  <path d="M200 700 Q800 260 1400 700" fill="none" stroke="#fff9c4" stroke-width="22" opacity="0.35"/>
+  <path d="M200 700 Q800 290 1400 700" fill="none" stroke="#c8e6c9" stroke-width="18" opacity="0.3"/>
+  <path d="M200 700 Q800 320 1400 700" fill="none" stroke="#bbdefb" stroke-width="14" opacity="0.3"/>
+  <!-- Clouds -->
+  <ellipse cx="300" cy="200" rx="120" ry="50" fill="#fff" opacity="0.6"/>
+  <ellipse cx="380" cy="185" rx="80" ry="40" fill="#fff" opacity="0.5"/>
+  <ellipse cx="1200" cy="250" rx="100" ry="45" fill="#fff" opacity="0.5"/>
+  <ellipse cx="1280" cy="240" rx="70" ry="35" fill="#fff" opacity="0.4"/>
+  <!-- Ground -->
+  <path d="M0 750 Q400 700 800 730 Q1200 760 1600 720 L1600 900 L0 900Z" fill="#c8dbbe" opacity="0.6"/>
+  <!-- Flowers -->
+  <circle cx="200" cy="780" r="8" fill="#f8a4b8" opacity="0.6"/>
+  <circle cx="500" cy="760" r="6" fill="#c9a8e8" opacity="0.5"/>
+  <circle cx="900" cy="770" r="7" fill="#f8a4b8" opacity="0.5"/>
+  <circle cx="1300" cy="755" r="8" fill="#ffcc80" opacity="0.5"/>
+  <!-- Paw prints trail -->
+  <ellipse cx="600" cy="800" rx="10" ry="8" fill="#b08968" opacity="0.25"/>
+  <circle cx="588" cy="786" r="4" fill="#b08968" opacity="0.2"/>
+  <circle cx="612" cy="786" r="4" fill="#b08968" opacity="0.2"/>
+  <ellipse cx="700" cy="780" rx="10" ry="8" fill="#b08968" opacity="0.2"/>
+  <circle cx="688" cy="766" r="4" fill="#b08968" opacity="0.15"/>
+  <circle cx="712" cy="766" r="4" fill="#b08968" opacity="0.15"/>
+</svg>

@@ -81,10 +81,15 @@ export async function POST(request: Request) {
     let uploadUrl = '';
     let fileUrl = '';
 
-    const hasS3Config = 
-      process.env.S3_ACCESS_KEY_ID && 
-      process.env.S3_SECRET_ACCESS_KEY && 
-      process.env.S3_ENDPOINT && 
+    const s3Endpoint = process.env.S3_ENDPOINT || '';
+    const s3LooksValid =
+      /^https?:\/\//i.test(s3Endpoint) &&
+      !/[<>]|account_id|your-|xxx|example\.com/i.test(s3Endpoint);
+
+    const hasS3Config =
+      s3LooksValid &&
+      process.env.S3_ACCESS_KEY_ID &&
+      process.env.S3_SECRET_ACCESS_KEY &&
       process.env.S3_BUCKET_NAME;
 
     if (hasS3Config) {
@@ -112,12 +117,12 @@ export async function POST(request: Request) {
       } catch (s3Err) {
         console.error('Error generating real S3 presigned URL:', s3Err);
         // Fallback to mock on error
-        uploadUrl = `/api/media/upload-mock?key=${fileKey}`;
+        uploadUrl = `/api/media/upload-mock?key=${encodeURIComponent(fileKey)}`;
         fileUrl = `/${fileKey}`;
       }
     } else {
       // Standard local simulation mock fallback
-      uploadUrl = `/api/media/upload-mock?key=${fileKey}`;
+      uploadUrl = `/api/media/upload-mock?key=${encodeURIComponent(fileKey)}`;
       fileUrl = `/${fileKey}`;
     }
 

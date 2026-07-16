@@ -18,6 +18,18 @@ interface GalleryClientProps {
   themeConfig?: any;
 }
 
+/**
+ * Classic masonry (natural heights). Use fewer columns when the set is small
+ * so the card still reads full — avoid sparse 4-col with large empty bottoms.
+ */
+function masonryColumnsClass(count: number) {
+  if (count <= 1) return 'columns-1 max-w-2xl mx-auto';
+  if (count === 2) return 'columns-2';
+  if (count <= 4) return 'columns-2';
+  if (count <= 8) return 'columns-2 md:columns-3';
+  return 'columns-2 md:columns-3 lg:columns-4';
+}
+
 export default function GalleryClient({ mediaList, slug, themeConfig }: GalleryClientProps) {
   const [activeAlbum, setActiveAlbum] = React.useState('ALL');
 
@@ -26,17 +38,16 @@ export default function GalleryClient({ mediaList, slug, themeConfig }: GalleryC
 
   const filteredMediaList = activeAlbum === 'ALL'
     ? mediaList
-    : mediaList.filter(m => mediaAlbums[m.id] === activeAlbum);
+    : mediaList.filter((m) => mediaAlbums[m.id] === activeAlbum);
 
   return (
     <div className="space-y-6">
-      {/* Album Tabs */}
       {albums.length > 0 && (
         <div className="flex flex-wrap items-center justify-center gap-2 pb-4 select-none">
           <button
             type="button"
             onClick={() => setActiveAlbum('ALL')}
-            className="px-4 py-1.5 rounded-full text-xs font-bold transition border"
+            className="rounded-full border px-4 py-1.5 text-xs font-bold transition"
             style={{
               borderColor: activeAlbum === 'ALL' ? 'var(--theme-primary, #0d9488)' : '#e7e5e4',
               backgroundColor: activeAlbum === 'ALL' ? 'var(--theme-primary, #0d9488)' : 'transparent',
@@ -46,14 +57,14 @@ export default function GalleryClient({ mediaList, slug, themeConfig }: GalleryC
             ทั้งหมด ({mediaList.length})
           </button>
           {albums.map((albumName) => {
-            const count = mediaList.filter(m => mediaAlbums[m.id] === albumName).length;
+            const count = mediaList.filter((m) => mediaAlbums[m.id] === albumName).length;
             const isSelected = activeAlbum === albumName;
             return (
               <button
                 key={albumName}
                 type="button"
                 onClick={() => setActiveAlbum(albumName)}
-                className="px-4 py-1.5 rounded-full text-xs font-bold transition border"
+                className="rounded-full border px-4 py-1.5 text-xs font-bold transition"
                 style={{
                   borderColor: isSelected ? 'var(--theme-primary, #0d9488)' : '#e7e5e4',
                   backgroundColor: isSelected ? 'var(--theme-primary, #0d9488)' : 'transparent',
@@ -67,37 +78,34 @@ export default function GalleryClient({ mediaList, slug, themeConfig }: GalleryC
         </div>
       )}
 
-      {/* Grid Display */}
       {mediaList.length === 0 ? (
-        <div className="text-center py-16 text-stone-500 text-sm border border-dashed border-stone-200 rounded-2xl space-y-2">
-          <ImageIcon className="w-10 h-10 text-stone-300 mx-auto block" />
+        <div className="space-y-2 rounded-2xl border border-dashed border-stone-200 py-16 text-center text-sm text-stone-500">
+          <ImageIcon className="mx-auto block size-10 text-stone-300" />
           <p>ยังไม่มีการอัปโหลดไฟล์รูปภาพความทรงจำ</p>
         </div>
       ) : filteredMediaList.length === 0 ? (
-        <div className="text-center py-16 text-stone-500 text-sm border border-dashed border-stone-200 rounded-2xl space-y-2">
-          <ImageIcon className="w-10 h-10 text-stone-300 mx-auto block" />
+        <div className="space-y-2 rounded-2xl border border-dashed border-stone-200 py-16 text-center text-sm text-stone-500">
+          <ImageIcon className="mx-auto block size-10 text-stone-300" />
           <p>ยังไม่มีรูปภาพในอัลบั้มนี้</p>
         </div>
       ) : (
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
-          {filteredMediaList.map((media) => {
-            return (
-              <div 
-                key={media.id} 
-                className="break-inside-avoid mb-4 relative group rounded-2xl overflow-hidden border border-stone-150 bg-stone-50 shadow-xs transition hover:scale-[1.01] hover:shadow-md"
-              >
-                <img 
-                  src={media.displayUrl} 
-                  alt={media.fileName} 
-                  className="w-full h-auto block animate-fade-in" 
-                  loading="lazy" 
-                />
-                <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition flex items-end p-3 pointer-events-none">
-                  <span className="text-[10px] text-white font-medium truncate w-full">{media.fileName}</span>
-                </div>
+        <div className={`w-full [column-gap:1rem] ${masonryColumnsClass(filteredMediaList.length)}`}>
+          {filteredMediaList.map((media) => (
+            <div
+              key={media.id}
+              className="group relative mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-stone-150 bg-stone-50 shadow-xs transition hover:scale-[1.01] hover:shadow-md"
+            >
+              <img
+                src={media.displayUrl}
+                alt={media.fileName}
+                className="block h-auto w-full animate-fade-in"
+                loading="lazy"
+              />
+              <div className="pointer-events-none absolute inset-0 flex items-end bg-stone-900/40 p-3 opacity-0 transition group-hover:opacity-100">
+                <span className="w-full truncate text-[10px] font-medium text-white">{media.fileName}</span>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
     </div>
