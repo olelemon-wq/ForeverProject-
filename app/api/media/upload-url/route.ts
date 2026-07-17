@@ -110,10 +110,15 @@ export async function POST(request: Request) {
         });
 
         uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-        
-        // Extract public URL prefix (or fallback to custom domain if configured)
-        const bucketDomain = process.env.S3_PUBLIC_DOMAIN || process.env.S3_ENDPOINT;
-        fileUrl = `${bucketDomain}/${process.env.S3_BUCKET_NAME}/${fileKey}`;
+
+        // Build the public read URL.
+        // When a public domain is configured (R2 r2.dev URL or a custom domain),
+        // it is already bound to the bucket, so the object key alone is appended.
+        // Otherwise fall back to the raw S3 endpoint which requires the bucket name.
+        const publicDomain = (process.env.S3_PUBLIC_DOMAIN || '').replace(/\/+$/, '');
+        fileUrl = publicDomain
+          ? `${publicDomain}/${fileKey}`
+          : `${(process.env.S3_ENDPOINT || '').replace(/\/+$/, '')}/${process.env.S3_BUCKET_NAME}/${fileKey}`;
       } catch (s3Err) {
         console.error('Error generating real S3 presigned URL:', s3Err);
         // Fallback to mock on error
