@@ -100,18 +100,30 @@ export default async function PublicCondolencePage(props: {
   const config = (tenant.themeConfig as any) || {};
   const subjects = config.subjects || [];
   const allSubjectsAlive = subjects.length > 0 && subjects.every((s: any) => s.isAlive);
-  const isHappy = tenant.category === 'Couple' || tenant.category === 'Wedding' || (tenant.category === 'Pet Memorial' && allSubjectsAlive);
+  const isHappy =
+    tenant.category === 'Couple' ||
+    tenant.category === 'Wedding' ||
+    tenant.category === 'Friends' ||
+    (tenant.category === 'Pet Memorial' && allSubjectsAlive);
 
   return (
     <div className="space-y-8 animate-fade-in">
       {(() => {
         const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'condolence');
-        const displayLabel = isHappy 
-          ? (tenant.category === 'Pet Memorial' ? 'สมุดเยี่ยมเยียนและส่งความรักถึงน้อง ๆ' : 'สมุดเยี่ยมเยียนและข้อความอวยพร') 
-          : fLabel;
-        const displayDesc = isHappy
-          ? 'คุณสามารถเขียนบันทึกความรู้สึก ส่งต่อกำลังใจ ความรัก และอธิษฐานจิตผ่านสมุดเยี่ยมเยียนเล่มนี้'
-          : fDesc;
+        const displayLabel =
+          tenant.category === 'Friends'
+            ? fLabel
+            : isHappy
+              ? tenant.category === 'Pet Memorial'
+                ? 'สมุดเยี่ยมเยียนและส่งความรักถึงน้อง ๆ'
+                : 'สมุดเยี่ยมเยียนและข้อความอวยพร'
+              : fLabel;
+        const displayDesc =
+          tenant.category === 'Friends'
+            ? fDesc
+            : isHappy
+              ? 'คุณสามารถเขียนบันทึกความรู้สึก ส่งต่อกำลังใจ ความรัก และอธิษฐานจิตผ่านสมุดเยี่ยมเยียนเล่มนี้'
+              : fDesc;
         return (
           <div className="rounded-3xl border border-stone-200/60 bg-white p-8 sm:p-12 shadow-sm space-y-10 relative overflow-hidden">
             {/* Header */}
@@ -142,7 +154,13 @@ export default async function PublicCondolencePage(props: {
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold flex items-center gap-2 text-stone-700">
                   <PenTool className="w-3.5 h-3.5" style={{ color: 'var(--theme-primary)' }} />
-                  <span>{isHappy ? 'ข้อความอวยพรทั้งหมด' : 'ข้อความรำลึกทั้งหมด'}</span>
+                  <span>
+                    {tenant.category === 'Friends'
+                      ? 'ข้อความทั้งหมด'
+                      : isHappy
+                        ? 'ข้อความอวยพรทั้งหมด'
+                        : 'ข้อความรำลึกทั้งหมด'}
+                  </span>
                   <span className="text-stone-400 font-medium">({condolences.length})</span>
                 </h3>
               </div>

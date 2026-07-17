@@ -18,8 +18,18 @@ export async function generateMetadata(props: {
     return {};
   }
 
-  const title = `รำลึกถึง ${tenant.name} - ${tenant.category} | FOREVER`;
-  const description = `ร่วมรำลึก ร่วมจุดเทียน และเขียนคำไว้อาลัยแด่ ${tenant.name} เพื่อบันทึกความทรงจำอันทรงคุณค่าให้อยู่ตลอดไป`;
+  const title =
+    tenant.category === 'Friends'
+      ? `${tenant.name} — กลุ่ม | FOREVER`
+      : tenant.category === 'Couple' || tenant.category === 'Wedding'
+        ? `${tenant.name} | FOREVER`
+        : `รำลึกถึง ${tenant.name} - ${tenant.category} | FOREVER`;
+  const description =
+    tenant.category === 'Friends'
+      ? `พื้นที่เก็บความทรงจำและข้อความถึงกันของ ${tenant.name}`
+      : tenant.category === 'Couple' || tenant.category === 'Wedding'
+        ? `ร่วมส่งคำอวยพรและความปรารถนาดีถึง ${tenant.name}`
+        : `ร่วมรำลึก ร่วมจุดเทียน และเขียนคำไว้อาลัยแด่ ${tenant.name} เพื่อบันทึกความทรงจำอันทรงคุณค่าให้อยู่ตลอดไป`;
 
   return {
     title,

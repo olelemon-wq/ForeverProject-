@@ -21,7 +21,11 @@ export default function CondolenceForm({
   const [userAnswer, setUserAnswer] = useState('');
 
   const allSubjectsAlive = subjects && subjects.length > 0 && subjects.every((s: any) => s.isAlive);
-  const isHappy = category === 'Couple' || category === 'Wedding' || (category === 'Pet Memorial' && allSubjectsAlive);
+  const isHappy =
+    category === 'Couple' ||
+    category === 'Wedding' ||
+    category === 'Friends' ||
+    (category === 'Pet Memorial' && allSubjectsAlive);
   const hideRelationship = category === 'Pet Memorial';
 
   const generateCaptcha = () => {
@@ -173,8 +177,10 @@ export default function CondolenceForm({
             {isHappy ? 'ร่วมส่งความคิดถึงและบันทึกข้อความ' : 'ร่วมส่งคำไว้อาลัยและแสดงความระลึกถึง'}
           </h3>
           <p className="text-stone-400 text-xs sm:text-sm mb-8 max-w-sm mx-auto leading-relaxed">
-            {isHappy 
-              ? 'เขียนข้อความส่งความรักและอวยพร เพื่อรวบรวมเป็นสมุดบันทึกความทรงจำ'
+            {isHappy
+              ? category === 'Friends'
+                ? 'เขียนข้อความฝากถึงกัน เพื่อเก็บเป็นความทรงจำของกลุ่ม'
+                : 'เขียนข้อความส่งความรักและอวยพร เพื่อรวบรวมเป็นสมุดบันทึกความทรงจำ'
               : 'ร่วมจุดเทียนออนไลน์และเขียนคำไว้อาลัย ส่งต่อให้ครอบครัวผู้ล่วงลับ'}
           </p>
           <button 
@@ -253,7 +259,11 @@ export default function CondolenceForm({
 
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-1">
-              {isHappy ? 'ข้อความถึงน้อง ๆ / เจ้าของแคมเปญ' : 'ข้อความไว้อาลัย'}
+              {isHappy
+                ? category === 'Friends'
+                  ? 'ข้อความถึงกลุ่ม'
+                  : 'ข้อความถึงน้อง ๆ / เจ้าของแคมเปญ'
+                : 'ข้อความไว้อาลัย'}
             </label>
             <div className="flex items-center gap-1 mb-2 flex-wrap">
               <button
@@ -290,14 +300,22 @@ export default function CondolenceForm({
               </div>
 
               <span className="text-[10px] text-stone-400 ml-auto select-none hidden sm:inline">
-                {isHappy ? 'เลือกรูปแบบข้อความหรือใส่อีโมจิไว้อาลัย' : 'เลือกรูปแบบข้อความหรือใส่อีโมจิไว้อาลัย'}
+                {category === 'Friends'
+                  ? 'ใส่สติกเกอร์หรืออีโมจิให้ข้อความสนุกขึ้น'
+                  : 'เลือกรูปแบบข้อความหรือใส่อีโมจิ'}
               </span>
             </div>
             <textarea 
               id="condolence-message-textarea"
               value={message} 
               onChange={(e) => setMessage(e.target.value)} 
-              placeholder={isHappy ? "เขียนส่งความรัก ความคิดถึง หรือข้อความสมุดเยี่ยมเยียน..." : "เขียนคำรำลึกและแสดงความไว้อาลัยแด่ผู้ล่วงลับ..."}
+              placeholder={
+                category === 'Friends'
+                  ? 'เขียนข้อความฝากถึงกลุ่ม ความหลัง หรือคำทักทาย...'
+                  : isHappy
+                    ? 'เขียนส่งความรัก ความคิดถึง หรือข้อความสมุดเยี่ยมเยียน...'
+                    : 'เขียนคำรำลึกและแสดงความไว้อาลัยแด่ผู้ล่วงลับ...'
+              }
               rows={5}
               className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-800 text-sm resize-none focus:bg-white focus:outline-none focus:border-stone-300 transition leading-relaxed"
               disabled={isLoading}

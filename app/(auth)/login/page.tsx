@@ -9,7 +9,7 @@ const CATEGORY_THAI_LABELS: Record<string, string> = {
   'Family Legacy': 'มรดกวงศ์ตระกูล (Family Legacy)',
   'Couple': 'ความรักคู่รัก (Couple)',
   'Wedding': 'ความทรงจำแต่งงาน (Wedding)',
-  'Friends': 'กลุ่มเพื่อนรัก (Friends)',
+  'Friends': 'กลุ่มรุ่น (Friends)',
   'Pet Memorial': 'สัตว์เลี้ยงแสนรัก (Pet Memorial)'
 };
 

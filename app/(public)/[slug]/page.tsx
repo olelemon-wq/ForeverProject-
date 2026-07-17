@@ -55,6 +55,8 @@ const getScheduleLabels = (category: string) => {
       venueLabel: 'สถานที่จัดงาน',
       venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
       footerText: 'ขอขอบคุณแขกผู้มีเกียรติทุกท่านที่มาร่วมแสดงความยินดี — เจ้าภาพ',
+      guidelinesTitle: 'คำแนะนำการร่วมแสดงความยินดี',
+      contactLabel: 'ติดต่อประสานงานเจ้าภาพ:',
     };
   }
   if (category === 'Pet Memorial') {
@@ -67,6 +69,8 @@ const getScheduleLabels = (category: string) => {
       venueLabel: 'วัดจัดพิธี / สถานที่จัดงาน',
       venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
       footerText: 'ขอขอบคุณทุกท่านที่มาร่วมส่งน้องกลับดาวและแบ่งปันความรัก — ครอบครัว',
+      guidelinesTitle: 'ข้อแนะนำการร่วมส่งน้องกลับดาว',
+      contactLabel: 'ติดต่อประสานงาน:',
     };
   }
   if (category === 'Family' || category === 'Family Legacy') {
@@ -79,18 +83,23 @@ const getScheduleLabels = (category: string) => {
       venueLabel: 'สถานที่นัดหมาย / บ้านครอบครัว',
       venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
       footerText: 'กราบขอบพระคุณทุกท่านที่ร่วมสืบสานสายสัมพันธ์และส่งต่อความรัก — ครอบครัว',
+      guidelinesTitle: 'ข้อมูลเพิ่มเติมสำหรับครอบครัว',
+      contactLabel: 'ติดต่อประสานงาน:',
     };
   }
   if (category === 'Friends') {
     return {
-      title: 'กำหนดการและกิจกรรมนัดพบวันวาน',
-      item1: '1. กิจกรรมย้อนรอยความทรงจำวัยเรียน',
-      item2: '2. งานเลี้ยงสังสรรค์พบปะเพื่อนร่วมรุ่น',
-      item3: '3. กิจกรรมถ่ายภาพที่ระลึกและแลกของขวัญ',
-      venueTitle: 'สถานที่จัดงาน (VENUE)',
-      venueLabel: 'สถานที่จัดงาน / ร้านอาหาร',
-      venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
-      footerText: 'ขอขอบคุณเพื่อน ๆ ทุกคนที่ร่วมแบ่งปันความรักและมิตรภาพวันวาน — กลุ่มเพื่อน',
+      title: 'นัดพบปะกลุ่ม',
+      item1: 'นัดพบปะกลุ่ม',
+      item2: '',
+      item3: '',
+      venueTitle: 'สถานที่นัดพบ',
+      venueLabel: 'สถานที่นัดพบ',
+      venueDesc: 'กดปุ่มนำทางเพื่อเปิดแผนที่ไปยังจุดนัดพบ',
+      footerText: 'ขอขอบคุณทุกคนที่ร่วมแบ่งปันความทรงจำและมิตรภาพ — กลุ่ม',
+      guidelinesTitle: 'ข้อมูลเพิ่มเติมสำหรับเพื่อน ๆ',
+      contactLabel: 'ติดต่อประสานงาน:',
+      notesLabel: 'โน้ต / รายละเอียด:',
     };
   }
   return {
@@ -102,7 +111,17 @@ const getScheduleLabels = (category: string) => {
     venueLabel: 'วัดจัดพิธี',
     venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังวัด',
     footerText: 'กราบขอบพระคุณทุกท่านที่มาร่วมไว้อาลัย — คณะเจ้าภาพ',
+    guidelinesTitle: 'ข้อแนะนำการร่วมแสดงความอาลัย',
+    contactLabel: 'ติดต่อประสานงานเจ้าภาพ:',
   };
+};
+
+const getInviteFallback = (category: string) => {
+  if (category === 'Couple' || category === 'Wedding') return 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี';
+  if (category === 'Friends') return 'เชิญชวนมาร่วมพบปะและสร้างความทรงจำด้วยกัน';
+  if (category === 'Pet Memorial') return 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาว';
+  if (category === 'Family' || category === 'Family Legacy') return 'เชิญชวนร่วมพบปะและสืบสานสายใยครอบครัว';
+  return 'กราบเรียนเชิญด้วยความเคารพอย่างสูง';
 };
 
 async function getRecentCondolences(websiteId: string) {
@@ -243,17 +262,47 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   
   const subjects = config?.subjects || [];
   const allSubjectsAlive = subjects.length > 0 && subjects.every((s: any) => s.isAlive);
-  const isHappy = tenant.category === 'Couple' || tenant.category === 'Wedding' || (tenant.category === 'Pet Memorial' && allSubjectsAlive);
+  const isHappy =
+    tenant.category === 'Couple' ||
+    tenant.category === 'Wedding' ||
+    tenant.category === 'Friends' ||
+    (tenant.category === 'Pet Memorial' && allSubjectsAlive);
 
-  const biographyHeading = isHappy 
-    ? (tenant.category === 'Pet Memorial' ? 'เรื่องราวและช่วงเวลาแสนซน' : 'เรื่องราวประทับใจ') 
-    : (homeCopy.biographyHeading || 'อาลัยและคำรำลึก');
-  const condolenceHeading = isHappy 
-    ? (tenant.category === 'Pet Memorial' ? 'สมุดเยี่ยมเยียนและข้อความถึงน้อง ๆ' : 'สมุดเยี่ยมเยียนและข้อความอวยพร') 
-    : (homeCopy.condolenceHeading || 'ข้อความไว้อาลัยล่าสุด');
-  const condolenceCta = isHappy 
-    ? 'ส่งความรักและความปรารถนาดี' 
-    : (homeCopy.condolenceCta || 'เขียนข้อความ/ร่วมจุดเทียนออนไลน์');
+  const biographyHeading =
+    homeCopy.biographyHeading ||
+    (isHappy
+      ? tenant.category === 'Pet Memorial'
+        ? 'เรื่องราวและช่วงเวลาแสนซน'
+        : 'เรื่องราวประทับใจ'
+      : 'อาลัยและคำรำลึก');
+  const condolenceHeading =
+    homeCopy.condolenceHeading ||
+    (isHappy
+      ? tenant.category === 'Pet Memorial'
+        ? 'สมุดเยี่ยมเยียนและข้อความถึงน้อง ๆ'
+        : 'สมุดเยี่ยมเยียนและข้อความอวยพร'
+      : 'ข้อความไว้อาลัยล่าสุด');
+  const condolenceCta =
+    homeCopy.condolenceCta ||
+    (isHappy ? 'ส่งความรักและความปรารถนาดี' : 'เขียนข้อความ/ร่วมจุดเทียนออนไลน์');
+  const condolenceViewAll =
+    tenant.category === 'Friends'
+      ? 'ดูสมุดข้อความทั้งหมด'
+      : isHappy
+        ? 'ดูสมุดเยี่ยมเยียนทั้งหมด'
+        : 'ดูสมุดลงนามทั้งหมด';
+  const condolenceEmpty =
+    tenant.category === 'Friends'
+      ? 'ยังไม่มีข้อความ ร่วมเขียนฝากถึงกันเป็นคนแรก'
+      : isHappy
+        ? 'ยังไม่มีข้อความในสมุดเล่มนี้ ร่วมเขียนเป็นคนแรก'
+        : 'ยังไม่มีข้อความแสดงความไว้อาลัย ร่วมเขียนคำไว้อาลัยเปิดสมุดลงนามเป็นคนแรก';
+  const condolenceOpenAll =
+    tenant.category === 'Friends'
+      ? 'เปิดอ่านข้อความทั้งหมด'
+      : isHappy
+        ? 'เปิดสมุดเยี่ยมเยียนทั้งหมด'
+        : 'เปิดสมุดอ่านคำไว้อาลัยทั้งหมด';
   const galleryHeading = homeCopy.galleryHeading || 'ภาพถ่ายความทรงจำล่าสุด';
   const ebooksTitle = (() => {
     if (tenant.category === 'Couple') return 'สมุดภาพความรักแนะนำ';
@@ -335,8 +384,10 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const avatarY = config?.avatarY || 0;
   const avatarRotate = config?.avatarRotate || 0;
 
-  // Wreath/Gift policy localization
-  const wreathPolicies: Record<string, string> = (tenant.category === 'Couple' || tenant.category === 'Wedding') ? {
+  // Wreath/Gift policy — Friends has no wreath/condolence policy
+  const isFriends = tenant.category === 'Friends';
+  const isCoupleLike = tenant.category === 'Couple' || tenant.category === 'Wedding';
+  const wreathPolicies: Record<string, string> = isCoupleLike ? {
     'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
     'NO_FLOWERS': 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
     'DONATION_ONLY': 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
@@ -347,6 +398,8 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
     'DONATION_ONLY': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
     'NO_WREATH': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
   };
+  const showWreathPolicy = !isFriends && !!ann?.wreathPolicy;
+  const showGuidelines = !!ann?.dressCode || !!ann?.contactPhone || showWreathPolicy;
 
   const cardStyles: React.CSSProperties = {
     fontFamily: ann?.fontFamily || 'var(--theme-font)',
@@ -380,7 +433,9 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           <div className="text-center space-y-6 relative z-10">
             
             <header className="space-y-4">
-              <span className="text-[10px] font-black tracking-widest uppercase opacity-85 block">กราบเรียนเชิญด้วยความเคารพอย่างสูง</span>
+              <span className="text-[10px] font-black tracking-widest uppercase opacity-85 block">
+                {ann?.text || getInviteFallback(tenant.category)}
+              </span>
               <DeceasedAvatar
                 avatarUrl={avatarUrl}
                 avatarScale={avatarScale}
@@ -433,7 +488,10 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
 
             <hr className={`border-t ${borderGoldClass}`} />
 
-            {/* Ceremony Schedule */}
+            {/* Ceremony / Meetup Schedule */}
+            {(isFriends
+              ? !!(ann.waterDate || ann.waterTime)
+              : !!(ann.waterDate || ann.abhidhammaDateRange || ann.cremationDate)) && (
             <div className="space-y-4 text-left">
               <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
                 <Calendar className="w-4 h-4" />
@@ -441,7 +499,17 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               </h3>
 
               <div className="grid grid-cols-1 gap-3">
-                {/* 1. Water Ceremony */}
+                {isFriends ? (
+                  <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
+                    <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
+                    <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
+                      {[ann.waterDate, ann.waterTime ? `เวลา ${ann.waterTime}` : '']
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </p>
+                  </div>
+                ) : (
+                  <>
                 {ann.waterDate && (
                   <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
                     <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
@@ -451,7 +519,6 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                   </div>
                 )}
 
-                {/* 2. Abhidhamma Ceremony */}
                 {ann.abhidhammaDateRange && (
                   <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
                     <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item2}</h4>
@@ -461,7 +528,6 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                   </div>
                 )}
 
-                {/* 3. Cremation Ceremony */}
                 {ann.cremationDate && (
                   <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
                     <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item3}</h4>
@@ -470,8 +536,11 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                     </p>
                   </div>
                 )}
+                  </>
+                )}
               </div>
             </div>
+            )}
 
             {/* Location & Directions */}
             {(ann.templeName || ann.pavilion) && (
@@ -505,29 +574,28 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               </div>
             )}
 
-            {/* Guidelines Block */}
+            {/* Guidelines Block — Friends: no wreath/condolence policy */}
+            {showGuidelines && (
             <div className="space-y-3 text-left">
               <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
                 <Info className="w-4 h-4" />
-                <span>
-                  {tenant.category === 'Couple' || tenant.category === 'Wedding'
-                    ? 'คำแนะนำการร่วมแสดงความยินดี'
-                    : 'ข้อแนะนำการร่วมแสดงความอาลัย'}
-                </span>
+                <span>{sLabels.guidelinesTitle}</span>
               </h3>
 
               <div className={`p-4 rounded-2xl border text-xs space-y-3.5 ${innerCardBg}`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {ann.dressCode && (
                     <div className="flex flex-col gap-0.5">
-                      <span className={`font-bold ${headingColorClass}`}>การแต่งกาย:</span>
+                      <span className={`font-bold ${headingColorClass}`}>
+                        {isFriends ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
+                      </span>
                       <span className={textMutedClass}>{ann.dressCode}</span>
                     </div>
                   )}
-                  {ann.wreathPolicy && (
+                  {showWreathPolicy && (
                     <div className="flex flex-col gap-0.5">
                       <span className={`font-bold ${headingColorClass}`}>
-                        {tenant.category === 'Couple' || tenant.category === 'Wedding' ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
+                        {isCoupleLike ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
                       </span>
                       <span className={textMutedClass}>{wreathPolicies[ann.wreathPolicy] || wreathPolicies.NORMAL}</span>
                     </div>
@@ -536,12 +604,13 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                 {ann.contactPhone && (
                   <div className="flex gap-2 border-t border-stone-200/50 pt-3 mt-3 items-center">
                     <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--theme-primary, #0d9488)' }} />
-                    <span className={`font-bold shrink-0 ${headingColorClass}`}>ติดต่อประสานงานเจ้าภาพ:</span>
+                    <span className={`font-bold shrink-0 ${headingColorClass}`}>{sLabels.contactLabel}</span>
                     <span className={textMutedClass}>{ann.contactPhone}</span>
                   </div>
                 )}
               </div>
             </div>
+            )}
 
             <footer className="pt-4 text-center">
               <p className={`text-[9px] font-bold tracking-wider uppercase ${textMutedClass}`}>
@@ -665,14 +734,14 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               className="hidden sm:inline-flex text-xs font-bold transition items-center gap-1 hover:underline flex-shrink-0"
               style={{ color: 'var(--theme-primary, #0d9488)' }}
             >
-              <span>ดูสมุดลงนามทั้งหมด</span>
+              <span>{condolenceViewAll}</span>
               <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
           {recentCondolences.length === 0 ? (
             <div className="text-center py-8 text-stone-500 text-sm border border-dashed border-stone-200 rounded-2xl">
-              ยังไม่มีข้อความแสดงความไว้อาลัย ร่วมเขียนคำไว้อาลัยเปิดสมุดลงนามเป็นคนแรก
+              {condolenceEmpty}
             </div>
           ) : (
             <div className="space-y-4">
@@ -712,7 +781,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               href={`/${slug}/condolence`}
               className="flex-1 px-5 py-3 rounded-xl font-bold text-center border border-stone-200 hover:bg-stone-50 transition text-xs text-stone-750 shadow-sm"
             >
-              เปิดสมุดอ่านคำไว้อาลัยทั้งหมด
+              {condolenceOpenAll}
             </Link>
             <Link
               href={`/${slug}/condolence`}
