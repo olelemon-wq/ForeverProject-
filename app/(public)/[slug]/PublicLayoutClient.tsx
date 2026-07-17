@@ -159,7 +159,7 @@ export default function PublicLayoutClient({
           />
         )}
         <div className="max-w-5xl mx-auto px-4 relative z-10">
-          <div className="w-24 h-24 rounded-full border-4 bg-stone-50 mx-auto shadow-md overflow-hidden flex items-center justify-center mb-4 animate-fade-in relative"
+          <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 bg-stone-50 mx-auto shadow-md overflow-hidden flex items-center justify-center mb-4 sm:mb-5 animate-fade-in relative"
                style={{ borderColor: 'var(--theme-primary)' }}>
             {config.avatarUrl ? (
               <img 
@@ -174,7 +174,7 @@ export default function PublicLayoutClient({
                 })}
               />
             ) : (
-              <Flame className="w-10 h-10 animate-pulse" style={{ color: 'var(--theme-primary)' }} />
+              <Flame className="w-12 h-12 sm:w-14 sm:h-14 animate-pulse" style={{ color: 'var(--theme-primary)' }} />
             )}
           </div>
           <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight mb-2 ${coverUrl ? 'text-white drop-shadow-md' : 'text-stone-900'}`}>

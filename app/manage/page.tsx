@@ -51,6 +51,10 @@ type ManageSubject = {
   birthYear: number | null;
   deathYear: number | null;
   isAlive?: boolean;
+  /** Friends: optional role in group */
+  role?: string;
+  /** Friends: optional short note */
+  note?: string;
 };
 
 const emptyManageSubject = (): ManageSubject => ({
@@ -62,6 +66,8 @@ const emptyManageSubject = (): ManageSubject => ({
   birthYear: null,
   deathYear: null,
   isAlive: false,
+  role: '',
+  note: '',
 });
 
 function dateToYmd(d: Date | null): string {
@@ -89,6 +95,8 @@ function normalizeManageSubjects(raw: any[], category: string): ManageSubject[] 
         birthYear: s?.birthYear ?? null,
         deathYear: s?.deathYear ?? null,
         isAlive: !!s?.isAlive,
+        role: s?.role || '',
+        note: s?.note || '',
       }))
     : [];
 
@@ -99,6 +107,25 @@ function normalizeManageSubjects(raw: any[], category: string): ManageSubject[] 
     return [emptyManageSubject()];
   }
   return list;
+}
+
+/** Serialize subjects for save — Friends keeps name/role/note only */
+function serializeManageSubjects(subjects: ManageSubject[], category: string) {
+  if (category === 'Friends') {
+    return subjects.map((s) => ({
+      name: s.name || '',
+      role: s.role || '',
+      note: s.note || '',
+      isAlive: true,
+      birthDate: null,
+      deathDate: null,
+      birthYearOnly: false,
+      deathYearOnly: false,
+      birthYear: null,
+      deathYear: null,
+    }));
+  }
+  return subjects;
 }
 
 function getSubjectEditorCopy(category: string) {
@@ -117,6 +144,7 @@ function getSubjectEditorCopy(category: string) {
       yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เดินทางกลับดาว)',
       addLabel: '+ เพิ่มสัตว์เลี้ยงอีกตัว',
       showAlive: true,
+      showDates: true,
       canAdd: true,
     };
   }
@@ -135,6 +163,7 @@ function getSubjectEditorCopy(category: string) {
       yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)',
       addLabel: '+ เพิ่มรายชื่ออีกท่าน',
       showAlive: true,
+      showDates: true,
       canAdd: true,
     };
   }
@@ -153,25 +182,31 @@ function getSubjectEditorCopy(category: string) {
       yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปี)',
       addLabel: '',
       showAlive: false,
+      showDates: true,
       canAdd: false,
     };
   }
   if (category === 'Friends') {
     return {
-      sectionTitle: 'รายชื่อผู้ร่วมแสดงผล',
-      sectionHint: 'เพิ่มหรือแก้ไขรายชื่อในกลุ่มเพื่อน แล้วกดบันทึกการตั้งค่าด้านล่าง',
-      cardTitle: (i: number) => `ข้อมูลคนที่ ${i + 1}`,
-      nameLabel: 'ชื่อ',
-      namePlaceholder: 'เช่น เพื่อนซี้ ม.ศ.3',
+      sectionTitle: 'รายชื่อสมาชิกในกลุ่ม',
+      sectionHint: 'เพิ่มชื่อเล่น บทบาท และโน้ตสั้น ๆ ของสมาชิก แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      cardTitle: (i: number) => `ข้อมูลสมาชิกคนที่ ${i + 1}`,
+      nameLabel: 'ชื่อ / ชื่อเล่น',
+      namePlaceholder: 'เช่น ตูน, แจ๊ส, บิ๊ก',
       aliveLabel: '',
-      dateLabel: 'วันก่อตั้ง – วันรวมตัวล่าสุด',
-      startTitle: 'วันก่อตั้ง',
-      endTitle: 'วันรวมตัวล่าสุด',
-      yearOnlyBirth: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปี)',
-      yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปี)',
-      addLabel: '+ เพิ่มรายชื่อ',
+      dateLabel: '',
+      startTitle: '',
+      endTitle: '',
+      yearOnlyBirth: '',
+      yearOnlyDeath: '',
+      addLabel: '+ เพิ่มสมาชิก',
       showAlive: false,
+      showDates: false,
       canAdd: true,
+      roleLabel: 'บทบาทในกลุ่ม (ไม่บังคับ)',
+      rolePlaceholder: 'เช่น กัปตัน, เลขา, เหรัญญิก, สมาชิก',
+      noteLabel: 'โน้ตสั้น (ไม่บังคับ)',
+      notePlaceholder: 'เช่น คนจัดทริป, สายกิน, ม.ศ.3 รุ่น 55',
     };
   }
   return {
@@ -188,6 +223,7 @@ function getSubjectEditorCopy(category: string) {
     yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)',
     addLabel: '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน',
     showAlive: false,
+    showDates: true,
     canAdd: true,
   };
 }
@@ -272,6 +308,30 @@ const getScheduleLabels = (category: string) => {
       pavilionLabel: 'ห้องจัดเลี้ยง / ห้องจัดงาน (ถ้ามี)',
       pavilionPlaceholder: 'เช่น ห้องแกรนด์บอลรูม / ห้องสราญรมย์',
       invitePlaceholder: 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี',
+      guidelinesTitle: 'คำแนะนำการร่วมงานแสดงความยินดี',
+    };
+  }
+  if (category === 'Friends') {
+    return {
+      subtitle: 'นัดพบปะกลุ่ม',
+      item1: 'วันและเวลานัดพบ',
+      item1Placeholder: 'เช่น วันเสาร์ที่ 20 ก.ค. 68',
+      item2: '',
+      item2Placeholder: '',
+      item2TimePlaceholder: '',
+      item3: '',
+      item3Placeholder: '',
+      venueLabel: 'สถานที่นัดพบ',
+      venuePlaceholder: 'เช่น ร้านอาหาร / คาเฟ่ / รีสอร์ท',
+      pavilionLabel: 'โซน / ห้อง (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น โซนสวน / ห้อง VIP',
+      invitePlaceholder: 'เชิญชวนมาร่วมพบปะและสร้างความทรงจำด้วยกัน',
+      guidelinesTitle: 'ข้อมูลเพิ่มเติมสำหรับเพื่อน ๆ',
+      dateLabel: 'วันนัดพบ',
+      timeLabel: 'เวลานัด (ไม่บังคับ)',
+      notesLabel: 'โน้ต / รายละเอียด',
+      notesPlaceholder: 'เช่น แต่งตามสบาย, ธีมสีกลุ่ม, สิ่งที่ควรเตรียม',
+      meetupTitle: 'นัดพบปะกลุ่ม',
     };
   }
   if (category === 'Pet Memorial') {
@@ -289,6 +349,7 @@ const getScheduleLabels = (category: string) => {
       pavilionLabel: 'ศาลา / โซนจัดพิธี (ถ้ามี)',
       pavilionPlaceholder: 'เช่น ศาลาน้ำตาแสงไต้ หรือ โซน B',
       invitePlaceholder: 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาวเสร็จสมบูรณ์',
+      guidelinesTitle: 'ข้อแนะนำการร่วมส่งน้องกลับดาว',
     };
   }
   return {
@@ -305,6 +366,7 @@ const getScheduleLabels = (category: string) => {
     pavilionLabel: 'ศาลาที่จัดงาน',
     pavilionPlaceholder: 'เช่น ศาลา 10',
     invitePlaceholder: 'กราบเรียนเชิญด้วยความเคารพอย่างสูง',
+    guidelinesTitle: 'ข้อแนะนำการร่วมแสดงความอาลัย',
   };
 };
 
@@ -879,7 +941,7 @@ export default function WebmasterDashboard() {
             coverRotate: deceasedCoverRotate,
             imageCoordSpace: 'relative',
             biography,
-            subjects,
+            subjects: serializeManageSubjects(subjects, activeSite.category),
             albums: updatedAlbums,
             mediaAlbums: updatedMediaAlbums,
             features,
@@ -892,15 +954,15 @@ export default function WebmasterDashboard() {
               fontFamily: annFontFamily,
               waterDate: annWaterDate,
               waterTime: annWaterTime,
-              abhidhammaDateRange: annAbhidhammaDateRange,
-              abhidhammaTime: annAbhidhammaTime,
-              cremationDate: annCremationDate,
-              cremationTime: annCremationTime,
+              abhidhammaDateRange: activeSite.category === 'Friends' ? '' : annAbhidhammaDateRange,
+              abhidhammaTime: activeSite.category === 'Friends' ? '' : annAbhidhammaTime,
+              cremationDate: activeSite.category === 'Friends' ? '' : annCremationDate,
+              cremationTime: activeSite.category === 'Friends' ? '' : annCremationTime,
               templeName: annTempleName,
               pavilion: annPavilion,
               mapLink: annMapLink,
               dressCode: annDressCode,
-              wreathPolicy: annWreathPolicy,
+              wreathPolicy: activeSite.category === 'Friends' ? '' : annWreathPolicy,
               contactPhone: annContactPhone,
             },
           },
@@ -1256,7 +1318,7 @@ export default function WebmasterDashboard() {
             coverRotate: deceasedCoverRotate,
             imageCoordSpace: 'relative',
             biography,
-            subjects,
+            subjects: serializeManageSubjects(subjects, activeSite.category),
             albums,
             mediaAlbums,
             features,
@@ -1269,15 +1331,15 @@ export default function WebmasterDashboard() {
               fontFamily: annFontFamily,
               waterDate: annWaterDate,
               waterTime: annWaterTime,
-              abhidhammaDateRange: annAbhidhammaDateRange,
-              abhidhammaTime: annAbhidhammaTime,
-              cremationDate: annCremationDate,
-              cremationTime: annCremationTime,
+              abhidhammaDateRange: activeSite.category === 'Friends' ? '' : annAbhidhammaDateRange,
+              abhidhammaTime: activeSite.category === 'Friends' ? '' : annAbhidhammaTime,
+              cremationDate: activeSite.category === 'Friends' ? '' : annCremationDate,
+              cremationTime: activeSite.category === 'Friends' ? '' : annCremationTime,
               templeName: annTempleName,
               pavilion: annPavilion,
               mapLink: annMapLink,
               dressCode: annDressCode,
-              wreathPolicy: annWreathPolicy,
+              wreathPolicy: activeSite.category === 'Friends' ? '' : annWreathPolicy,
               contactPhone: annContactPhone,
             },
           },
@@ -1310,10 +1372,17 @@ export default function WebmasterDashboard() {
   // 4. Moderate Condolence (Approve / Delete - BR027)
   const handleModerateCondolence = async (id: string, action: 'APPROVE' | 'DELETE', force = false) => {
     if (!activeSite) return;
+    const isFriends = activeSite.category === 'Friends';
+    const isHappy =
+      isFriends ||
+      activeSite.category === 'Couple' ||
+      activeSite.category === 'Wedding';
     if (action === 'DELETE' && !force) {
       showConfirm(
         'ยืนยันการลบข้อมูล',
-        'คุณต้องการลบข้อความแสดงความไว้อาลัยนี้ใช่หรือไม่? การลบนี้จะไม่สามารถย้อนกลับได้',
+        isHappy
+          ? 'คุณต้องการลบข้อความนี้ใช่หรือไม่? การลบนี้จะไม่สามารถย้อนกลับได้'
+          : 'คุณต้องการลบข้อความแสดงความไว้อาลัยนี้ใช่หรือไม่? การลบนี้จะไม่สามารถย้อนกลับได้',
         () => handleModerateCondolence(id, 'DELETE', true)
       );
       return;
@@ -1335,7 +1404,15 @@ export default function WebmasterDashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess(action === 'APPROVE' ? 'อนุมัติคำไว้อาลัยออกเผยแพร่สำเร็จ' : 'ลบคำไว้อาลัยสำเร็จ');
+      setSuccess(
+        action === 'APPROVE'
+          ? isHappy
+            ? 'อนุมัติข้อความออกเผยแพร่สำเร็จ'
+            : 'อนุมัติคำไว้อาลัยออกเผยแพร่สำเร็จ'
+          : isHappy
+            ? 'ลบข้อความสำเร็จ'
+            : 'ลบคำไว้อาลัยสำเร็จ'
+      );
       setCondolences(condolences.filter(c => c.id !== id));
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการคัดกรองข้อมูล');
@@ -2067,7 +2144,7 @@ export default function WebmasterDashboard() {
                 }`}
               >
                 <Camera className={`size-3.5 shrink-0 ${activeTab === 'gallery' ? 'text-white' : 'text-stone-500'}`} />
-                <span>คลังภาพรำลึก ({photoMedias.length})</span>
+                <span>{getFeatureLabel(selectedSite.category, 'gallery').label} ({photoMedias.length})</span>
               </Button>
             )}
             {features.videos && (
@@ -2081,7 +2158,7 @@ export default function WebmasterDashboard() {
                 }`}
               >
                 <Video className={`size-3.5 shrink-0 ${activeTab === 'videos' ? 'text-white' : 'text-stone-500'}`} />
-                <span>คลังวิดีโอ ({videoMedias.length})</span>
+                <span>{getFeatureLabel(selectedSite.category, 'videos').label} ({videoMedias.length})</span>
               </Button>
             )}
             {features.family && (
@@ -2095,7 +2172,7 @@ export default function WebmasterDashboard() {
                 }`}
               >
                 <GitBranch className={`size-3.5 shrink-0 ${activeTab === 'family' ? 'text-white' : 'text-stone-500'}`} />
-                <span>ผังครอบครัว ({familyMembers.length})</span>
+                <span>{getFeatureLabel(selectedSite.category, 'family').label} ({familyMembers.length})</span>
               </Button>
             )}
             {features.ebooks && (
@@ -2109,7 +2186,7 @@ export default function WebmasterDashboard() {
                 }`}
               >
                 <BookOpen className={`size-3.5 shrink-0 ${activeTab === 'ebooks' ? 'text-white' : 'text-stone-500'}`} />
-                <span>หนังสือของชำร่วย ({ebooks.length})</span>
+                <span>{getFeatureLabel(selectedSite.category, 'ebooks').label} ({ebooks.length})</span>
               </Button>
             )}
             {(features.condolence || features.memory) && (
@@ -2128,8 +2205,12 @@ export default function WebmasterDashboard() {
                     {features.condolence && features.memory
                       ? 'กลั่นกรองเนื้อหา'
                       : features.memory
-                      ? 'กลั่นกรองความทรงจำ'
-                      : 'กลั่นกรองคำไว้อาลัย'}
+                      ? `กลั่นกรอง${getFeatureLabel(selectedSite.category, 'memory').label}`
+                      : selectedSite.category === 'Friends'
+                        ? 'กลั่นกรองข้อความถึงกัน'
+                        : selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                          ? 'กลั่นกรองคำอวยพร'
+                          : 'กลั่นกรองคำไว้อาลัย'}
                   </span>
                 </div>
                 
@@ -2435,6 +2516,10 @@ export default function WebmasterDashboard() {
                         ? 'ชื่อคู่รัก / ชื่อหน้าความรัก'
                         : selectedSite.category === 'Pet Memorial'
                         ? 'ชื่อสัตว์เลี้ยง / หน้าความทรงจำ'
+                        : selectedSite.category === 'Friends'
+                        ? 'ชื่อเว็บไซต์ / ชื่อกลุ่ม'
+                        : selectedSite.category === 'Family Legacy'
+                        ? 'ชื่อตระกูล / หน้าความทรงจำ'
                         : 'ชื่อหน้ารำลึก'}
                     </label>
                     <Input 
@@ -2451,6 +2536,10 @@ export default function WebmasterDashboard() {
                         ? 'เรื่องราวความรัก (ประวัติคู่รักโดยย่อ)'
                         : selectedSite.category === 'Pet Memorial'
                         ? 'คำอำลาและประวัติสัตว์เลี้ยงโดยย่อ'
+                        : selectedSite.category === 'Friends'
+                        ? 'เรื่องราวของพวกเรา (แนะนำกลุ่มโดยย่อ)'
+                        : selectedSite.category === 'Family Legacy'
+                        ? 'เรื่องราวตระกูล (ประวัติโดยย่อ)'
                         : 'คำอาลัยและคำรำลึก (ประวัติโดยย่อ)'}
                     </label>
                     <Textarea 
@@ -2462,6 +2551,10 @@ export default function WebmasterDashboard() {
                           ? 'เช่น เรื่องราวความรักของเราสองคน เริ่มต้นจากการพบกันครั้งแรกในที่ทำงาน และร่วมทุกข์ร่วมสุขด้วยกันมา...'
                           : selectedSite.category === 'Pet Memorial'
                           ? 'เช่น น้องเป็นหมาที่ร่าเริงและแสนรู้ที่สุด นำความสุขและรอยยิ้มมาให้ครอบครัวเราตลอดเวลาที่อยู่ด้วยกัน...'
+                          : selectedSite.category === 'Friends'
+                          ? 'เช่น พวกเราเจอกันตั้งแต่สมัยเรียน ไปทริปด้วยกันทุกปี และยังคอยเชียร์กันในทุกก้าวของชีวิต...'
+                          : selectedSite.category === 'Family Legacy'
+                          ? 'เช่น ตระกูลของเราเริ่มต้นจากคุณปู่คุณย่าที่สร้างบ้านและส่งต่อคุณค่าดี ๆ ให้ลูกหลาน...'
                           : 'เช่น คุณพ่อสมศักดิ์เป็นคนดี มีความเสียสละ...'
                       }
                       className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
@@ -2524,7 +2617,36 @@ export default function WebmasterDashboard() {
                               />
                             </div>
 
-                            {!(index > 0 && (cat === 'Couple' || cat === 'Wedding')) && (
+                            {cat === 'Friends' && (
+                              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div className="space-y-1">
+                                  <label className="text-sm font-bold tracking-wide text-stone-600">
+                                    {copy.roleLabel || 'บทบาทในกลุ่ม (ไม่บังคับ)'}
+                                  </label>
+                                  <Input
+                                    type="text"
+                                    value={sub.role || ''}
+                                    onChange={(e) => updateSubject(index, { role: e.target.value })}
+                                    placeholder={copy.rolePlaceholder || 'เช่น กัปตัน, เลขา, สมาชิก'}
+                                    className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-900"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-sm font-bold tracking-wide text-stone-600">
+                                    {copy.noteLabel || 'โน้ตสั้น (ไม่บังคับ)'}
+                                  </label>
+                                  <Input
+                                    type="text"
+                                    value={sub.note || ''}
+                                    onChange={(e) => updateSubject(index, { note: e.target.value })}
+                                    placeholder={copy.notePlaceholder || 'เช่น คนจัดทริป, สายกิน'}
+                                    className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-900"
+                                  />
+                                </div>
+                              </div>
+                            )}
+
+                            {copy.showDates !== false && !(index > 0 && (cat === 'Couple' || cat === 'Wedding')) && (
                               <div className="space-y-2.5">
                                 {copy.showAlive && (
                                   <label className="flex cursor-pointer select-none items-center gap-1.5">
@@ -2893,11 +3015,17 @@ export default function WebmasterDashboard() {
                             <div className="border-t border-stone-150 pt-3">
                               <p className="font-bold text-stone-700 mb-2">{sLabels.subtitle}</p>
                               <div className="space-y-3">
-                                {/* 1. รดน้ำ */}
+                                {/* Meetup / ceremony slot 1 */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
-                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item1}</div>
+                                  {selectedSite.category !== 'Friends' && (
+                                    <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item1}</div>
+                                  )}
                                   <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">วันที่จัด</label>
+                                    <label className="text-stone-500 font-medium">
+                                      {selectedSite.category === 'Friends'
+                                        ? (sLabels.dateLabel || 'วันนัดพบ')
+                                        : 'วันที่จัด'}
+                                    </label>
                                     <div className="flex gap-1.5 items-center relative">
                                       <Input
                                         type="text"
@@ -2919,7 +3047,11 @@ export default function WebmasterDashboard() {
                                     </div>
                                   </div>
                                   <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">เวลาเริ่ม</label>
+                                    <label className="text-stone-500 font-medium">
+                                      {selectedSite.category === 'Friends'
+                                        ? (sLabels.timeLabel || 'เวลานัด (ไม่บังคับ)')
+                                        : 'เวลาเริ่ม'}
+                                    </label>
                                     <div className="space-y-1.5">
                                       <Select
                               value={(isCustomWaterTime ? 'CUSTOM' : annWaterTime) || '__empty__'}
@@ -2941,7 +3073,9 @@ export default function WebmasterDashboard() {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent position="popper">
-<SelectItem value="__empty__">เลือกเวลา</SelectItem>
+<SelectItem value="__empty__">
+                                          {selectedSite.category === 'Friends' ? 'ไม่ระบุเวลา' : 'เลือกเวลา'}
+                                        </SelectItem>
                                         {TIME_PRESETS.map((preset) => (
                                           <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                                         ))}
@@ -2961,6 +3095,8 @@ export default function WebmasterDashboard() {
                                   </div>
                                 </div>
 
+                                {selectedSite.category !== 'Friends' && (
+                                <>
                                 {/* 2. สวดพระอภิธรรม */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
                                   <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item2}</div>
@@ -3101,6 +3237,8 @@ export default function WebmasterDashboard() {
                                     </div>
                                   </div>
                                 </div>
+                                </>
+                                )}
                               </div>
                             </div>
 
@@ -3112,7 +3250,9 @@ export default function WebmasterDashboard() {
                                   <label className="text-stone-600 font-semibold">
                                     {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                                       ? 'สถานที่จัดงาน (เช่น โรงแรม/โบสถ์)'
-                                      : 'ชื่อวัด / สถานที่จัดงาน'}
+                                      : selectedSite.category === 'Friends'
+                                        ? 'ชื่อสถานที่นัดพบ'
+                                        : 'ชื่อวัด / สถานที่จัดงาน'}
                                   </label>
                                   <Input
                                     type="text"
@@ -3150,11 +3290,17 @@ export default function WebmasterDashboard() {
                               <p className="font-bold text-stone-700">
                                 {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                                   ? 'คำแนะนำการร่วมงานแสดงความยินดี'
-                                  : 'คำแนะนำการร่วมงาน'}
+                                  : selectedSite.category === 'Friends'
+                                    ? 'ข้อมูลเพิ่มเติมสำหรับเพื่อน ๆ'
+                                    : 'คำแนะนำการร่วมงาน'}
                               </p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div className="space-y-1">
-                                  <label className="text-stone-600 font-semibold">การแต่งกาย</label>
+                                  <label className="text-stone-600 font-semibold">
+                                    {selectedSite.category === 'Friends'
+                                      ? (sLabels.notesLabel || 'โน้ต / รายละเอียด')
+                                      : 'การแต่งกาย'}
+                                  </label>
                                   <Input
                                     type="text"
                                     value={annDressCode}
@@ -3162,7 +3308,9 @@ export default function WebmasterDashboard() {
                                     placeholder={
                                       selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                                         ? 'เช่น ธีมสีชมพู/พาสเทล หรือ ตามความสะดวก'
-                                        : 'เช่น ชุดสุภาพสีขาว/ดำ'
+                                        : selectedSite.category === 'Friends'
+                                          ? (sLabels.notesPlaceholder || 'เช่น แต่งตามสบาย, ธีมสีกลุ่ม')
+                                          : 'เช่น ชุดสุภาพสีขาว/ดำ'
                                     }
                                     className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
                                   />
@@ -3178,6 +3326,7 @@ export default function WebmasterDashboard() {
                                   />
                                 </div>
                               </div>
+                              {selectedSite.category !== 'Friends' && (
                               <div className="space-y-1">
                                 <label className="text-stone-600 font-semibold">
                                   {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
@@ -3210,6 +3359,7 @@ export default function WebmasterDashboard() {
                               </SelectContent>
                             </Select>
                               </div>
+                              )}
                             </div>
                               </>
                             )}
@@ -3285,7 +3435,7 @@ export default function WebmasterDashboard() {
 
                             {/* Header */}
                             <div className="space-y-1.5">
-                              <p className="text-[10px] tracking-widest opacity-80 uppercase">{annText || 'กราบเรียนเชิญด้วยความเคารพอย่างสูง'}</p>
+                              <p className="text-[10px] tracking-widest opacity-80 uppercase">{annText || sLabels.invitePlaceholder}</p>
                               <h2 className="text-xl font-bold tracking-normal">
                                 {(() => {
                                   const match = siteName.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
@@ -3306,7 +3456,21 @@ export default function WebmasterDashboard() {
 
                             {/* Timelines list */}
                             <div className="space-y-3 text-xs text-left">
-                              {/* 1. Water */}
+                              {selectedSite.category === 'Friends' ? (
+                                (annWaterDate || annWaterTime) && (
+                                  <div className={`p-4 rounded-2xl border transition-all ${
+                                    annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg :
+                                    annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' :
+                                    'bg-stone-50 border-stone-200/80'
+                                  }`}>
+                                    <p className="font-bold mb-1">{sLabels.meetupTitle || 'นัดพบปะกลุ่ม'}</p>
+                                    <p className="opacity-90">
+                                      {[annWaterDate, annWaterTime ? `เวลา ${annWaterTime}` : ''].filter(Boolean).join(' · ') || '-'}
+                                    </p>
+                                  </div>
+                                )
+                              ) : (
+                                <>
                               {(annWaterDate || annWaterTime) && (
                                 <div className={`p-4 rounded-2xl border transition-all ${
                                   annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
@@ -3318,7 +3482,6 @@ export default function WebmasterDashboard() {
                                 </div>
                               )}
 
-                              {/* 2. Abhidhamma */}
                               {(annAbhidhammaDateRange || annAbhidhammaTime) && (
                                 <div className={`p-4 rounded-2xl border transition-all ${
                                   annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
@@ -3330,7 +3493,6 @@ export default function WebmasterDashboard() {
                                 </div>
                               )}
 
-                              {/* 3. Cremation */}
                               {(annCremationDate || annCremationTime) && (
                                 <div className={`p-4 rounded-2xl border transition-all ${
                                   annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
@@ -3340,6 +3502,8 @@ export default function WebmasterDashboard() {
                                   <p className="font-bold mb-1">{sLabels.item3}</p>
                                   <p className="opacity-90">{annCremationDate || '-'} {annCremationTime ? `เวลา ${annCremationTime}` : ''}</p>
                                 </div>
+                              )}
+                                </>
                               )}
                             </div>
 
@@ -3358,32 +3522,35 @@ export default function WebmasterDashboard() {
                                   </div>
                                 )}
 
-                                {(annDressCode || annContactPhone || annWreathPolicy !== 'NORMAL') && (
+                                {(annDressCode || annContactPhone || (selectedSite.category !== 'Friends' && annWreathPolicy !== 'NORMAL')) && (
                                   <div className="space-y-1">
                                     <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">
-                                      {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
-                                        ? 'คำแนะนำการร่วมงานแสดงความยินดี'
-                                        : 'ข้อแนะนำการร่วมแสดงความอาลัย'}
+                                      {sLabels.guidelinesTitle}
                                     </p>
-                                    {annDressCode && <p className="opacity-90">👗 การแต่งกาย: {annDressCode}</p>}
-                                    {annContactPhone && <p className="opacity-90">📞 ติดต่อประสานงาน: {annContactPhone}</p>}
-                                    {annWreathPolicy === 'NO_FLOWERS' && (
+                                    {annDressCode && (
+                                      <p className="opacity-90">
+                                        {selectedSite.category === 'Friends' ? 'โน้ต: ' : 'การแต่งกาย: '}
+                                        {annDressCode}
+                                      </p>
+                                    )}
+                                    {annContactPhone && <p className="opacity-90">ติดต่อประสานงาน: {annContactPhone}</p>}
+                                    {selectedSite.category !== 'Friends' && annWreathPolicy === 'NO_FLOWERS' && (
                                       <p className="text-amber-800 font-bold">
-                                        🎗️ {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                        {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                                           ? 'งดรับของขวัญ เน้นการร่วมอวยพรแทน'
                                           : 'งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)'}
                                       </p>
                                     )}
-                                    {annWreathPolicy === 'NO_WREATH' && (
+                                    {selectedSite.category !== 'Friends' && annWreathPolicy === 'NO_WREATH' && (
                                       <p className="text-red-650 font-bold">
-                                        🚫 {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                        {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                                           ? 'งดรับซองและของขวัญทุกประเภท'
                                           : 'งดรับพวงหรีดทุกประเภท'}
                                       </p>
                                     )}
-                                    {annWreathPolicy === 'DONATION_ONLY' && (
+                                    {selectedSite.category !== 'Friends' && annWreathPolicy === 'DONATION_ONLY' && (
                                       <p className="text-amber-800 font-bold">
-                                        🎗️ {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                                        {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                                           ? 'งดรับของขวัญ ร่วมสมทบทุนมูลนิธิแทน'
                                           : 'งดรับพวงหรีด ร่วมทำบุญสมทบทุนแทน'}
                                       </p>
@@ -3400,15 +3567,32 @@ export default function WebmasterDashboard() {
 
                   {/* Donation Settings Section */}
                   <div className="border-t border-stone-150 pt-6 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h4 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
-                        <DollarSign className="w-4 h-4 text-emerald-700" />
-                        <span>เปิดใช้บริการรับเงินทำบุญ (Donation QR Settings)</span>
-                      </h4>
+                    <div className="flex justify-between items-center gap-3">
+                      <div className="min-w-0 space-y-0.5">
+                        <h4 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
+                          <DollarSign className="w-4 h-4 text-emerald-700 shrink-0" />
+                          <span>
+                            {selectedSite.category === 'Friends'
+                              ? 'เปิดใช้กองทุนรวมตัว (Donation QR)'
+                              : selectedSite.category === 'Pet Memorial'
+                              ? 'เปิดใช้สมทบกองทุนช่วยเหลือสัตว์ (Donation QR)'
+                              : selectedSite.category === 'Couple'
+                              ? 'เปิดใช้กองทุนแห่งความรัก (Donation QR)'
+                              : selectedSite.category === 'Wedding'
+                              ? 'เปิดใช้ร่วมใส่ซองออนไลน์ (Donation QR)'
+                              : selectedSite.category === 'Family Legacy'
+                              ? 'เปิดใช้สมทบกองทุนตระกูล (Donation QR)'
+                              : 'เปิดใช้บริการรับเงินทำบุญ (Donation QR)'}
+                          </span>
+                        </h4>
+                        <p className="text-[11px] text-stone-400 leading-relaxed">
+                          {getFeatureLabel(selectedSite.category, 'donation').description}
+                        </p>
+                      </div>
                       <Checkbox 
                         checked={donationActive}
                         onCheckedChange={(c) => setDonationActive(!!c)}
-                        className="w-5 h-5 cursor-pointer"
+                        className="w-5 h-5 cursor-pointer shrink-0"
                       />
                     </div>
 
@@ -5045,7 +5229,13 @@ export default function WebmasterDashboard() {
                     <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
                       <Flame className="w-4 h-4 text-[#0071e3]" />
                     </div>
-                    <span>คำไว้อาลัยรออนุมัติ</span>
+                    <span>
+                      {selectedSite.category === 'Friends'
+                        ? 'ข้อความถึงกันรออนุมัติ'
+                        : selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                          ? 'คำอวยพรรออนุมัติ'
+                          : 'คำไว้อาลัยรออนุมัติ'}
+                    </span>
                     {condolences.length > 0 && (
                       <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black">{condolences.length}</span>
                     )}
@@ -5056,7 +5246,13 @@ export default function WebmasterDashboard() {
                   <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
                     <Flame className="w-10 h-10 text-stone-300 mx-auto" />
                     <p className="text-sm text-stone-500">ไม่มีข้อความค้างอนุมัติ</p>
-                    <p className="text-xs text-stone-400">ข้อความไว้อาลัยใหม่จะแสดงที่นี่</p>
+                    <p className="text-xs text-stone-400">
+                      {selectedSite.category === 'Friends'
+                        ? 'ข้อความใหม่จะแสดงที่นี่'
+                        : selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                          ? 'คำอวยพรใหม่จะแสดงที่นี่'
+                          : 'ข้อความไว้อาลัยใหม่จะแสดงที่นี่'}
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-3">

@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local scratch scripts / data
+/scratch/
+
+# user-uploaded media (runtime content, not source)
+/public/uploads/

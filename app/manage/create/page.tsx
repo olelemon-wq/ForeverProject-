@@ -24,6 +24,8 @@ interface Subject {
   birthYear: number | null;
   deathYear: number | null;
   isAlive?: boolean;
+  role?: string;
+  note?: string;
 }
 
 function dateToYmd(d: Date | null): string {
@@ -51,6 +53,11 @@ const CATEGORY_INPUT_DEFAULTS: Record<string, {
   dateEndTitle: string;
   dateEndPlaceholder: string;
   lifespanPrefix: string;
+  hideDates?: boolean;
+  roleLabel?: string;
+  rolePlaceholder?: string;
+  noteLabel?: string;
+  notePlaceholder?: string;
 }> = {
   'Memorial': {
     nameLabel: 'ชื่อเว็บไซต์ (เช่น รำลึกรักแด่คุณพ่อสมศักดิ์)',
@@ -101,16 +108,21 @@ const CATEGORY_INPUT_DEFAULTS: Record<string, {
     lifespanPrefix: 'ช่วงความสัมพันธ์',
   },
   'Friends': {
-    nameLabel: 'ชื่อเว็บไซต์ (เช่น กลุ่มเพื่อนซี้ ม.ศ.3 รุ่น 12)',
-    namePlaceholder: 'เช่น มิตรภาพตลอดไป แก๊งสามช่า',
-    subjectLabel: 'ชื่อกลุ่มเพื่อน / รุ่น',
-    subjectPlaceholder: 'เช่น เพื่อนซี้ ม.ศ.3 รุ่น 12',
-    dateLabel: 'วันเริ่มก่อตั้งแก๊ง – วันปัจจุบัน',
-    dateStartTitle: 'วันก่อตั้งแก๊ง',
-    dateStartPlaceholder: 'เลือกวันก่อตั้งแก๊ง',
-    dateEndTitle: 'วันรวมตัวล่าสุด',
-    dateEndPlaceholder: 'เลือกวันรวมตัวล่าสุด',
-    lifespanPrefix: 'ระยะเวลามิตรภาพ',
+    nameLabel: 'ชื่อเว็บไซต์ / ชื่อกลุ่ม',
+    namePlaceholder: 'เช่น CN the Gang / รุ่น 55',
+    subjectLabel: 'ชื่อ / ชื่อเล่น',
+    subjectPlaceholder: 'เช่น ตูน, แจ๊ส, บิ๊ก',
+    dateLabel: '',
+    dateStartTitle: '',
+    dateStartPlaceholder: '',
+    dateEndTitle: '',
+    dateEndPlaceholder: '',
+    lifespanPrefix: '',
+    hideDates: true,
+    roleLabel: 'บทบาทในกลุ่ม (ไม่บังคับ)',
+    rolePlaceholder: 'เช่น กัปตัน, เลขา, สมาชิก',
+    noteLabel: 'โน้ตสั้น (ไม่บังคับ)',
+    notePlaceholder: 'เช่น คนจัดทริป, ม.ศ.3 รุ่น 55',
   },
   'Pet Memorial': {
     nameLabel: 'ชื่อเว็บไซต์ (เช่น รำลึกถึงเจ้าปุยฝ้ายแสนรัก)',
@@ -158,7 +170,7 @@ const CATEGORY_OPTIONS = [
   { 
     key: 'Friends', 
     thaiLabel: 'Friends', 
-    subLabel: 'กลุ่มเพื่อนรัก', 
+    subLabel: 'กลุ่มรุ่น', 
     desc: 'พื้นที่รวบรวมเรื่องราวความผูกพัน มิตรภาพที่ไม่มีวันจางหาย และความทรงจำร่วมกับแก๊ง', 
     icon: Users, 
   },
@@ -205,6 +217,8 @@ export default function WebsiteCreationWizard() {
       deathYearOnly: false,
       birthYear: null,
       deathYear: null,
+      role: '',
+      note: '',
     }
   ]);
 
@@ -218,6 +232,12 @@ export default function WebsiteCreationWizard() {
       setDeceasedName(names[0]);
     } else {
       setDeceasedName('');
+    }
+
+    // Friends: no lifespan dates
+    if (category === 'Friends') {
+      setLifespan(names.length > 0 ? names.join(', ') : '');
+      return;
     }
 
     // 2. Format a combined lifespan string for display
@@ -449,17 +469,41 @@ export default function WebsiteCreationWizard() {
             heroStyle: 'Classic',
             avatarUrl: seedMedia.avatarUrl,
             coverUrl: seedMedia.coverUrl,
-            subjects: subjects.map(s => ({
-              name: s.name,
-              birthDate: s.birthDate ? s.birthDate.toISOString() : null,
-              deathDate: s.deathDate ? s.deathDate.toISOString() : null,
-              birthYearOnly: s.birthYearOnly,
-              deathYearOnly: s.deathYearOnly,
-            })),
-            deceasedBirthDate: subjects[0]?.birthDate ? subjects[0].birthDate.toISOString() : null,
-            deceasedDeathDate: subjects[0]?.deathDate ? subjects[0].deathDate.toISOString() : null,
-            birthYearOnly: subjects[0]?.birthYearOnly || false,
-            deathYearOnly: subjects[0]?.deathYearOnly || false,
+            subjects: subjects.map((s) =>
+              category === 'Friends'
+                ? {
+                    name: s.name,
+                    role: s.role || '',
+                    note: s.note || '',
+                    isAlive: true,
+                    birthDate: null,
+                    deathDate: null,
+                    birthYearOnly: false,
+                    deathYearOnly: false,
+                  }
+                : {
+                    name: s.name,
+                    birthDate: s.birthDate ? s.birthDate.toISOString() : null,
+                    deathDate: s.deathDate ? s.deathDate.toISOString() : null,
+                    birthYearOnly: s.birthYearOnly,
+                    deathYearOnly: s.deathYearOnly,
+                    isAlive: s.isAlive,
+                  }
+            ),
+            deceasedBirthDate:
+              category === 'Friends'
+                ? null
+                : subjects[0]?.birthDate
+                  ? subjects[0].birthDate.toISOString()
+                  : null,
+            deceasedDeathDate:
+              category === 'Friends'
+                ? null
+                : subjects[0]?.deathDate
+                  ? subjects[0].deathDate.toISOString()
+                  : null,
+            birthYearOnly: category === 'Friends' ? false : subjects[0]?.birthYearOnly || false,
+            deathYearOnly: category === 'Friends' ? false : subjects[0]?.deathYearOnly || false,
             lifespan,
           },
         }),
@@ -858,6 +902,7 @@ export default function WebsiteCreationWizard() {
                   <h4 className="text-[10px] font-black text-stone-400 uppercase tracking-wider">
                     {category === 'Pet Memorial' ? `ข้อมูลสัตว์เลี้ยงตัวที่ ${index + 1}` :
                      category === 'Couple' || category === 'Wedding' ? `ข้อมูลคู่รักคนที่ ${index + 1}` :
+                     category === 'Friends' ? `ข้อมูลสมาชิกคนที่ ${index + 1}` :
                      `ข้อมูลผู้ล่วงลับท่านที่ ${index + 1}`}
                   </h4>
 
@@ -879,7 +924,44 @@ export default function WebsiteCreationWizard() {
                     />
                   </div>
 
-                  {!(index > 0 && (category === 'Couple' || category === 'Wedding')) && (
+                  {category === 'Friends' && (
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div className="space-y-1">
+                        <label className="text-sm font-bold tracking-wide text-stone-600">
+                          {defaults.roleLabel}
+                        </label>
+                        <Input
+                          type="text"
+                          value={sub.role || ''}
+                          onChange={(e) => {
+                            const newSubs = [...subjects];
+                            newSubs[index].role = e.target.value;
+                            setSubjects(newSubs);
+                          }}
+                          placeholder={defaults.rolePlaceholder}
+                          className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-bold tracking-wide text-stone-600">
+                          {defaults.noteLabel}
+                        </label>
+                        <Input
+                          type="text"
+                          value={sub.note || ''}
+                          onChange={(e) => {
+                            const newSubs = [...subjects];
+                            newSubs[index].note = e.target.value;
+                            setSubjects(newSubs);
+                          }}
+                          placeholder={defaults.notePlaceholder}
+                          className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {!defaults.hideDates && !(index > 0 && (category === 'Couple' || category === 'Wedding')) && (
                     <div className="space-y-2.5">
                       {/* Still Alive checkbox for Pet Memorial and Family Legacy */}
                       {(category === 'Pet Memorial' || category === 'Family Legacy') && (
@@ -1049,6 +1131,8 @@ export default function WebsiteCreationWizard() {
                         deathYearOnly: false,
                         birthYear: null,
                         deathYear: null,
+                        role: '',
+                        note: '',
                       }
                     ]);
                   }}
@@ -1057,11 +1141,12 @@ export default function WebsiteCreationWizard() {
                   {category === 'Pet Memorial' ? '+ เพิ่มสัตว์เลี้ยงอีกตัว' :
                    category === 'Family Legacy' ? '+ เพิ่มรายชื่อสมาชิกตระกูลอีกท่าน' :
                    category === 'Memorial' ? '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน' :
+                   category === 'Friends' ? '+ เพิ่มสมาชิก' :
                    '+ เพิ่มรายชื่อผู้ร่วมแสดงผล'}
                 </Button>
               )}
 
-              {lifespan && (
+              {lifespan && category !== 'Friends' && (
                 <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
                     สรุปกำหนดข้อมูลช่วงเวลา ({defaults.lifespanPrefix})

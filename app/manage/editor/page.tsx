@@ -201,6 +201,23 @@ const getScheduleLabels = (category: string) => {
       invitePlaceholder: 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี',
     };
   }
+  if (category === 'Friends') {
+    return {
+      subtitle: 'นัดพบปะกลุ่ม',
+      item1: 'วันและเวลานัดพบ',
+      item1Placeholder: 'เช่น วันเสาร์ที่ 20 ก.ค. 68',
+      item2: '',
+      item2Placeholder: '',
+      item2TimePlaceholder: '',
+      item3: '',
+      item3Placeholder: '',
+      venueLabel: 'สถานที่นัดพบ',
+      venuePlaceholder: 'เช่น ร้านอาหาร / คาเฟ่ / รีสอร์ท',
+      pavilionLabel: 'โซน / ห้อง (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น โซนสวน / ห้อง VIP',
+      invitePlaceholder: 'เชิญชวนมาร่วมพบปะและสร้างความทรงจำด้วยกัน',
+    };
+  }
   if (category === 'Pet Memorial') {
     return {
       subtitle: 'กำหนดการอำลาและการเดินทางกลับดาว',
@@ -445,7 +462,7 @@ function EditorWorkspace() {
 
               let guidelineStr = '';
               if (ann.dressCode) guidelineStr += `การแต่งกาย: ${ann.dressCode}`;
-              if (ann.wreathPolicy) {
+              if (ann.wreathPolicy && siteCategory !== 'Friends') {
                 const policies: any = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? {
                   'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
                   'NO_FLOWERS': 'ขออภัย งดรับของขวัญ (เน้นการร่วมอวยพรแทน)',
@@ -509,7 +526,8 @@ function EditorWorkspace() {
     } else if (field === 'announcementWaterDate' || field === 'announcementWaterTime') {
       const date = field === 'announcementWaterDate' ? value : formData.announcementWaterDate;
       const time = field === 'announcementWaterTime' ? value : formData.announcementWaterTime;
-      const text = `พิธีรดน้ำศพ: ${date} ${time ? `(${time})` : ''}`;
+      const waterLabel = siteCategory === 'Friends' ? 'นัดพบปะกลุ่ม' : 'พิธีรดน้ำศพ';
+      const text = `${waterLabel}: ${date} ${time ? `(${time})` : ''}`;
       const el = elements.find((e) => e.id === 'water-text');
       if (el && el.type === 'text') {
         updateElement('water-text', { text, width: measureTextWidth(text, el.fontSize, el.fontFamily, el.fontStyle) + 10 });
@@ -546,7 +564,7 @@ function EditorWorkspace() {
 
       let guidelineStr = '';
       if (dress) guidelineStr += `การแต่งกาย: ${dress}`;
-      if (policy) {
+      if (policy && siteCategory !== 'Friends') {
         const policies: any = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? {
           'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
           'NO_FLOWERS': 'ขออภัย งดรับของขวัญ (เน้นการร่วมอวยพรแทน)',
@@ -1063,10 +1081,10 @@ function EditorWorkspace() {
               <div className="bg-white rounded-2xl border border-stone-200 p-4 space-y-3 shadow-sm">
                 <h4 className="text-xs font-bold text-emerald-850 flex items-center gap-1.5 border-b border-stone-100 pb-2">
                   <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>2. วันและเวลากำหนดการพิธี</span>
+                  <span>{siteCategory === 'Friends' ? '2. นัดพบปะกลุ่ม' : '2. วันและเวลากำหนดการพิธี'}</span>
                 </h4>
 
-                 {/* 1. Water Bathing */}
+                 {/* 1. Water Bathing / Meetup */}
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
                   <span className="text-[10px] font-bold text-stone-700 flex items-center gap-1 select-none">
                     <Droplets className="w-3.5 h-3.5 text-blue-600 shrink-0" />
@@ -1112,7 +1130,7 @@ function EditorWorkspace() {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent position="popper">
-<SelectItem value="__empty__">เลือกเวลา</SelectItem>
+<SelectItem value="__empty__">{siteCategory === 'Friends' ? 'ไม่ระบุเวลา' : 'เลือกเวลา'}</SelectItem>
                         {TIME_PRESETS.map((preset) => (
                                           <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                         ))}
@@ -1132,6 +1150,8 @@ function EditorWorkspace() {
                   </div>
                 </div>
 
+                {siteCategory !== 'Friends' && (
+                <>
                 {/* 2. Abhidhamma */}
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
                   <span className="text-[10px] font-bold text-stone-700 flex items-center gap-1 select-none">
@@ -1269,17 +1289,25 @@ function EditorWorkspace() {
                     </div>
                   </div>
                 </div>
+                </>
+                )}
               </div>
 
               {/* Card 3: Guidelines */}
               <div className="bg-white rounded-2xl border border-stone-200 p-4 space-y-3.5 shadow-sm">
                 <h4 className="text-xs font-bold text-emerald-850 flex items-center gap-1.5 border-b border-stone-100 pb-2">
                   <Info className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>3. ข้อแนะนำสำหรับแขกผู้เข้าร่วมงาน</span>
+                  <span>
+                    {siteCategory === 'Friends'
+                      ? '3. ข้อมูลเพิ่มเติมสำหรับเพื่อน ๆ'
+                      : '3. ข้อแนะนำสำหรับแขกผู้เข้าร่วมงาน'}
+                  </span>
                 </h4>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">การแต่งกายเข้าร่วมงาน</label>
+                  <label className="text-[10px] font-bold text-stone-600 block">
+                    {siteCategory === 'Friends' ? 'โน้ต / รายละเอียด' : 'การแต่งกายเข้าร่วมงาน'}
+                  </label>
                   <Input 
                     type="text" 
                     value={formData.announcementDressCode} 
@@ -1287,12 +1315,15 @@ function EditorWorkspace() {
                     placeholder={
                       siteCategory === 'Couple' || siteCategory === 'Wedding'
                         ? 'เช่น ธีมสีชมพู/พาสเทล หรือ ตามความสะดวก'
-                        : 'เช่น ชุดสุภาพโทนสีดำหรือขาว'
+                        : siteCategory === 'Friends'
+                          ? 'เช่น แต่งตามสบาย / ธีมสีกลุ่ม'
+                          : 'เช่น ชุดสุภาพโทนสีดำหรือขาว'
                     }
                     className="w-full px-3 py-2 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:bg-white focus:border-emerald-500/80 transition"
                   />
                 </div>
 
+                {siteCategory !== 'Friends' && (
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-stone-600 block">
                     {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'นโยบายการรับซอง/ของขวัญ' : 'นโยบายพวงหรีด'}
@@ -1323,9 +1354,12 @@ function EditorWorkspace() {
                               </SelectContent>
                             </Select>
                 </div>
+                )}
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">เบอร์ติดต่อประสานงานเจ้าภาพ</label>
+                  <label className="text-[10px] font-bold text-stone-600 block">
+                    {siteCategory === 'Friends' ? 'เบอร์ติดต่อประสานงาน' : 'เบอร์ติดต่อประสานงานเจ้าภาพ'}
+                  </label>
                   <Input 
                     type="text" 
                     value={formData.announcementContactPhone} 

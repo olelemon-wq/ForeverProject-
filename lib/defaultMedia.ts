@@ -17,18 +17,25 @@ const CATEGORY_FOLDER: Record<CategoryKey, string> = {
   'Pet Memorial': 'pet-memorial',
 };
 
+/** Categories with custom PNG presets; others keep SVG presets */
+const CATEGORY_EXT: Partial<Record<CategoryKey, 'svg' | 'png' | 'jpg' | 'webp'>> = {
+  Friends: 'png',
+  'Pet Memorial': 'png',
+};
+
 const AVATAR_LABELS = ['ชุด 1', 'ชุด 2', 'ชุด 3', 'ชุด 4'];
 const COVER_LABELS = ['พื้นหลัง 1', 'พื้นหลัง 2', 'พื้นหลัง 3', 'พื้นหลัง 4'];
 
 function buildItems(category: CategoryKey, kind: DefaultMediaKind): DefaultMediaItem[] {
   const folder = CATEGORY_FOLDER[category] || CATEGORY_FOLDER.Memorial;
+  const ext = CATEGORY_EXT[category] || 'svg';
   const labels = kind === 'avatar' ? AVATAR_LABELS : COVER_LABELS;
   return labels.map((label, i) => {
     const n = i + 1;
     return {
       id: `${folder}-${kind}-${n}`,
       label,
-      src: `/defaults/${folder}/${kind}/${n}.svg`,
+      src: `/defaults/${folder}/${kind}/${n}.${ext}`,
     };
   });
 }
