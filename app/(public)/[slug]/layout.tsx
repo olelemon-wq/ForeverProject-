@@ -21,15 +21,17 @@ export async function generateMetadata(props: {
   const title =
     tenant.category === 'Friends'
       ? `${tenant.name} — กลุ่ม | FOREVER`
-      : tenant.category === 'Couple' || tenant.category === 'Wedding'
+      : tenant.category === 'Couple' || tenant.category === 'Wedding' || tenant.category === 'Pet Memorial'
         ? `${tenant.name} | FOREVER`
         : `รำลึกถึง ${tenant.name} - ${tenant.category} | FOREVER`;
   const description =
     tenant.category === 'Friends'
       ? `พื้นที่เก็บความทรงจำและข้อความถึงกันของ ${tenant.name}`
-      : tenant.category === 'Couple' || tenant.category === 'Wedding'
-        ? `ร่วมส่งคำอวยพรและความปรารถนาดีถึง ${tenant.name}`
-        : `ร่วมรำลึก ร่วมจุดเทียน และเขียนคำไว้อาลัยแด่ ${tenant.name} เพื่อบันทึกความทรงจำอันทรงคุณค่าให้อยู่ตลอดไป`;
+      : tenant.category === 'Pet Memorial'
+        ? `พื้นที่เก็บภาพและเรื่องราวของ ${tenant.name} ทั้งวันที่อยู่ด้วยกันและในความทรงจำ`
+        : tenant.category === 'Couple' || tenant.category === 'Wedding'
+          ? `ร่วมส่งคำอวยพรและความปรารถนาดีถึง ${tenant.name}`
+          : `ร่วมรำลึก ร่วมจุดเทียน และเขียนคำไว้อาลัยแด่ ${tenant.name} เพื่อบันทึกความทรงจำอันทรงคุณค่าให้อยู่ตลอดไป`;
 
   return {
     title,

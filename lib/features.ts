@@ -160,8 +160,11 @@ export function getEnabledFeatures(
     return typeof v === 'boolean' ? v : fallback;
   };
 
+  const isPet = tenant?.category === 'Pet Memorial';
+
   return {
-    announcement: read('announcement', false) || !!cfg.announcement?.active,
+    // Pet sites intentionally have no ceremony/announcement card
+    announcement: isPet ? false : (read('announcement', false) || !!cfg.announcement?.active),
     condolence: read('condolence', true),
     memory: read('memory', true),
     feed: read('feed', true),

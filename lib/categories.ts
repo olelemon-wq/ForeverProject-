@@ -137,12 +137,11 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     },
   },
   'Pet Memorial': {
-    label: 'Pet Memorial (สัตว์เลี้ยงแสนรัก)',
-    tagline: 'อนุสรณ์สถานรำลึกถึงสัตว์เลี้ยงสมาชิกในครอบครัว',
-    optional: ['announcement', 'condolence', 'memory', 'feed', 'donation'],
-    defaultOn: ['condolence', 'memory'],
+    label: 'Pet (พื้นที่ของน้อง)',
+    tagline: 'พื้นที่เก็บความทรงจำและเรื่องราวของน้อง ทั้งวันที่อยู่ด้วยกันและในความทรงจำ',
+    optional: ['condolence', 'memory', 'feed', 'donation'],
+    defaultOn: ['memory', 'feed'],
     featureLabels: {
-      announcement: { label: 'การ์ดส่งน้องกลับดาว', description: 'การ์ดแจ้งข่าวส่งน้องกันกลับดาวดึงดูดความรักและความคิดถึง' },
       gallery: { label: 'คลังภาพเจ้าตัวน้อย', description: 'อัลบั้มภาพถ่ายความทรงจำและโมเมนต์น่ารักของเด็ก ๆ' },
       videos: { label: 'วิดีโอแสนซนของน้อง', description: 'คลิปวิดีโอแสนซนและช่วงเวลาป่วนปนน่ารักของเด็ก ๆ' },
       condolence: { label: 'สมุดส่งความคิดถึง', description: 'สมุดฝากคำรักและข้อความคิดถึงส่งตรงถึงดาวหมาแมว' },
