@@ -1233,16 +1233,17 @@ export default function WebmasterDashboard() {
       setAbhidhammaEndDate('');
 
       if (config.features) {
+        const visible = new Set(getVisibleKeys(site.category));
         setFeatures({
-          family: config.features.family !== false,
-          gallery: config.features.gallery !== false,
-          videos: config.features.videos !== false,
-          announcement: config.features.announcement !== false,
-          ebooks: config.features.ebooks !== false,
-          condolence: config.features.condolence !== false,
-          donation: config.features.donation !== false,
-          memory: config.features.memory !== false,
-          feed: config.features.feed !== false,
+          family: visible.has('family') && config.features.family !== false,
+          gallery: visible.has('gallery') && config.features.gallery !== false,
+          videos: visible.has('videos') && config.features.videos !== false,
+          announcement: visible.has('announcement') && config.features.announcement !== false,
+          ebooks: visible.has('ebooks') && config.features.ebooks !== false,
+          condolence: visible.has('condolence') && config.features.condolence !== false,
+          donation: visible.has('donation') && config.features.donation !== false,
+          memory: visible.has('memory') && config.features.memory !== false,
+          feed: visible.has('feed') && config.features.feed !== false,
         });
       }
     } else {
@@ -1681,7 +1682,7 @@ export default function WebmasterDashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('อัปโหลดหนังสือที่ระลึกธรรมทานและสร้างระบบ Web Reader สำเร็จ!');
+      setSuccess(`อัปโหลด${getFeatureLabel(activeSite.category, 'ebooks').label}สำเร็จ`);
       setStorageUsedBytes(prev => prev + fileSize);
 
       // Reload ebooks
@@ -1701,8 +1702,8 @@ export default function WebmasterDashboard() {
     if (!activeSite) return;
     if (!force) {
       showConfirm(
-        'ยืนยันการลบหนังสือที่ระลึก',
-        'คุณแน่ใจหรือไม่ว่าต้องการลบหนังสือที่ระลึกนี้? การลบแล้วจะไม่สามารถกู้คืนกลับมาได้',
+        'ยืนยันการลบ',
+        `คุณแน่ใจหรือไม่ว่าต้องการลบ${getFeatureLabel(activeSite?.category, 'ebooks').label}นี้? การลบแล้วจะไม่สามารถกู้คืนกลับมาได้`,
         () => handleDeleteEbook(ebId, true)
       );
       return;
@@ -1721,7 +1722,7 @@ export default function WebmasterDashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('ลบหนังสือที่ระลึกสำเร็จ');
+      setSuccess(`ลบ${getFeatureLabel(activeSite?.category, 'ebooks').label}สำเร็จ`);
       setEbooks(ebooks.filter(b => b.id !== ebId));
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการลบหนังสือ');
@@ -2178,7 +2179,7 @@ export default function WebmasterDashboard() {
                 <span>{getFeatureLabel(selectedSite.category, 'family').label} ({familyMembers.length})</span>
               </Button>
             )}
-            {features.ebooks && (
+            {features.ebooks && getVisibleKeys(selectedSite.category).includes('ebooks') && (
               <Button variant="ghost" 
                 type="button"
                 onClick={() => handleTabClick('ebooks')}
@@ -5061,15 +5062,15 @@ export default function WebmasterDashboard() {
           )}
         </section>
         )}        {/* E-Books Manager Section */}
-        {activeTab === 'ebooks' && (
+        {activeTab === 'ebooks' && features.ebooks && getVisibleKeys(selectedSite.category).includes('ebooks') && (
           <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
           <div className="flex justify-between items-center border-b border-stone-100 pb-4">
             <div>
               <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
                 <BookOpen className="w-5 h-5 text-emerald-700" />
-                <span>หนังสือของชำร่วยและธรรมทาน ({ebooks.length})</span>
+                <span>{getFeatureLabel(selectedSite.category, 'ebooks').label} ({ebooks.length})</span>
               </h3>
-              <p className="text-xs text-stone-500">อัปโหลดหนังสือธรรมะ บทสวดมนต์ หรือหนังสือชีวประวัติ (PDF) พร้อมระบบอ่านในเว็บ</p>
+              <p className="text-xs text-stone-500">{getFeatureLabel(selectedSite.category, 'ebooks').description}</p>
             </div>
             <Button variant="ghost" type="button" 
               onClick={() => { resetEbookForm(); setEbookFormOpen(!ebookFormOpen); }}
@@ -5080,7 +5081,7 @@ export default function WebmasterDashboard() {
               ) : (
                 <>
                   <Plus className="w-3.5 h-3.5" />
-                  <span>อัปโหลดหนังสือใหม่</span>
+                  <span>อัปโหลดเล่มใหม่</span>
                 </>
               )}
             </Button>
@@ -5097,7 +5098,7 @@ export default function WebmasterDashboard() {
                 ) : (
                   <>
                     <Plus className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>อัปโหลดหนังสือธรรมทานใหม่</span>
+                    <span>อัปโหลด{getFeatureLabel(selectedSite.category, 'ebooks').label}</span>
                   </>
                 )}
               </h4>
@@ -5110,7 +5111,17 @@ export default function WebmasterDashboard() {
                     value={ebookTitle} 
                     onChange={(e) => setEbookTitle(e.target.value)}
                     required
-                    placeholder="เช่น หนังสือบทสวดมนต์และธรรมสติ"
+                    placeholder={
+                      selectedSite.category === 'Wedding'
+                        ? 'เช่น อัลบั้มแทนคำขอบคุณ'
+                        : selectedSite.category === 'Friends'
+                          ? 'เช่น หนังสือรุ่นประจำปี'
+                          : selectedSite.category === 'Couple'
+                            ? 'เช่น สมุดภาพความรักของเรา'
+                            : selectedSite.category === 'Family Legacy'
+                              ? 'เช่น ประวัติตระกูล'
+                              : 'เช่น หนังสืออนุสรณ์'
+                    }
                     className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"
                   />
                 </div>
@@ -5184,7 +5195,7 @@ export default function WebmasterDashboard() {
 
           {ebooks.length === 0 ? (
             <div className="p-8 text-center border border-dashed border-stone-200 rounded-2xl text-stone-500 text-xs">
-              ยังไม่มีการอัปโหลดหนังสือที่ระลึกธรรมทาน
+              ยังไม่มี{getFeatureLabel(selectedSite.category, 'ebooks').label}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

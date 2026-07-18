@@ -168,7 +168,8 @@ export function getEnabledFeatures(
     family: read('family', true),
     gallery: read('gallery', true),
     videos: read('videos', true),
-    ebooks: read('ebooks', true),
+    // Pet Memorial intentionally has no ebooks / memorial-book feature
+    ebooks: tenant?.category === 'Pet Memorial' ? false : read('ebooks', true),
     donation: read('donation', !!tenant?.donationActive),
   };
 }
