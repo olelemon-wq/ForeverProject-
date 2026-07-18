@@ -853,11 +853,14 @@ export default function WebmasterDashboard() {
       if (!res.ok) throw new Error(data.error);
 
       if (data.uploadUrl) {
-        await fetch(data.uploadUrl, {
+        const putRes = await fetch(data.uploadUrl, {
           method: 'PUT',
           headers: { 'Content-Type': file.type },
           body: file,
         });
+        if (!putRes.ok) {
+          throw new Error('อัปโหลดไฟล์ไปยังที่เก็บไม่สำเร็จ กรุณาลองใหม่ หรือตรวจการตั้งค่า R2/CORS');
+        }
       }
 
       setSuccess('อัปโหลดไฟล์สำเร็จ');

@@ -76,57 +76,91 @@ export async function POST(request: Request) {
 
     // 5. Generate storage key
     const fileKey = `uploads/${websiteId}/${Date.now()}-${fileName}`;
-    
-    // Determine upload URL strategy (Real S3/R2 or Mock fallback)
+
+    // Determine upload URL strategy (Real S3/R2 or local mock fallback)
     let uploadUrl = '';
     let fileUrl = '';
 
-    const s3Endpoint = process.env.S3_ENDPOINT || '';
-    const s3LooksValid =
-      /^https?:\/\//i.test(s3Endpoint) &&
-      !/[<>]|account_id|your-|xxx|example\.com/i.test(s3Endpoint);
+    const looksLikePlaceholder = (value: string) =>
+      !value ||
+      /[<>]|account_id|your[_-]|xxx|example\.com|changeme|placeholder/i.test(value);
+
+    const s3Endpoint = (process.env.S3_ENDPOINT || '').trim();
+    const s3AccessKey = (process.env.S3_ACCESS_KEY_ID || '').trim();
+    const s3SecretKey = (process.env.S3_SECRET_ACCESS_KEY || '').trim();
+    const s3Bucket = (process.env.S3_BUCKET_NAME || '').trim();
+    const s3PublicDomain = (process.env.S3_PUBLIC_DOMAIN || '').trim();
 
     const hasS3Config =
-      s3LooksValid &&
-      process.env.S3_ACCESS_KEY_ID &&
-      process.env.S3_SECRET_ACCESS_KEY &&
-      process.env.S3_BUCKET_NAME;
+      /^https?:\/\//i.test(s3Endpoint) &&
+      !looksLikePlaceholder(s3Endpoint) &&
+      !looksLikePlaceholder(s3AccessKey) &&
+      !looksLikePlaceholder(s3SecretKey) &&
+      !looksLikePlaceholder(s3Bucket);
+
+    // Vercel / production cannot persist files to the local filesystem.
+    // Mock upload would report success but leave broken images.
+    const isServerless =
+      process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+
+    if (isServerless && hasS3Config && looksLikePlaceholder(s3PublicDomain)) {
+      return NextResponse.json(
+        {
+          error:
+            'ยังไม่ได้ตั้ง S3_PUBLIC_DOMAIN บน Vercel (เช่น https://pub-xxxx.r2.dev) กรุณาใส่แล้ว Redeploy',
+        },
+        { status: 503 }
+      );
+    }
 
     if (hasS3Config) {
       try {
         const s3Client = new S3Client({
           region: 'auto',
-          endpoint: process.env.S3_ENDPOINT,
+          endpoint: s3Endpoint,
           credentials: {
-            accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+            accessKeyId: s3AccessKey,
+            secretAccessKey: s3SecretKey,
           },
         });
 
         const command = new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME,
+          Bucket: s3Bucket,
           Key: fileKey,
           ContentType: fileType,
         });
 
         uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
 
-        // Build the public read URL.
-        // When a public domain is configured (R2 r2.dev URL or a custom domain),
-        // it is already bound to the bucket, so the object key alone is appended.
-        // Otherwise fall back to the raw S3 endpoint which requires the bucket name.
-        const publicDomain = (process.env.S3_PUBLIC_DOMAIN || '').replace(/\/+$/, '');
+        // Public domain (r2.dev / custom) is already bound to the bucket.
+        const publicDomain = s3PublicDomain.replace(/\/+$/, '');
         fileUrl = publicDomain
           ? `${publicDomain}/${fileKey}`
-          : `${(process.env.S3_ENDPOINT || '').replace(/\/+$/, '')}/${process.env.S3_BUCKET_NAME}/${fileKey}`;
+          : `${s3Endpoint.replace(/\/+$/, '')}/${s3Bucket}/${fileKey}`;
       } catch (s3Err) {
         console.error('Error generating real S3 presigned URL:', s3Err);
-        // Fallback to mock on error
+        if (isServerless) {
+          return NextResponse.json(
+            {
+              error:
+                'ตั้งค่าที่เก็บไฟล์ (Cloudflare R2) ไม่สำเร็จ กรุณาตรวจ S3_ENDPOINT / Access Key บน Vercel แล้ว Redeploy',
+            },
+            { status: 503 }
+          );
+        }
         uploadUrl = `/api/media/upload-mock?key=${encodeURIComponent(fileKey)}`;
         fileUrl = `/${fileKey}`;
       }
+    } else if (isServerless) {
+      return NextResponse.json(
+        {
+          error:
+            'เว็บจริงยังไม่ได้ตั้งค่าที่เก็บไฟล์ (Cloudflare R2) กรุณาใส่ S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_ENDPOINT, S3_BUCKET_NAME, S3_PUBLIC_DOMAIN บน Vercel แล้ว Redeploy',
+        },
+        { status: 503 }
+      );
     } else {
-      // Standard local simulation mock fallback
+      // Local development only: write into public/uploads
       uploadUrl = `/api/media/upload-mock?key=${encodeURIComponent(fileKey)}`;
       fileUrl = `/${fileKey}`;
     }
