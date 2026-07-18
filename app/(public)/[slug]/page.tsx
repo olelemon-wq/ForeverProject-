@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { 
   BookOpen, Calendar, MapPin, Image, Flame, ArrowRight,
-  Phone, Info, Share2, Printer, ExternalLink, Droplets, Sparkles, PawPrint
+  Phone, Info, Share2, Printer, ExternalLink, Droplets, Sparkles, PawPrint,
+  Cake, Heart, Star, Frown
 } from 'lucide-react';
 import Link from 'next/link';
 import DeceasedAvatar from './announcement/DeceasedAvatar';
@@ -797,14 +798,19 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
       {/* 5. Pet profiles + Biography */}
       {tenant.category === 'Pet Memorial' && subjects.some((s: any) => s?.name) && (
         <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
-          <h2
-            className="text-xl font-bold flex items-center gap-2"
-            style={{ color: 'var(--theme-primary, #0d9488)' }}
-          >
-            <PawPrint className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
-            สมุดประจำตัวน้อง
-          </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-1">
+            <h2
+              className="text-xl font-bold flex items-center gap-2"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+            >
+              <PawPrint className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
+              สมุดประจำตัวน้อง
+            </h2>
+            <p className="text-xs text-stone-400 font-medium">
+              โปรไฟล์และเรื่องน่ารู้ของสมาชิกสี่ขาประจำบ้าน
+            </p>
+          </div>
+          <div className={`grid grid-cols-1 gap-5 ${subjects.filter((s: any) => s?.name).length > 1 ? 'sm:grid-cols-2' : 'sm:max-w-md'}`}>
             {subjects
               .filter((s: any) => s?.name)
               .map((s: any, i: number) => {
@@ -824,40 +830,70 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                   ? formatPetDate(s.deathDate, s.deathYearOnly, s.deathYear)
                   : '';
                 const rows = [
-                  s.breed && { label: 'สายพันธุ์', value: s.breed },
-                  birth && { label: s.isAlive ? 'วันเกิด / รับมา' : 'วันเกิด / รับมา', value: birth },
-                  passed && { label: 'วันที่จากไป', value: passed },
-                  s.personality && { label: 'บุคลิก', value: s.personality },
-                  s.favorite && { label: 'ของโปรด', value: s.favorite },
-                  s.dislike && { label: 'ไม่ชอบ', value: s.dislike },
-                ].filter(Boolean) as { label: string; value: string }[];
+                  birth && { icon: Cake, label: 'วันเกิด / รับมา', value: birth },
+                  passed && { icon: Star, label: 'วันที่จากไป', value: passed },
+                  s.personality && { icon: Sparkles, label: 'บุคลิก', value: s.personality },
+                  s.favorite && { icon: Heart, label: 'ของโปรด', value: s.favorite },
+                  s.dislike && { icon: Frown, label: 'ไม่ชอบ', value: s.dislike },
+                ].filter(Boolean) as { icon: any; label: string; value: string }[];
 
                 return (
                   <div
                     key={`${s.name}-${i}`}
-                    className="rounded-2xl border border-stone-200 bg-stone-50/50 p-5 space-y-3"
+                    className="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:shadow-lg hover:-translate-y-1"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-base font-black text-stone-900">{s.name}</h3>
+                    <PawPrint
+                      aria-hidden
+                      className="pointer-events-none absolute -bottom-5 -right-5 h-28 w-28 rotate-[-15deg] opacity-[0.05] transition duration-500 group-hover:rotate-0 group-hover:scale-110"
+                      style={{ color: 'var(--theme-primary)' }}
+                    />
+
+                    {/* Header */}
+                    <div className="flex items-center gap-4 p-5 pb-4">
+                      <div
+                        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-stone-100 shadow-inner"
+                        style={{ backgroundColor: 'color-mix(in srgb, var(--theme-primary) 10%, white)' }}
+                      >
+                        <PawPrint className="h-5 w-5" style={{ color: 'var(--theme-primary)' }} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="truncate text-base font-black text-stone-900">{s.name}</h3>
+                        {s.breed && (
+                          <p className="truncate text-xs font-medium text-stone-400">{s.breed}</p>
+                        )}
+                      </div>
                       <span
-                        className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${
                           s.isAlive
-                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-100'
-                            : 'bg-stone-100 text-stone-600 border border-stone-200'
+                            ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
+                            : 'border border-amber-100 bg-amber-50/70 text-amber-700'
                         }`}
                       >
+                        {s.isAlive ? (
+                          <Heart className="h-3 w-3" />
+                        ) : (
+                          <Star className="h-3 w-3" />
+                        )}
                         {s.isAlive ? 'อยู่ด้วยกัน' : 'ในความทรงจำ'}
                       </span>
                     </div>
+
                     {rows.length > 0 && (
-                      <dl className="space-y-1.5 text-sm">
-                        {rows.map((row) => (
-                          <div key={row.label} className="flex gap-2">
-                            <dt className="w-24 shrink-0 text-xs font-bold text-stone-400">{row.label}</dt>
-                            <dd className="text-stone-700">{row.value}</dd>
-                          </div>
-                        ))}
-                      </dl>
+                      <div className="border-t border-dashed border-stone-200/80 px-5 py-4">
+                        <dl className="space-y-2.5">
+                          {rows.map((row) => (
+                            <div key={row.label} className="flex items-start gap-2.5 text-sm">
+                              <row.icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-stone-300" />
+                              <dt className="w-24 shrink-0 pt-px text-[11px] font-bold uppercase tracking-wide text-stone-400">
+                                {row.label}
+                              </dt>
+                              <dd className="min-w-0 flex-1 font-medium leading-relaxed text-stone-700">
+                                {row.value}
+                              </dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </div>
                     )}
                   </div>
                 );
