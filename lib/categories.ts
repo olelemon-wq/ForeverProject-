@@ -152,7 +152,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     },
     home: {
       biographyHeading: 'เรื่องราวของเจ้าตัวน้อย',
-      condolenceHeading: 'ข้อความรำลึกล่าสุด',
+      condolenceHeading: 'ข้อความถึงน้องล่าสุด',
       galleryHeading: 'ภาพความทรงจำแสนรัก',
     },
   },

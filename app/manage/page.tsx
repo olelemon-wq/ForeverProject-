@@ -55,6 +55,14 @@ type ManageSubject = {
   role?: string;
   /** Friends: optional short note */
   note?: string;
+  /** Pet: breed / species */
+  breed?: string;
+  /** Pet: personality traits */
+  personality?: string;
+  /** Pet: favorite things */
+  favorite?: string;
+  /** Pet: dislikes */
+  dislike?: string;
 };
 
 const emptyManageSubject = (): ManageSubject => ({
@@ -68,6 +76,10 @@ const emptyManageSubject = (): ManageSubject => ({
   isAlive: false,
   role: '',
   note: '',
+  breed: '',
+  personality: '',
+  favorite: '',
+  dislike: '',
 });
 
 function dateToYmd(d: Date | null): string {
@@ -97,12 +109,20 @@ function normalizeManageSubjects(raw: any[], category: string): ManageSubject[] 
         isAlive: !!s?.isAlive,
         role: s?.role || '',
         note: s?.note || '',
+        breed: s?.breed || '',
+        personality: s?.personality || '',
+        favorite: s?.favorite || '',
+        dislike: s?.dislike || '',
       }))
     : [];
 
   if (list.length === 0) {
     if (category === 'Couple' || category === 'Wedding') {
       return [emptyManageSubject(), emptyManageSubject()];
+    }
+    // Pet defaults to "living with us" so new sites feel welcoming
+    if (category === 'Pet Memorial') {
+      return [{ ...emptyManageSubject(), isAlive: true }];
     }
     return [emptyManageSubject()];
   }
@@ -125,27 +145,51 @@ function serializeManageSubjects(subjects: ManageSubject[], category: string) {
       deathYear: null,
     }));
   }
+  if (category === 'Pet Memorial') {
+    return subjects.map((s) => ({
+      name: s.name || '',
+      breed: s.breed || '',
+      personality: s.personality || '',
+      favorite: s.favorite || '',
+      dislike: s.dislike || '',
+      isAlive: !!s.isAlive,
+      birthDate: s.birthDate,
+      deathDate: s.isAlive ? null : s.deathDate,
+      birthYearOnly: !!s.birthYearOnly,
+      deathYearOnly: s.isAlive ? false : !!s.deathYearOnly,
+      birthYear: s.birthYear,
+      deathYear: s.isAlive ? null : s.deathYear,
+    }));
+  }
   return subjects;
 }
 
 function getSubjectEditorCopy(category: string) {
   if (category === 'Pet Memorial') {
     return {
-      sectionTitle: 'รายชื่อสัตว์เลี้ยง',
-      sectionHint: 'เพิ่มหรือแก้ไขข้อมูลน้อง ๆ ที่แสดงบนหน้าเว็บ แล้วกดบันทึกการตั้งค่าด้านล่าง',
-      cardTitle: (i: number) => `ข้อมูลสัตว์เลี้ยงตัวที่ ${i + 1}`,
-      nameLabel: 'ชื่อสัตว์เลี้ยงแสนรัก',
-      namePlaceholder: 'เช่น เจ้าปุยฝ้าย',
-      aliveLabel: 'น้องยังมีชีวิตอยู่',
-      dateLabel: 'วันเกิด – วันที่เดินทางไปดาวหมาแมว',
-      startTitle: 'วันเกิด',
-      endTitle: 'วันที่เดินทางกลับดาว',
-      yearOnlyBirth: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีเกิด)',
-      yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เดินทางกลับดาว)',
-      addLabel: '+ เพิ่มสัตว์เลี้ยงอีกตัว',
+      sectionTitle: 'สมุดประจำตัวน้อง',
+      sectionHint: 'เพิ่มโปรไฟล์น้องแต่ละตัว — ใช้ได้ทั้งน้องที่อยู่ด้วยกันและน้องในความทรงจำ',
+      cardTitle: (i: number) => `โปรไฟล์น้องตัวที่ ${i + 1}`,
+      nameLabel: 'ชื่อ / ชื่อเล่น',
+      namePlaceholder: 'เช่น เจ้าปุยฝ้าย, ตูบ',
+      aliveLabel: 'อยู่ด้วยกัน (ยังมีชีวิต)',
+      dateLabel: 'วันเกิด / วันที่รับมา – วันที่จากไป',
+      startTitle: 'วันเกิด / วันที่รับมา',
+      endTitle: 'วันที่จากไป',
+      yearOnlyBirth: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปี)',
+      yearOnlyDeath: 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่จากไป)',
+      addLabel: '+ เพิ่มน้องอีกตัว',
       showAlive: true,
       showDates: true,
       canAdd: true,
+      breedLabel: 'สายพันธุ์ / ชนิด',
+      breedPlaceholder: 'เช่น แมวเปอร์เซีย, สุนัขคอร์กี้, กระต่าย',
+      personalityLabel: 'บุคลิก',
+      personalityPlaceholder: 'เช่น ซน กินเก่ง ชอบกอด',
+      favoriteLabel: 'ของโปรด',
+      favoritePlaceholder: 'เช่น ขนมปลา, ลูกบอล, นอนตัก',
+      dislikeLabel: 'สิ่งที่ไม่ชอบ (ไม่บังคับ)',
+      dislikePlaceholder: 'เช่น อาบน้ำ, เสียงดัง',
     };
   }
   if (category === 'Family Legacy') {
@@ -2644,6 +2688,61 @@ export default function WebmasterDashboard() {
                                     value={sub.note || ''}
                                     onChange={(e) => updateSubject(index, { note: e.target.value })}
                                     placeholder={copy.notePlaceholder || 'เช่น คนจัดทริป, สายกิน'}
+                                    className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-900"
+                                  />
+                                </div>
+                              </div>
+                            )}
+
+                            {cat === 'Pet Memorial' && (
+                              <div className="space-y-3">
+                                <div className="space-y-1">
+                                  <label className="text-sm font-bold tracking-wide text-stone-600">
+                                    {copy.breedLabel || 'สายพันธุ์ / ชนิด'}
+                                  </label>
+                                  <Input
+                                    type="text"
+                                    value={sub.breed || ''}
+                                    onChange={(e) => updateSubject(index, { breed: e.target.value })}
+                                    placeholder={copy.breedPlaceholder || 'เช่น แมวเปอร์เซีย'}
+                                    className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-900"
+                                  />
+                                </div>
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                  <div className="space-y-1">
+                                    <label className="text-sm font-bold tracking-wide text-stone-600">
+                                      {copy.personalityLabel || 'บุคลิก'}
+                                    </label>
+                                    <Input
+                                      type="text"
+                                      value={sub.personality || ''}
+                                      onChange={(e) => updateSubject(index, { personality: e.target.value })}
+                                      placeholder={copy.personalityPlaceholder || 'เช่น ซน กินเก่ง'}
+                                      className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-900"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-sm font-bold tracking-wide text-stone-600">
+                                      {copy.favoriteLabel || 'ของโปรด'}
+                                    </label>
+                                    <Input
+                                      type="text"
+                                      value={sub.favorite || ''}
+                                      onChange={(e) => updateSubject(index, { favorite: e.target.value })}
+                                      placeholder={copy.favoritePlaceholder || 'เช่น ขนมปลา, นอนตัก'}
+                                      className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-900"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-sm font-bold tracking-wide text-stone-600">
+                                    {copy.dislikeLabel || 'สิ่งที่ไม่ชอบ (ไม่บังคับ)'}
+                                  </label>
+                                  <Input
+                                    type="text"
+                                    value={sub.dislike || ''}
+                                    onChange={(e) => updateSubject(index, { dislike: e.target.value })}
+                                    placeholder={copy.dislikePlaceholder || 'เช่น อาบน้ำ'}
                                     className="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-900"
                                   />
                                 </div>

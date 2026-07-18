@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { 
   BookOpen, Calendar, MapPin, Image, Flame, ArrowRight,
-  Phone, Info, Share2, Printer, ExternalLink, Droplets, Sparkles 
+  Phone, Info, Share2, Printer, ExternalLink, Droplets, Sparkles, PawPrint
 } from 'lucide-react';
 import Link from 'next/link';
 import DeceasedAvatar from './announcement/DeceasedAvatar';
@@ -794,7 +794,78 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
         </div>
       )}
 
-      {/* 5. Biography Box (Moved to bottom) */}
+      {/* 5. Pet profiles + Biography */}
+      {tenant.category === 'Pet Memorial' && subjects.some((s: any) => s?.name) && (
+        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
+          <h2
+            className="text-xl font-bold flex items-center gap-2"
+            style={{ color: 'var(--theme-primary, #0d9488)' }}
+          >
+            <PawPrint className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
+            สมุดประจำตัวน้อง
+          </h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {subjects
+              .filter((s: any) => s?.name)
+              .map((s: any, i: number) => {
+                const formatPetDate = (raw: any, yearOnly?: boolean, year?: number | null) => {
+                  if (yearOnly && year) return `พ.ศ. ${year + 543}`;
+                  if (!raw) return '';
+                  const d = new Date(raw);
+                  if (isNaN(d.getTime())) return '';
+                  return d.toLocaleDateString('th-TH', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  });
+                };
+                const birth = formatPetDate(s.birthDate, s.birthYearOnly, s.birthYear);
+                const passed = !s.isAlive
+                  ? formatPetDate(s.deathDate, s.deathYearOnly, s.deathYear)
+                  : '';
+                const rows = [
+                  s.breed && { label: 'สายพันธุ์', value: s.breed },
+                  birth && { label: s.isAlive ? 'วันเกิด / รับมา' : 'วันเกิด / รับมา', value: birth },
+                  passed && { label: 'วันที่จากไป', value: passed },
+                  s.personality && { label: 'บุคลิก', value: s.personality },
+                  s.favorite && { label: 'ของโปรด', value: s.favorite },
+                  s.dislike && { label: 'ไม่ชอบ', value: s.dislike },
+                ].filter(Boolean) as { label: string; value: string }[];
+
+                return (
+                  <div
+                    key={`${s.name}-${i}`}
+                    className="rounded-2xl border border-stone-200 bg-stone-50/50 p-5 space-y-3"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="text-base font-black text-stone-900">{s.name}</h3>
+                      <span
+                        className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                          s.isAlive
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-100'
+                            : 'bg-stone-100 text-stone-600 border border-stone-200'
+                        }`}
+                      >
+                        {s.isAlive ? 'อยู่ด้วยกัน' : 'ในความทรงจำ'}
+                      </span>
+                    </div>
+                    {rows.length > 0 && (
+                      <dl className="space-y-1.5 text-sm">
+                        {rows.map((row) => (
+                          <div key={row.label} className="flex gap-2">
+                            <dt className="w-24 shrink-0 text-xs font-bold text-stone-400">{row.label}</dt>
+                            <dd className="text-stone-700">{row.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
+
       <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left">
         <h2 className="text-xl font-bold mb-6 flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>

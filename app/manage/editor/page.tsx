@@ -859,7 +859,7 @@ function EditorWorkspace() {
                               className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
                             />
                             <span className="text-[10px] font-bold text-emerald-800">
-                              {siteCategory === 'Pet Memorial' ? 'น้องยังมีชีวิตอยู่' : 'ท่านยังมีชีวิตอยู่'}
+                              {siteCategory === 'Pet Memorial' ? 'อยู่ด้วยกัน (ยังมีชีวิต)' : 'ท่านยังมีชีวิตอยู่'}
                             </span>
                           </label>
                         )}

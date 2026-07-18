@@ -26,6 +26,10 @@ interface Subject {
   isAlive?: boolean;
   role?: string;
   note?: string;
+  breed?: string;
+  personality?: string;
+  favorite?: string;
+  dislike?: string;
 }
 
 function dateToYmd(d: Date | null): string {
@@ -58,6 +62,15 @@ const CATEGORY_INPUT_DEFAULTS: Record<string, {
   rolePlaceholder?: string;
   noteLabel?: string;
   notePlaceholder?: string;
+  breedLabel?: string;
+  breedPlaceholder?: string;
+  personalityLabel?: string;
+  personalityPlaceholder?: string;
+  favoriteLabel?: string;
+  favoritePlaceholder?: string;
+  dislikeLabel?: string;
+  dislikePlaceholder?: string;
+  aliveLabel?: string;
 }> = {
   'Memorial': {
     nameLabel: 'ชื่อเว็บไซต์ (เช่น รำลึกรักแด่คุณพ่อสมศักดิ์)',
@@ -125,16 +138,25 @@ const CATEGORY_INPUT_DEFAULTS: Record<string, {
     notePlaceholder: 'เช่น คนจัดทริป, ม.ศ.3 รุ่น 55',
   },
   'Pet Memorial': {
-    nameLabel: 'ชื่อเว็บไซต์ (เช่น รำลึกถึงเจ้าปุยฝ้ายแสนรัก)',
-    namePlaceholder: 'เช่น ความทรงจำแสนรัก เจ้าตูบสี่ขา',
-    subjectLabel: 'ชื่อสัตว์เลี้ยงแสนรัก',
-    subjectPlaceholder: 'เช่น เจ้าปุยฝ้าย',
-    dateLabel: 'วันเกิด – วันที่เดินทางไปดาวหมาแมว',
-    dateStartTitle: 'วันเกิด',
-    dateStartPlaceholder: 'เลือกวันเกิด',
-    dateEndTitle: 'วันที่เดินทางกลับดาว',
-    dateEndPlaceholder: 'เลือกวันที่เดินทางกลับดาว',
-    lifespanPrefix: 'ช่วงชีวิตแสนสุข',
+    nameLabel: 'ชื่อเว็บไซต์ (เช่น พื้นที่ของเจ้าปุยฝ้าย)',
+    namePlaceholder: 'เช่น บ้านของตูบสี่ขา',
+    subjectLabel: 'ชื่อ / ชื่อเล่น',
+    subjectPlaceholder: 'เช่น เจ้าปุยฝ้าย, ตูบ',
+    dateLabel: 'วันเกิด / วันที่รับมา – วันที่จากไป',
+    dateStartTitle: 'วันเกิด / วันที่รับมา',
+    dateStartPlaceholder: 'เลือกวันเกิดหรือวันที่รับมา',
+    dateEndTitle: 'วันที่จากไป',
+    dateEndPlaceholder: 'เลือกวันที่จากไป',
+    lifespanPrefix: 'ช่วงเวลาของน้อง',
+    aliveLabel: 'อยู่ด้วยกัน (ยังมีชีวิต)',
+    breedLabel: 'สายพันธุ์ / ชนิด',
+    breedPlaceholder: 'เช่น แมวเปอร์เซีย, สุนัขคอร์กี้',
+    personalityLabel: 'บุคลิก',
+    personalityPlaceholder: 'เช่น ซน กินเก่ง ชอบกอด',
+    favoriteLabel: 'ของโปรด',
+    favoritePlaceholder: 'เช่น ขนมปลา, ลูกบอล, นอนตัก',
+    dislikeLabel: 'สิ่งที่ไม่ชอบ (ไม่บังคับ)',
+    dislikePlaceholder: 'เช่น อาบน้ำ, เสียงดัง',
   },
 };
 
@@ -176,9 +198,9 @@ const CATEGORY_OPTIONS = [
   },
   { 
     key: 'Pet Memorial', 
-    thaiLabel: 'Pet Memorial', 
-    subLabel: 'สัตว์เลี้ยงแสนรัก', 
-    desc: 'คลังรูปถ่ายและพื้นที่ส่งท้ายความผูกพันถึงเจ้าตัวน้อย สมาชิกแสนสำคัญของครอบครัว', 
+    thaiLabel: 'Pet', 
+    subLabel: 'พื้นที่ของน้อง', 
+    desc: 'เก็บภาพและเรื่องราวของน้อง ทั้งวันที่อยู่ด้วยกันและในความทรงจำ', 
     icon: PawPrint, 
   },
 ];
@@ -217,8 +239,13 @@ export default function WebsiteCreationWizard() {
       deathYearOnly: false,
       birthYear: null,
       deathYear: null,
+      isAlive: true,
       role: '',
       note: '',
+      breed: '',
+      personality: '',
+      favorite: '',
+      dislike: '',
     }
   ]);
 
@@ -480,6 +507,21 @@ export default function WebsiteCreationWizard() {
                     deathDate: null,
                     birthYearOnly: false,
                     deathYearOnly: false,
+                  }
+                : category === 'Pet Memorial'
+                ? {
+                    name: s.name,
+                    breed: s.breed || '',
+                    personality: s.personality || '',
+                    favorite: s.favorite || '',
+                    dislike: s.dislike || '',
+                    isAlive: !!s.isAlive,
+                    birthDate: s.birthDate ? s.birthDate.toISOString() : null,
+                    deathDate: s.isAlive ? null : (s.deathDate ? s.deathDate.toISOString() : null),
+                    birthYearOnly: s.birthYearOnly,
+                    deathYearOnly: s.isAlive ? false : s.deathYearOnly,
+                    birthYear: s.birthYear,
+                    deathYear: s.isAlive ? null : s.deathYear,
                   }
                 : {
                     name: s.name,
@@ -900,7 +942,7 @@ export default function WebsiteCreationWizard() {
                     </Button>
                   )}
                   <h4 className="text-[10px] font-black text-stone-400 uppercase tracking-wider">
-                    {category === 'Pet Memorial' ? `ข้อมูลสัตว์เลี้ยงตัวที่ ${index + 1}` :
+                    {category === 'Pet Memorial' ? `โปรไฟล์น้องตัวที่ ${index + 1}` :
                      category === 'Couple' || category === 'Wedding' ? `ข้อมูลคู่รักคนที่ ${index + 1}` :
                      category === 'Friends' ? `ข้อมูลสมาชิกคนที่ ${index + 1}` :
                      `ข้อมูลผู้ล่วงลับท่านที่ ${index + 1}`}
@@ -961,6 +1003,77 @@ export default function WebsiteCreationWizard() {
                     </div>
                   )}
 
+                  {category === 'Pet Memorial' && (
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className="text-sm font-bold tracking-wide text-stone-600">
+                          {defaults.breedLabel}
+                        </label>
+                        <Input
+                          type="text"
+                          value={sub.breed || ''}
+                          onChange={(e) => {
+                            const newSubs = [...subjects];
+                            newSubs[index].breed = e.target.value;
+                            setSubjects(newSubs);
+                          }}
+                          placeholder={defaults.breedPlaceholder}
+                          className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div className="space-y-1">
+                          <label className="text-sm font-bold tracking-wide text-stone-600">
+                            {defaults.personalityLabel}
+                          </label>
+                          <Input
+                            type="text"
+                            value={sub.personality || ''}
+                            onChange={(e) => {
+                              const newSubs = [...subjects];
+                              newSubs[index].personality = e.target.value;
+                              setSubjects(newSubs);
+                            }}
+                            placeholder={defaults.personalityPlaceholder}
+                            className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-sm font-bold tracking-wide text-stone-600">
+                            {defaults.favoriteLabel}
+                          </label>
+                          <Input
+                            type="text"
+                            value={sub.favorite || ''}
+                            onChange={(e) => {
+                              const newSubs = [...subjects];
+                              newSubs[index].favorite = e.target.value;
+                              setSubjects(newSubs);
+                            }}
+                            placeholder={defaults.favoritePlaceholder}
+                            className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-sm font-bold tracking-wide text-stone-600">
+                          {defaults.dislikeLabel}
+                        </label>
+                        <Input
+                          type="text"
+                          value={sub.dislike || ''}
+                          onChange={(e) => {
+                            const newSubs = [...subjects];
+                            newSubs[index].dislike = e.target.value;
+                            setSubjects(newSubs);
+                          }}
+                          placeholder={defaults.dislikePlaceholder}
+                          className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {!defaults.hideDates && !(index > 0 && (category === 'Couple' || category === 'Wedding')) && (
                     <div className="space-y-2.5">
                       {/* Still Alive checkbox for Pet Memorial and Family Legacy */}
@@ -982,7 +1095,9 @@ export default function WebsiteCreationWizard() {
                             className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5 cursor-pointer"
                           />
                           <span className="text-xs font-bold text-emerald-800">
-                            {category === 'Pet Memorial' ? 'น้องยังมีชีวิตอยู่' : 'ท่านยังมีชีวิตอยู่'}
+                            {category === 'Pet Memorial'
+                              ? (defaults.aliveLabel || 'อยู่ด้วยกัน (ยังมีชีวิต)')
+                              : 'ท่านยังมีชีวิตอยู่'}
                           </span>
                         </label>
                       )}
@@ -1105,7 +1220,7 @@ export default function WebsiteCreationWizard() {
                                 {category === 'Couple' ? 'ระบุเฉพาะปีมงคลสมรส' :
                                  category === 'Friends' ? 'ระบุเฉพาะปีล่าสุด' :
                                  category === 'Wedding' ? 'ระบุเฉพาะปี' :
-                                 category === 'Pet Memorial' ? 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เดินทางกลับดาว)' :
+                                 category === 'Pet Memorial' ? 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่จากไป)' :
                                  'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)'}
                               </span>
                             </label>
@@ -1131,14 +1246,19 @@ export default function WebsiteCreationWizard() {
                         deathYearOnly: false,
                         birthYear: null,
                         deathYear: null,
+                        isAlive: category === 'Pet Memorial',
                         role: '',
                         note: '',
+                        breed: '',
+                        personality: '',
+                        favorite: '',
+                        dislike: '',
                       }
                     ]);
                   }}
                   className="w-full py-3 border-2 border-dashed border-stone-300 hover:border-emerald-500 hover:text-emerald-700 text-stone-500 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer bg-stone-50/20 active:scale-99 hover:bg-emerald-50/10"
                 >
-                  {category === 'Pet Memorial' ? '+ เพิ่มสัตว์เลี้ยงอีกตัว' :
+                  {category === 'Pet Memorial' ? '+ เพิ่มน้องอีกตัว' :
                    category === 'Family Legacy' ? '+ เพิ่มรายชื่อสมาชิกตระกูลอีกท่าน' :
                    category === 'Memorial' ? '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน' :
                    category === 'Friends' ? '+ เพิ่มสมาชิก' :

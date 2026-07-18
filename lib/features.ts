@@ -134,7 +134,7 @@ interface ThemeConfigShape {
   announcement?: { active?: boolean | null } | null;
 }
 
-type TenantLike = { donationActive?: boolean | null } | null | undefined;
+type TenantLike = { donationActive?: boolean | null; category?: string | null } | null | undefined;
 
 /**
  * Normalize a tenant's feature visibility into a complete FeatureMap.
