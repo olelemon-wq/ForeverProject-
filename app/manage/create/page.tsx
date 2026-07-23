@@ -357,7 +357,7 @@ function WebsiteCreationWizard() {
   // Pre-select category from marketing / login deep link (?category=Couple)
   useEffect(() => {
     const cat = searchParams.get('category');
-    if (cat && CATEGORIES.some((c) => c.key === cat)) {
+    if (cat && CATEGORY_OPTIONS.some((c) => c.key === cat)) {
       setCategory(cat);
     }
   }, [searchParams]);
