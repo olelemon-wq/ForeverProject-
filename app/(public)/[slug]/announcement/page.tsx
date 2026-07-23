@@ -18,7 +18,23 @@ async function getTenantData(slug: string) {
 }
 
 const getScheduleLabels = (category: string) => {
-  if (category === 'Couple' || category === 'Wedding') {
+  if (category === 'Couple') {
+    return {
+      title: 'วันสำคัญของเรา',
+      item1: 'วันสำคัญ / ครบรอบ',
+      item2: '',
+      item3: '',
+      venueTitle: 'สถานที่ / โน้ต (ถ้ามี)',
+      venueLabel: 'สถานที่หรือเหตุการณ์',
+      pavilionLabel: 'รายละเอียดเพิ่มเติม (ถ้ามี)',
+      venueDesc: 'กดปุ่มนำทางเพื่อเปิดแผนที่ (ถ้ามี)',
+      footerText: 'ขอบคุณที่มาร่วมเป็นส่วนหนึ่งของเส้นทางความรักของเรา',
+      guidelinesTitle: 'โน้ตเพิ่มเติม',
+      contactLabel: 'ติดต่อ:',
+      notesLabel: 'โน้ต / รายละเอียด:',
+    };
+  }
+  if (category === 'Wedding') {
     return {
       title: 'กำหนดการจัดงานและกิจกรรม',
       item1: '1. พิธีมงคลสมรส / พิธีหลั่งน้ำพระพุทธมนต์',
@@ -95,7 +111,8 @@ const getScheduleLabels = (category: string) => {
 };
 
 const getInviteFallback = (category: string) => {
-  if (category === 'Couple' || category === 'Wedding') return 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี';
+  if (category === 'Couple') return 'บันทึกวันสำคัญและเส้นทางความรักของเรา';
+  if (category === 'Wedding') return 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี';
   if (category === 'Friends') return 'เชิญชวนมาร่วมพบปะและสร้างความทรงจำด้วยกัน';
   if (category === 'Pet Memorial') return 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาว';
   if (category === 'Family' || category === 'Family Legacy') return 'เชิญชวนร่วมพบปะและสืบสานสายใยครอบครัว';
@@ -193,8 +210,10 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
 
   // Wreath/Gift policy — Friends category has no wreath/gift policy
   const isFriends = tenant.category === 'Friends';
-  const isCoupleLike = tenant.category === 'Couple' || tenant.category === 'Wedding';
-  const wreathPolicies: Record<string, string> = isCoupleLike ? {
+  const isCouple = tenant.category === 'Couple';
+  const isWedding = tenant.category === 'Wedding';
+  const isMilestoneSchedule = isFriends || isCouple;
+  const wreathPolicies: Record<string, string> = isWedding ? {
     'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
     'NO_FLOWERS': 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
     'DONATION_ONLY': 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
@@ -205,7 +224,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
     'DONATION_ONLY': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
     'NO_WREATH': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
   };
-  const showWreathPolicy = !isFriends && !!announcement.wreathPolicy;
+  const showWreathPolicy = isWedding && !!announcement.wreathPolicy;
   const showGuidelines =
     !!announcement.dressCode || !!announcement.contactPhone || showWreathPolicy;
 
@@ -383,7 +402,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           <hr className={`border-t ${borderGoldClass}`} />
 
           {/* Ceremony / Meetup Schedule */}
-          {(isFriends
+          {(isMilestoneSchedule
             ? !!(announcement.waterDate || announcement.waterTime)
             : !!(announcement.waterDate || announcement.abhidhammaDateRange || announcement.cremationDate)) && (
           <div className="space-y-4 text-left">
@@ -393,7 +412,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
             </h3>
 
             <div className="grid grid-cols-1 gap-3 print-inner-card-grid">
-              {isFriends ? (
+              {isMilestoneSchedule ? (
                 <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg}`}>
                   <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
                   <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
@@ -481,7 +500,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
                 {announcement.dressCode && (
                   <div className="flex flex-col gap-0.5">
                     <span className={`font-bold ${headingColorClass}`}>
-                      {isFriends ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
+                      {isFriends || isCouple ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
                     </span>
                     <span className={textMutedClass}>{announcement.dressCode}</span>
                   </div>
@@ -489,7 +508,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
                 {showWreathPolicy && (
                   <div className="flex flex-col gap-0.5">
                     <span className={`font-bold ${headingColorClass}`}>
-                      {isCoupleLike ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
+                      {isWedding ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
                     </span>
                     <span className={textMutedClass}>{wreathPolicies[announcement.wreathPolicy] || wreathPolicies.NORMAL}</span>
                   </div>

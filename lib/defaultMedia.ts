@@ -19,8 +19,18 @@ const CATEGORY_FOLDER: Record<CategoryKey, string> = {
 
 /** Categories with custom PNG presets; others keep SVG presets */
 const CATEGORY_EXT: Partial<Record<CategoryKey, 'svg' | 'png' | 'jpg' | 'webp'>> = {
+  Memorial: 'png',
+  'Family Legacy': 'png',
+  Wedding: 'png',
   Friends: 'png',
   'Pet Memorial': 'png',
+};
+
+/** Per-kind overrides when only one preset type uses custom PNG (e.g. Couple cover only) */
+const CATEGORY_KIND_EXT: Partial<
+  Record<CategoryKey, Partial<Record<DefaultMediaKind, 'svg' | 'png' | 'jpg' | 'webp'>>>
+> = {
+  Couple: { cover: 'png' },
 };
 
 const AVATAR_LABELS = ['ชุด 1', 'ชุด 2', 'ชุด 3', 'ชุด 4'];
@@ -28,7 +38,7 @@ const COVER_LABELS = ['พื้นหลัง 1', 'พื้นหลัง 2'
 
 function buildItems(category: CategoryKey, kind: DefaultMediaKind): DefaultMediaItem[] {
   const folder = CATEGORY_FOLDER[category] || CATEGORY_FOLDER.Memorial;
-  const ext = CATEGORY_EXT[category] || 'svg';
+  const ext = CATEGORY_KIND_EXT[category]?.[kind] ?? CATEGORY_EXT[category] ?? 'svg';
   const labels = kind === 'avatar' ? AVATAR_LABELS : COVER_LABELS;
   return labels.map((label, i) => {
     const n = i + 1;

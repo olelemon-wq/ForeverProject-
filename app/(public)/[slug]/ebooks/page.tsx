@@ -151,7 +151,7 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
   const finalBooklets = [...mappedDbEbooks, ...mockBooklets];
 
   return (
-    <div className="animate-fade-in text-center font-sans">
+    <div className="animate-fade-in text-center">
       {(() => {
         const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'ebooks');
         return (

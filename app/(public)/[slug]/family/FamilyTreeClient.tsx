@@ -644,7 +644,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
   };
 
   return (
-    <div className="animate-fade-in text-center font-sans">
+    <div className="animate-fade-in text-center">
       {isFullscreen ? (
         <div 
           ref={viewportRef}

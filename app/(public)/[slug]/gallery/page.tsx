@@ -4,6 +4,7 @@ import GalleryClient from './GalleryClient';
 import { getFeatureLabel } from '@/lib/categories';
 import { getEnabledFeatures } from '@/lib/features';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
+import { filterGalleryMedia } from '@/lib/galleryMedia';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +14,7 @@ async function getTenantData(slug: string) {
   });
 }
 
-async function getGalleryMedia(websiteId: string) {
+async function getGalleryMedia(websiteId: string, themeConfig?: unknown) {
   const medias = await db.media.findMany({
     where: {
       websiteId,
@@ -27,7 +28,7 @@ async function getGalleryMedia(websiteId: string) {
     ],
   });
 
-  return medias.map((m, idx) => ({
+  return filterGalleryMedia(medias, themeConfig).map((m, idx) => ({
     id: m.id,
     filePath: m.filePath,
     fileName: m.fileName,
@@ -73,7 +74,7 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
     notFound();
   }
 
-  const mediaList = await getGalleryMedia(tenant.id);
+  const mediaList = await getGalleryMedia(tenant.id, tenant.themeConfig);
 
   return (
     <div className="animate-fade-in">

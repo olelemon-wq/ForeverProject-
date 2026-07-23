@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Smartphone, Info, Check, Flame, GitBranch, Heart, Sparkles, Users, PawPrint, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ const MONTHS_THAI = [
 
 interface Subject {
   name: string;
+  avatarUrl?: string;
   birthDate: Date | null;
   deathDate: Date | null;
   birthYearOnly: boolean;
@@ -205,8 +206,23 @@ const CATEGORY_OPTIONS = [
   },
 ];
 
-export default function WebsiteCreationWizard() {
+export default function WebsiteCreationWizardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-600">
+          <p className="text-sm font-semibold tracking-wider animate-pulse">กำลังโหลด...</p>
+        </div>
+      }
+    >
+      <WebsiteCreationWizard />
+    </Suspense>
+  );
+}
+
+function WebsiteCreationWizard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [userPhone, setUserPhone] = useState('');
   
@@ -233,6 +249,7 @@ export default function WebsiteCreationWizard() {
   const [subjects, setSubjects] = useState<Subject[]>([
     {
       name: '',
+      avatarUrl: '',
       birthDate: null,
       deathDate: null,
       birthYearOnly: false,
@@ -336,6 +353,14 @@ export default function WebsiteCreationWizard() {
   const [paymentRef, setPaymentRef] = useState('');
   const [paymentAmount, setPaymentAmount] = useState(2000);
   const [createdTenantId, setCreatedTenantId] = useState('');
+
+  // Pre-select category from marketing / login deep link (?category=Couple)
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    if (cat && CATEGORIES.some((c) => c.key === cat)) {
+      setCategory(cat);
+    }
+  }, [searchParams]);
 
   // Check auth session on load
   useEffect(() => {
@@ -511,6 +536,7 @@ export default function WebsiteCreationWizard() {
                 : category === 'Pet Memorial'
                 ? {
                     name: s.name,
+                    avatarUrl: s.avatarUrl || '',
                     breed: s.breed || '',
                     personality: s.personality || '',
                     favorite: s.favorite || '',
@@ -835,6 +861,7 @@ export default function WebsiteCreationWizard() {
             <header className="space-y-1">
               <h2 className="text-xl font-black text-stone-900">ตั้งชื่อลิงก์สำหรับเว็บไซต์ความทรงจำ</h2>
               <p className="text-xs text-stone-500">ใช้เป็น URL Path เพื่อให้คนทั่วไปสามารถพิมพ์เพื่อเข้าชมได้ทันที</p>
+              <p className="text-[11px] text-stone-400">ใช้ตัวพิมพ์เล็ก a-z, ตัวเลข และขีด (-) เท่านั้น</p>
             </header>
 
             <div className="space-y-4">
@@ -846,7 +873,7 @@ export default function WebsiteCreationWizard() {
                   type="text"
                   value={slug}
                   onChange={(e) => {
-                    setSlug(e.target.value.replace(/[^a-zA-Z0-9-]/g, ''));
+                    setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''));
                     setSlugValid(null);
                   }}
                   placeholder={
@@ -1240,6 +1267,7 @@ export default function WebsiteCreationWizard() {
                       ...subjects,
                       {
                         name: '',
+                        avatarUrl: '',
                         birthDate: null,
                         deathDate: null,
                         birthYearOnly: false,

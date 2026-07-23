@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { signToken } from '@/lib/auth/jwt';
-import { getInitialFeatureMapForCategory } from '@/lib/categories';
-import { getSeedDefaultMedia } from '@/lib/defaultMedia';
 import { ensureWebmasterForPhone } from '@/lib/auth/webmaster';
 
 export async function POST(request: Request) {
@@ -70,82 +68,14 @@ export async function POST(request: Request) {
     // 6. Auto-register / Retrieve Webmaster (legacy-safe if WebmasterPhone table missing)
     const webmaster = await ensureWebmasterForPhone(cleanPhone);
 
-    // 7. If Category param is provided, create a PENDING_PAYMENT Draft website with temp slug (draft-<uuid>)
-    let draftTenantId: string | null = null;
-    if (category) {
-      const uuid = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 6);
-      const tempSlug = `draft-${uuid}`;
-      const expiredAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 1 year
-      
-      const seedMedia = getSeedDefaultMedia(category);
-      const defaultThemeConfig = {
-        primaryColor: '#0071e3', // New royal blue accent default (spec)
-        secondaryColor: '#f59e0b',
-        fontFamily: 'Inter',
-        heroStyle: 'Classic',
-        avatarUrl: seedMedia.avatarUrl,
-        coverUrl: seedMedia.coverUrl,
-        features: getInitialFeatureMapForCategory(category),
-      };
-
-      const result = await db.$transaction(async (tx) => {
-        const tenant = await tx.tenant.create({
-          data: {
-            slug: tempSlug,
-            name: `ความทรงจำแสนรัก (${category === 'Pet Memorial' ? 'สัตว์เลี้ยง' : category})`,
-            category,
-            ownerPhone: cleanPhone,
-            themeConfig: defaultThemeConfig,
-            visibility: 'PUBLIC',
-            status: 'PENDING_PAYMENT', // Gated state
-            expiredAt,
-          },
-        });
-
-        // Default menu tabs
-        await tx.menu.createMany({
-          data: [
-            { websiteId: tenant.id, title: 'หน้าแรก', pageType: 'HOME', sortOrder: 1, isVisible: true },
-            { websiteId: tenant.id, title: 'คลังภาพรำลึก', pageType: 'GALLERY', sortOrder: 2, isVisible: true },
-            { websiteId: tenant.id, title: 'สมุดไว้อาลัย', pageType: 'CONDOLENCE', sortOrder: 3, isVisible: true },
-          ],
-        });
-
-        // Main webmaster link
-        await tx.websiteWebmaster.create({
-          data: {
-            websiteId: tenant.id,
-            webmasterId: webmaster.id,
-            role: 'MAIN',
-          },
-        });
-
-        // Payment record
-        const paymentRef = `QR-${tempSlug}-${Math.floor(10000 + Math.random() * 90000)}`;
-        await tx.payment.create({
-          data: {
-            websiteId: tenant.id,
-            refId: paymentRef,
-            type: 'NEW_WEBSITE',
-            amount: 2000.0,
-            status: 'PENDING',
-          },
-        });
-
-        return tenant;
-      });
-
-      draftTenantId = result.id;
-    }
-
-    // 8. Sign token & write session cookie (90 days)
+    // 7. Sign token & write session cookie (90 days)
     const token = await signToken({ phone: cleanPhone });
 
     const response = NextResponse.json({
       success: true,
       message: 'ยืนยันตัวตนสำเร็จ ยินดีต้อนรับเข้าสู่ระบบ',
       webmaster,
-      draftTenantId,
+      category: category || null,
     });
 
     response.cookies.set('session', token, {

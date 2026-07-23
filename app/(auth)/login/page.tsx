@@ -71,13 +71,14 @@ function MobileLoginInner() {
         throw new Error(data.error || 'รหัส OTP ไม่ถูกต้อง');
       }
 
-      // Successful verification -> Go to payment page if draft created, else go to manage dashboard
-      if (data.draftTenantId) {
-        router.push(`/manage/payment?site=${data.draftTenantId}`);
-      } else {
-        const next = searchParams.get('next');
-        router.push(next && next.startsWith('/') ? next : '/manage');
+      // Registration with category -> unified 5-step create wizard
+      if (category) {
+        router.push(`/manage/create?category=${encodeURIComponent(category)}`);
+        return;
       }
+
+      const next = searchParams.get('next');
+      router.push(next && next.startsWith('/') ? next : '/manage');
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการยืนยันตัวตน');
     } finally {
@@ -88,12 +89,9 @@ function MobileLoginInner() {
   return (
     <div className="w-full max-w-md p-8 rounded-3xl border border-stone-200 bg-white shadow-xl relative z-10 space-y-8 animate-fade-in text-center">
       
-      {/* 3-Step Wizard Indicator (if registering a website) */}
       {category && (
-        <div className="flex justify-between items-center text-[10px] font-bold text-stone-400 max-w-xs mx-auto pb-4 border-b border-stone-200/60 select-none">
-          <span className="text-stone-500">1. เลือกหัวข้อ ✓</span>
-          <span className="text-blue-600 border-b-2 border-blue-500 pb-1">2. ยืนยันเบอร์โทรศัพท์</span>
-          <span>3. ชำระเงินค่าบริการ</span>
+        <div className="max-w-xs mx-auto pb-4 border-b border-stone-200/60 text-[10px] font-medium text-stone-500 leading-relaxed">
+          หลังยืนยัน OTP ระบบจะพาไปหน้าสร้างเว็บไซต์ 5 ขั้นตอน (เลือกหมวด → ตั้ง URL → กรอกข้อมูล → เลือกธีม → ชำระเงิน)
         </div>
       )}
 

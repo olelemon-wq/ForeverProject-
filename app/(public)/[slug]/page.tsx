@@ -3,14 +3,31 @@ import { db } from '@/lib/db';
 import { 
   BookOpen, Calendar, MapPin, Image, Flame, ArrowRight,
   Phone, Info, Share2, Printer, ExternalLink, Droplets, Sparkles, PawPrint,
-  Cake, Heart, Star, Frown
+  Cake, Heart, Star, Frown, type LucideIcon
 } from 'lucide-react';
 import Link from 'next/link';
 import DeceasedAvatar from './announcement/DeceasedAvatar';
 import { getEnabledFeatures } from '@/lib/features';
 import { getCategoryJourney } from '@/lib/categories';
+import { filterGalleryMedia } from '@/lib/galleryMedia';
 
 export const dynamic = 'force-dynamic';
+
+interface PetProfile {
+  name: string;
+  avatarUrl?: string;
+  breed?: string;
+  personality?: string;
+  favorite?: string;
+  dislike?: string;
+  isAlive?: boolean;
+  birthDate?: string | null;
+  deathDate?: string | null;
+  birthYearOnly?: boolean;
+  deathYearOnly?: boolean;
+  birthYear?: number | null;
+  deathYear?: number | null;
+}
 
 async function getTenantData(slug: string) {
   return await db.tenant.findUnique({
@@ -18,7 +35,7 @@ async function getTenantData(slug: string) {
   });
 }
 
-async function getRecentGallery(websiteId: string) {
+async function getRecentGallery(websiteId: string, themeConfig?: unknown) {
   const medias = await db.media.findMany({
     where: {
       websiteId,
@@ -30,15 +47,17 @@ async function getRecentGallery(websiteId: string) {
       { sortOrder: 'asc' },
       { createdAt: 'desc' },
     ],
-    take: 4,
+    take: 12,
   });
 
-  return medias.map(m => ({
-    id: m.id,
-    filePath: m.filePath,
-    fileName: m.fileName,
-    mimeType: m.mimeType,
-  }));
+  return filterGalleryMedia(medias, themeConfig)
+    .slice(0, 4)
+    .map((m) => ({
+      id: m.id,
+      filePath: m.filePath,
+      fileName: m.fileName,
+      mimeType: m.mimeType,
+    }));
 }
 
 function getDisplayUrl(filePath: string, mimeType: string, index: number) {
@@ -46,7 +65,23 @@ function getDisplayUrl(filePath: string, mimeType: string, index: number) {
 }
 
 const getScheduleLabels = (category: string) => {
-  if (category === 'Couple' || category === 'Wedding') {
+  if (category === 'Couple') {
+    return {
+      title: 'วันสำคัญของเรา',
+      item1: 'วันสำคัญ / ครบรอบ',
+      item2: '',
+      item3: '',
+      venueTitle: 'สถานที่ / โน้ต (ถ้ามี)',
+      venueLabel: 'สถานที่หรือเหตุการณ์',
+      pavilionLabel: 'รายละเอียดเพิ่มเติม (ถ้ามี)',
+      venueDesc: 'กดปุ่มนำทางเพื่อเปิดแผนที่ (ถ้ามี)',
+      footerText: 'ขอบคุณที่มาร่วมเป็นส่วนหนึ่งของเส้นทางความรักของเรา',
+      guidelinesTitle: 'โน้ตเพิ่มเติม',
+      contactLabel: 'ติดต่อ:',
+      notesLabel: 'โน้ต / รายละเอียด:',
+    };
+  }
+  if (category === 'Wedding') {
     return {
       title: 'กำหนดการจัดงานและกิจกรรม',
       item1: '1. พิธีมงคลสมรส / พิธีหลั่งน้ำพระพุทธมนต์',
@@ -54,6 +89,7 @@ const getScheduleLabels = (category: string) => {
       item3: '3. พิธีฉลองอาฟเตอร์ปาร์ตี้ / กิจกรรมพิเศษ',
       venueTitle: 'สถานที่จัดงาน (VENUE)',
       venueLabel: 'สถานที่จัดงาน',
+      pavilionLabel: 'ห้องจัดเลี้ยง / ห้องจัดงาน (ถ้ามี)',
       venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
       footerText: 'ขอขอบคุณแขกผู้มีเกียรติทุกท่านที่มาร่วมแสดงความยินดี — เจ้าภาพ',
       guidelinesTitle: 'คำแนะนำการร่วมแสดงความยินดี',
@@ -118,7 +154,8 @@ const getScheduleLabels = (category: string) => {
 };
 
 const getInviteFallback = (category: string) => {
-  if (category === 'Couple' || category === 'Wedding') return 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี';
+  if (category === 'Couple') return 'บันทึกวันสำคัญและเส้นทางความรักของเรา';
+  if (category === 'Wedding') return 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี';
   if (category === 'Friends') return 'เชิญชวนมาร่วมพบปะและสร้างความทรงจำด้วยกัน';
   if (category === 'Pet Memorial') return 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาว';
   if (category === 'Family' || category === 'Family Legacy') return 'เชิญชวนร่วมพบปะและสืบสานสายใยครอบครัว';
@@ -167,22 +204,22 @@ async function getRecentEbooks(websiteId: string, category: string) {
     },
   ];
 
-  if (category === 'Couple' || category === 'Wedding') {
+  if (category === 'Couple') {
     mockBooklets = [
       {
         id: 'book-1',
-        title: 'บันทึกความทรงจำและคำขอบคุณพรีเวดดิ้ง',
-        author: 'คู่บ่าวสาว',
+        title: 'บันทึกความทรงจำและเส้นทางความรัก',
+        author: 'คู่รัก',
         totalPages: 4,
       },
       {
         id: 'book-2',
-        title: 'เรื่องราวเส้นทางความรักของสองเรา',
+        title: 'เรื่องราววันสำคัญของเรา',
         author: 'คู่รัก',
         totalPages: 3,
       },
     ];
-  } else if (category === 'Pet Memorial') {
+  } else if (category === 'Wedding') {
     mockBooklets = [
       {
         id: 'book-1',
@@ -234,7 +271,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
 
   // Parallel database fetching
   const [recentPhotos, recentCondolences, recentEbooks] = await Promise.all([
-    getRecentGallery(tenant.id),
+    getRecentGallery(tenant.id, tenant.themeConfig),
     getRecentCondolences(tenant.id),
     getRecentEbooks(tenant.id, tenant.category),
   ]);
@@ -243,7 +280,10 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const sLabels = getScheduleLabels(tenant.category);
   const enabledFeatures = getEnabledFeatures(config, tenant);
   const displayBiography = config?.biography || (() => {
-    if (tenant.category === 'Couple' || tenant.category === 'Wedding') {
+    if (tenant.category === 'Couple') {
+      return "เรื่องราวความรักของเราสองคน บันทึกทุกช่วงเวลาที่เติมเต็มรอยยิ้ม ความทรงจำ และเส้นทางที่เราเดินมาด้วยกัน...";
+    }
+    if (tenant.category === 'Wedding') {
       return "เรื่องราวความรักของเราสองคน เริ่มต้นจากการพบกันครั้งแรก และร่วมเดินทางเติมเต็มรอยยิ้มและสร้างความทรงจำที่อบอุ่นด้วยกันในทุกวัน...";
     }
     if (tenant.category === 'Pet Memorial') {
@@ -262,7 +302,9 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const homeCopy = journey.home || {};
   
   const subjects = config?.subjects || [];
-  const allSubjectsAlive = subjects.length > 0 && subjects.every((s: any) => s.isAlive);
+  const petProfiles = subjects as PetProfile[];
+  const allSubjectsAlive =
+    subjects.length > 0 && subjects.every((s: { isAlive?: boolean }) => s.isAlive);
   const isHappy =
     tenant.category === 'Couple' ||
     tenant.category === 'Wedding' ||
@@ -387,8 +429,10 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
 
   // Wreath/Gift policy — Friends has no wreath/condolence policy
   const isFriends = tenant.category === 'Friends';
-  const isCoupleLike = tenant.category === 'Couple' || tenant.category === 'Wedding';
-  const wreathPolicies: Record<string, string> = isCoupleLike ? {
+  const isCouple = tenant.category === 'Couple';
+  const isWedding = tenant.category === 'Wedding';
+  const isMilestoneSchedule = isFriends || isCouple;
+  const wreathPolicies: Record<string, string> = isWedding ? {
     'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
     'NO_FLOWERS': 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
     'DONATION_ONLY': 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
@@ -399,7 +443,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
     'DONATION_ONLY': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
     'NO_WREATH': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
   };
-  const showWreathPolicy = !isFriends && !!ann?.wreathPolicy;
+  const showWreathPolicy = isWedding && !!ann?.wreathPolicy;
   const showGuidelines = !!ann?.dressCode || !!ann?.contactPhone || showWreathPolicy;
 
   const cardStyles: React.CSSProperties = {
@@ -412,10 +456,22 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   }
 
   return (
-    <div className="space-y-8 animate-fade-in text-center font-sans">
+    <div className="space-y-8 animate-fade-in text-center">
       
-      {/* 1. Styled Announcement Invitation Card */}
-      {isAnnActive && (
+      {/* 1. Announcement Invitation Card */}
+      {isAnnActive && ann.mode === 'custom' && ann.customCardUrl ? (
+        <section
+          id="announcement-card"
+          className="max-w-2xl mx-auto rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={ann.customCardUrl}
+            alt="การ์ดกำหนดการ"
+            className="w-full h-auto object-contain block"
+          />
+        </section>
+      ) : isAnnActive ? (
         <section 
           id="announcement-card"
           className={`max-w-2xl mx-auto rounded-3xl border-2 p-8 sm:p-12 shadow-md relative overflow-hidden text-center transition-all duration-300 ${cardBgClass}`}
@@ -490,7 +546,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             <hr className={`border-t ${borderGoldClass}`} />
 
             {/* Ceremony / Meetup Schedule */}
-            {(isFriends
+            {(isMilestoneSchedule
               ? !!(ann.waterDate || ann.waterTime)
               : !!(ann.waterDate || ann.abhidhammaDateRange || ann.cremationDate)) && (
             <div className="space-y-4 text-left">
@@ -500,7 +556,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               </h3>
 
               <div className="grid grid-cols-1 gap-3">
-                {isFriends ? (
+                {isMilestoneSchedule ? (
                   <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
                     <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
                     <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
@@ -588,7 +644,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                   {ann.dressCode && (
                     <div className="flex flex-col gap-0.5">
                       <span className={`font-bold ${headingColorClass}`}>
-                        {isFriends ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
+                        {isFriends || isCouple ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
                       </span>
                       <span className={textMutedClass}>{ann.dressCode}</span>
                     </div>
@@ -596,7 +652,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                   {showWreathPolicy && (
                     <div className="flex flex-col gap-0.5">
                       <span className={`font-bold ${headingColorClass}`}>
-                        {isCoupleLike ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
+                        {isWedding ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
                       </span>
                       <span className={textMutedClass}>{wreathPolicies[ann.wreathPolicy] || wreathPolicies.NORMAL}</span>
                     </div>
@@ -621,7 +677,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
 
           </div>
         </section>
-      )}
+      ) : null}
 
       {/* 2. Recent Gallery Snippet */}
       {enabledFeatures.gallery && recentPhotos.length > 0 && (
@@ -796,25 +852,39 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
       )}
 
       {/* 5. Pet profiles + Biography */}
-      {tenant.category === 'Pet Memorial' && subjects.some((s: any) => s?.name) && (
-        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
-          <div className="space-y-1">
+      {tenant.category === 'Pet Memorial' && petProfiles.some((s) => s?.name) && (
+        <section className="space-y-8 rounded-3xl border border-stone-200/80 bg-white p-6 text-left shadow-sm sm:p-8">
+          <div className="mx-auto max-w-2xl space-y-2 text-center">
             <h2
-              className="text-xl font-bold flex items-center gap-2"
+              className="flex items-center justify-center gap-2 text-xl font-black"
               style={{ color: 'var(--theme-primary, #0d9488)' }}
             >
-              <PawPrint className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
+              <PawPrint className="h-5 w-5" aria-hidden />
               สมุดประจำตัวน้อง
             </h2>
-            <p className="text-xs text-stone-400 font-medium">
-              โปรไฟล์และเรื่องน่ารู้ของสมาชิกสี่ขาประจำบ้าน
+            <p className="text-sm font-medium leading-relaxed text-stone-500">
+              ทุกอุ้งเท้ามีเรื่องราว — ทำความรู้จักสมาชิกตัวน้อยของบ้านเรา
             </p>
           </div>
-          <div className={`grid grid-cols-1 gap-5 ${subjects.filter((s: any) => s?.name).length > 1 ? 'sm:grid-cols-2' : 'sm:max-w-md'}`}>
-            {subjects
-              .filter((s: any) => s?.name)
-              .map((s: any, i: number) => {
-                const formatPetDate = (raw: any, yearOnly?: boolean, year?: number | null) => {
+
+          <div
+            className={`grid grid-cols-1 gap-6 ${
+              petProfiles.filter((s) => s?.name).length > 1
+                ? 'md:grid-cols-2'
+                : 'mx-auto w-full max-w-xl'
+            }`}
+          >
+            {petProfiles
+              .filter((s) => s?.name)
+              .map((s, i) => {
+                // Backward compatibility: use the site's original avatar for
+                // the first pet until an individual photo is assigned.
+                const petAvatar = s.avatarUrl || (i === 0 ? config?.avatarUrl : '');
+                const formatPetDate = (
+                  raw?: string | null,
+                  yearOnly?: boolean,
+                  year?: number | null
+                ) => {
                   if (yearOnly && year) return `พ.ศ. ${year + 543}`;
                   if (!raw) return '';
                   const d = new Date(raw);
@@ -829,77 +899,144 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                 const passed = !s.isAlive
                   ? formatPetDate(s.deathDate, s.deathYearOnly, s.deathYear)
                   : '';
-                const rows = [
-                  birth && { icon: Cake, label: 'วันเกิด / รับมา', value: birth },
+
+                const startDate = s.birthDate ? new Date(s.birthDate) : null;
+                const endDate = !s.isAlive && s.deathDate ? new Date(s.deathDate) : new Date();
+                let ageLabel = '';
+                if (startDate && !isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+                  let totalMonths =
+                    (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+                    endDate.getMonth() -
+                    startDate.getMonth();
+                  if (endDate.getDate() < startDate.getDate()) totalMonths -= 1;
+                  totalMonths = Math.max(0, totalMonths);
+                  const years = Math.floor(totalMonths / 12);
+                  const months = totalMonths % 12;
+                  ageLabel = [
+                    years > 0 ? `${years} ปี` : '',
+                    months > 0 ? `${months} เดือน` : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ');
+                  if (!ageLabel) ageLabel = 'ไม่ถึง 1 เดือน';
+                } else if (s.birthYear) {
+                  const endYear = !s.isAlive && s.deathYear ? s.deathYear : new Date().getFullYear();
+                  const years = Math.max(0, endYear - s.birthYear);
+                  ageLabel = years > 0 ? `ประมาณ ${years} ปี` : '';
+                }
+
+                const details = [
+                  birth && { icon: Cake, label: 'วันเกิด / วันที่รับมา', value: birth },
                   passed && { icon: Star, label: 'วันที่จากไป', value: passed },
                   s.personality && { icon: Sparkles, label: 'บุคลิก', value: s.personality },
                   s.favorite && { icon: Heart, label: 'ของโปรด', value: s.favorite },
-                  s.dislike && { icon: Frown, label: 'ไม่ชอบ', value: s.dislike },
-                ].filter(Boolean) as { icon: any; label: string; value: string }[];
+                  s.dislike && { icon: Frown, label: 'สิ่งที่ไม่ชอบ', value: s.dislike },
+                ].filter(Boolean) as { icon: LucideIcon; label: string; value: string }[];
 
                 return (
-                  <div
+                  <article
                     key={`${s.name}-${i}`}
-                    className="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:shadow-lg hover:-translate-y-1"
+                    className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                   >
                     <PawPrint
                       aria-hidden
-                      className="pointer-events-none absolute -bottom-5 -right-5 h-28 w-28 rotate-[-15deg] opacity-[0.05] transition duration-500 group-hover:rotate-0 group-hover:scale-110"
+                      className="pointer-events-none absolute -right-8 top-28 h-36 w-36 rotate-[-15deg] opacity-[0.035] transition duration-500 group-hover:rotate-0 group-hover:scale-110"
                       style={{ color: 'var(--theme-primary)' }}
                     />
 
-                    {/* Header */}
-                    <div className="flex items-center gap-4 p-5 pb-4">
-                      <div
-                        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-stone-100 shadow-inner"
-                        style={{ backgroundColor: 'color-mix(in srgb, var(--theme-primary) 10%, white)' }}
-                      >
-                        <PawPrint className="h-5 w-5" style={{ color: 'var(--theme-primary)' }} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="truncate text-base font-black text-stone-900">{s.name}</h3>
-                        {s.breed && (
-                          <p className="truncate text-xs font-medium text-stone-400">{s.breed}</p>
-                        )}
-                      </div>
+                    <div
+                      className="relative flex flex-col items-center px-6 pb-6 pt-8 text-center"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, color-mix(in srgb, var(--theme-primary) 8%, white), white)',
+                      }}
+                    >
                       <span
-                        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${
+                        className={`absolute right-4 top-4 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${
                           s.isAlive
                             ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
-                            : 'border border-amber-100 bg-amber-50/70 text-amber-700'
+                            : 'border border-amber-100 bg-amber-50 text-amber-700'
                         }`}
                       >
                         {s.isAlive ? (
-                          <Heart className="h-3 w-3" />
+                          <Heart className="h-3 w-3" aria-hidden />
                         ) : (
-                          <Star className="h-3 w-3" />
+                          <Star className="h-3 w-3" aria-hidden />
                         )}
                         {s.isAlive ? 'อยู่ด้วยกัน' : 'ในความทรงจำ'}
                       </span>
+
+                      <div
+                        className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-stone-50 shadow-lg ring-1 ring-stone-200"
+                        style={{ backgroundColor: 'color-mix(in srgb, var(--theme-primary) 10%, white)' }}
+                      >
+                        {petAvatar ? (
+                          <img
+                            src={petAvatar}
+                            alt={`รูปประจำตัวของ ${s.name}`}
+                            width={112}
+                            height={112}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <PawPrint
+                            className="h-10 w-10 opacity-50"
+                            style={{ color: 'var(--theme-primary)' }}
+                            aria-hidden
+                          />
+                        )}
+                      </div>
+                      <h3 className="mt-4 text-xl font-black text-stone-900">{s.name}</h3>
+                      {s.breed && (
+                        <p className="mt-1 text-xs font-medium text-stone-500">{s.breed}</p>
+                      )}
+                      {ageLabel && (
+                        <span
+                          className="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold"
+                          style={{
+                            color: 'var(--theme-primary)',
+                            backgroundColor:
+                              'color-mix(in srgb, var(--theme-primary) 10%, white)',
+                          }}
+                        >
+                          <Cake className="h-3.5 w-3.5" aria-hidden />
+                          {s.isAlive ? `อายุ ${ageLabel}` : `ช่วงเวลาที่อยู่ด้วยกัน ${ageLabel}`}
+                        </span>
+                      )}
                     </div>
 
-                    {rows.length > 0 && (
-                      <div className="border-t border-dashed border-stone-200/80 px-5 py-4">
-                        <dl className="space-y-2.5">
-                          {rows.map((row) => (
-                            <div key={row.label} className="flex items-start gap-2.5 text-sm">
-                              <row.icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-stone-300" />
-                              <dt className="w-24 shrink-0 pt-px text-[11px] font-bold uppercase tracking-wide text-stone-400">
-                                {row.label}
-                              </dt>
-                              <dd className="min-w-0 flex-1 font-medium leading-relaxed text-stone-700">
-                                {row.value}
-                              </dd>
+                    {details.length > 0 && (
+                      <div className="flex-1 border-t border-dashed border-stone-200 px-5 py-5">
+                        <dl className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                          {details.map((detail) => (
+                            <div
+                              key={detail.label}
+                              className="flex min-h-20 items-start gap-3 rounded-2xl border border-dashed border-stone-200 bg-stone-50/60 p-4"
+                            >
+                              <detail.icon
+                                className="mt-0.5 h-5 w-5 shrink-0"
+                                style={{ color: 'var(--theme-primary)' }}
+                                aria-hidden
+                              />
+                              <div className="min-w-0">
+                                <dt className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                                  {detail.label}
+                                </dt>
+                                <dd className="mt-1 break-words text-sm font-bold leading-relaxed text-stone-700">
+                                  {detail.value}
+                                </dd>
+                              </div>
                             </div>
                           ))}
                         </dl>
                       </div>
                     )}
-                  </div>
+                  </article>
                 );
               })}
           </div>
-        </div>
+        </section>
       )}
 
       <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left">

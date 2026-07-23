@@ -142,7 +142,7 @@ export default function DonationClientForm({
   };
 
   return (
-    <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden text-left max-w-2xl mx-auto font-sans">
+    <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden text-left max-w-2xl mx-auto">
       {/* Page Header with CategoryOrnament and Wing lines */}
       {(() => {
         const { label: fLabel, description: fDesc } = getFeatureLabel(category || 'Memorial', 'donation');

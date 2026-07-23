@@ -36,8 +36,7 @@ function PaymentPageInner() {
         }
 
         if (matched.status === 'ACTIVE') {
-          // Already paid, proceed to onboarding
-          router.push(`/manage/onboarding/choose-url?site=${siteId}`);
+          router.push(matched.slug ? `/manage?site=${matched.slug}` : '/manage');
           return;
         }
 
@@ -82,8 +81,9 @@ function PaymentPageInner() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      // Success -> Redirect directly to choose-url onboarding step
-      router.push(`/manage/onboarding/choose-url?site=${siteId}`);
+      router.push(
+        `/manage/setup-features?site=${siteId}&category=${encodeURIComponent(siteDetails?.category || '')}`
+      );
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการจำลองการชำระเงิน');
       setIsVerifying(false);
@@ -176,7 +176,7 @@ function PaymentPageInner() {
                 )}
               </Button>
               <p className="text-[10px] text-stone-400">
-                * หลังจากชำระเงินสำเร็จ ระบบจะนำทางไปยังขั้นตอนการตั้งชื่อลิงก์เว็บไซต์ต่อทันที
+                * หลังชำระเงินสำเร็จ ระบบจะพาไปเลือกฟีเจอร์เริ่มต้น แล้วเข้าหน้าจัดการเว็บไซต์
               </p>
             </div>
           </div>

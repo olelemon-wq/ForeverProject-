@@ -73,7 +73,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     label: 'Couple (ความรักคู่รัก)',
     tagline: 'บันทึกการเดินทางความรักและเรื่องราวคู่ชีวิต',
     optional: ['announcement', 'memory', 'feed', 'ebooks'],
-    defaultOn: ['memory', 'feed'],
+    defaultOn: ['announcement', 'memory'],
     featureLabels: {
       announcement: { label: 'บันทึกวันสำคัญ', description: 'การ์ดบันทึกวันสำคัญ ครบรอบ และเส้นทางความรักของสองเรา' },
       gallery: { label: 'คลังภาพแสนรัก', description: 'อัลบั้มรูปถ่ายบันทึกการเดินทางความรักของคู่เรา' },

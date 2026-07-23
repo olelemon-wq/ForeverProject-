@@ -176,7 +176,7 @@ export default function MarketingHome() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <Link 
-                href="/login?category=Memorial" 
+                href="/manage/create?category=Memorial" 
                 className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-all active:scale-[0.98]"
               >
                 {t.startMemorial}
@@ -220,7 +220,7 @@ export default function MarketingHome() {
               </ul>
               <div className="pt-4 md:pt-6">
                 <Link 
-                  href="/login?category=Memorial" 
+                  href="/manage/create?category=Memorial" 
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   {t.createMemorialBtn}
@@ -245,7 +245,7 @@ export default function MarketingHome() {
               </p>
               <div>
                 <Link 
-                  href="/login?category=Couple" 
+                  href="/manage/create?category=Couple" 
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   {t.createCoupleBtn}
@@ -291,7 +291,7 @@ export default function MarketingHome() {
 
               <div className="pt-4 md:pt-6">
                 <Link
-                  href="/login?category=Wedding"
+                  href="/manage/create?category=Wedding"
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   {t.createWeddingBtn}
@@ -364,7 +364,7 @@ export default function MarketingHome() {
                 />
                 <div className="absolute inset-x-0 bottom-0 flex justify-start bg-gradient-to-t from-black/50 to-transparent p-5 pt-16 md:hidden">
                   <Link
-                    href="/login?category=Family Legacy"
+                    href="/manage/create?category=Family Legacy"
                     className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                   >
                     {t.createFamilyBtn}
@@ -388,7 +388,7 @@ export default function MarketingHome() {
                 </div>
                 <div className="hidden md:block pt-2">
                   <Link
-                    href="/login?category=Family Legacy"
+                    href="/manage/create?category=Family Legacy"
                     className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                   >
                     {t.createFamilyBtn}
@@ -414,7 +414,7 @@ export default function MarketingHome() {
               </p>
               <div>
                 <Link 
-                  href="/login?category=Friends" 
+                  href="/manage/create?category=Friends" 
                   className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
                 >
                   {t.createFriendsBtn}
@@ -480,7 +480,7 @@ export default function MarketingHome() {
                   <p className="font-medium text-[14px] md:text-[15px] text-white/85 leading-relaxed sm:flex-grow">{t.galleryDesc}</p>
                   <div className="mt-4 sm:mt-6 flex justify-start md:justify-center">
                     <Link
-                      href="/login?category=Pet Memorial"
+                      href="/manage/create?category=Pet Memorial"
                       className="inline-flex items-center justify-center bg-[#E8F1FB] text-[#0071e3] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#d6e8fa] transition-colors"
                     >
                       {t.createPetBtn}
@@ -546,7 +546,7 @@ export default function MarketingHome() {
                 )}
               </h2>
               <Link
-                href="/login?category=Memorial"
+                href="/manage/create?category=Memorial"
                 className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
               >
                 {t.readyBtn}

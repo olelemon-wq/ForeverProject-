@@ -74,7 +74,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
   const currentTheme = themeStyles[theme];
 
   return (
-    <div className="space-y-8 text-center font-sans">
+    <div className="space-y-8 text-center">
       {!activeBook ? (
         /* Render Booklets List Selection Card Grid */
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">

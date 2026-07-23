@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { isAnnouncementCardMedia } from '@/lib/galleryMedia';
 
 export async function GET(request: Request) {
   try {
@@ -11,6 +12,11 @@ export async function GET(request: Request) {
     }
 
     // 1. Fetch gallery media list
+    const tenant = await db.tenant.findUnique({
+      where: { id: websiteId },
+      select: { themeConfig: true },
+    });
+
     const mediaList = await db.media.findMany({
       where: {
         websiteId,
@@ -21,6 +27,11 @@ export async function GET(request: Request) {
         { sortOrder: 'asc' },
         { createdAt: 'desc' },
       ],
+    });
+
+    const visibleMediaList = mediaList.filter((media) => {
+      if (media.album !== 'GALLERY') return true;
+      return !isAnnouncementCardMedia(media, tenant?.themeConfig);
     });
 
     // 2. Fetch total storage usage (all non-deleted media files for the site)
@@ -38,7 +49,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-      mediaList: mediaList.map(m => ({
+      mediaList: visibleMediaList.map(m => ({
         id: m.id,
         filePath: m.filePath,
         fileName: m.fileName,

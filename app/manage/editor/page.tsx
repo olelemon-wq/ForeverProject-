@@ -184,7 +184,24 @@ const getTextColors = (category: string, style: string) => {
 };
 
 const getScheduleLabels = (category: string) => {
-  if (category === 'Couple' || category === 'Wedding') {
+  if (category === 'Couple') {
+    return {
+      subtitle: 'บันทึกวันสำคัญ',
+      item1: 'วันสำคัญ / ครบรอบ',
+      item1Placeholder: 'เช่น วันครบรอบ 1 ปี 20 ก.ค. 68',
+      item2: '',
+      item2Placeholder: '',
+      item2TimePlaceholder: '',
+      item3: '',
+      item3Placeholder: '',
+      venueLabel: 'สถานที่หรือเหตุการณ์',
+      venuePlaceholder: 'เช่น ร้านอาหาร / ทริปท่องเที่ยว / บ้าน',
+      pavilionLabel: 'รายละเอียดเพิ่มเติม (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น โซนสวน / ห้อง VIP',
+      invitePlaceholder: 'บันทึกวันสำคัญและเส้นทางความรักของเรา',
+    };
+  }
+  if (category === 'Wedding') {
     return {
       subtitle: 'กำหนดการจัดงานและกิจกรรม',
       item1: '1. พิธีมงคลสมรส / พิธีหลั่งน้ำพระพุทธมนต์',
@@ -251,6 +268,9 @@ const getScheduleLabels = (category: string) => {
     invitePlaceholder: 'กราบเรียนเชิญด้วยความเคารพอย่างสูง',
   };
 };
+
+const usesSingleMilestoneSchedule = (category: string) =>
+  category === 'Friends' || category === 'Couple';
 
 function EditorWorkspace() {
   const searchParams = useSearchParams();
@@ -462,8 +482,8 @@ function EditorWorkspace() {
 
               let guidelineStr = '';
               if (ann.dressCode) guidelineStr += `การแต่งกาย: ${ann.dressCode}`;
-              if (ann.wreathPolicy && siteCategory !== 'Friends') {
-                const policies: any = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? {
+              if (ann.wreathPolicy && !usesSingleMilestoneSchedule(siteCategory)) {
+                const policies: any = siteCategory === 'Wedding' ? {
                   'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
                   'NO_FLOWERS': 'ขออภัย งดรับของขวัญ (เน้นการร่วมอวยพรแทน)',
                   'DONATION_ONLY': 'ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
@@ -475,7 +495,7 @@ function EditorWorkspace() {
                   'NO_WREATH': 'งดรับพวงหรีดทุกประเภท',
                 };
                 if (guidelineStr) guidelineStr += '\n';
-                const policyLabel = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? 'ของขวัญ/ซอง' : 'พวงหรีด';
+                const policyLabel = siteCategory === 'Wedding' ? 'ของขวัญ/ซอง' : 'พวงหรีด';
                 guidelineStr += `${policyLabel}: ${policies[ann.wreathPolicy] || policies.NORMAL}`;
               }
               if (ann.contactPhone) {
@@ -526,7 +546,7 @@ function EditorWorkspace() {
     } else if (field === 'announcementWaterDate' || field === 'announcementWaterTime') {
       const date = field === 'announcementWaterDate' ? value : formData.announcementWaterDate;
       const time = field === 'announcementWaterTime' ? value : formData.announcementWaterTime;
-      const waterLabel = siteCategory === 'Friends' ? 'นัดพบปะกลุ่ม' : 'พิธีรดน้ำศพ';
+      const waterLabel = usesSingleMilestoneSchedule(siteCategory) ? (siteCategory === 'Couple' ? 'วันสำคัญของเรา' : 'นัดพบปะกลุ่ม') : 'พิธีรดน้ำศพ';
       const text = `${waterLabel}: ${date} ${time ? `(${time})` : ''}`;
       const el = elements.find((e) => e.id === 'water-text');
       if (el && el.type === 'text') {
@@ -564,8 +584,8 @@ function EditorWorkspace() {
 
       let guidelineStr = '';
       if (dress) guidelineStr += `การแต่งกาย: ${dress}`;
-      if (policy && siteCategory !== 'Friends') {
-        const policies: any = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? {
+      if (policy && !usesSingleMilestoneSchedule(siteCategory)) {
+        const policies: any = siteCategory === 'Wedding' ? {
           'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
           'NO_FLOWERS': 'ขออภัย งดรับของขวัญ (เน้นการร่วมอวยพรแทน)',
           'DONATION_ONLY': 'ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
@@ -577,7 +597,7 @@ function EditorWorkspace() {
           'NO_WREATH': 'งดรับพวงหรีดทุกประเภท',
         };
         if (guidelineStr) guidelineStr += '\n';
-        const policyLabel = (siteCategory === 'Couple' || siteCategory === 'Wedding') ? 'ของขวัญ/ซอง' : 'พวงหรีด';
+        const policyLabel = siteCategory === 'Wedding' ? 'ของขวัญ/ซอง' : 'พวงหรีด';
         guidelineStr += `${policyLabel}: ${policies[policy] || policies.NORMAL}`;
       }
       if (phone) {
@@ -1019,7 +1039,7 @@ function EditorWorkspace() {
                 <div className="grid grid-cols-2 gap-3.5">
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-stone-600 block">
-                      {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'สถานที่จัดงาน' : 'ชื่อวัด'}
+                      {siteCategory === 'Wedding' ? 'สถานที่จัดงาน' : siteCategory === 'Couple' ? 'สถานที่หรือเหตุการณ์' : 'ชื่อวัด'}
                     </label>
                     <Input 
                       type="text" 
@@ -1081,7 +1101,7 @@ function EditorWorkspace() {
               <div className="bg-white rounded-2xl border border-stone-200 p-4 space-y-3 shadow-sm">
                 <h4 className="text-xs font-bold text-emerald-850 flex items-center gap-1.5 border-b border-stone-100 pb-2">
                   <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{siteCategory === 'Friends' ? '2. นัดพบปะกลุ่ม' : '2. วันและเวลากำหนดการพิธี'}</span>
+                  <span>{usesSingleMilestoneSchedule(siteCategory) ? (siteCategory === 'Couple' ? '2. วันสำคัญของเรา' : '2. นัดพบปะกลุ่ม') : '2. วันและเวลากำหนดการพิธี'}</span>
                 </h4>
 
                  {/* 1. Water Bathing / Meetup */}
@@ -1130,7 +1150,7 @@ function EditorWorkspace() {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent position="popper">
-<SelectItem value="__empty__">{siteCategory === 'Friends' ? 'ไม่ระบุเวลา' : 'เลือกเวลา'}</SelectItem>
+<SelectItem value="__empty__">{usesSingleMilestoneSchedule(siteCategory) ? 'ไม่ระบุเวลา' : 'เลือกเวลา'}</SelectItem>
                         {TIME_PRESETS.map((preset) => (
                                           <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
                         ))}
@@ -1150,7 +1170,7 @@ function EditorWorkspace() {
                   </div>
                 </div>
 
-                {siteCategory !== 'Friends' && (
+                {!usesSingleMilestoneSchedule(siteCategory) && (
                 <>
                 {/* 2. Abhidhamma */}
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
@@ -1298,24 +1318,24 @@ function EditorWorkspace() {
                 <h4 className="text-xs font-bold text-emerald-850 flex items-center gap-1.5 border-b border-stone-100 pb-2">
                   <Info className="w-3.5 h-3.5 text-emerald-600" />
                   <span>
-                    {siteCategory === 'Friends'
-                      ? '3. ข้อมูลเพิ่มเติมสำหรับเพื่อน ๆ'
+                    {usesSingleMilestoneSchedule(siteCategory)
+                      ? (siteCategory === 'Couple' ? '3. โน้ตเพิ่มเติม' : '3. ข้อมูลเพิ่มเติมสำหรับเพื่อน ๆ')
                       : '3. ข้อแนะนำสำหรับแขกผู้เข้าร่วมงาน'}
                   </span>
                 </h4>
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-stone-600 block">
-                    {siteCategory === 'Friends' ? 'โน้ต / รายละเอียด' : 'การแต่งกายเข้าร่วมงาน'}
+                    {usesSingleMilestoneSchedule(siteCategory) ? 'โน้ต / รายละเอียด' : 'การแต่งกายเข้าร่วมงาน'}
                   </label>
                   <Input 
                     type="text" 
                     value={formData.announcementDressCode} 
                     onChange={(e) => handleFieldChange('announcementDressCode', e.target.value)} 
                     placeholder={
-                      siteCategory === 'Couple' || siteCategory === 'Wedding'
+                      siteCategory === 'Wedding'
                         ? 'เช่น ธีมสีชมพู/พาสเทล หรือ ตามความสะดวก'
-                        : siteCategory === 'Friends'
+                        : usesSingleMilestoneSchedule(siteCategory)
                           ? 'เช่น แต่งตามสบาย / ธีมสีกลุ่ม'
                           : 'เช่น ชุดสุภาพโทนสีดำหรือขาว'
                     }
@@ -1323,10 +1343,10 @@ function EditorWorkspace() {
                   />
                 </div>
 
-                {siteCategory !== 'Friends' && (
+                {!usesSingleMilestoneSchedule(siteCategory) && (
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-stone-600 block">
-                    {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'นโยบายการรับซอง/ของขวัญ' : 'นโยบายพวงหรีด'}
+                    {siteCategory === 'Wedding' ? 'นโยบายการรับซอง/ของขวัญ' : 'นโยบายพวงหรีด'}
                   </label>
                   <Select
                               value={formData.announcementWreathPolicy}
@@ -1336,7 +1356,7 @@ function EditorWorkspace() {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent position="popper">
-{siteCategory === 'Couple' || siteCategory === 'Wedding' ? (
+{siteCategory === 'Wedding' ? (
                       <>
                         <SelectItem value="NORMAL">ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ</SelectItem>
                         <SelectItem value="NO_FLOWERS">ขออภัย งดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)</SelectItem>
@@ -1358,7 +1378,7 @@ function EditorWorkspace() {
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-stone-600 block">
-                    {siteCategory === 'Friends' ? 'เบอร์ติดต่อประสานงาน' : 'เบอร์ติดต่อประสานงานเจ้าภาพ'}
+                    {usesSingleMilestoneSchedule(siteCategory) ? 'เบอร์ติดต่อประสานงาน' : 'เบอร์ติดต่อประสานงานเจ้าภาพ'}
                   </label>
                   <Input 
                     type="text" 
