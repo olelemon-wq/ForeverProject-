@@ -8,6 +8,8 @@ import {
 import Link from 'next/link';
 import DeceasedAvatar from './announcement/DeceasedAvatar';
 import { getEnabledFeatures } from '@/lib/features';
+import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
+import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { getCategoryJourney } from '@/lib/categories';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
 
@@ -431,7 +433,8 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const isFriends = tenant.category === 'Friends';
   const isCouple = tenant.category === 'Couple';
   const isWedding = tenant.category === 'Wedding';
-  const isMilestoneSchedule = isFriends || isCouple;
+  const isMilestoneSchedule = isFriends;
+  const coupleMilestones = isCouple ? getCoupleMilestonesFromAnnouncement(ann) : [];
   const wreathPolicies: Record<string, string> = isWedding ? {
     'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
     'NO_FLOWERS': 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
@@ -546,7 +549,15 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             <hr className={`border-t ${borderGoldClass}`} />
 
             {/* Ceremony / Meetup Schedule */}
-            {(isMilestoneSchedule
+            {isCouple && coupleMilestones.length > 0 ? (
+              <CoupleMilestoneList
+                milestones={coupleMilestones}
+                title={sLabels.title}
+                headingColorClass={headingColorClass}
+                innerCardBg={innerCardBg}
+                textMutedClass={textMutedClass}
+              />
+            ) : (isMilestoneSchedule
               ? !!(ann.waterDate || ann.waterTime)
               : !!(ann.waterDate || ann.abhidhammaDateRange || ann.cremationDate)) && (
             <div className="space-y-4 text-left">
@@ -600,7 +611,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             )}
 
             {/* Location & Directions */}
-            {(ann.templeName || ann.pavilion) && (
+            {!isCouple && (ann.templeName || ann.pavilion) && (
               <div className="space-y-3 text-left">
                 <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
                   <MapPin className="w-4 h-4" />

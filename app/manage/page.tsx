@@ -12,6 +12,13 @@ import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imag
 import type { DefaultMediaKind } from '@/lib/defaultMedia';
 import { getDefaultMediaForCategory } from '@/lib/defaultMedia';
 import {
+  parseCoupleMilestones,
+  coupleMilestonesForSave,
+  emptyCoupleMilestone,
+  type CoupleMilestone,
+} from '@/lib/coupleMilestones';
+import CoupleMilestonesEditor from '@/components/manage/CoupleMilestonesEditor';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -442,8 +449,9 @@ const getScheduleLabels = (category: string) => {
   };
 };
 
-const usesSingleMilestoneSchedule = (category: string) =>
-  category === 'Friends' || category === 'Couple';
+const usesSingleMilestoneSchedule = (category: string) => category === 'Friends';
+
+const isCoupleCategory = (category: string) => category === 'Couple';
 
 const sidebarNavButtonClass = (active: boolean) =>
   `h-auto w-full justify-start gap-3 rounded-xl border-transparent px-3 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
@@ -626,6 +634,7 @@ export default function WebmasterDashboard() {
   const [annDressCode, setAnnDressCode] = useState('');
   const [annWreathPolicy, setAnnWreathPolicy] = useState('NORMAL');
   const [annContactPhone, setAnnContactPhone] = useState('');
+  const [annMilestones, setAnnMilestones] = useState<CoupleMilestone[]>([emptyCoupleMilestone()]);
   
   const [isCustomWaterTime, setIsCustomWaterTime] = useState(false);
   const [isCustomAbhidhammaTime, setIsCustomAbhidhammaTime] = useState(false);
@@ -695,6 +704,51 @@ export default function WebmasterDashboard() {
   const [renewRefId, setRenewRefId] = useState('');
   const [renewAmount, setRenewAmount] = useState(2000);
   const [renewLoading, setRenewLoading] = useState(false);
+
+  const buildAnnouncementPayload = (category: string) => {
+    const base = {
+      active: annActive,
+      mode: annCardMode,
+      customCardUrl: annCustomCardUrl.startsWith('blob:') ? '' : annCustomCardUrl,
+      text: annText,
+      style: annStyle,
+      fontFamily: annFontFamily,
+      contactPhone: annContactPhone,
+    };
+
+    if (isCoupleCategory(category)) {
+      return {
+        ...base,
+        milestones: coupleMilestonesForSave(annMilestones),
+        waterDate: '',
+        waterTime: '',
+        abhidhammaDateRange: '',
+        abhidhammaTime: '',
+        cremationDate: '',
+        cremationTime: '',
+        templeName: '',
+        pavilion: '',
+        mapLink: '',
+        dressCode: annDressCode,
+        wreathPolicy: '',
+      };
+    }
+
+    return {
+      ...base,
+      waterDate: annWaterDate,
+      waterTime: annWaterTime,
+      abhidhammaDateRange: usesSingleMilestoneSchedule(category) ? '' : annAbhidhammaDateRange,
+      abhidhammaTime: usesSingleMilestoneSchedule(category) ? '' : annAbhidhammaTime,
+      cremationDate: usesSingleMilestoneSchedule(category) ? '' : annCremationDate,
+      cremationTime: usesSingleMilestoneSchedule(category) ? '' : annCremationTime,
+      templeName: annTempleName,
+      pavilion: annPavilion,
+      mapLink: annMapLink,
+      dressCode: annDressCode,
+      wreathPolicy: usesSingleMilestoneSchedule(category) ? '' : annWreathPolicy,
+    };
+  };
 
   // UI states
   const [isLoading, setIsLoading] = useState(true);
@@ -1104,26 +1158,7 @@ export default function WebmasterDashboard() {
             albums: updatedAlbums,
             mediaAlbums: updatedMediaAlbums,
             features,
-            announcement: {
-              active: annActive,
-              mode: annCardMode,
-              customCardUrl: annCustomCardUrl.startsWith('blob:') ? '' : annCustomCardUrl,
-              text: annText,
-              style: annStyle,
-              fontFamily: annFontFamily,
-              waterDate: annWaterDate,
-              waterTime: annWaterTime,
-              abhidhammaDateRange: usesSingleMilestoneSchedule(activeSite.category) ? '' : annAbhidhammaDateRange,
-              abhidhammaTime: usesSingleMilestoneSchedule(activeSite.category) ? '' : annAbhidhammaTime,
-              cremationDate: usesSingleMilestoneSchedule(activeSite.category) ? '' : annCremationDate,
-              cremationTime: usesSingleMilestoneSchedule(activeSite.category) ? '' : annCremationTime,
-              templeName: annTempleName,
-              pavilion: annPavilion,
-              mapLink: annMapLink,
-              dressCode: annDressCode,
-              wreathPolicy: usesSingleMilestoneSchedule(activeSite.category) ? '' : annWreathPolicy,
-              contactPhone: annContactPhone,
-            },
+            announcement: buildAnnouncementPayload(activeSite.category),
           },
         }),
       });
@@ -1382,6 +1417,12 @@ export default function WebmasterDashboard() {
       setAnnWreathPolicy(ann.wreathPolicy || 'NORMAL');
       setAnnContactPhone(ann.contactPhone || '');
 
+      if (site.category === 'Couple') {
+        setAnnMilestones(parseCoupleMilestones(ann));
+      } else {
+        setAnnMilestones([emptyCoupleMilestone()]);
+      }
+
       setIsCustomWaterTime(ann.waterTime ? !TIME_PRESETS.includes(ann.waterTime) : false);
       setIsCustomAbhidhammaTime(ann.abhidhammaTime ? !TIME_PRESETS.includes(ann.abhidhammaTime) : false);
       setIsCustomCremationTime(ann.cremationTime ? !TIME_PRESETS.includes(ann.cremationTime) : false);
@@ -1482,26 +1523,7 @@ export default function WebmasterDashboard() {
             albums,
             mediaAlbums,
             features,
-            announcement: {
-              active: annActive,
-              mode: annCardMode,
-              customCardUrl: annCustomCardUrl.startsWith('blob:') ? '' : annCustomCardUrl,
-              text: annText,
-              style: annStyle,
-              fontFamily: annFontFamily,
-              waterDate: annWaterDate,
-              waterTime: annWaterTime,
-              abhidhammaDateRange: usesSingleMilestoneSchedule(activeSite.category) ? '' : annAbhidhammaDateRange,
-              abhidhammaTime: usesSingleMilestoneSchedule(activeSite.category) ? '' : annAbhidhammaTime,
-              cremationDate: usesSingleMilestoneSchedule(activeSite.category) ? '' : annCremationDate,
-              cremationTime: usesSingleMilestoneSchedule(activeSite.category) ? '' : annCremationTime,
-              templeName: annTempleName,
-              pavilion: annPavilion,
-              mapLink: annMapLink,
-              dressCode: annDressCode,
-              wreathPolicy: usesSingleMilestoneSchedule(activeSite.category) ? '' : annWreathPolicy,
-              contactPhone: annContactPhone,
-            },
+            announcement: buildAnnouncementPayload(activeSite.category),
           },
         }),
       });
@@ -3090,7 +3112,13 @@ export default function WebmasterDashboard() {
                         <div className="flex justify-between items-center border-b border-stone-150 pb-3">
                           <h4 className="text-sm font-bold text-stone-900 flex items-center gap-1.5 font-sans">
                             <Calendar className="w-4 h-4 text-emerald-700" />
-                            <span>ข้อมูลการ์ดกำหนดการดิจิทัล</span>
+                            <span>
+                              {selectedSite.category === 'Couple'
+                                ? 'บันทึกวันสำคัญของเรา'
+                                : selectedSite.category === 'Wedding'
+                                  ? 'การ์ดเชิญ & กำหนดการงาน'
+                                  : 'ข้อมูลการ์ดกำหนดการดิจิทัล'}
+                            </span>
                           </h4>
                           <label className="flex items-center gap-2 text-xs font-bold text-stone-600 cursor-pointer">
                             <Checkbox
@@ -3300,6 +3328,14 @@ export default function WebmasterDashboard() {
                             </div>
 
                             <div className="border-t border-stone-150 pt-3">
+                              {isCoupleCategory(selectedSite.category) ? (
+                                <CoupleMilestonesEditor
+                                  milestones={annMilestones}
+                                  onChange={setAnnMilestones}
+                                  formatThaiDate={formatThaiDateWithDay}
+                                />
+                              ) : (
+                              <>
                               <p className="font-bold text-stone-700 mb-2">{sLabels.subtitle}</p>
                               <div className="space-y-3">
                                 {/* Meetup / ceremony slot 1 */}
@@ -3527,9 +3563,12 @@ export default function WebmasterDashboard() {
                                 </>
                                 )}
                               </div>
+                              </>
+                              )}
                             </div>
 
                             {/* Location Details */}
+                            {!isCoupleCategory(selectedSite.category) && (
                             <div className="border-t border-stone-150 pt-3 space-y-3">
                               <p className="font-bold text-stone-700">{sLabels.venueLabel}</p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -3538,7 +3577,7 @@ export default function WebmasterDashboard() {
                                     {selectedSite.category === 'Wedding'
                                       ? 'สถานที่จัดงาน (เช่น โรงแรม/โบสถ์)'
                                       : usesSingleMilestoneSchedule(selectedSite.category)
-                                        ? (selectedSite.category === 'Couple' ? 'สถานที่หรือเหตุการณ์' : 'ชื่อสถานที่นัดพบ')
+                                        ? 'ชื่อสถานที่นัดพบ'
                                         : 'ชื่อวัด / สถานที่จัดงาน'}
                                   </label>
                                   <Input
@@ -3571,12 +3610,15 @@ export default function WebmasterDashboard() {
                                 />
                               </div>
                             </div>
+                            )}
 
                             {/* Recommendations */}
                             <div className="border-t border-stone-150 pt-3 space-y-3">
                               <p className="font-bold text-stone-700">
                                 {selectedSite.category === 'Wedding'
                                   ? 'คำแนะนำการร่วมงานแสดงความยินดี'
+                                  : isCoupleCategory(selectedSite.category)
+                                    ? 'โน้ตเพิ่มเติม (แสดงท้ายการ์ด)'
                                   : usesSingleMilestoneSchedule(selectedSite.category)
                                     ? (sLabels.guidelinesTitle || 'ข้อมูลเพิ่มเติม')
                                     : 'คำแนะนำการร่วมงาน'}
@@ -3584,7 +3626,9 @@ export default function WebmasterDashboard() {
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div className="space-y-1">
                                   <label className="text-stone-600 font-semibold">
-                                    {usesSingleMilestoneSchedule(selectedSite.category)
+                                    {isCoupleCategory(selectedSite.category)
+                                      ? 'โน้ตทั่วไป'
+                                      : usesSingleMilestoneSchedule(selectedSite.category)
                                       ? (sLabels.notesLabel || 'โน้ต / รายละเอียด')
                                       : 'การแต่งกาย'}
                                   </label>
@@ -3595,6 +3639,8 @@ export default function WebmasterDashboard() {
                                     placeholder={
                                       selectedSite.category === 'Wedding'
                                         ? 'เช่น ธีมสีชมพู/พาสเทล หรือ ตามความสะดวก'
+                                        : isCoupleCategory(selectedSite.category)
+                                          ? 'เช่น ข้อความท้ายการ์ด หรือคำอธิษฐานถึงกัน'
                                         : usesSingleMilestoneSchedule(selectedSite.category)
                                           ? (sLabels.notesPlaceholder || 'เช่น แต่งตามสบาย, ธีมสีกลุ่ม')
                                           : 'เช่น ชุดสุภาพสีขาว/ดำ'
@@ -3743,7 +3789,24 @@ export default function WebmasterDashboard() {
 
                             {/* Timelines list */}
                             <div className="space-y-3 text-xs text-left">
-                              {usesSingleMilestoneSchedule(selectedSite.category) ? (
+                              {isCoupleCategory(selectedSite.category) ? (
+                                coupleMilestonesForSave(annMilestones).map((milestone, index) => (
+                                  <div
+                                    key={milestone.id}
+                                    className={`p-4 rounded-2xl border transition-all ${
+                                      annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg :
+                                      annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' :
+                                      'bg-stone-50 border-stone-200/80'
+                                    }`}
+                                  >
+                                    <p className="font-bold mb-1">{milestone.title || `วันสำคัญที่ ${index + 1}`}</p>
+                                    <p className="opacity-90">
+                                      {[milestone.date, milestone.time ? `เวลา ${milestone.time}` : ''].filter(Boolean).join(' · ') || '-'}
+                                    </p>
+                                    {milestone.place && <p className="opacity-75 mt-1">{milestone.place}</p>}
+                                  </div>
+                                ))
+                              ) : usesSingleMilestoneSchedule(selectedSite.category) ? (
                                 (annWaterDate || annWaterTime) && (
                                   <div className={`p-4 rounded-2xl border transition-all ${
                                     annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg :
@@ -3795,9 +3858,9 @@ export default function WebmasterDashboard() {
                             </div>
 
                             {/* Venue & Guidelines */}
-                            {(annTempleName || annPavilion || annDressCode || annContactPhone) && (
+                            {((!isCoupleCategory(selectedSite.category) && (annTempleName || annPavilion)) || annDressCode || annContactPhone) && (
                               <div className="space-y-4 border-t border-dashed border-stone-300/30 pt-4 text-xs text-left">
-                                {annTempleName && (
+                                {!isCoupleCategory(selectedSite.category) && annTempleName && (
                                   <div>
                                     <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">{sLabels.venueLabel}</p>
                                     <p className="font-bold mt-0.5">{annTempleName} {annPavilion ? `(${annPavilion})` : ''}</p>

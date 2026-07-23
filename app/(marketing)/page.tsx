@@ -13,6 +13,8 @@ import {
   HeartHandshake,
   Cloud,
   QrCode,
+  Calendar,
+  Camera,
 } from 'lucide-react';
 import { useLanguageStore } from '@/stores/useLanguageStore';
 import { AuroraBackground } from '@/components/ui/aurora-background';
@@ -31,21 +33,24 @@ const TRANSLATIONS = {
     createMemorialBtn: "สร้างเว็บรำลึกบุคคล",
 
     coupleTitle: "คู่รัก (Couple)",
-    coupleDesc: "สมุดบันทึกดิจิทัลส่วนตัวสำหรับคู่รัก เก็บรวบรวมทุกหมุดหมายสำคัญ วันครบรอบแสนพิเศษ และโมเมนต์ที่น่ารักในวันธรรมดา เพื่อร่วมเฉลองความผูกพันและการเดินทางของชีวิตคู่ในพื้นที่ปลอดภัยตลอดกาล",
+    coupleDesc: "พื้นที่ส่วนตัวของสองคน — บันทึกวันสำคัญหลายรายการ ครบรอบ และเส้นทางความรักในการ์ดเดียว เก็บภาพและเรื่องราวความทรงจำยาว ๆ ไม่ใช่เว็บเชิญงาน",
+    coupleMilestoneTitle: "บันทึกวันสำคัญหลายรายการ",
+    coupleDiaryTitle: "ไดอารี่ความทรงจำ",
+    coupleGalleryTitle: "คลังภาพแสนรัก",
     createCoupleBtn: "สร้างเว็บคู่รัก",
 
     weddingTitle: "งานแต่งงาน (Wedding)",
-    weddingDesc: "การ์ดเชิญ กำหนดการ และความทรงจำประทับใจวันสำคัญ ครบจบในลิงก์เดียว",
+    weddingDesc: "การ์ดเชิญดิจิทัล กำหนดการ 3 ช่วงพิธี และความทรงจำวันมงคลสมรส — ครบจบในลิงก์เดียว",
     createWeddingBtn: "สร้างเว็บงานแต่ง",
     familyTitle: "มรดกวงศ์ตระกูล (Family Legacy)",
     familyDesc: "รวบรวมแผนผังครอบครัว บันทึกสูตรอาหารส่งต่อรุ่นสู่รุ่น และเก็บรักษามรดกทางความรู้ในห้องเก็บข้อมูลส่วนตัวที่ปลอดภัยสำหรับการเดินทางอันยืนยงของวงศ์ตระกูล",
     createFamilyBtn: "สร้างเว็บประวัติตระกูล",
-    inviteTitle: "การ์ดเชิญ & กำหนดการ",
-    inviteDesc: "การ์ดเชิญออนไลน์และแจ้งกำหนดการพิธี",
+    inviteTitle: "การ์ดเชิญ & กำหนดการ 3 ช่วง",
+    inviteDesc: "พิธีมงคลสมรส งานเลี้ยงฉลอง และกิจกรรมพิเศษ",
     giftTitle: "กล่องรับซอง & ของชำร่วย",
     giftDesc: "ระบบรับซองคำอวยพรและแจกไฟล์ของชำร่วย",
-    rsvpTitle: "ระบบตอบรับการเข้าร่วม (RSVP)",
-    rsvpDesc: "ให้แขกยืนยันการร่วมงานล่วงหน้าได้อย่างง่ายดาย",
+    rsvpTitle: "สมุดอวยพร & ฟีดเฉลิมฉลอง",
+    rsvpDesc: "ให้แขกเขียนคำอวยพรและแชร์ความยินดีบนฟีด",
 
     friendsTitle: "กลุ่มเพื่อน (Friends)",
     friendsDesc: "พื้นที่บันทึกความทรงจำการเดินทางร่วมกัน ทริปแก๊งเพื่อนซี้ เรื่องราวมิตรภาพที่เติบโตไปด้วยกัน เพื่อบันทึกรอยยิ้ม เสียงหัวเราะ และคำยินดีในทุกก้าวของชีวิตไว้เป็นของขวัญล้ำค่าของกลุ่มตลอดไป",
@@ -91,18 +96,21 @@ const TRANSLATIONS = {
     createMemorialBtn: "Create Memorial",
 
     coupleTitle: "Couple",
-    coupleDesc: "Your private digital journal to celebrate milestones, anniversaries, and the warmth of everyday moments, preserving your shared growth and narrative forever.",
+    coupleDesc: "Your private space for two — record multiple milestones, anniversaries, and your love story on one card. A long-term memory journal, not a wedding invitation site.",
+    coupleMilestoneTitle: "Multiple milestone dates",
+    coupleDiaryTitle: "Memory diary",
+    coupleGalleryTitle: "Love photo gallery",
     createCoupleBtn: "Create Couple Site",
 
     weddingTitle: "Wedding",
-    weddingDesc: "Digital invitations, schedules, and wedding memories, all in a single link.",
+    weddingDesc: "Digital invitations, a three-part ceremony schedule, and wedding memories — all in one link.",
     createWeddingBtn: "Create Wedding Site",
-    inviteTitle: "Invitations & Schedules",
-    inviteDesc: "Online invitation card and ceremony schedule notifier.",
+    inviteTitle: "Invitation & 3-part schedule",
+    inviteDesc: "Ceremony, reception, and after-party details in one card.",
     giftTitle: "Digital Envelope & Gifts",
     giftDesc: "Accept warm blessings and distribute digital guest return-gifts.",
-    rsvpTitle: "RSVP Response System",
-    rsvpDesc: "Let guests confirm their attendance easily in advance.",
+    rsvpTitle: "Guestbook & celebration feed",
+    rsvpDesc: "Let guests leave wishes and share joy on your feed.",
     familyTitle: "Family Legacy",
     familyDesc: "Map your ancestry, preserve family recipes, and pass down wisdom. A private, secure vault for your family's enduring narrative.",
     createFamilyBtn: "Create Family Site",
@@ -240,9 +248,21 @@ export default function MarketingHome() {
               <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
                 {t.coupleTitle}
               </h2>
-              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-5 md:mb-8 max-w-md">
+              <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-5 md:mb-6 max-w-md">
                 {t.coupleDesc}
               </p>
+              <ul className="space-y-3 md:space-y-4 mb-5 md:mb-8">
+                {[
+                  { icon: Calendar, label: t.coupleMilestoneTitle },
+                  { icon: BookOpen, label: t.coupleDiaryTitle },
+                  { icon: Camera, label: t.coupleGalleryTitle },
+                ].map((item) => (
+                  <li key={item.label} className="flex items-center gap-3">
+                    <item.icon className="w-5 h-5 text-[#0071e3] shrink-0" />
+                    <span className="text-[17px] text-[#1D1D1F] font-medium">{item.label}</span>
+                  </li>
+                ))}
+              </ul>
               <div>
                 <Link 
                   href="/manage/create?category=Couple" 
@@ -278,13 +298,16 @@ export default function MarketingHome() {
 
               <ul className="space-y-3 md:space-y-4 pt-2 md:pt-4">
                 {[
-                  { icon: Mail, label: t.inviteTitle },
-                  { icon: Gift, label: t.giftTitle },
-                  { icon: HeartHandshake, label: t.rsvpTitle },
+                  { icon: Mail, label: t.inviteTitle, desc: t.inviteDesc },
+                  { icon: Gift, label: t.giftTitle, desc: t.giftDesc },
+                  { icon: HeartHandshake, label: t.rsvpTitle, desc: t.rsvpDesc },
                 ].map((item) => (
-                  <li key={item.label} className="flex items-center gap-3">
-                    <item.icon className="w-5 h-5 text-[#0071e3] shrink-0" />
-                    <span className="text-[17px] text-[#1D1D1F] font-medium">{item.label}</span>
+                  <li key={item.label} className="flex items-start gap-3">
+                    <item.icon className="w-5 h-5 text-[#0071e3] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-[17px] text-[#1D1D1F] font-medium">{item.label}</span>
+                      <span className="block text-[14px] text-[#86868B] font-medium mt-0.5">{item.desc}</span>
+                    </div>
                   </li>
                 ))}
               </ul>

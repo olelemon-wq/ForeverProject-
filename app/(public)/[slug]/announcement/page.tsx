@@ -8,6 +8,8 @@ import React from 'react';
 import AnnouncementControls from './AnnouncementControls';
 import DeceasedAvatar from './DeceasedAvatar';
 import { getEnabledFeatures } from '@/lib/features';
+import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
+import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 
 export const dynamic = 'force-dynamic';
 
@@ -212,7 +214,8 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   const isFriends = tenant.category === 'Friends';
   const isCouple = tenant.category === 'Couple';
   const isWedding = tenant.category === 'Wedding';
-  const isMilestoneSchedule = isFriends || isCouple;
+  const isMilestoneSchedule = isFriends;
+  const coupleMilestones = isCouple ? getCoupleMilestonesFromAnnouncement(announcement) : [];
   const wreathPolicies: Record<string, string> = isWedding ? {
     'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
     'NO_FLOWERS': 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
@@ -320,7 +323,13 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
         <div className="text-left space-y-0.5">
           <h4 className="text-xs font-bold text-stone-850 flex items-center gap-1.5">
             <Share2 className="w-3.5 h-3.5 text-emerald-700" />
-            <span>การ์ดกำหนดการดิจิทัลออนไลน์</span>
+            <span>
+              {tenant.category === 'Couple'
+                ? 'การ์ดบันทึกวันสำคัญออนไลน์'
+                : tenant.category === 'Wedding'
+                  ? 'การ์ดเชิญ & กำหนดการออนไลน์'
+                  : 'การ์ดกำหนดการดิจิทัลออนไลน์'}
+            </span>
           </h4>
           <p className="text-[10px] text-stone-500">คุณสามารถพิมพ์ เซฟเป็น PDF หรือคัดลอกลิงก์เพื่อส่งต่อทาง LINE/Facebook ได้ทันทีค่ะ</p>
         </div>
@@ -402,7 +411,16 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           <hr className={`border-t ${borderGoldClass}`} />
 
           {/* Ceremony / Meetup Schedule */}
-          {(isMilestoneSchedule
+          {isCouple && coupleMilestones.length > 0 ? (
+            <CoupleMilestoneList
+              milestones={coupleMilestones}
+              title={sLabels.title}
+              headingColorClass={headingColorClass}
+              innerCardBg={innerCardBg}
+              textMutedClass={textMutedClass}
+              compact
+            />
+          ) : (isMilestoneSchedule
             ? !!(announcement.waterDate || announcement.waterTime)
             : !!(announcement.waterDate || announcement.abhidhammaDateRange || announcement.cremationDate)) && (
           <div className="space-y-4 text-left">
@@ -456,7 +474,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           )}
 
           {/* Location & Directions */}
-          {(announcement.templeName || announcement.pavilion) && (
+          {!isCouple && (announcement.templeName || announcement.pavilion) && (
             <div className="space-y-3 text-left">
               <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
                 <MapPin className="w-4 h-4" />
