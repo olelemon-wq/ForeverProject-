@@ -1,4 +1,10 @@
-import { FeatureKey, FeatureMap, FEATURE_CATALOG } from './features';
+import {
+  FeatureKey,
+  FeatureMap,
+  FEATURE_CATALOG,
+  PHASE_HIDDEN_FEATURES,
+  applyPhaseFeatureConstraints,
+} from './features';
 
 export type CategoryKey =
   | 'Memorial'
@@ -94,7 +100,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     label: 'Wedding (ความทรงจำแต่งงาน)',
     tagline: 'บันทึกความสุขในวันสำคัญและแชร์ภาพความประทับใจ',
     optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'donation'],
-    defaultOn: ['announcement', 'feed'],
+    defaultOn: ['announcement'],
     featureLabels: {
       announcement: { label: 'การ์ดเชิญ & กำหนดการ', description: 'การ์ดเชิญร่วมงานแต่งงานออนไลน์และแจ้งกำหนดการพิธี' },
       gallery: { label: 'แกลเลอรีคู่บ่าวสาว', description: 'อัลบั้มรูป Pre-Wedding และภาพบรรยากาศวันงานแต่งงาน' },
@@ -117,7 +123,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     label: 'Friends (กลุ่มรุ่น)',
     tagline: 'พื้นที่เก็บความทรงจำร่วม ทริป และเรื่องราวของกลุ่มที่เติบโตไปด้วยกัน',
     optional: ['announcement', 'condolence', 'memory', 'feed', 'ebooks', 'donation'],
-    defaultOn: ['memory', 'feed'],
+    defaultOn: ['memory', 'condolence'],
     featureLabels: {
       announcement: { label: 'บอร์ดนัดหมายกลุ่ม', description: 'การ์ดนัดแนะ กำหนดการรวมตัว หรือทริปร่วมกัน' },
       gallery: { label: 'คลังภาพของกลุ่ม', description: 'อัลบั้มรูปทริป งานรวมตัว และโมเมนต์ร่วมกัน' },
@@ -140,7 +146,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     label: 'Pet (พื้นที่ของน้อง)',
     tagline: 'พื้นที่เก็บความทรงจำและเรื่องราวของน้อง ทั้งวันที่อยู่ด้วยกันและในความทรงจำ',
     optional: ['condolence', 'memory', 'feed', 'donation'],
-    defaultOn: ['memory', 'feed'],
+    defaultOn: ['memory'],
     featureLabels: {
       gallery: { label: 'คลังภาพเจ้าตัวน้อย', description: 'อัลบั้มภาพถ่ายความทรงจำและโมเมนต์น่ารักของเด็ก ๆ' },
       videos: { label: 'วิดีโอแสนซนของน้อง', description: 'คลิปวิดีโอแสนซนและช่วงเวลาป่วนปนน่ารักของเด็ก ๆ' },
@@ -178,7 +184,7 @@ export function getInitialFeatureMapForCategory(category?: string): FeatureMap {
     initialMap[f.key] = isMandatory || isDefaultOn;
   }
   
-  return initialMap;
+  return applyPhaseFeatureConstraints(initialMap);
 }
 
 /** Resolves dynamic description and label, merging default catalog value with journey overrides. */
@@ -204,5 +210,5 @@ export function getVisibleKeys(category?: string): FeatureKey[] {
   const journey = getCategoryJourney(category);
   // Merge mandatory features and optional ones
   const keys = new Set<FeatureKey>([...MANDATORY_FEATURES, ...journey.optional]);
-  return Array.from(keys);
+  return Array.from(keys).filter((key) => !PHASE_HIDDEN_FEATURES.includes(key));
 }

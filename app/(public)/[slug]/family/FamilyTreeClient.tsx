@@ -20,7 +20,7 @@ import { getInitialLetter } from '@/lib/utils';
 import Link from 'next/link';
 import { getFeatureLabel } from '@/lib/categories';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
-import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
+import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 
 interface FamilyMember {
   id: string;
@@ -69,7 +69,8 @@ function CustomFamilyNode({ data }: { data: any }) {
     avatarScale,
     avatarX,
     avatarY,
-    avatarRotate
+    avatarRotate,
+    imageCoordSpace,
   } = data;
   const [imageError, setImageError] = useState(false);
   
@@ -98,6 +99,19 @@ function CustomFamilyNode({ data }: { data: any }) {
   }
   const hasValidAvatar = !!cleanedAvatarUrl && !imageError;
 
+  const avatarImgStyle: React.CSSProperties = { width: '100%', height: '100%', objectFit: 'cover' };
+  if (isMain) {
+    const scale = avatarScale || 1;
+    const x = clampImagePan(toRelativeOffset(avatarX || 0, 224, imageCoordSpace), scale);
+    const y = clampImagePan(toRelativeOffset(avatarY || 0, 224, imageCoordSpace), scale);
+    Object.assign(avatarImgStyle, imageTransformStyle({
+      x,
+      y,
+      scale,
+      rotate: avatarRotate || 0,
+    }));
+  }
+
   return (
     <div className="flex flex-col items-center group select-none w-[130px] bg-transparent relative">
       {/* Target handle at Top for parent-to-child connections */}
@@ -118,17 +132,7 @@ function CustomFamilyNode({ data }: { data: any }) {
             alt={name} 
             className="pointer-events-none" 
             draggable={false}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              ...imageTransformStyle({
-                x: toRelativeOffset(avatarX || 0, 224),
-                y: toRelativeOffset(avatarY || 0, 224),
-                scale: avatarScale || 1,
-                rotate: avatarRotate || 0,
-              }),
-            }}
+            style={avatarImgStyle}
             onError={() => {
               setImageError(true);
             }}
@@ -456,6 +460,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
     const deceasedAvatarX = themeConfig?.avatarX || 0;
     const deceasedAvatarY = themeConfig?.avatarY || 0;
     const deceasedAvatarRotate = themeConfig?.avatarRotate || 0;
+    const deceasedImageCoordSpace = themeConfig?.imageCoordSpace || null;
 
     if (hasSpouse) {
       deceasedX = deceasedCoupleCenter - 140;
@@ -481,6 +486,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
           avatarX: deceasedAvatarX,
           avatarY: deceasedAvatarY,
           avatarRotate: deceasedAvatarRotate,
+          imageCoordSpace: deceasedImageCoordSpace,
           ringColor: subjectIsAlive ? 'border-amber-500' : 'border-rose-500',
           placeholderBg: subjectIsAlive ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
         }
@@ -520,6 +526,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
           avatarX: deceasedAvatarX,
           avatarY: deceasedAvatarY,
           avatarRotate: deceasedAvatarRotate,
+          imageCoordSpace: deceasedImageCoordSpace,
           ringColor: subjectIsAlive ? 'border-amber-500' : 'border-rose-500',
           placeholderBg: subjectIsAlive ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
         }

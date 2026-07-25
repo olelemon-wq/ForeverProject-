@@ -115,6 +115,22 @@ export const FEATURE_CATALOG: FeatureDef[] = [
 
 export type FeatureMap = Record<FeatureKey, boolean>;
 
+/** Features hidden from manage UI and the public site until a future release. */
+export const PHASE_HIDDEN_FEATURES: readonly FeatureKey[] = ['feed'];
+
+export function isPhaseHiddenFeature(key: FeatureKey): boolean {
+  return PHASE_HIDDEN_FEATURES.includes(key);
+}
+
+/** Force phase-hidden features off while keeping the rest of the map intact. */
+export function applyPhaseFeatureConstraints(map: FeatureMap): FeatureMap {
+  const next = { ...map };
+  for (const key of PHASE_HIDDEN_FEATURES) {
+    next[key] = false;
+  }
+  return next;
+}
+
 /** Build a FeatureMap from each feature's `defaultOn` flag. */
 function presetFromCatalog(): FeatureMap {
   return FEATURE_CATALOG.reduce((acc, f) => {
@@ -162,7 +178,7 @@ export function getEnabledFeatures(
 
   const isPet = tenant?.category === 'Pet Memorial';
 
-  return {
+  return applyPhaseFeatureConstraints({
     // Pet sites intentionally have no ceremony/announcement card
     announcement: isPet ? false : (read('announcement', false) || !!cfg.announcement?.active),
     condolence: read('condolence', true),
@@ -174,14 +190,16 @@ export function getEnabledFeatures(
     // Pet Memorial intentionally has no ebooks / memorial-book feature
     ebooks: tenant?.category === 'Pet Memorial' ? false : read('ebooks', true),
     donation: read('donation', !!tenant?.donationActive),
-  };
+  });
 }
 
 /** Coerce an arbitrary input into a complete, boolean-only FeatureMap. */
 export function normalizeFeatureMap(input: unknown): FeatureMap {
   const src = (input ?? {}) as Partial<Record<FeatureKey, unknown>>;
-  return FEATURE_CATALOG.reduce((acc, f) => {
-    acc[f.key] = src[f.key] === true;
-    return acc;
-  }, {} as FeatureMap);
+  return applyPhaseFeatureConstraints(
+    FEATURE_CATALOG.reduce((acc, f) => {
+      acc[f.key] = src[f.key] === true;
+      return acc;
+    }, {} as FeatureMap)
+  );
 }
