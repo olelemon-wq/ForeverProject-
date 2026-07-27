@@ -190,7 +190,7 @@ export default function MarketingHome() {
                 {t.startMemorial}
               </Link>
               <Link 
-                href="/kittiemeaw" 
+                href="/examples" 
                 className="inline-flex items-center justify-center bg-transparent text-[#0071e3] font-medium text-[17px] px-8 py-3 rounded-full hover:underline transition-all flex items-center gap-1"
               >
                 {t.exploreExamples} <ChevronRight className="w-4 h-4" />
@@ -587,7 +587,7 @@ export default function MarketingHome() {
               <h4 className="font-semibold text-[#1D1D1F]">ผลิตภัณฑ์</h4>
               <ul className="space-y-2">
                 <li><a className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="#features">ฟีเจอร์</a></li>
-                <li><Link className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="/kittiemeaw">ตัวอย่าง</Link></li>
+                <li><Link className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="/examples">ตัวอย่าง</Link></li>
                 <li><Link className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="/pricing">ราคา</Link></li>
               </ul>
             </div>

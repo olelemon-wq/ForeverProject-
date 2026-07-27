@@ -45,6 +45,7 @@ export default function MarketingLayout({
   const currentLang = mounted ? lang : 'th';
 
   const menuItems = [
+    { href: '/examples', label: currentLang === 'th' ? 'ตัวอย่าง' : 'Examples' },
     { href: '#memorial', label: currentLang === 'th' ? 'อนุสรณ์บุคคล' : 'Memorial' },
     { href: '#family-legacy', label: currentLang === 'th' ? 'มรดกวงศ์ตระกูล' : 'Family Legacy' },
     { href: '#couple', label: currentLang === 'th' ? 'คู่รัก' : 'Couple' },
