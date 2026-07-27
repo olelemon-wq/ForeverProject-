@@ -99,7 +99,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
   'Wedding': {
     label: 'Wedding (ความทรงจำแต่งงาน)',
     tagline: 'บันทึกความสุขในวันสำคัญและแชร์ภาพความประทับใจ',
-    optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'donation'],
+    optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'donation'],
     defaultOn: ['announcement'],
     featureLabels: {
       announcement: { label: 'การ์ดเชิญ & กำหนดการ', description: 'การ์ดเชิญร่วมงานแต่งงานออนไลน์และแจ้งกำหนดการพิธี' },
@@ -109,7 +109,6 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
       memory: { label: 'บอร์ดส่งคำยินดี', description: 'แชร์เรื่องราวยินดีและรวมรูปถ่ายจากเพื่อนๆ ที่มาร่วมงาน' },
       feed: { label: 'ฟีดเฉลิมฉลอง', description: 'ฟีดคอมเมนต์ส่งรัก แสดงความยินดี และกดส่งหัวใจให้บ่าวสาว' },
       family: { label: 'สองครอบครัวชื่นมื่น', description: 'แผนแนะนำครอบครัวและเครือญาติฝั่งเจ้าบ่าวและเจ้าสาว' },
-      ebooks: { label: 'ของชำร่วยออนไลน์', description: 'หนังสือของชำร่วยและอัลบั้มแทนคำขอบคุณอ่านออนไลน์' },
       donation: { label: 'ร่วมใส่ซองออนไลน์', description: 'ร่วมส่งของขวัญและเงินของขวัญวันแต่งงานผ่าน PromptPay' },
     },
     home: {

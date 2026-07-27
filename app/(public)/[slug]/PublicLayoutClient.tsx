@@ -6,6 +6,7 @@ import { Flame, Menu as MenuIcon, X, Eye, Type } from 'lucide-react';
 import { getEnabledFeatures } from '@/lib/features';
 import { getFeatureLabel } from '@/lib/categories';
 import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
+import { resolveDefaultMediaSrc } from '@/lib/defaultMedia';
 
 interface Menu {
   id: string;
@@ -67,7 +68,7 @@ export default function PublicLayoutClient({
       document.documentElement.style.fontSize = '100%';
     };
   }, [config.defaultFontSize, zoomLevel]);
-  const coverUrl = config.coverUrl || '';
+  const coverUrl = resolveDefaultMediaSrc(config.coverUrl || '');
   const coverScale = config.coverScale || 1;
   const coverX = toRelativeOffset(config.coverX || 0, 320, config.imageCoordSpace);
   const coverY = toRelativeOffset(config.coverY || 0, 160, config.imageCoordSpace);

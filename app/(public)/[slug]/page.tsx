@@ -10,6 +10,7 @@ import DeceasedAvatar from './announcement/DeceasedAvatar';
 import { getEnabledFeatures } from '@/lib/features';
 import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
+import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
 import { getCategoryJourney } from '@/lib/categories';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
 
@@ -221,21 +222,6 @@ async function getRecentEbooks(websiteId: string, category: string) {
         totalPages: 3,
       },
     ];
-  } else if (category === 'Wedding') {
-    mockBooklets = [
-      {
-        id: 'book-1',
-        title: 'ไดอารี่บันทึกการเดินทางกลับดาวของหนู',
-        author: 'เจ้าของอันเป็นที่รัก',
-        totalPages: 4,
-      },
-      {
-        id: 'book-2',
-        title: 'รวมโมเมนต์แสนซนและรอยยิ้มสี่ขา',
-        author: 'ครอบครัวน้อง',
-        totalPages: 3,
-      },
-    ];
   } else if (category === 'Friends') {
     mockBooklets = [
       {
@@ -351,7 +337,6 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const galleryHeading = homeCopy.galleryHeading || 'ภาพถ่ายความทรงจำล่าสุด';
   const ebooksTitle = (() => {
     if (tenant.category === 'Couple') return 'สมุดภาพความรักแนะนำ';
-    if (tenant.category === 'Wedding') return 'ของชำร่วยออนไลน์และหนังสือที่ระลึกแนะนำ';
     if (tenant.category === 'Pet Memorial') return 'บันทึกการเดินทางของน้องและสมุดภาพแนะนำ';
     if (tenant.category === 'Friends') return 'หนังสือรุ่นและบันทึกความทรงจำแนะนำ';
     if (tenant.category === 'Family Legacy') return 'หนังสือประวัติตระกูลและบันทึกแนะนำ';
@@ -359,7 +344,6 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   })();
   const ebooksCtaText = (() => {
     if (tenant.category === 'Couple') return 'ดูสมุดภาพทั้งหมด';
-    if (tenant.category === 'Wedding') return 'ดูของชำร่วยทั้งหมด';
     if (tenant.category === 'Pet Memorial') return 'ดูบันทึกทั้งหมด';
     return 'อ่านหนังสือทั้งหมด';
   })();
@@ -367,60 +351,16 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const isAnnActive = enabledFeatures.announcement;
 
   // Parse template colors
-  let cardBgClass = 'bg-white border-stone-200 text-stone-900';
-  let textMutedClass = 'text-stone-500';
-  let headingColorClass = 'text-stone-900';
-  let innerCardBg = 'bg-stone-50/60 border-stone-200/80';
-  let borderGoldClass = 'border-amber-600/30';
-  let hasBackgroundImage = false;
-  let bgImageUrl = '';
-
-  if (ann.style === 'CHARCOAL_SLATE') {
-    hasBackgroundImage = true;
-    bgImageUrl = '/Template-cards/charcoal_gold.png';
-
-    if (tenant.category === 'Couple' || tenant.category === 'Wedding') {
-      cardBgClass = 'bg-[#FFF0F2] border-[#FBC5CD] text-[#8C3A4F] shadow-[0_10px_30px_rgba(251,197,205,0.3)]';
-      textMutedClass = 'text-[#A25F70]';
-      headingColorClass = 'text-[#8C3A4F]';
-      innerCardBg = 'bg-[#FFF5F6]/70 border-[#FBC5CD]/40';
-      borderGoldClass = 'border-[#FBC5CD]/60';
-      hasBackgroundImage = false;
-    } else if (tenant.category === 'Pet Memorial') {
-      cardBgClass = 'bg-[#F2F6F3] border-[#C8D9CD] text-[#2C4A3E] shadow-[0_10px_30px_rgba(200,217,205,0.3)]';
-      textMutedClass = 'text-[#4E7062]';
-      headingColorClass = 'text-[#2C4A3E]';
-      innerCardBg = 'bg-[#FAFDFB]/75 border-[#C8D9CD]/40';
-      borderGoldClass = 'border-[#C8D9CD]/60';
-      hasBackgroundImage = false;
-    } else if (tenant.category === 'Family Legacy') {
-      cardBgClass = 'bg-[#0D1F2D] border-[#2A445C] text-[#E0A96D] shadow-[0_10px_30px_rgba(0,0,0,0.4)]';
-      textMutedClass = 'text-[#B5834C]';
-      headingColorClass = 'text-[#E0A96D]';
-      innerCardBg = 'bg-[#152E40]/65 border-[#2A445C]/40';
-      borderGoldClass = 'border-[#2A445C]/60';
-      hasBackgroundImage = false;
-    } else if (tenant.category === 'Friends') {
-      cardBgClass = 'bg-[#EAF4F4] border-[#A8D1D1] text-[#1E4848] shadow-[0_10px_30px_rgba(168,209,209,0.3)]';
-      textMutedClass = 'text-[#3E7D7D]';
-      headingColorClass = 'text-[#1E4848]';
-      innerCardBg = 'bg-[#F4FAFA]/75 border-[#A8D1D1]/40';
-      borderGoldClass = 'border-[#A8D1D1]/60';
-      hasBackgroundImage = false;
-    } else {
-      cardBgClass = 'bg-stone-900 border-stone-800 text-[#C2A878] shadow-[0_10px_30px_rgba(0,0,0,0.4)]';
-      textMutedClass = 'text-[#C2A878]/80';
-      headingColorClass = 'text-[#C2A878]';
-      innerCardBg = 'bg-stone-850/65 border-[#C2A878]/20';
-      borderGoldClass = 'border-[#C2A878]/45';
-    }
-  } else if (ann.style === 'WARM_CREAM') {
-    cardBgClass = 'bg-[#FAF6EE] border-[#EADFC9] text-[#4A3E29]';
-    textMutedClass = 'text-[#7D6B4E]';
-    headingColorClass = 'text-[#362C1A]';
-    innerCardBg = 'bg-[#F3EBD9]/60 border-[#E5D7B7]';
-    borderGoldClass = 'border-[#C2A878]/30';
-  }
+  const cardTheme = resolveAnnouncementCardTheme(tenant.category, ann.style);
+  const {
+    cardBgClass,
+    textMutedClass,
+    headingColorClass,
+    innerCardBg,
+    borderGoldClass,
+    hasBackgroundImage,
+    bgImageUrl,
+  } = cardTheme;
 
   // Deceased Image config
   const avatarUrl = config?.avatarUrl;
@@ -508,7 +448,10 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               />
               
               <div className="space-y-1">
-                <h2 className={`text-2xl sm:text-3xl font-black ${headingColorClass}`}>
+                <h2
+                  className="text-2xl sm:text-3xl font-black"
+                  style={{ color: 'var(--theme-primary)' }}
+                >
                   {(() => {
                     const match = tenant.name.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
                     if (match) {
@@ -553,9 +496,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               <CoupleMilestoneList
                 milestones={coupleMilestones}
                 title={sLabels.title}
-                headingColorClass={headingColorClass}
                 innerCardBg={innerCardBg}
-                textMutedClass={textMutedClass}
               />
             ) : (isMilestoneSchedule
               ? !!(ann.waterDate || ann.waterTime)
@@ -632,7 +573,8 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                       href={ann.mapLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full sm:w-auto px-4 py-2.5 bg-stone-900 hover:bg-black text-white dark:bg-white dark:hover:bg-stone-50 dark:text-stone-900 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer"
+                      className="w-full sm:w-auto px-4 py-2.5 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer hover:opacity-90 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--theme-primary)]/25"
+                      style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>เปิด Google Maps นำทาง</span>
@@ -645,8 +587,11 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             {/* Guidelines Block — Friends: no wreath/condolence policy */}
             {showGuidelines && (
             <div className="space-y-3 text-left">
-              <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
-                <Info className="w-4 h-4" />
+              <h3
+                className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${isCouple ? '' : headingColorClass}`}
+                style={isCouple ? coupleSiteTextStyles.primary : undefined}
+              >
+                <Info className="w-4 h-4" style={isCouple ? coupleSiteTextStyles.primary : undefined} />
                 <span>{sLabels.guidelinesTitle}</span>
               </h3>
 
@@ -654,26 +599,55 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {ann.dressCode && (
                     <div className="flex flex-col gap-0.5">
-                      <span className={`font-bold ${headingColorClass}`}>
+                      <span
+                        className={`font-bold ${isCouple ? '' : headingColorClass}`}
+                        style={isCouple ? coupleSiteTextStyles.primary : undefined}
+                      >
                         {isFriends || isCouple ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
                       </span>
-                      <span className={textMutedClass}>{ann.dressCode}</span>
+                      <span
+                        className={isCouple ? '' : textMutedClass}
+                        style={isCouple ? coupleSiteTextStyles.muted : undefined}
+                      >
+                        {ann.dressCode}
+                      </span>
                     </div>
                   )}
                   {showWreathPolicy && (
                     <div className="flex flex-col gap-0.5">
-                      <span className={`font-bold ${headingColorClass}`}>
+                      <span
+                        className={`font-bold ${isCouple ? '' : headingColorClass}`}
+                        style={isCouple ? coupleSiteTextStyles.primary : undefined}
+                      >
                         {isWedding ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
                       </span>
-                      <span className={textMutedClass}>{wreathPolicies[ann.wreathPolicy] || wreathPolicies.NORMAL}</span>
+                      <span
+                        className={isCouple ? '' : textMutedClass}
+                        style={isCouple ? coupleSiteTextStyles.muted : undefined}
+                      >
+                        {wreathPolicies[ann.wreathPolicy] || wreathPolicies.NORMAL}
+                      </span>
                     </div>
                   )}
                 </div>
                 {ann.contactPhone && (
-                  <div className="flex gap-2 border-t border-stone-200/50 pt-3 mt-3 items-center">
+                  <div
+                    className={`flex gap-2 border-t pt-3 mt-3 items-center ${isCouple ? '' : 'border-stone-200/50'}`}
+                    style={isCouple ? coupleSiteTextStyles.border : undefined}
+                  >
                     <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--theme-primary, #0d9488)' }} />
-                    <span className={`font-bold shrink-0 ${headingColorClass}`}>{sLabels.contactLabel}</span>
-                    <span className={textMutedClass}>{ann.contactPhone}</span>
+                    <span
+                      className={`font-bold shrink-0 ${isCouple ? '' : headingColorClass}`}
+                      style={isCouple ? coupleSiteTextStyles.primary : undefined}
+                    >
+                      {sLabels.contactLabel}
+                    </span>
+                    <span
+                      className={isCouple ? '' : textMutedClass}
+                      style={isCouple ? coupleSiteTextStyles.muted : undefined}
+                    >
+                      {ann.contactPhone}
+                    </span>
                   </div>
                 )}
               </div>

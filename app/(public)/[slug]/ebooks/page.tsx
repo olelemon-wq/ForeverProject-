@@ -60,7 +60,7 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
     },
   ];
 
-  if (tenant.category === 'Couple' || tenant.category === 'Wedding') {
+  if (tenant.category === 'Couple') {
     mockBooklets = [
       {
         id: 'book-1',

@@ -103,3 +103,38 @@ export function getCoupleMilestonesFromAnnouncement(
 ): CoupleMilestone[] {
   return coupleMilestonesForSave(parseCoupleMilestones(ann));
 }
+
+/** Split common Thai date strings into a compact day + month/year block for timeline cards. */
+export function parseMilestoneDateDisplay(
+  date: string
+): { day: string; monthYear: string } | null {
+  const trimmed = date.trim();
+  if (!trimmed) return null;
+
+  const shortMatch = trimmed.match(/(\d{1,2})\s+([ก-๙a-zA-Z\.]+)\s*\.?\s*(\d{2,4})/);
+  if (shortMatch) {
+    return {
+      day: shortMatch[1],
+      monthYear: `${shortMatch[2].replace(/\.$/, '')} ${shortMatch[3]}`,
+    };
+  }
+
+  const longMatch = trimmed.match(
+    /(?:วัน\S*\s+)?(?:ที่\s+)?(\d{1,2})\s+([ก-๙a-zA-Z\.]+)\s*\.?\s*(\d{2,4})/
+  );
+  if (longMatch) {
+    return {
+      day: longMatch[1],
+      monthYear: `${longMatch[2].replace(/\.$/, '')} ${longMatch[3]}`,
+    };
+  }
+
+  return { day: '•', monthYear: trimmed };
+}
+
+export function formatMilestoneTime(time?: string): string | null {
+  const trimmed = time?.trim();
+  if (!trimmed) return null;
+  if (/เวลา/.test(trimmed)) return trimmed;
+  return `เวลา ${trimmed}`;
+}

@@ -26,12 +26,31 @@ const CATEGORY_EXT: Partial<Record<CategoryKey, 'svg' | 'png' | 'jpg' | 'webp'>>
   'Pet Memorial': 'png',
 };
 
-/** Per-kind overrides when only one preset type uses custom PNG (e.g. Couple cover only) */
+/** Per-kind overrides when preset files use a non-default extension */
 const CATEGORY_KIND_EXT: Partial<
   Record<CategoryKey, Partial<Record<DefaultMediaKind, 'svg' | 'png' | 'jpg' | 'webp'>>>
 > = {
   Couple: { cover: 'png' },
+  Wedding: { cover: 'jpg' },
+  Friends: { cover: 'jpg' },
 };
+
+/** Legacy `.png` paths after gallery compression — map to on-disk `.jpg` presets */
+const LEGACY_DEFAULT_MEDIA_SRC: Record<string, string> = {
+  '/defaults/wedding/cover/1.png': '/defaults/wedding/cover/1.jpg',
+  '/defaults/wedding/cover/2.png': '/defaults/wedding/cover/2.jpg',
+  '/defaults/wedding/cover/3.png': '/defaults/wedding/cover/3.jpg',
+  '/defaults/wedding/cover/4.png': '/defaults/wedding/cover/4.jpg',
+  '/defaults/friends/cover/1.png': '/defaults/friends/cover/1.jpg',
+  '/defaults/friends/cover/2.png': '/defaults/friends/cover/2.jpg',
+  '/defaults/friends/cover/3.png': '/defaults/friends/cover/3.jpg',
+  '/defaults/friends/cover/4.png': '/defaults/friends/cover/4.jpg',
+};
+
+export function resolveDefaultMediaSrc(src: string | null | undefined): string {
+  if (!src) return '';
+  return LEGACY_DEFAULT_MEDIA_SRC[src] ?? src;
+}
 
 const AVATAR_LABELS = ['ชุด 1', 'ชุด 2', 'ชุด 3', 'ชุด 4'];
 const COVER_LABELS = ['พื้นหลัง 1', 'พื้นหลัง 2', 'พื้นหลัง 3', 'พื้นหลัง 4'];

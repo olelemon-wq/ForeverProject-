@@ -10,6 +10,7 @@ import DeceasedAvatar from './DeceasedAvatar';
 import { getEnabledFeatures } from '@/lib/features';
 import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
+import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
 
 export const dynamic = 'force-dynamic';
 
@@ -183,25 +184,16 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   }
 
   // Parse template colors
-  let cardBgClass = 'bg-white border-stone-200 text-stone-900';
-  let textMutedClass = 'text-stone-500';
-  let headingColorClass = 'text-stone-900';
-  let innerCardBg = 'bg-stone-50/60 border-stone-200/80';
-  let borderGoldClass = 'border-amber-600/30';
-
-  if (announcement.style === 'CHARCOAL_SLATE') {
-    cardBgClass = 'bg-stone-900 border-stone-800 text-[#C2A878] shadow-[0_10px_30px_rgba(0,0,0,0.4)]';
-    textMutedClass = 'text-[#C2A878]/80';
-    headingColorClass = 'text-[#C2A878]';
-    innerCardBg = 'bg-stone-850/65 border-[#C2A878]/20';
-    borderGoldClass = 'border-[#C2A878]/45';
-  } else if (announcement.style === 'WARM_CREAM') {
-    cardBgClass = 'bg-[#FAF6EE] border-[#EADFC9] text-[#4A3E29]';
-    textMutedClass = 'text-[#7D6B4E]';
-    headingColorClass = 'text-[#362C1A]';
-    innerCardBg = 'bg-[#F3EBD9]/60 border-[#E5D7B7]';
-    borderGoldClass = 'border-[#C2A878]/30';
-  }
+  const cardTheme = resolveAnnouncementCardTheme(tenant.category, announcement.style);
+  const {
+    cardBgClass,
+    textMutedClass,
+    headingColorClass,
+    innerCardBg,
+    borderGoldClass,
+    hasBackgroundImage,
+    bgImageUrl,
+  } = cardTheme;
 
   // Deceased Image config
   const avatarUrl = themeConfig?.avatarUrl;
@@ -234,8 +226,8 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   const cardStyles: React.CSSProperties = {
     fontFamily: announcement?.fontFamily || 'var(--theme-font)',
   };
-  if (announcement?.style === 'CHARCOAL_SLATE') {
-    cardStyles.backgroundImage = 'url(/Template-cards/charcoal_gold.png)';
+  if (hasBackgroundImage && bgImageUrl) {
+    cardStyles.backgroundImage = `url(${bgImageUrl})`;
     cardStyles.backgroundSize = 'cover';
     cardStyles.backgroundPosition = 'center';
   }
@@ -343,7 +335,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
         style={cardStyles}
       >
         {/* Decorative corner lines */}
-        {announcement?.style !== 'CHARCOAL_SLATE' && (
+        {!hasBackgroundImage && (
           <>
             <div className={`absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 pointer-events-none rounded-tl-lg ${borderGoldClass}`} />
             <div className={`absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 pointer-events-none rounded-tr-lg ${borderGoldClass}`} />
@@ -370,7 +362,10 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
             />
             
             <div className="space-y-1">
-              <h2 className={`text-2xl sm:text-3xl font-black ${headingColorClass}`}>
+              <h2
+                className="text-2xl sm:text-3xl font-black"
+                style={{ color: 'var(--theme-primary)' }}
+              >
                 {(() => {
                   const match = tenant.name.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
                   if (match) {
@@ -415,9 +410,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
             <CoupleMilestoneList
               milestones={coupleMilestones}
               title={sLabels.title}
-              headingColorClass={headingColorClass}
               innerCardBg={innerCardBg}
-              textMutedClass={textMutedClass}
               compact
             />
           ) : (isMilestoneSchedule
@@ -495,7 +488,8 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
                     href={announcement.mapLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto px-4 py-2.5 bg-stone-900 hover:bg-black text-white dark:bg-white dark:hover:bg-stone-50 dark:text-stone-900 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition print:hidden cursor-pointer"
+                    className="w-full sm:w-auto px-4 py-2.5 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition print:hidden cursor-pointer hover:opacity-90 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--theme-primary)]/25"
+                    style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     <span>เปิด Google Maps นำทาง</span>
@@ -508,8 +502,11 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           {/* Guidelines Block — Friends: no wreath/condolence policy */}
           {showGuidelines && (
           <div className="space-y-3 text-left">
-            <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
-              <Info className="w-4 h-4" />
+            <h3
+              className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${isCouple ? '' : headingColorClass}`}
+              style={isCouple ? coupleSiteTextStyles.primary : undefined}
+            >
+              <Info className="w-4 h-4" style={isCouple ? coupleSiteTextStyles.primary : undefined} />
               <span>{sLabels.guidelinesTitle}</span>
             </h3>
 
@@ -517,26 +514,55 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {announcement.dressCode && (
                   <div className="flex flex-col gap-0.5">
-                    <span className={`font-bold ${headingColorClass}`}>
+                    <span
+                      className={`font-bold ${isCouple ? '' : headingColorClass}`}
+                      style={isCouple ? coupleSiteTextStyles.primary : undefined}
+                    >
                       {isFriends || isCouple ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
                     </span>
-                    <span className={textMutedClass}>{announcement.dressCode}</span>
+                    <span
+                      className={isCouple ? '' : textMutedClass}
+                      style={isCouple ? coupleSiteTextStyles.muted : undefined}
+                    >
+                      {announcement.dressCode}
+                    </span>
                   </div>
                 )}
                 {showWreathPolicy && (
                   <div className="flex flex-col gap-0.5">
-                    <span className={`font-bold ${headingColorClass}`}>
+                    <span
+                      className={`font-bold ${isCouple ? '' : headingColorClass}`}
+                      style={isCouple ? coupleSiteTextStyles.primary : undefined}
+                    >
                       {isWedding ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
                     </span>
-                    <span className={textMutedClass}>{wreathPolicies[announcement.wreathPolicy] || wreathPolicies.NORMAL}</span>
+                    <span
+                      className={isCouple ? '' : textMutedClass}
+                      style={isCouple ? coupleSiteTextStyles.muted : undefined}
+                    >
+                      {wreathPolicies[announcement.wreathPolicy] || wreathPolicies.NORMAL}
+                    </span>
                   </div>
                 )}
               </div>
               {announcement.contactPhone && (
-                <div className="flex gap-2 border-t border-stone-200/50 pt-3 mt-3 items-center">
+                <div
+                  className={`flex gap-2 border-t pt-3 mt-3 items-center ${isCouple ? '' : 'border-stone-200/50'}`}
+                  style={isCouple ? coupleSiteTextStyles.border : undefined}
+                >
                   <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--theme-primary, #0d9488)' }} />
-                  <span className={`font-bold shrink-0 ${headingColorClass}`}>{sLabels.contactLabel}</span>
-                  <span className={textMutedClass}>{announcement.contactPhone}</span>
+                  <span
+                    className={`font-bold shrink-0 ${isCouple ? '' : headingColorClass}`}
+                    style={isCouple ? coupleSiteTextStyles.primary : undefined}
+                  >
+                    {sLabels.contactLabel}
+                  </span>
+                  <span
+                    className={isCouple ? '' : textMutedClass}
+                    style={isCouple ? coupleSiteTextStyles.muted : undefined}
+                  >
+                    {announcement.contactPhone}
+                  </span>
                 </div>
               )}
             </div>

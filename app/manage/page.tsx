@@ -10,7 +10,7 @@ import DefaultMediaPicker from '@/components/DefaultMediaPicker';
 import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categories';
 import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import type { DefaultMediaKind } from '@/lib/defaultMedia';
-import { getDefaultMediaForCategory } from '@/lib/defaultMedia';
+import { getDefaultMediaForCategory, resolveDefaultMediaSrc } from '@/lib/defaultMedia';
 import {
   parseCoupleMilestones,
   coupleMilestonesForSave,
@@ -1390,7 +1390,7 @@ export default function WebmasterDashboard() {
         setDeceasedAvatarX(clampImagePan(toRelativeOffset(config.avatarX || 0, 224, config.imageCoordSpace), avatarScale));
         setDeceasedAvatarY(clampImagePan(toRelativeOffset(config.avatarY || 0, 224, config.imageCoordSpace), avatarScale));
         setDeceasedAvatarRotate(config.avatarRotate || 0);
-        setDeceasedCoverUrl(config.coverUrl || '');
+        setDeceasedCoverUrl(resolveDefaultMediaSrc(config.coverUrl || ''));
         setDeceasedCoverScale(coverScale);
         setDeceasedCoverX(clampImagePan(toRelativeOffset(config.coverX || 0, 320, config.imageCoordSpace), coverScale));
         setDeceasedCoverY(clampImagePan(toRelativeOffset(config.coverY || 0, 160, config.imageCoordSpace), coverScale));
@@ -3769,7 +3769,7 @@ export default function WebmasterDashboard() {
                             {/* Header */}
                             <div className="space-y-1.5">
                               <p className="text-[10px] tracking-widest opacity-80 uppercase">{annText || sLabels.invitePlaceholder}</p>
-                              <h2 className="text-xl font-bold tracking-normal">
+                              <h2 className="text-xl font-bold tracking-normal" style={{ color: primaryColor }}>
                                 {(() => {
                                   const match = siteName.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
                                   if (match) {
@@ -4052,8 +4052,9 @@ export default function WebmasterDashboard() {
                       <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">ตัวอย่างบนหน้าเว็บ</p>
                       <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-[10px] font-bold text-stone-500">Live preview</span>
                     </div>
-                    <div className="relative h-52 sm:h-64 overflow-hidden rounded-2xl bg-stone-100 border border-stone-200/80 group select-none">
-                    {/* Cover Photo Background */}
+                    <div className="relative h-52 sm:h-64 rounded-2xl border border-stone-200/80 group select-none">
+                    {/* Cover Photo Background — clip image only so menus are not cut off */}
+                    <div className="absolute inset-0 overflow-hidden rounded-2xl bg-stone-100">
                     {deceasedCoverUrl ? (
                       <div className="absolute inset-0 w-full h-full">
                         <img 
@@ -4075,6 +4076,7 @@ export default function WebmasterDashboard() {
                         <span className="text-xs font-medium text-stone-400">กดปุ่ม &quot;หน้าปก&quot; มุมขวาบนเพื่อเพิ่มรูป</span>
                       </div>
                     )}
+                    </div>
 
                     {/* Circular Avatar (Overlapping in the center) */}
                     <div className="absolute inset-x-0 bottom-0 flex justify-center pb-5 sm:pb-6 z-10">
@@ -4193,7 +4195,7 @@ export default function WebmasterDashboard() {
                       {isCoverMenuOpen && (
                         <>
                           <div className="fixed inset-0 z-10 cursor-default" onClick={() => setIsCoverMenuOpen(false)} />
-                          <div className="absolute right-0 bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-48 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
+                          <div className="absolute right-0 top-full mt-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-48 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
                             <Button variant="ghost"
                               type="button"
                               onClick={() => {
