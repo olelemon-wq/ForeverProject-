@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 
 const DATA_PATH = path.join(process.cwd(), 'prisma/data/demo-sites.json');
@@ -83,7 +84,7 @@ async function seedSite(site: JsonRecord, webmasterId: string, ownerPhone: strin
 
   if (menus.length) {
     await db.menu.createMany({
-      data: menus.map((m) => ({ ...stripMeta(m), websiteId })),
+      data: menus.map((m) => ({ ...stripMeta(m), websiteId })) as Prisma.MenuCreateManyInput[],
     });
   }
 
@@ -93,31 +94,31 @@ async function seedSite(site: JsonRecord, webmasterId: string, ownerPhone: strin
         ...stripMeta(m),
         websiteId,
         fileSize: BigInt((m.fileSize as number | string | undefined) ?? 0),
-      })),
+      })) as Prisma.MediaCreateManyInput[],
     });
   }
 
   if (condolences.length) {
     await db.condolence.createMany({
-      data: condolences.map((c) => ({ ...stripMeta(c), websiteId })),
+      data: condolences.map((c) => ({ ...stripMeta(c), websiteId })) as Prisma.CondolenceCreateManyInput[],
     });
   }
 
   if (memoryPosts.length) {
     await db.memoryPost.createMany({
-      data: memoryPosts.map((p) => ({ ...stripMeta(p), websiteId })),
+      data: memoryPosts.map((p) => ({ ...stripMeta(p), websiteId })) as Prisma.MemoryPostCreateManyInput[],
     });
   }
 
   if (ebooks.length) {
     await db.ebook.createMany({
-      data: ebooks.map((e) => ({ ...stripMeta(e), websiteId })),
+      data: ebooks.map((e) => ({ ...stripMeta(e), websiteId })) as Prisma.EbookCreateManyInput[],
     });
   }
 
   if (donations.length) {
     await db.donation.createMany({
-      data: donations.map((d) => ({ ...stripMeta(d), websiteId })),
+      data: donations.map((d) => ({ ...stripMeta(d), websiteId })) as Prisma.DonationCreateManyInput[],
     });
   }
 
@@ -136,7 +137,7 @@ async function seedSite(site: JsonRecord, webmasterId: string, ownerPhone: strin
           websiteId,
           parentId: null,
           spouseOfId: null,
-        },
+        } as unknown as Prisma.FamilyMemberCreateInput,
       });
       idMap.set(oldId, { newId: created.id, oldParentId, oldSpouseOfId });
     }
