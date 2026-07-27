@@ -11,6 +11,7 @@ import { getEnabledFeatures } from '@/lib/features';
 import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 export const dynamic = 'force-dynamic';
 
@@ -174,7 +175,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={announcement.customCardUrl}
+            src={resolveMediaSrc(announcement.customCardUrl)}
             alt="การ์ดกำหนดการ"
             className="w-full h-auto object-contain block"
           />

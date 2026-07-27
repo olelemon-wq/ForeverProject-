@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Camera, PenTool, RotateCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 interface MemoryPost {
   id: string;
@@ -184,7 +185,7 @@ function MemoryPostCard({ p, parseMessage }: { p: MemoryPost; parseMessage: (msg
         <div className="w-full md:w-44 flex-shrink-0 mt-3 md:mt-0">
           <div className="relative rounded-2xl overflow-hidden bg-stone-50 border border-stone-200/80 md:aspect-square flex items-center justify-center shadow-sm max-w-full mx-auto md:mx-0">
             <img 
-              src={p.mediaUrl.startsWith('http') || p.mediaUrl.startsWith('/') ? p.mediaUrl : `/${p.mediaUrl}`} 
+              src={resolveMediaSrc(p.mediaUrl)} 
               alt={p.title || 'Memory Image'}
               className="max-h-64 sm:max-h-72 md:max-h-none md:w-full md:h-full object-contain md:object-cover"
               onError={(e) => {

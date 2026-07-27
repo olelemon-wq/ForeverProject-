@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { getFeatureLabel } from '@/lib/categories';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
 import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 interface FamilyMember {
   id: string;
@@ -93,10 +94,7 @@ function CustomFamilyNode({ data }: { data: any }) {
 
   const lifespanText = hideAge ? '' : getAgeText();
 
-  let cleanedAvatarUrl = avatarUrl || '';
-  if (cleanedAvatarUrl && !cleanedAvatarUrl.startsWith('http') && !cleanedAvatarUrl.startsWith('/')) {
-    cleanedAvatarUrl = '/' + cleanedAvatarUrl;
-  }
+  let cleanedAvatarUrl = resolveMediaSrc(avatarUrl || '');
   const hasValidAvatar = !!cleanedAvatarUrl && !imageError;
 
   const avatarImgStyle: React.CSSProperties = { width: '100%', height: '100%', objectFit: 'cover' };

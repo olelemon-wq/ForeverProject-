@@ -6,6 +6,7 @@ import { MemorialPostFeedItem } from '@/stores/useMemorialFeedStore';
 
 import ReactionBar from './ReactionBar';
 import CommentThread from './CommentThread';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 interface FeedItemProps {
   post: MemorialPostFeedItem;
@@ -52,10 +53,7 @@ export default function FeedItem({
 
   const commentInputRef = useRef<HTMLInputElement>(null);
 
-  const displayMediaUrl = (url: string) => {
-    if (url.startsWith('http') || url.startsWith('/')) return url;
-    return `https://storage.forever.co.th/${url}`;
-  };
+  const displayMediaUrl = (url: string) => resolveMediaSrc(url);
 
   return (
     <div 

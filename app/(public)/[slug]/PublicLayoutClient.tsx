@@ -7,6 +7,7 @@ import { getEnabledFeatures } from '@/lib/features';
 import { getFeatureLabel } from '@/lib/categories';
 import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import { resolveDefaultMediaSrc } from '@/lib/defaultMedia';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 interface Menu {
   id: string;
@@ -68,7 +69,7 @@ export default function PublicLayoutClient({
       document.documentElement.style.fontSize = '100%';
     };
   }, [config.defaultFontSize, zoomLevel]);
-  const coverUrl = resolveDefaultMediaSrc(config.coverUrl || '');
+  const coverUrl = resolveMediaSrc(resolveDefaultMediaSrc(config.coverUrl || ''));
   const coverScale = config.coverScale || 1;
   const coverX = toRelativeOffset(config.coverX || 0, 320, config.imageCoordSpace);
   const coverY = toRelativeOffset(config.coverY || 0, 160, config.imageCoordSpace);
@@ -141,7 +142,7 @@ export default function PublicLayoutClient({
         {coverUrl ? (
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             <img 
-              src={coverUrl.startsWith('http') || coverUrl.startsWith('/') ? coverUrl : `/${coverUrl}`} 
+              src={coverUrl} 
               alt="Cover Image" 
               className="w-full h-full object-cover" 
               style={imageTransformStyle({
@@ -164,7 +165,7 @@ export default function PublicLayoutClient({
                style={{ borderColor: 'var(--theme-primary)' }}>
             {config.avatarUrl ? (
               <img 
-                src={config.avatarUrl.startsWith('http') || config.avatarUrl.startsWith('/') ? config.avatarUrl : `/${config.avatarUrl}`} 
+                src={resolveMediaSrc(config.avatarUrl)} 
                 alt="Avatar"
                 className="w-full h-full object-cover"
                 style={imageTransformStyle({

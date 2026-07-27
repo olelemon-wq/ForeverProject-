@@ -4,6 +4,7 @@ import VideosClient from './VideosClient';
 import { getFeatureLabel } from '@/lib/categories';
 import { getEnabledFeatures } from '@/lib/features';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,8 +38,8 @@ async function getVideoMedia(websiteId: string) {
   }));
 }
 
-function getDisplayUrl(filePath: string, mimeType: string, index: number) {
-  return filePath;
+function getDisplayUrl(filePath: string, _mimeType: string, _index: number) {
+  return resolveMediaSrc(filePath);
 }
 
 export default async function PublicVideosPage(props: { params: Promise<{ slug: string }> }) {

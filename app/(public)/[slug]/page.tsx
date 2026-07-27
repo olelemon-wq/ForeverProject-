@@ -13,6 +13,7 @@ import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
 import { getCategoryJourney } from '@/lib/categories';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,8 +64,8 @@ async function getRecentGallery(websiteId: string, themeConfig?: unknown) {
     }));
 }
 
-function getDisplayUrl(filePath: string, mimeType: string, index: number) {
-  return filePath;
+function getDisplayUrl(filePath: string, _mimeType: string, _index: number) {
+  return resolveMediaSrc(filePath);
 }
 
 const getScheduleLabels = (category: string) => {
@@ -409,7 +410,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={ann.customCardUrl}
+            src={resolveMediaSrc(ann.customCardUrl)}
             alt="การ์ดกำหนดการ"
             className="w-full h-auto object-contain block"
           />
@@ -957,7 +958,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                       >
                         {petAvatar ? (
                           <img
-                            src={petAvatar}
+                            src={resolveMediaSrc(petAvatar)}
                             alt={`รูปประจำตัวของ ${s.name}`}
                             width={112}
                             height={112}

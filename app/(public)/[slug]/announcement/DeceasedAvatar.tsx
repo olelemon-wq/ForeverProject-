@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Flame } from 'lucide-react';
 import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 interface DeceasedAvatarProps {
   avatarUrl?: string | null;
@@ -38,7 +39,7 @@ export default function DeceasedAvatar({
     >
       {hasValidAvatar ? (
         <img 
-          src={avatarUrl.startsWith('http') || avatarUrl.startsWith('/') ? avatarUrl : `/${avatarUrl}`} 
+          src={resolveMediaSrc(avatarUrl)} 
           alt={tenantName} 
           className="pointer-events-none"
           style={{

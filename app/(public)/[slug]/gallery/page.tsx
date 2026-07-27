@@ -5,6 +5,7 @@ import { getFeatureLabel } from '@/lib/categories';
 import { getEnabledFeatures } from '@/lib/features';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,27 +39,8 @@ async function getGalleryMedia(websiteId: string, themeConfig?: unknown) {
   }));
 }
 
-function getDisplayUrl(filePath: string, mimeType: string, index: number) {
-  // Encode path segments so spaces / parentheses in filenames load reliably
-  if (filePath.startsWith('/')) {
-    return filePath
-      .split('/')
-      .map((seg, i) => (i === 0 ? seg : encodeURIComponent(seg)))
-      .join('/');
-  }
-  if (filePath.startsWith('https://storage.forever.co.th')) {
-    try {
-      const u = new URL(filePath);
-      u.pathname = u.pathname
-        .split('/')
-        .map((seg) => (seg ? encodeURIComponent(decodeURIComponent(seg)) : ''))
-        .join('/');
-      return u.toString();
-    } catch {
-      return filePath;
-    }
-  }
-  return filePath;
+function getDisplayUrl(filePath: string, _mimeType: string, _index: number) {
+  return resolveMediaSrc(filePath);
 }
 
 export default async function PublicGalleryPage(props: { params: Promise<{ slug: string }> }) {
