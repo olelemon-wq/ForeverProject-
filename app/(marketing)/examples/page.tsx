@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useLanguageStore } from '@/stores/useLanguageStore';
 import { getDemoSiteCards, type DemoSiteCard } from '@/lib/demoSites';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 import type { CategoryKey } from '@/lib/categories';
 
 const CATEGORY_ICONS: Record<CategoryKey, React.ReactNode> = {
@@ -60,7 +61,7 @@ function DemoCard({
     <article className="group flex flex-col overflow-hidden rounded-[22px] bg-white border border-stone-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)]">
       <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
         <img
-          src={site.coverUrl}
+          src={resolveMediaSrc(site.coverUrl)}
           alt={site.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
