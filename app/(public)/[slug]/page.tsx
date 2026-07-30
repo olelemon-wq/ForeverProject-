@@ -13,6 +13,7 @@ import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
 import { getCategoryJourney } from '@/lib/categories';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
+import RecentGalleryMasonry from '@/components/public/RecentGalleryMasonry';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 export const dynamic = 'force-dynamic';
@@ -685,22 +686,13 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             </Link>
           </div>
 
-          <div className="columns-2 sm:columns-4 gap-4">
-            {recentPhotos.map((m, idx) => {
-              const displayUrl = getDisplayUrl(m.filePath, m.mimeType, idx);
-
-              return (
-                <div key={m.id} className="break-inside-avoid mb-4 bg-stone-50 rounded-2xl overflow-hidden border border-stone-150 group relative transition hover:scale-[1.01] hover:shadow-sm">
-                  <img 
-                    src={displayUrl} 
-                    alt={m.fileName} 
-                    className="w-full h-auto block animate-fade-in"
-                    loading="lazy"
-                  />
-                </div>
-              );
-            })}
-          </div>
+          <RecentGalleryMasonry
+            items={recentPhotos.map((m, idx) => ({
+              id: m.id,
+              fileName: m.fileName,
+              displayUrl: getDisplayUrl(m.filePath, m.mimeType, idx),
+            }))}
+          />
 
           <div className="flex justify-end sm:hidden">
             <Link 

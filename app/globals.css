@@ -271,3 +271,19 @@
     @apply font-sans;
   }
 }
+
+/* Masonry gallery layout (react-masonry-css) */
+.masonry-grid {
+  display: flex;
+  margin-left: -1rem;
+  width: auto;
+}
+
+.masonry-grid_column {
+  padding-left: 1rem;
+  background-clip: padding-box;
+}
+
+.masonry-grid_column > * {
+  margin-bottom: 1rem;
+}

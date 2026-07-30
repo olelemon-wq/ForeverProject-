@@ -18,6 +18,7 @@ import {
   type CoupleMilestone,
 } from '@/lib/coupleMilestones';
 import CoupleMilestonesEditor from '@/components/manage/CoupleMilestonesEditor';
+import MasonryGrid from '@/components/public/MasonryGrid';
 import {
   Select,
   SelectContent,
@@ -4935,7 +4936,7 @@ export default function WebmasterDashboard() {
                   ยังไม่มีรูปภาพในอัลบั้มนี้
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                <MasonryGrid itemCount={filteredPhotoMedias.length}>
                   {filteredPhotoMedias.map((m, index) => {
                     const isDraggingItem = draggedIndex === index;
                     return (
@@ -4947,7 +4948,7 @@ export default function WebmasterDashboard() {
                         onDrop={(e) => handleDrop(e, index)}
                         onDragEnd={handleDragEnd}
                         className={`
-                          group relative aspect-square bg-stone-50 rounded-2xl overflow-hidden border shadow-sm flex flex-col justify-between transition-all duration-200 cursor-grab active:cursor-grabbing
+                          group relative overflow-hidden rounded-2xl border bg-stone-50 shadow-sm transition-all duration-200 cursor-grab active:cursor-grabbing
                           ${isDraggingItem 
                             ? 'opacity-40 border-emerald-500 scale-[0.97] ring-2 ring-emerald-500/20' 
                             : 'border-stone-200 hover:scale-[1.02]'
@@ -4957,7 +4958,8 @@ export default function WebmasterDashboard() {
                         <img 
                           src={m.filePath} 
                           alt={m.fileName} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300 pointer-events-none"
+                          className="block h-auto w-full pointer-events-none"
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center p-2 gap-2">
                           <Button variant="ghost"
@@ -5002,7 +5004,7 @@ export default function WebmasterDashboard() {
                       </div>
                     );
                   })}
-                </div>
+                </MasonryGrid>
               )}
             </section>
           );
