@@ -8,7 +8,7 @@ const UPLOADS_CDN =
 function encodePathSegments(path: string): string {
   return path
     .split('/')
-    .map((seg, i) => (i === 0 || !seg ? seg : encodeURIComponent(seg)))
+    .map((seg, i) => (i === 0 || !seg ? seg : encodeURIComponent(decodeURIComponent(seg))))
     .join('/');
 }
 
