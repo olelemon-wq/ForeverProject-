@@ -89,7 +89,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
     title: 'คิตตี้เหมียวจอมซน',
     description: 'พื้นที่รำลึกน้องสัตว์เลี้ยง พร้อมสมุดส่งความคิดถึงและแกลเลอรี',
     coverUrl:
-      '/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784006644493-gallery-1784006644479-img_7297-1.jpg',
+      '/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398783773-deceased-avatar-1785398783710-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg',
     primaryColor: '#8b9a7d',
     highlights: ['สมุดส่งความคิดถึง', 'ไดอารี่ความสุข', 'แกลเลอรีน้อง'],
   },
