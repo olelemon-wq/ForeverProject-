@@ -148,7 +148,7 @@ export default async function PublicEbooksPage(props: { params: Promise<{ slug: 
     mockPages: eb.pages as string[],
   }));
 
-  const finalBooklets = [...mappedDbEbooks, ...mockBooklets];
+  const finalBooklets = dbEbooks.length > 0 ? mappedDbEbooks : [...mappedDbEbooks, ...mockBooklets];
 
   return (
     <div className="animate-fade-in text-center">

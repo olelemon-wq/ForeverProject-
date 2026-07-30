@@ -247,7 +247,9 @@ async function getRecentEbooks(websiteId: string, category: string) {
     totalPages: eb.totalPages,
   }));
 
-  return [...mappedDbEbooks, ...mockBooklets].slice(0, 2);
+  return dbEbooks.length > 0
+    ? mappedDbEbooks.slice(0, 2)
+    : [...mappedDbEbooks, ...mockBooklets].slice(0, 2);
 }
 
 export default async function PublicMemorialHome(props: { params: Promise<{ slug: string }> }) {
