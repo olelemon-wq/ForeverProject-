@@ -65,7 +65,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
     category: 'Family Legacy',
     categoryLabel: 'มรดกวงศ์ตระกูล',
     title: 'Jitjaidee-Family',
-    description: 'Family legacy site with genealogy, history books, and memory board for the Jitjaidee family.',
+    description: 'Jitjaidee family legacy — genealogy, history books, gallery, and memory board.',
     coverUrl:
       '/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401245880-deceased-avatar-1785401245825-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg',
     primaryColor: '#8ba8bd',
