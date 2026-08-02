@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Charmonman:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&family=Niramit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700;800&family=Srisakdi:wght@400;700&family=Thasadith:wght@400;700&display=swap');
 @import "tailwindcss";
+@source "../lib";
 @import "@xyflow/react/dist/style.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";

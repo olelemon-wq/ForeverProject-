@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { getCondolenceSectionTheme } from '@/lib/condolenceCardTheme';
-import { FEATURE_CARD_CLASS } from '@/lib/publicLayout';
 
 type CondolenceSectionShellProps = {
   category: string;
@@ -32,7 +31,7 @@ export default function CondolenceSectionShell({
     return (
       <div
         className={cn(
-          FEATURE_CARD_CLASS,
+          'w-full max-w-5xl mx-auto',
           'rounded-3xl border border-stone-200/80 bg-white p-8 shadow-sm',
           className,
         )}
@@ -44,9 +43,9 @@ export default function CondolenceSectionShell({
 
   return (
     <div
-      className={cn(
-        FEATURE_CARD_CLASS,
-        'relative overflow-hidden rounded-3xl border shadow-[0_4px_20px_rgba(0,0,0,0.02)]',
+        className={cn(
+          'w-full max-w-5xl mx-auto',
+          'relative overflow-hidden rounded-3xl border shadow-[0_4px_20px_rgba(0,0,0,0.02)]',
         theme.borderClass,
         theme.surfaceClass,
         className,
