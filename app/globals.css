@@ -7,6 +7,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Stable layout widths — defined in CSS so production builds never purge them. */
+@utility feature-page-card {
+  @apply mx-auto w-full max-w-5xl;
+}
+
+@utility announcement-page-card {
+  @apply mx-auto w-full max-w-2xl;
+}
+
 /* LINE Seed Sans TH Fonts */
 @font-face {
   font-family: 'LINE Seed Sans TH';

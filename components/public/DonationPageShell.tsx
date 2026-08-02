@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { getCondolenceSectionTheme } from '@/lib/condolenceCardTheme';
+import { FEATURE_CARD_CLASS } from '@/lib/publicLayout';
 
 type DonationPageShellProps = {
   category: string;
@@ -31,7 +32,7 @@ export default function DonationPageShell({
     return (
       <div
         className={cn(
-          'w-full max-w-5xl mx-auto',
+          FEATURE_CARD_CLASS,
           'relative overflow-hidden rounded-3xl border border-stone-200/80 bg-white p-6 shadow-[0_4px_20px_rgba(0,0,0,0.015)] sm:p-10',
           className,
         )}
@@ -49,7 +50,7 @@ export default function DonationPageShell({
   return (
     <div
         className={cn(
-          'w-full max-w-5xl mx-auto',
+          FEATURE_CARD_CLASS,
           'relative overflow-hidden rounded-3xl border shadow-[0_4px_20px_rgba(0,0,0,0.02)]',
         theme.borderClass,
         theme.surfaceClass,
