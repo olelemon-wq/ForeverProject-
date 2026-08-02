@@ -18,7 +18,7 @@ import { filterGalleryMedia } from '@/lib/galleryMedia';
 import RecentGalleryBento from '@/components/public/RecentGalleryBento';
 import FeaturedEbooksSnippet from '@/components/public/FeaturedEbooksSnippet';
 import CondolenceSectionShell from '@/components/public/CondolenceSectionShell';
-import PetProfileCard from '@/components/public/PetProfileCard';
+import PetProfileCard, { type PetProfileCardSubject } from '@/components/public/PetProfileCard';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 import { ANNOUNCEMENT_CARD_CLASS, FEATURE_CARD_CLASS } from '@/lib/publicLayout';
 
@@ -237,10 +237,11 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const journey = getCategoryJourney(tenant.category);
   const homeCopy = journey.home || {};
   
-  const subjects = config?.subjects || [];
-  const petProfiles = subjects;
+  const petProfiles: PetProfileCardSubject[] = Array.isArray(config?.subjects)
+    ? (config.subjects as PetProfileCardSubject[])
+    : [];
   const allSubjectsAlive =
-    subjects.length > 0 && subjects.every((s: { isAlive?: boolean }) => s.isAlive);
+    petProfiles.length > 0 && petProfiles.every((s) => s.isAlive);
   const isHappy =
     tenant.category === 'Couple' ||
     tenant.category === 'Wedding' ||
