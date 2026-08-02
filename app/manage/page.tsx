@@ -11,6 +11,7 @@ import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categ
 import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import type { DefaultMediaKind } from '@/lib/defaultMedia';
 import { getDefaultMediaForCategory, resolveDefaultMediaSrc } from '@/lib/defaultMedia';
+import { resolveMediaSrc } from '@/lib/mediaUrl';
 import {
   parseCoupleMilestones,
   coupleMilestonesForSave,
@@ -18,7 +19,12 @@ import {
   type CoupleMilestone,
 } from '@/lib/coupleMilestones';
 import CoupleMilestonesEditor from '@/components/manage/CoupleMilestonesEditor';
-import MasonryGrid from '@/components/public/MasonryGrid';
+import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
+import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
+import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
+import { resolveCardFontFamily } from '@/lib/themeFont';
+import { getSiteThemeStyle } from '@/lib/siteTheme';
+import ManageGalleryGrid from '@/components/manage/ManageGalleryGrid';
 import {
   Select,
   SelectContent,
@@ -490,7 +496,15 @@ const getStyle3Label = (category: string) => {
 };
 
 const getStyle3Config = (category: string) => {
-  if (category === 'Couple' || category === 'Wedding') {
+  if (category === 'Couple') {
+    return {
+      classes: 'bg-[#FFF6F0] border-[#EDD5C8] text-[#7A3D45] shadow-[0_10px_32px_rgba(237,213,200,0.35)]',
+      backgroundImage: undefined,
+      avatarBorder: 'border-[#EDD5C8]',
+      innerCardBg: 'bg-[#FFFBF7]/85 border-[#EDD5C8]/45',
+    };
+  }
+  if (category === 'Wedding') {
     return {
       classes: 'bg-[#FFF0F2] border-[#FBC5CD] text-[#8C3A4F] shadow-[0_10px_30px_rgba(251,197,205,0.3)]',
       backgroundImage: undefined,
@@ -1404,7 +1418,7 @@ export default function WebmasterDashboard() {
       setAnnCustomCardUrl(ann.customCardUrl || '');
       setAnnText(ann.text || '');
       setAnnStyle(ann.style || 'ELEGANT_WHITE');
-      setAnnFontFamily(ann.fontFamily || 'LINE Seed Sans TH');
+      setAnnFontFamily(ann.fontFamily || loadedFont);
       setAnnWaterDate(ann.waterDate || '');
       setAnnWaterTime(ann.waterTime || '');
       setAnnAbhidhammaDateRange(ann.abhidhammaDateRange || '');
@@ -2442,7 +2456,7 @@ export default function WebmasterDashboard() {
           <Button variant="ghost" 
             type="button"
             onClick={handleLogout}
-            className="h-9 w-9 shrink-0 p-0 rounded-xl text-stone-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer active:scale-95 border-0"
+            className="h-9 w-9 shrink-0 p-0 rounded-xl text-stone-900 hover:text-rose-800 transition cursor-pointer active:scale-95 border-0"
             title="ออกจากระบบ"
             aria-label="ออกจากระบบ"
           >
@@ -2837,7 +2851,7 @@ export default function WebmasterDashboard() {
                                   <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-stone-100 shadow-sm ring-2 ring-white ring-offset-1 ring-offset-stone-50">
                                     {sub.avatarUrl ? (
                                       <img
-                                        src={sub.avatarUrl}
+                                        src={resolveMediaSrc(sub.avatarUrl)}
                                         alt={`รูปประจำตัวของ ${sub.name || `น้องตัวที่ ${index + 1}`}`}
                                         className="h-full w-full object-cover"
                                       />
@@ -3279,7 +3293,8 @@ export default function WebmasterDashboard() {
                             </Select>
                               </div>
                               <div className="space-y-1">
-                                <label className="font-bold text-stone-600">แบบอักษร (Font)</label>
+                                <label className="font-bold text-stone-600">ฟอนต์การ์ดประกาศ</label>
+                                <p className="text-[10px] leading-relaxed text-stone-400">ถ้าเลือกฟอนต์เดียวกับแท็บธีม จะเปลี่ยนตามกันอัตโนมัติ</p>
                                 <Select
                               value={annFontFamily}
                               onValueChange={(value) => setAnnFontFamily(value)}
@@ -3702,7 +3717,10 @@ export default function WebmasterDashboard() {
                       </div>
 
                       {/* Right: Live Preview Card */}
-                      <div className="sticky top-6 space-y-4">
+                      <div
+                        className="sticky top-6 space-y-4"
+                        style={getSiteThemeStyle({ primaryColor, secondaryColor, fontFamily })}
+                      >
                         <p className="text-xs font-bold text-stone-500 text-left uppercase tracking-wider">ตัวอย่างแสดงผลการ์ดจริงบนหน้าเว็บ (Live Preview)</p>
                         
                         {!annActive ? (
@@ -3725,6 +3743,49 @@ export default function WebmasterDashboard() {
                               </div>
                             )}
                           </div>
+                        ) : isCoupleCategory(selectedSite.category) ? (
+                          <CoupleJourneyCard
+                            className="max-w-md"
+                            tenantName={siteName}
+                            inviteText={annText}
+                            inviteFallback={sLabels.invitePlaceholder}
+                            footerText="ขอบคุณที่มาร่วมเป็นส่วนหนึ่งของเส้นทางความรักของเรา"
+                            theme={resolveAnnouncementCardTheme(selectedSite.category, annStyle)}
+                            milestones={coupleMilestonesForSave(annMilestones)}
+                            timelineTitle="เส้นทางที่ผ่านมา"
+                            fontFamily={annFontFamily}
+                            siteFontFamily={fontFamily}
+                            avatarUrl={deceasedAvatarUrl}
+                            avatarScale={deceasedAvatarScale}
+                            avatarX={deceasedAvatarX}
+                            avatarY={deceasedAvatarY}
+                            avatarRotate={deceasedAvatarRotate}
+                            notes={annDressCode}
+                            contactPhone={annContactPhone}
+                          />
+                        ) : selectedSite.category === 'Friends' ? (
+                          <FriendsMeetupCard
+                            className="max-w-md"
+                            tenantName={siteName}
+                            inviteText={annText}
+                            inviteFallback={sLabels.invitePlaceholder}
+                            footerText="ขอขอบคุณทุกคนที่ร่วมแบ่งปันความทรงจำและมิตรภาพ — กลุ่ม"
+                            theme={resolveAnnouncementCardTheme(selectedSite.category, annStyle)}
+                            fontFamily={annFontFamily}
+                            siteFontFamily={fontFamily}
+                            avatarUrl={deceasedAvatarUrl}
+                            avatarScale={deceasedAvatarScale}
+                            avatarX={deceasedAvatarX}
+                            avatarY={deceasedAvatarY}
+                            avatarRotate={deceasedAvatarRotate}
+                            meetupDate={annWaterDate}
+                            meetupTime={annWaterTime}
+                            venueName={annTempleName}
+                            venueDetail={annPavilion}
+                            mapLink={annMapLink}
+                            notes={annDressCode}
+                            contactPhone={annContactPhone}
+                          />
                         ) : (
                           <div 
                             className={`w-full max-w-md mx-auto rounded-3xl border p-8 space-y-6 text-center shadow-lg relative overflow-hidden transition-all duration-300 ${
@@ -3735,7 +3796,7 @@ export default function WebmasterDashboard() {
                                 : 'bg-white border-stone-200 text-stone-900'
                             }`}
                             style={{
-                              fontFamily: annFontFamily,
+                              fontFamily: resolveCardFontFamily(annFontFamily, fontFamily) || annFontFamily,
                               backgroundImage: annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').backgroundImage : undefined,
                               backgroundSize: 'cover',
                               backgroundPosition: 'center',
@@ -4543,9 +4604,15 @@ export default function WebmasterDashboard() {
                   {/* Font */}
                   <div className="space-y-3">
                     <label className="text-xs font-bold uppercase tracking-wide text-stone-500">ฟอนต์</label>
+                    <p className="text-[11px] leading-relaxed text-stone-500">
+                      ใช้กับเมนู เนื้อหา และส่วนอื่น ๆ ของหน้าเว็บ (ยกเว้นการ์ดประกาศที่ตั้งฟอนต์แยก)
+                    </p>
                     <Select
                       value={fontFamily}
-                      onValueChange={(value) => setFontFamily(value)}
+                      onValueChange={(value) => {
+                        setAnnFontFamily((prev) => (prev === fontFamily ? value : prev));
+                        setFontFamily(value);
+                      }}
                     >
                       <SelectTrigger
                         className="h-11 w-full rounded-xl border border-stone-200 bg-stone-50/50 px-4 text-sm font-bold text-stone-900 focus:border-[#0071e3]/50 focus:bg-white focus:outline-none"
@@ -4560,6 +4627,14 @@ export default function WebmasterDashboard() {
                         <SelectItem value="Niramit" style={{ fontFamily: 'Niramit' }}>Niramit (ไทยร่วมสมัย)</SelectItem>
                       </SelectContent>
                     </Select>
+                    <div
+                      className="rounded-2xl border border-stone-200/80 bg-stone-50/60 px-4 py-3 text-left"
+                      style={{ fontFamily: `${fontFamily}, ui-sans-serif, system-ui, sans-serif` }}
+                    >
+                      <p className="text-[10px] font-bold uppercase tracking-wide text-stone-400">ตัวอย่างฟอนต์เว็บไซต์</p>
+                      <p className="mt-1 text-sm font-bold text-stone-800">{siteName || 'ชื่อเว็บไซต์ของคุณ'}</p>
+                      <p className="mt-0.5 text-xs text-stone-600">เมนู · แกลเลอรี · สมุดข้อความ · เนื้อหาอื่น ๆ บนหน้าเว็บ</p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -4936,75 +5011,22 @@ export default function WebmasterDashboard() {
                   ยังไม่มีรูปภาพในอัลบั้มนี้
                 </div>
               ) : (
-                <MasonryGrid itemCount={filteredPhotoMedias.length}>
-                  {filteredPhotoMedias.map((m, index) => {
-                    const isDraggingItem = draggedIndex === index;
-                    return (
-                      <div 
-                        key={m.id} 
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, index)}
-                        onDragOver={(e) => handleDragOver(e, index)}
-                        onDrop={(e) => handleDrop(e, index)}
-                        onDragEnd={handleDragEnd}
-                        className={`
-                          group relative overflow-hidden rounded-2xl border bg-stone-50 shadow-sm transition-all duration-200 cursor-grab active:cursor-grabbing
-                          ${isDraggingItem 
-                            ? 'opacity-40 border-emerald-500 scale-[0.97] ring-2 ring-emerald-500/20' 
-                            : 'border-stone-200 hover:scale-[1.02]'
-                          }
-                        `}
-                      >
-                        <img 
-                          src={m.filePath} 
-                          alt={m.fileName} 
-                          className="block h-auto w-full pointer-events-none"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center p-2 gap-2">
-                          <Button variant="ghost"
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteGalleryMedia(m.id);
-                            }}
-                            className="p-2 bg-red-650 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer border-0"
-                            title="ลบรูปภาพ"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-
-                          {/* Move to Album Dropdown */}
-                          {albums.length > 0 && (
-                            <div className="w-full px-1" onClick={(e) => e.stopPropagation()}>
-                              <Select
-                              value={(mediaAlbums[m.id] || '') || '__empty__'}
-                              onValueChange={(raw) => {
-                                const value = raw === '__empty__' ? '' : raw;
-                                const nextMediaAlbums = { ...mediaAlbums, [m.id]: value };
-                                  setMediaAlbums(nextMediaAlbums);
-                                  saveAlbumConfig(albums, nextMediaAlbums);
-                              }}
-                            >
-                              <SelectTrigger className={"w-full px-1.5 py-1 bg-white hover:bg-stone-50 text-stone-900 border border-stone-300 rounded-lg text-[10px] font-bold focus:outline-none cursor-pointer"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-<SelectItem value="__empty__">(ไม่มีอัลบั้ม)</SelectItem>
-                                {albums.map((a) => (
-                                          <SelectItem key={a} value={a}>
-                                    ย้ายไป: {a}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </MasonryGrid>
+                <ManageGalleryGrid
+                  items={filteredPhotoMedias}
+                  albums={albums}
+                  mediaAlbums={mediaAlbums}
+                  draggedIndex={draggedIndex}
+                  onDragStart={handleDragStart}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  onDragEnd={handleDragEnd}
+                  onDelete={deleteGalleryMedia}
+                  onAlbumChange={(mediaId, album) => {
+                    const nextMediaAlbums = { ...mediaAlbums, [mediaId]: album };
+                    setMediaAlbums(nextMediaAlbums);
+                    saveAlbumConfig(albums, nextMediaAlbums);
+                  }}
+                />
               )}
             </section>
           );

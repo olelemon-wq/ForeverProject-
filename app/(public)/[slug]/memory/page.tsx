@@ -4,6 +4,7 @@ import { getEnabledFeatures } from '@/lib/features';
 import MemoryWallClient from './MemoryWallClient';
 import { getFeatureLabel } from '@/lib/categories';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
+import DonationPageShell from '@/components/public/DonationPageShell';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,36 +51,43 @@ export default async function PublicMemoryWallPage(props: { params: Promise<{ sl
   const posts = await getApprovedPosts(tenant.id);
 
   return (
-    <div className="animate-fade-in space-y-8">
-      {(() => {
-        const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'memory');
-        return (
-          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
-            {/* Page Header with CategoryOrnament and Wing lines */}
-            <div className="flex flex-col items-center text-center space-y-3">
-              <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
-                {fLabel}
-              </h2>
-              <p className="text-stone-500 text-xs max-w-lg leading-normal">
-                {fDesc}
-              </p>
-              {/* Centered Motif with Wing lines divider */}
-              <div className="w-full flex items-center justify-center gap-4 pt-4 select-none">
-                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-stone-200" />
-                <div className="flex-shrink-0">
+    <div className="animate-fade-in">
+      <DonationPageShell
+        category={tenant.category}
+        patternOpacity={
+          tenant.category === 'Couple'
+            ? { mobile: 0.28, desktop: 0.34 }
+            : { mobile: 0.28, desktop: 0.32 }
+        }
+      >
+        {(() => {
+          const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'memory');
+          return (
+            <>
+              <header className="mx-auto mb-8 max-w-xl space-y-3 text-center">
+                <h2
+                  className="text-2xl font-black tracking-tight text-stone-900 sm:text-[1.65rem]"
+                  style={{ color: 'var(--theme-primary, #0d9488)' }}
+                >
+                  {fLabel}
+                </h2>
+                <p className="text-sm leading-relaxed text-stone-500">{fDesc}</p>
+                <div className="flex items-center justify-center gap-4 pt-2 select-none">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-stone-200" />
                   <CategoryOrnament category={tenant.category} count={1} />
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-stone-200" />
                 </div>
-                <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-stone-200" />
-              </div>
-            </div>
+              </header>
 
-            {/* Memory Wall Grid & Interactive Clients */}
-            <div>
-              <MemoryWallClient websiteId={tenant.id} initialPosts={posts} category={tenant.category} />
-            </div>
-          </div>
-        );
-      })()}
+              <MemoryWallClient
+                websiteId={tenant.id}
+                initialPosts={posts}
+                category={tenant.category}
+              />
+            </>
+          );
+        })()}
+      </DonationPageShell>
     </div>
   );
 }

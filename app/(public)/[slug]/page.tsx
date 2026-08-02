@@ -2,37 +2,27 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { 
   BookOpen, Calendar, MapPin, Image, Flame, ArrowRight,
-  Phone, Info, Share2, Printer, ExternalLink, Droplets, Sparkles, PawPrint,
-  Cake, Heart, Star, Frown, type LucideIcon
+  Phone, Info, Share2, Printer, ExternalLink, Droplets, PawPrint,
 } from 'lucide-react';
 import Link from 'next/link';
 import DeceasedAvatar from './announcement/DeceasedAvatar';
 import { getEnabledFeatures } from '@/lib/features';
 import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
+import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
+import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
+import { getCategoryEbookMocks, toEbookSummaries } from '@/lib/ebookMocks';
 import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
 import { getCategoryJourney } from '@/lib/categories';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
-import RecentGalleryMasonry from '@/components/public/RecentGalleryMasonry';
+import RecentGalleryBento from '@/components/public/RecentGalleryBento';
+import FeaturedEbooksSnippet from '@/components/public/FeaturedEbooksSnippet';
+import CondolenceSectionShell from '@/components/public/CondolenceSectionShell';
+import PetProfileCard from '@/components/public/PetProfileCard';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
+import { ANNOUNCEMENT_CARD_CLASS, FEATURE_CARD_CLASS } from '@/lib/publicLayout';
 
 export const dynamic = 'force-dynamic';
-
-interface PetProfile {
-  name: string;
-  avatarUrl?: string;
-  breed?: string;
-  personality?: string;
-  favorite?: string;
-  dislike?: string;
-  isAlive?: boolean;
-  birthDate?: string | null;
-  deathDate?: string | null;
-  birthYearOnly?: boolean;
-  deathYearOnly?: boolean;
-  birthYear?: number | null;
-  deathYear?: number | null;
-}
 
 async function getTenantData(slug: string) {
   return await db.tenant.findUnique({
@@ -194,54 +184,8 @@ async function getRecentEbooks(websiteId: string, category: string) {
     orderBy: { createdAt: 'desc' },
   });
 
-  let mockBooklets = [
-    {
-      id: 'book-1',
-      title: 'หนังสือธรรมะรำลึกและคำสอนสติ',
-      author: 'ครอบครัวเจริญยิ่ง',
-      totalPages: 4,
-    },
-    {
-      id: 'book-2',
-      title: 'บันทึกประวัติความทรงจำและคำขอบคุณ',
-      author: 'คณะผู้จัดทำ',
-      totalPages: 3,
-    },
-  ];
-
-  if (category === 'Couple') {
-    mockBooklets = [
-      {
-        id: 'book-1',
-        title: 'บันทึกความทรงจำและเส้นทางความรัก',
-        author: 'คู่รัก',
-        totalPages: 4,
-      },
-      {
-        id: 'book-2',
-        title: 'เรื่องราววันสำคัญของเรา',
-        author: 'คู่รัก',
-        totalPages: 3,
-      },
-    ];
-  } else if (category === 'Friends') {
-    mockBooklets = [
-      {
-        id: 'book-1',
-        title: 'หนังสือรุ่นและบันทึกมิตรสหายเฟรนด์ชิป',
-        author: 'แก๊งเพื่อนรัก',
-        totalPages: 4,
-      },
-      {
-        id: 'book-2',
-        title: 'บันทึกวีรกรรมความทรงจำแสนเกรียน',
-        author: 'กลุ่มเพื่อนสนิท',
-        totalPages: 3,
-      },
-    ];
-  }
-
-  const mappedDbEbooks = dbEbooks.map(eb => ({
+  const mockBooklets = getCategoryEbookMocks(category);
+  const mappedDbEbooks = dbEbooks.map((eb) => ({
     id: eb.id,
     title: eb.title,
     author: eb.author,
@@ -250,7 +194,7 @@ async function getRecentEbooks(websiteId: string, category: string) {
 
   return dbEbooks.length > 0
     ? mappedDbEbooks.slice(0, 2)
-    : [...mappedDbEbooks, ...mockBooklets].slice(0, 2);
+    : toEbookSummaries(mockBooklets).slice(0, 2);
 }
 
 export default async function PublicMemorialHome(props: { params: Promise<{ slug: string }> }) {
@@ -294,7 +238,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const homeCopy = journey.home || {};
   
   const subjects = config?.subjects || [];
-  const petProfiles = subjects as PetProfile[];
+  const petProfiles = subjects;
   const allSubjectsAlive =
     subjects.length > 0 && subjects.every((s: { isAlive?: boolean }) => s.isAlive);
   const isHappy =
@@ -409,7 +353,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
       {isAnnActive && ann.mode === 'custom' && ann.customCardUrl ? (
         <section
           id="announcement-card"
-          className="max-w-2xl mx-auto rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white"
+          className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -418,10 +362,53 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             className="w-full h-auto object-contain block"
           />
         </section>
+      ) : isAnnActive && isCouple ? (
+        <CoupleJourneyCard
+          tenantName={tenant.name}
+          inviteText={ann.text}
+          inviteFallback={getInviteFallback(tenant.category)}
+          footerText={sLabels.footerText}
+          theme={cardTheme}
+          milestones={coupleMilestones}
+          timelineTitle="เส้นทางที่ผ่านมา"
+          fontFamily={ann?.fontFamily}
+          siteFontFamily={config?.fontFamily}
+          avatarUrl={avatarUrl}
+          avatarScale={avatarScale}
+          avatarX={avatarX}
+          avatarY={avatarY}
+          avatarRotate={avatarRotate}
+          imageCoordSpace={config?.imageCoordSpace}
+          notes={ann.dressCode}
+          contactPhone={ann.contactPhone}
+        />
+      ) : isAnnActive && isFriends ? (
+        <FriendsMeetupCard
+          tenantName={tenant.name}
+          inviteText={ann.text}
+          inviteFallback={getInviteFallback(tenant.category)}
+          footerText={sLabels.footerText}
+          theme={cardTheme}
+          fontFamily={ann?.fontFamily}
+          siteFontFamily={config?.fontFamily}
+          avatarUrl={avatarUrl}
+          avatarScale={avatarScale}
+          avatarX={avatarX}
+          avatarY={avatarY}
+          avatarRotate={avatarRotate}
+          imageCoordSpace={config?.imageCoordSpace}
+          meetupDate={ann.waterDate}
+          meetupTime={ann.waterTime}
+          venueName={ann.templeName}
+          venueDetail={ann.pavilion}
+          mapLink={ann.mapLink}
+          notes={ann.dressCode}
+          contactPhone={ann.contactPhone}
+        />
       ) : isAnnActive ? (
         <section 
           id="announcement-card"
-          className={`max-w-2xl mx-auto rounded-3xl border-2 p-8 sm:p-12 shadow-md relative overflow-hidden text-center transition-all duration-300 ${cardBgClass}`}
+          className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border-2 p-8 sm:p-12 shadow-md relative overflow-hidden text-center transition-all duration-300 ${cardBgClass}`}
           style={cardStyles}
         >
           {/* Decorative corner lines */}
@@ -670,7 +657,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
 
       {/* 2. Recent Gallery Snippet */}
       {enabledFeatures.gallery && recentPhotos.length > 0 && (
-        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
+        <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-5 sm:p-8 sm:space-y-6`}>
           <div className="flex justify-between items-center border-b border-stone-100 pb-3">
             <h2 className="text-xl font-bold flex items-center gap-2"
                 style={{ color: 'var(--theme-primary, #0d9488)' }}>
@@ -686,7 +673,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
             </Link>
           </div>
 
-          <RecentGalleryMasonry
+          <RecentGalleryBento
             items={recentPhotos.map((m, idx) => ({
               id: m.id,
               fileName: m.fileName,
@@ -709,59 +696,22 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
 
       {/* 3. Featured Ebooks Snippet */}
       {enabledFeatures.ebooks && recentEbooks.length > 0 && (
-        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
-          <div className="flex justify-between items-center border-b border-stone-100 pb-3">
-            <h2 className="text-xl font-bold flex items-center gap-2"
-                style={{ color: 'var(--theme-primary, #0d9488)' }}>
-              <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {ebooksTitle}
-            </h2>
-            <Link 
-              href={`/${slug}/ebooks`}
-              className="hidden sm:inline-flex text-xs font-bold transition items-center gap-1 hover:underline flex-shrink-0"
-              style={{ color: 'var(--theme-primary, #0d9488)' }}
-            >
-              <span>{ebooksCtaText}</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {recentEbooks.map((book) => (
-              <div 
-                key={book.id}
-                className="p-5 rounded-2xl border border-stone-200 bg-stone-50/40 flex items-center gap-4 hover:bg-stone-50 transition"
-              >
-                <div className="w-14 h-20 bg-white border border-stone-200 rounded shadow-sm flex flex-col items-center justify-center p-1.5 relative overflow-hidden flex-shrink-0">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-600" style={{ backgroundColor: 'var(--theme-primary)' }} />
-                  <BookOpen className="w-4 h-4 text-emerald-700 mb-1" style={{ color: 'var(--theme-primary)' }} />
-                  <span className="text-[6px] text-stone-550 font-bold text-center leading-tight line-clamp-2">{book.title}</span>
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-xs font-extrabold text-stone-900 line-clamp-1">{book.title}</h4>
-                  <p className="text-[10px] text-stone-550">ผู้เขียน: {book.author}</p>
-                  <span className="text-[8px] px-1.5 py-0.5 rounded bg-white border border-stone-200 text-stone-600 font-bold">{book.totalPages} หน้า</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-end sm:hidden">
-            <Link 
-              href={`/${slug}/ebooks`}
-              className="text-xs font-bold transition flex items-center gap-1 hover:underline"
-              style={{ color: 'var(--theme-primary, #0d9488)' }}
-            >
-              <span>{ebooksCtaText}</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-        </div>
+        <FeaturedEbooksSnippet
+          slug={slug}
+          title={ebooksTitle}
+          ctaText={ebooksCtaText}
+          books={recentEbooks}
+        />
       )}
 
       {/* 4. Recent Condolences Quote Snippet */}
       {enabledFeatures.condolence && (
-        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left space-y-6">
-          <div className="flex justify-between items-center border-b border-stone-100 pb-3">
+        <CondolenceSectionShell
+          category={tenant.category}
+          className="text-left shadow-[0_4px_20px_rgba(0,0,0,0.015)]"
+          contentClassName="space-y-6"
+        >
+          <div className="flex justify-between items-center border-b border-stone-100/90 pb-3">
             <h2 className="text-xl font-bold flex items-center gap-2"
                 style={{ color: 'var(--theme-primary, #0d9488)' }}>
               <Flame className="w-5 h-5 animate-pulse" style={{ color: 'var(--theme-primary)' }} /> {condolenceHeading}
@@ -781,19 +731,19 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               {condolenceEmpty}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="divide-y divide-stone-100/90">
               {recentCondolences.map((c) => (
-                <div key={c.id} className="p-5 rounded-2xl border border-stone-100 bg-stone-50/30 space-y-3 relative overflow-hidden">
-                  <div className="flex justify-between items-start gap-4">
+                <div key={c.id} className="py-5">
+                  <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-stone-200 text-stone-700 text-xs font-black flex items-center justify-center select-none uppercase">
+                      <div className="flex h-8 w-8 select-none items-center justify-center rounded-full bg-stone-200 text-xs font-black uppercase text-stone-700">
                         {c.senderName.substring(0, 2)}
                       </div>
                       <div>
-                        <h4 className="text-xs font-extrabold text-stone-850 flex items-center gap-1.5">
+                        <h4 className="flex items-center gap-1.5 text-xs font-extrabold text-stone-850">
                           <span>{c.senderName}</span>
                           {c.type === 'FAMILY' && (
-                            <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-bold uppercase tracking-wider">ครอบครัว</span>
+                            <span className="rounded-full border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-amber-700">ครอบครัว</span>
                           )}
                         </h4>
                         {tenant.category !== 'Pet Memorial' && c.relationship && c.relationship !== '—' && (
@@ -801,12 +751,12 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                         )}
                       </div>
                     </div>
-                    <span className="text-[9px] text-stone-400 font-mono">
+                    <span className="font-mono text-[9px] text-stone-400">
                       {new Date(c.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}
                     </span>
                   </div>
-                  <p className="text-xs text-stone-650 italic leading-relaxed pl-1">
-                    " {c.message} "
+                  <p className="mt-3 pl-1 text-xs italic leading-relaxed text-stone-650">
+                    &ldquo;{c.message}&rdquo;
                   </p>
                 </div>
               ))}
@@ -828,12 +778,12 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
               {condolenceCta}
             </Link>
           </div>
-        </div>
+        </CondolenceSectionShell>
       )}
 
       {/* 5. Pet profiles + Biography */}
       {tenant.category === 'Pet Memorial' && petProfiles.some((s) => s?.name) && (
-        <section className="space-y-8 rounded-3xl border border-stone-200/80 bg-white p-6 text-left shadow-sm sm:p-8">
+        <section className={`${FEATURE_CARD_CLASS} space-y-8 rounded-3xl border border-stone-200/80 bg-white p-6 text-left shadow-sm sm:p-8`}>
           <div className="mx-auto max-w-2xl space-y-2 text-center">
             <h2
               className="flex items-center justify-center gap-2 text-xl font-black"
@@ -856,170 +806,19 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           >
             {petProfiles
               .filter((s) => s?.name)
-              .map((s, i) => {
-                // Backward compatibility: use the site's original avatar for
-                // the first pet until an individual photo is assigned.
-                const petAvatar = s.avatarUrl || (i === 0 ? config?.avatarUrl : '');
-                const formatPetDate = (
-                  raw?: string | null,
-                  yearOnly?: boolean,
-                  year?: number | null
-                ) => {
-                  if (yearOnly && year) return `พ.ศ. ${year + 543}`;
-                  if (!raw) return '';
-                  const d = new Date(raw);
-                  if (isNaN(d.getTime())) return '';
-                  return d.toLocaleDateString('th-TH', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  });
-                };
-                const birth = formatPetDate(s.birthDate, s.birthYearOnly, s.birthYear);
-                const passed = !s.isAlive
-                  ? formatPetDate(s.deathDate, s.deathYearOnly, s.deathYear)
-                  : '';
-
-                const startDate = s.birthDate ? new Date(s.birthDate) : null;
-                const endDate = !s.isAlive && s.deathDate ? new Date(s.deathDate) : new Date();
-                let ageLabel = '';
-                if (startDate && !isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
-                  let totalMonths =
-                    (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-                    endDate.getMonth() -
-                    startDate.getMonth();
-                  if (endDate.getDate() < startDate.getDate()) totalMonths -= 1;
-                  totalMonths = Math.max(0, totalMonths);
-                  const years = Math.floor(totalMonths / 12);
-                  const months = totalMonths % 12;
-                  ageLabel = [
-                    years > 0 ? `${years} ปี` : '',
-                    months > 0 ? `${months} เดือน` : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ');
-                  if (!ageLabel) ageLabel = 'ไม่ถึง 1 เดือน';
-                } else if (s.birthYear) {
-                  const endYear = !s.isAlive && s.deathYear ? s.deathYear : new Date().getFullYear();
-                  const years = Math.max(0, endYear - s.birthYear);
-                  ageLabel = years > 0 ? `ประมาณ ${years} ปี` : '';
-                }
-
-                const details = [
-                  birth && { icon: Cake, label: 'วันเกิด / วันที่รับมา', value: birth },
-                  passed && { icon: Star, label: 'วันที่จากไป', value: passed },
-                  s.personality && { icon: Sparkles, label: 'บุคลิก', value: s.personality },
-                  s.favorite && { icon: Heart, label: 'ของโปรด', value: s.favorite },
-                  s.dislike && { icon: Frown, label: 'สิ่งที่ไม่ชอบ', value: s.dislike },
-                ].filter(Boolean) as { icon: LucideIcon; label: string; value: string }[];
-
-                return (
-                  <article
-                    key={`${s.name}-${i}`}
-                    className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-                  >
-                    <PawPrint
-                      aria-hidden
-                      className="pointer-events-none absolute -right-8 top-28 h-36 w-36 rotate-[-15deg] opacity-[0.035] transition duration-500 group-hover:rotate-0 group-hover:scale-110"
-                      style={{ color: 'var(--theme-primary)' }}
-                    />
-
-                    <div
-                      className="relative flex flex-col items-center px-6 pb-6 pt-8 text-center"
-                      style={{
-                        background:
-                          'linear-gradient(180deg, color-mix(in srgb, var(--theme-primary) 8%, white), white)',
-                      }}
-                    >
-                      <span
-                        className={`absolute right-4 top-4 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${
-                          s.isAlive
-                            ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
-                            : 'border border-amber-100 bg-amber-50 text-amber-700'
-                        }`}
-                      >
-                        {s.isAlive ? (
-                          <Heart className="h-3 w-3" aria-hidden />
-                        ) : (
-                          <Star className="h-3 w-3" aria-hidden />
-                        )}
-                        {s.isAlive ? 'อยู่ด้วยกัน' : 'ในความทรงจำ'}
-                      </span>
-
-                      <div
-                        className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-stone-50 shadow-lg ring-1 ring-stone-200"
-                        style={{ backgroundColor: 'color-mix(in srgb, var(--theme-primary) 10%, white)' }}
-                      >
-                        {petAvatar ? (
-                          <img
-                            src={resolveMediaSrc(petAvatar)}
-                            alt={`รูปประจำตัวของ ${s.name}`}
-                            width={112}
-                            height={112}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                          />
-                        ) : (
-                          <PawPrint
-                            className="h-10 w-10 opacity-50"
-                            style={{ color: 'var(--theme-primary)' }}
-                            aria-hidden
-                          />
-                        )}
-                      </div>
-                      <h3 className="mt-4 text-xl font-black text-stone-900">{s.name}</h3>
-                      {s.breed && (
-                        <p className="mt-1 text-xs font-medium text-stone-500">{s.breed}</p>
-                      )}
-                      {ageLabel && (
-                        <span
-                          className="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold"
-                          style={{
-                            color: 'var(--theme-primary)',
-                            backgroundColor:
-                              'color-mix(in srgb, var(--theme-primary) 10%, white)',
-                          }}
-                        >
-                          <Cake className="h-3.5 w-3.5" aria-hidden />
-                          {s.isAlive ? `อายุ ${ageLabel}` : `ช่วงเวลาที่อยู่ด้วยกัน ${ageLabel}`}
-                        </span>
-                      )}
-                    </div>
-
-                    {details.length > 0 && (
-                      <div className="flex-1 border-t border-dashed border-stone-200 px-5 py-5">
-                        <dl className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-                          {details.map((detail) => (
-                            <div
-                              key={detail.label}
-                              className="flex min-h-20 items-start gap-3 rounded-2xl border border-dashed border-stone-200 bg-stone-50/60 p-4"
-                            >
-                              <detail.icon
-                                className="mt-0.5 h-5 w-5 shrink-0"
-                                style={{ color: 'var(--theme-primary)' }}
-                                aria-hidden
-                              />
-                              <div className="min-w-0">
-                                <dt className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                                  {detail.label}
-                                </dt>
-                                <dd className="mt-1 break-words text-sm font-bold leading-relaxed text-stone-700">
-                                  {detail.value}
-                                </dd>
-                              </div>
-                            </div>
-                          ))}
-                        </dl>
-                      </div>
-                    )}
-                  </article>
-                );
-              })}
+              .map((s, i) => (
+                <PetProfileCard
+                  key={`${s.name}-${i}`}
+                  subject={s}
+                  index={i}
+                  fallbackAvatar={config?.avatarUrl}
+                />
+              ))}
           </div>
         </section>
       )}
 
-      <div className="rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left">
+      <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left`}>
         <h2 className="text-xl font-bold mb-6 flex items-center gap-2"
             style={{ color: 'var(--theme-primary, #0d9488)' }}>
           <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {biographyHeading}

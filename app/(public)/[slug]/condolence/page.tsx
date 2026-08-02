@@ -6,6 +6,7 @@ import { getFeatureLabel } from '@/lib/categories';
 import { PenTool, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import CondolenceItem from './CondolenceItem';
+import CondolenceSectionShell from '@/components/public/CondolenceSectionShell';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
 
 export const dynamic = 'force-dynamic';
@@ -125,7 +126,11 @@ export default async function PublicCondolencePage(props: {
               ? 'คุณสามารถเขียนบันทึกความรู้สึก ส่งต่อกำลังใจ ความรัก และอธิษฐานจิตผ่านสมุดเยี่ยมเยียนเล่มนี้'
               : fDesc;
         return (
-          <div className="rounded-3xl border border-stone-200/60 bg-white p-8 sm:p-12 shadow-sm space-y-10 relative overflow-hidden">
+          <CondolenceSectionShell
+            category={tenant.category}
+            contentClassName="space-y-10"
+            patternOpacity={{ mobile: 0.28 }}
+          >
             {/* Header */}
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="select-none py-2 w-full">
@@ -150,7 +155,7 @@ export default async function PublicCondolencePage(props: {
             </div>
 
             {/* List */}
-            <div className="space-y-6">
+            <div className="space-y-6 pt-5 sm:pt-0">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold flex items-center gap-2 text-stone-700">
                   <PenTool className="w-3.5 h-3.5" style={{ color: 'var(--theme-primary)' }} />
@@ -244,16 +249,15 @@ export default async function PublicCondolencePage(props: {
                 </div>
               )}
             </div>
-          </div>
+
+            <CondolenceForm
+              websiteId={tenant.id}
+              category={tenant.category}
+              subjects={(tenant.themeConfig as any)?.subjects}
+            />
+          </CondolenceSectionShell>
         );
       })()}
-
-      {/* Condolence submission component */}
-      <CondolenceForm 
-        websiteId={tenant.id} 
-        category={tenant.category} 
-        subjects={(tenant.themeConfig as any)?.subjects} 
-      />
     </div>
   );
 }

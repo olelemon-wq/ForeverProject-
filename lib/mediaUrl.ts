@@ -37,11 +37,11 @@ export function resolveMediaSrc(src: string | null | undefined): string {
   }
 
   if (normalized.startsWith('/uploads/')) {
-    const bundled = `/demo-media${normalized.slice('/uploads'.length)}`;
     if (UPLOADS_CDN && UPLOADS_CDN !== 'https://storage.forever.co.th') {
       return encodePathSegments(`${UPLOADS_CDN.replace(/\/$/, '')}${normalized}`);
     }
-    return encodePathSegments(bundled);
+    // Local uploads are written to public/uploads (mock uploader).
+    return encodePathSegments(normalized);
   }
 
   if (normalized.startsWith('/')) {

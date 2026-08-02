@@ -20,7 +20,7 @@ export default async function PublicDonationPage(props: { params: Promise<{ slug
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="animate-fade-in">
       <DonationClientForm 
         websiteId={tenant.id}
         donationPromptPay={tenant.donationPromptPay}

@@ -11,6 +11,7 @@ interface CoupleMilestoneListProps {
   title?: string;
   innerCardBg: string;
   compact?: boolean;
+  hideTitle?: boolean;
 }
 
 const milestoneThemeStyle = coupleSiteThemeVars;
@@ -20,11 +21,13 @@ export default function CoupleMilestoneList({
   title = 'วันสำคัญของเรา',
   innerCardBg,
   compact = false,
+  hideTitle = false,
 }: CoupleMilestoneListProps) {
   if (milestones.length === 0) return null;
 
   return (
     <div className="space-y-5 text-left" style={milestoneThemeStyle}>
+      {!hideTitle && (
       <h3
         className={`${compact ? 'text-[10px]' : 'text-xs'} font-black uppercase tracking-wider flex items-center gap-1.5`}
         style={{ color: 'var(--milestone-primary)' }}
@@ -32,6 +35,7 @@ export default function CoupleMilestoneList({
         <Calendar className="w-4 h-4" aria-hidden />
         <span>{title}</span>
       </h3>
+      )}
 
       <ol className="relative space-y-0" aria-label={title}>
         {milestones.map((milestone, index) => {

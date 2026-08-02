@@ -12,6 +12,7 @@ import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
+import { ANNOUNCEMENT_CARD_CLASS } from '@/lib/publicLayout';
 
 export const dynamic = 'force-dynamic';
 
@@ -171,7 +172,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
 
         <section
           id="announcement-card"
-          className="max-w-2xl mx-auto rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white print-card-section"
+          className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white print-card-section`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -332,7 +333,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
       {/* Main Invitation Card Container */}
       <section 
         id="announcement-card"
-        className={`max-w-2xl mx-auto rounded-3xl border-2 p-8 sm:p-12 shadow-md relative overflow-hidden transition-all duration-300 print:border-stone-300 print:shadow-none print:my-0 print:mx-auto print:max-w-3xl print-card-section ${cardBgClass}`}
+        className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border-2 p-8 sm:p-12 shadow-md relative overflow-hidden transition-all duration-300 print:border-stone-300 print:shadow-none print:my-0 print:mx-auto print:max-w-3xl print-card-section ${cardBgClass}`}
         style={cardStyles}
       >
         {/* Decorative corner lines */}

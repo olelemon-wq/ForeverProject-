@@ -2,6 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { getEnabledFeatures } from '@/lib/features';
+import { FEATURE_CARD_CLASS } from '@/lib/publicLayout';
 import MemorialFeed from '../_components/feed/MemorialFeed';
 
 export const dynamic = 'force-dynamic';
@@ -25,7 +26,7 @@ export default async function FeedPage(props: { params: Promise<{ slug: string }
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className={`${FEATURE_CARD_CLASS} px-4 py-8`}>
       <div className="text-center mb-8 space-y-2">
         <h2 className="text-xl sm:text-2xl font-bold text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
           ฟีดความทรงจำและคำร่วมไว้อาลัย

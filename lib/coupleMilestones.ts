@@ -138,3 +138,20 @@ export function formatMilestoneTime(time?: string): string | null {
   if (/เวลา/.test(trimmed)) return trimmed;
   return `เวลา ${trimmed}`;
 }
+
+/** Latest milestone is shown as hero; earlier ones stay in the timeline. */
+export function splitCoupleMilestonesForDisplay(milestones: CoupleMilestone[]): {
+  latest: CoupleMilestone | null;
+  earlier: CoupleMilestone[];
+} {
+  if (milestones.length === 0) {
+    return { latest: null, earlier: [] };
+  }
+  if (milestones.length === 1) {
+    return { latest: milestones[0], earlier: [] };
+  }
+  return {
+    latest: milestones[milestones.length - 1],
+    earlier: milestones.slice(0, -1),
+  };
+}

@@ -20,6 +20,7 @@ import { getInitialLetter } from '@/lib/utils';
 import Link from 'next/link';
 import { getFeatureLabel } from '@/lib/categories';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
+import { FEATURE_CARD_CLASS } from '@/lib/publicLayout';
 import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 
@@ -708,7 +709,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
           </button>
         </div>
       ) : (
-        <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
+        <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden`}>
           {/* Page Header with CategoryOrnament and Wing lines */}
           {(() => {
             const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category || 'Memorial', 'family');

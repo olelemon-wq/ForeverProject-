@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Flame, RotateCw } from 'lucide-react';
+import { Flame, PenTool, RotateCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function CondolenceForm({ 
   websiteId, 
@@ -170,30 +171,43 @@ export default function CondolenceForm({
   ];
 
   return (
-    <div className="mt-8 text-center">
+    <div className="border-t border-stone-200/80 pt-8">
       {!isOpen ? (
-        <div className="py-12 px-8 rounded-3xl border border-stone-200/60 bg-white shadow-sm text-center">
-          <h3 className="text-base sm:text-lg font-bold text-stone-800 mb-2">
-            {isHappy ? 'ร่วมส่งความคิดถึงและบันทึกข้อความ' : 'ร่วมส่งคำไว้อาลัยและแสดงความระลึกถึง'}
-          </h3>
-          <p className="text-stone-400 text-xs sm:text-sm mb-8 max-w-sm mx-auto leading-relaxed">
-            {isHappy
-              ? category === 'Friends'
-                ? 'เขียนข้อความฝากถึงกัน เพื่อเก็บเป็นความทรงจำของกลุ่ม'
-                : 'เขียนข้อความส่งความรักและอวยพร เพื่อรวบรวมเป็นสมุดบันทึกความทรงจำ'
-              : 'ร่วมจุดเทียนออนไลน์และเขียนคำไว้อาลัย ส่งต่อให้ครอบครัวผู้ล่วงลับ'}
-          </p>
-          <button 
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white/80">
+            <PenTool
+              className="h-5 w-5"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+              aria-hidden
+            />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-base font-bold text-stone-900 sm:text-lg">
+              {isHappy ? 'ร่วมส่งความคิดถึงและบันทึกข้อความ' : 'ร่วมส่งคำไว้อาลัยและแสดงความระลึกถึง'}
+            </h3>
+            <p className="mx-auto max-w-md text-sm leading-relaxed text-stone-500">
+              {isHappy
+                ? category === 'Friends'
+                  ? 'เขียนข้อความฝากถึงกัน เพื่อเก็บเป็นความทรงจำของกลุ่ม'
+                  : 'เขียนข้อความส่งความรักและอวยพร เพื่อรวบรวมเป็นสมุดบันทึกความทรงจำ'
+                : 'ร่วมจุดเทียนออนไลน์และเขียนคำไว้อาลัย ส่งต่อให้ครอบครัวผู้ล่วงลับ'}
+            </p>
+          </div>
+          <Button
+            type="button"
             onClick={() => setIsOpen(true)}
-            className="px-8 py-3 text-sm font-bold rounded-full text-white hover:brightness-105 active:scale-95 transition shadow-md flex items-center gap-2 mx-auto"
+            className="mx-auto min-h-11 rounded-full px-6 text-sm font-bold text-white hover:brightness-105"
             style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
           >
-            <Flame className="w-4 h-4" />
-            <span>{isHappy ? 'เขียนข้อความ' : 'เขียนคำไว้อาลัย'}</span>
-          </button>
+            <Flame className="h-4 w-4" aria-hidden />
+            {isHappy ? 'เขียนข้อความ' : 'เขียนคำไว้อาลัย'}
+          </Button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="p-8 sm:p-10 rounded-3xl border border-stone-200/60 bg-white text-left space-y-6 w-full shadow-sm relative animate-fade-in">
+        <form
+          onSubmit={handleSubmit}
+          className="animate-fade-in relative w-full space-y-6 rounded-2xl border border-stone-200/80 bg-white/80 p-6 text-left shadow-sm sm:p-8"
+        >
           <header className="flex justify-between items-center border-b border-stone-100 pb-4">
             <h3 className="text-base font-bold text-stone-900">{isHappy ? 'เขียนข้อความ' : 'เขียนคำไว้อาลัย'}</h3>
             <button 

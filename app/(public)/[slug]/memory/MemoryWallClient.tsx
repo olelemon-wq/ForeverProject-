@@ -1,8 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Camera, PenTool, RotateCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import {
+  AlertCircle,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Expand,
+  Heart,
+  PawPrint,
+  PenTool,
+  RotateCw,
+  Shield,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
+import GalleryImageLightbox from '@/components/public/GalleryImageLightbox';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface MemoryPost {
   id: string;
@@ -14,8 +32,48 @@ interface MemoryPost {
   createdAt: string;
 }
 
+const getEmptyStateText = (category: string) => {
+  if (category === 'Couple') {
+    return 'ยังไม่มีบันทึก — เริ่มเขียนเรื่องราวแรกของเราได้เลย';
+  }
+  if (category === 'Pet Memorial') {
+    return 'ยังไม่มีใครแชร์เรื่องราว — เป็นคนแรกที่เขียนบันทึกความทรงจำของน้องได้เลย';
+  }
+  if (category === 'Friends') {
+    return 'ยังไม่มีใครแชร์เรื่องราว — เป็นคนแรกที่เล่าวีรกรรมวันวานได้เลย';
+  }
+  if (category === 'Wedding') {
+    return 'ยังไม่มีใครแชร์เรื่องราว — เป็นคนแรกที่เขียนคำอวยพรได้เลย';
+  }
+  return 'ยังไม่มีใครแชร์เรื่องราว — เป็นคนแรกที่เขียนบันทึกความทรงจำได้เลย';
+};
+
 const getFormLabels = (category: string) => {
-  if (category === 'Couple' || category === 'Wedding') {
+  if (category === 'Couple') {
+    return {
+      title: 'เขียนไดอารี่ความทรงจำ',
+      subtitle: 'บันทึกช่วงเวลาที่อยากเก็บไว้ ย้อนอ่านความรู้สึกดี ๆ ของเราสองคน',
+      btnText: 'ร่วมเขียนบันทึกความทรงจำ',
+      ctaTitle: 'ร่วมเขียนไดอารี่ความทรงจำ',
+      ctaDesc: 'โพสต์รูป เขียนเรื่องเล่า หรือบันทึกช่วงเวลาที่อยากเก็บไว้ — ไว้ย้อนอ่านความรู้สึกดี ๆ ของเราสองคน',
+      writerLabel: 'ชื่อผู้เขียน',
+      writerPlaceholder: 'เช่น เราสองคน / คนที่หนึ่ง',
+      topicLabel: 'หัวข้อบันทึก (ระบุหรือไม่ก็ได้)',
+      topicPlaceholder: 'เช่น ทริปประทับใจ หรือ วันที่เราเจอกัน',
+      contentPlaceholder: 'เล่าเรื่องราว ความประทับใจ หรือความรู้สึกที่อยากเก็บไว้...',
+      emojiLabel: 'เลือกรูปแบบข้อความหรือใส่อีโมจิความรัก',
+      emojis: [
+        { char: '❤️', label: 'หัวใจแดง' },
+        { char: '💖', label: 'หัวใจประกาย' },
+        { char: '✨', label: 'ประกายวิบวับ' },
+        { char: '🥂', label: 'ชนแก้ว' },
+        { char: '💐', label: 'ช่อดอกไม้' },
+        { char: '💍', label: 'แหวน' },
+        { char: '🎉', label: 'ปาร์ตี้' },
+      ],
+    };
+  }
+  if (category === 'Wedding') {
     return {
       title: 'แชร์เรื่องราวความทรงจำแสนรัก',
       subtitle: 'เขียนบอกเล่าเรื่องราวความประทับใจและความรู้สึกดี ๆ ระหว่างเรา',
@@ -26,7 +84,7 @@ const getFormLabels = (category: string) => {
       writerPlaceholder: 'เช่น เพื่อนสนิทกิ่งแก้ว',
       topicLabel: 'หัวข้อเรื่องราว (ระบุหรือไม่ก็ได้)',
       topicPlaceholder: 'เช่น ทริปประทับใจ หรือ ยินดีกับคู่บ่าวสาว',
-      contentPlaceholder: 'ร่วมแบ่งปันเรื่องราวน่ารักๆ ความประทับใจ หรือคำอวยพรหวานๆ แด่คู่รัก...',
+      contentPlaceholder: 'ร่วมแบ่งปันเรื่องราวน่ารื่น ความประทับใจ หรือคำอวยพรหวาน ๆ แด่คู่รัก...',
       emojiLabel: 'เลือกรูปแบบข้อความหรือใส่อีโมจิความรัก/อวยพร',
       emojis: [
         { char: '❤️', label: 'หัวใจแดง' },
@@ -135,46 +193,77 @@ const getFormLabels = (category: string) => {
   };
 };
 
-function MemoryPostCard({ p, parseMessage }: { p: MemoryPost; parseMessage: (msg: string | null) => React.ReactNode }) {
+function MemoryPostCard({
+  p,
+  parseMessage,
+  postIcon: PostIcon,
+  onImageClick,
+}: {
+  p: MemoryPost;
+  parseMessage: (msg: string | null) => React.ReactNode;
+  postIcon: LucideIcon;
+  onImageClick?: () => void;
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const text = p.content || '';
   const shouldTruncate = text.length > 250;
-  const displayText = shouldTruncate && !isExpanded ? text.slice(0, 220) + '...' : text;
+  const displayText = shouldTruncate && !isExpanded ? `${text.slice(0, 220)}...` : text;
 
   return (
-    <div className="relative py-6 pl-1 transition flex flex-col md:flex-row gap-6 items-start text-left w-full">
-      <div className="flex-1 min-w-0 space-y-2.5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-bold text-stone-850">
-            {p.senderName}
-          </span>
-          <span className="text-[10px] text-stone-450 font-semibold font-mono ml-auto">
-            {new Date(p.createdAt).toLocaleDateString('th-TH', {
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-            })}
-          </span>
+    <article className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8 lg:gap-10">
+      <div className="min-w-0 flex-1 space-y-3">
+        <div className="flex items-start gap-3">
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+            style={{
+              backgroundColor: 'color-mix(in srgb, var(--theme-primary, #0d9488) 10%, white)',
+            }}
+          >
+            <PostIcon
+              className="h-4 w-4"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+              aria-hidden
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm font-bold text-stone-900">{p.senderName}</span>
+              <time
+                dateTime={p.createdAt}
+                className="ml-auto rounded-full bg-stone-100 px-2.5 py-0.5 text-[11px] font-semibold text-stone-400"
+              >
+                {new Date(p.createdAt).toLocaleDateString('th-TH', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </time>
+            </div>
+          </div>
         </div>
 
         {p.title && (
-          <h4 className="text-sm font-bold text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
+          <h4
+            className="text-sm font-bold text-stone-900 sm:text-base"
+            style={{ color: 'var(--theme-primary, #0d9488)' }}
+          >
             {p.title}
           </h4>
         )}
 
         {p.content && (
-          <div className="space-y-1">
-            <p className="text-stone-605 text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words">
-              "{parseMessage(displayText)}"
+          <div className="space-y-1.5">
+            <p className="whitespace-pre-line break-words text-sm leading-relaxed text-stone-600">
+              {parseMessage(displayText)}
             </p>
             {shouldTruncate && (
               <button
+                type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="text-[10px] font-bold text-emerald-700 hover:text-emerald-850 transition cursor-pointer mt-1 focus:outline-none flex items-center gap-0.5"
+                className="text-xs font-bold transition hover:opacity-80"
                 style={{ color: 'var(--theme-primary, #0d9488)' }}
               >
-                <span>{isExpanded ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม'}</span>
+                {isExpanded ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม'}
               </button>
             )}
           </div>
@@ -182,20 +271,26 @@ function MemoryPostCard({ p, parseMessage }: { p: MemoryPost; parseMessage: (msg
       </div>
 
       {p.mediaUrl && (
-        <div className="w-full md:w-44 flex-shrink-0 mt-3 md:mt-0">
-          <div className="relative rounded-2xl overflow-hidden bg-stone-50 border border-stone-200/80 md:aspect-square flex items-center justify-center shadow-sm max-w-full mx-auto md:mx-0">
-            <img 
-              src={resolveMediaSrc(p.mediaUrl)} 
-              alt={p.title || 'Memory Image'}
-              className="max-h-64 sm:max-h-72 md:max-h-none md:w-full md:h-full object-contain md:object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&q=80&w=600';
-              }}
-            />
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={onImageClick}
+          className="group relative mx-auto w-full max-w-sm shrink-0 overflow-hidden rounded-2xl border border-stone-200/50 bg-stone-50/80 shadow-none sm:mx-0 sm:ml-auto sm:w-36 sm:opacity-90 md:w-40 lg:opacity-[0.85]"
+          aria-label={`ขยายรูปจาก ${p.senderName}`}
+        >
+          <img
+            src={resolveMediaSrc(p.mediaUrl)}
+            alt={p.title || `รูปจาก ${p.senderName}`}
+            className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.02] sm:aspect-square"
+          />
+          <span className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/20">
+            <span className="flex items-center gap-1 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-bold text-white opacity-0 transition group-hover:opacity-100">
+              <Expand className="h-3.5 w-3.5" aria-hidden />
+              ขยาย
+            </span>
+          </span>
+        </button>
       )}
-    </div>
+    </article>
   );
 }
 
@@ -222,6 +317,10 @@ export default function MemoryWallClient({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const PostIcon =
+    category === 'Pet Memorial' ? PawPrint : category === 'Couple' ? Heart : PenTool;
 
   // Math Captcha bot protection
   const [captchaQuestion, setCaptchaQuestion] = useState({ num1: 0, num2: 0, answer: 0 });
@@ -385,250 +484,328 @@ export default function MemoryWallClient({
         setIsOpen(false);
         setSuccess('');
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || 'เกิดข้อผิดพลาดในการแชร์เรื่องราว');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการแชร์เรื่องราว';
+      setError(message);
       generateCaptcha();
     } finally {
       setIsLoading(false);
     }
   };
 
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+
+  const lightboxItems = useMemo(
+    () =>
+      currentPosts
+        .filter((p) => p.mediaUrl)
+        .map((p) => ({
+          id: p.id,
+          displayUrl: resolveMediaSrc(p.mediaUrl!),
+          fileName: p.title || `รูปจาก ${p.senderName}`,
+        })),
+    [currentPosts],
+  );
+
   return (
-    <div className="space-y-8">
-      {/* Write a Story Call to Action button */}
-      {!isOpen ? (
-        <div className="p-8 rounded-3xl border border-dashed border-stone-300 bg-white text-center shadow-sm">
-          <h3 className="text-base sm:text-lg font-semibold text-stone-850 mb-2">
-            {mLabels.ctaTitle}
-          </h3>
-          <p className="text-stone-500 text-xs mb-6 max-w-md mx-auto leading-normal">
-            {mLabels.ctaDesc}
-          </p>
-          <button 
-            onClick={openForm}
-            className="px-6 py-3 text-xs sm:text-sm font-semibold rounded-full text-white hover:brightness-105 active:scale-95 transition flex items-center gap-1.5 mx-auto"
-            style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
+    <div className="space-y-10">
+      <div className="space-y-8">
+        {posts.length === 0 ? (
+          <div
+            className={`rounded-2xl border border-dashed px-6 py-14 text-center ${
+              category === 'Couple'
+                ? 'border-[#EDD5C8]/70 bg-white/50'
+                : 'border-stone-200 bg-white/60'
+            }`}
           >
-            <PenTool className="w-4 h-4" />
-            <span>{mLabels.btnText}</span>
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="p-8 rounded-3xl border border-stone-200 bg-white space-y-4 w-full shadow-xl relative animate-fade-in text-left">
-          <header className="flex justify-between items-center border-b border-stone-200 pb-3">
-            <h3 className="text-base font-bold text-stone-900">{mLabels.title}</h3>
-            <button 
-              type="button" 
-              onClick={() => setIsOpen(false)} 
-              className="text-xs text-stone-400 hover:text-stone-700 transition"
-            >
-              ปิดฟอร์ม [x]
-            </button>
-          </header>
-
-          {error && <div className="p-3 bg-red-5 border border-red-200 rounded-xl text-xs text-red-700 font-medium">⚠️ {error}</div>}
-          {success && <div className="p-3 bg-emerald-5 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">✓ {success}</div>}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">{mLabels.writerLabel}</label>
-              <input 
-                type="text" 
-                value={senderName} 
-                onChange={(e) => setSenderName(e.target.value)} 
-                placeholder={mLabels.writerPlaceholder}
-                className="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">{mLabels.topicLabel}</label>
-              <input 
-                type="text" 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-                placeholder={mLabels.topicPlaceholder}
-                className="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-1">
-              แนบรูปภาพความทรงจำ (ถ้ามี)
-            </label>
-            <input 
-              type="file" 
-              accept="image/*"
-              key={mediaFile ? mediaFile.name : 'empty'}
-              onChange={(e) => setMediaFile(e.target.files ? e.target.files[0] : null)}
-              className="w-full text-stone-500 text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-semibold file:bg-stone-200 file:text-stone-700 hover:file:bg-stone-300 cursor-pointer"
-              disabled={isLoading}
+            <PostIcon
+              className="mx-auto mb-3 h-8 w-8 opacity-30"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+              aria-hidden
             />
+            <p className="text-sm text-stone-500">{getEmptyStateText(category)}</p>
           </div>
+        ) : (
+          <ul className="space-y-8">
+            {currentPosts.map((p) => (
+              <li key={p.id}>
+                <MemoryPostCard
+                  p={p}
+                  parseMessage={parseMessage}
+                  postIcon={PostIcon}
+                  onImageClick={
+                    p.mediaUrl
+                      ? () => {
+                          const idx = lightboxItems.findIndex((item) => item.id === p.id);
+                          if (idx >= 0) setLightboxIndex(idx);
+                        }
+                      : undefined
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+        )}
 
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-1">รายละเอียดและเนื้อเรื่องเล่า</label>
-            <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-              <button
-                type="button"
-                onClick={() => insertFormatting('bold')}
-                className="px-2.5 py-1 text-xs font-black rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-850 transition active:scale-95 cursor-pointer shadow-sm"
-                title="ตัวหนา (Bold)"
-              >
-                B
-              </button>
-              <button
-                type="button"
-                onClick={() => insertFormatting('italic')}
-                className="px-2.5 py-1 text-xs italic font-semibold rounded-lg border border-stone-200 bg-white hover:bg-stone-50 text-stone-850 transition active:scale-95 cursor-pointer shadow-sm"
-                title="ตัวเอียง (Italic)"
-              >
-                I
-              </button>
+        <GalleryImageLightbox
+          items={lightboxItems}
+          activeIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={setLightboxIndex}
+        />
 
-              <div className="h-4 w-px bg-stone-200 mx-1"></div>
-
-              {/* Mourning Emojis List */}
-              <div className="flex items-center gap-1">
-                {mLabels.emojis.map((item) => (
-                  <button
-                    key={item.char}
-                    type="button"
-                    onClick={() => insertEmoji(item.char)}
-                    className="p-1 text-sm hover:bg-stone-100 rounded-md transition active:scale-90 cursor-pointer"
-                    title={item.label}
-                  >
-                    {item.char}
-                  </button>
-                ))}
-              </div>
-
-              <span className="text-[10px] text-stone-400 ml-auto select-none hidden sm:inline">
-                {mLabels.emojiLabel}
-              </span>
-            </div>
-            <textarea 
-              id="memory-content-textarea"
-              value={content} 
-              onChange={(e) => setContent(e.target.value)} 
-              placeholder={mLabels.contentPlaceholder}
-              rows={4}
-              className="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs resize-none focus:bg-white focus:outline-none"
-              disabled={isLoading}
-            />
-          </div>
-
-          {/* Math Captcha Challenge for Bot Protection */}
-          <div className="space-y-2 p-4 bg-stone-50 border border-stone-200 rounded-2xl">
-            <label className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide block">
-              🛡️ การป้องกันสแปมบอท (กรุณาคำนวณผลลัพธ์)
-            </label>
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-stone-800 bg-white border border-stone-200 px-3 py-2 rounded-xl select-none">
-                {captchaQuestion.num1} + {captchaQuestion.num2} = ?
-              </span>
-              <input 
-                type="number" 
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                placeholder="คำตอบของคุณ"
-                className="flex-1 px-4 py-2 bg-white border border-stone-200 rounded-xl text-stone-850 text-xs focus:outline-none"
-                disabled={isLoading}
-              />
-              <button
-                type="button"
-                onClick={generateCaptcha}
-                className="px-3 py-2 text-xs bg-stone-100 text-stone-500 hover:text-stone-800 rounded-xl border border-stone-200 transition flex items-center justify-center cursor-pointer active:scale-95"
-                title="เปลี่ยนคำถาม"
-              >
-                <RotateCw className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-2">
-            <button 
-              type="button" 
-              onClick={() => setIsOpen(false)} 
-              className="px-4 py-2 text-xs border border-stone-300 hover:bg-stone-100 rounded-xl text-stone-500 hover:text-stone-800 transition"
-              disabled={isLoading}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="cursor-pointer rounded-xl border border-stone-200 p-2 text-stone-600 transition hover:bg-stone-50 disabled:pointer-events-none disabled:opacity-40"
             >
-              ยกเลิก
+              <ChevronLeft className="h-4 w-4" />
             </button>
-            <button 
-              type="submit" 
-              className="px-5 py-2 text-xs font-bold rounded-xl text-white hover:brightness-105 transition flex items-center gap-1.5 cursor-pointer active:scale-95"
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                type="button"
+                onClick={() => setCurrentPage(pageNumber)}
+                className={`cursor-pointer rounded-xl px-3 py-1.5 text-xs font-bold transition ${
+                  currentPage === pageNumber
+                    ? 'text-white shadow-sm'
+                    : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
+                }`}
+                style={
+                  currentPage === pageNumber
+                    ? { backgroundColor: 'var(--theme-primary, #0d9488)' }
+                    : {}
+                }
+              >
+                {pageNumber}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="cursor-pointer rounded-xl border border-stone-200 p-2 text-stone-600 transition hover:bg-stone-50 disabled:pointer-events-none disabled:opacity-40"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div
+        className={`border-t pt-8 ${
+          category === 'Couple' ? 'border-[#EDD5C8]/60' : 'border-stone-200/80'
+        }`}
+      >
+        {!isOpen ? (
+          <div className="space-y-4 text-center">
+            <div
+              className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${
+                category === 'Couple' ? 'bg-white/70' : 'bg-white/80'
+              }`}
+            >
+              <UserRound
+                className="h-5 w-5"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}
+                aria-hidden
+              />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-base font-bold text-stone-900 sm:text-lg">{mLabels.ctaTitle}</h3>
+              <p className="mx-auto max-w-md text-sm leading-relaxed text-stone-500">
+                {mLabels.ctaDesc}
+              </p>
+            </div>
+            <Button
+              type="button"
+              onClick={openForm}
+              className="mx-auto min-h-11 rounded-full px-6 text-sm font-bold text-white hover:brightness-105"
               style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
-              disabled={isLoading}
             >
-              <PenTool className="w-4 h-4" />
-              <span>{isLoading ? 'กำลังส่งข้อมูล...' : 'เผยแพร่เรื่องราว'}</span>
-            </button>
+              <PenTool className="h-4 w-4" aria-hidden />
+              {mLabels.btnText}
+            </Button>
           </div>
-        </form>
-      )}
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            className="animate-fade-in space-y-5 rounded-2xl border border-stone-200/80 bg-white/80 p-6 text-left shadow-sm sm:p-8"
+          >
+            <header className="flex items-center justify-between border-b border-stone-200 pb-3">
+              <h3 className="text-base font-bold text-stone-900">{mLabels.title}</h3>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="text-xs text-stone-400 transition hover:text-stone-700"
+              >
+                ปิดฟอร์ม
+              </button>
+            </header>
 
-      {/* Memory posts board grid list */}
-      {(() => {
-        const indexOfLastPost = currentPage * postsPerPage;
-        const indexOfFirstPost = indexOfLastPost - postsPerPage;
-        const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-        const totalPages = Math.ceil(posts.length / postsPerPage);
-
-        return (
-          <div className="space-y-6">
-            {posts.length === 0 ? (
-              <div className="text-center py-12 text-stone-500 text-sm border border-dashed border-stone-250 rounded-3xl bg-white shadow-sm">
-                ยังไม่มีผู้ร่วมแชร์เรื่องราวกระดานความทรงจำในขณะนี้
+            {error && (
+              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                <span>{error}</span>
               </div>
-            ) : (
-              <div className="divide-y divide-stone-150">
-                {currentPosts.map(p => (
-                  <MemoryPostCard key={p.id} p={p} parseMessage={parseMessage} />
-                ))}
+            )}
+            {success && (
+              <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-700">
+                <Check className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                <span>{success}</span>
               </div>
             )}
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 pt-6">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="p-2 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
-                  <button
-                    key={pageNumber}
-                    onClick={() => setCurrentPage(pageNumber)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-                      currentPage === pageNumber
-                        ? 'text-white bg-emerald-600 shadow-sm'
-                        : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
-                    }`}
-                    style={currentPage === pageNumber ? { backgroundColor: 'var(--theme-primary, #0d9488)' } : {}}
-                  >
-                    {pageNumber}
-                  </button>
-                ))}
-                
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="p-2 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="memory-sender">{mLabels.writerLabel}</Label>
+                <Input
+                  id="memory-sender"
+                  type="text"
+                  value={senderName}
+                  onChange={(e) => setSenderName(e.target.value)}
+                  placeholder={mLabels.writerPlaceholder}
+                  className="min-h-10 rounded-xl bg-stone-50/80"
+                  disabled={isLoading}
+                />
               </div>
-            )}
-          </div>
-        );
-      })()}
+              <div className="space-y-1.5">
+                <Label htmlFor="memory-title">{mLabels.topicLabel}</Label>
+                <Input
+                  id="memory-title"
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder={mLabels.topicPlaceholder}
+                  className="min-h-10 rounded-xl bg-stone-50/80"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="memory-photo">แนบรูปภาพความทรงจำ (ถ้ามี)</Label>
+              <Input
+                id="memory-photo"
+                type="file"
+                accept="image/*"
+                key={mediaFile ? mediaFile.name : 'empty'}
+                onChange={(e) => setMediaFile(e.target.files ? e.target.files[0] : null)}
+                className="min-h-10 rounded-xl bg-stone-50/80 file:mr-3 file:rounded-lg file:border-0 file:bg-stone-200 file:px-3 file:py-1.5 file:text-xs file:font-semibold"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="memory-content-textarea">รายละเอียดและเนื้อเรื่องเล่า</Label>
+              <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => insertFormatting('bold')}
+                  className="h-7 rounded-lg px-2.5 text-xs font-black"
+                >
+                  B
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => insertFormatting('italic')}
+                  className="h-7 rounded-lg px-2.5 text-xs italic"
+                >
+                  I
+                </Button>
+                <div className="mx-1 h-4 w-px bg-stone-200" />
+                <div className="flex items-center gap-1">
+                  {mLabels.emojis.map((item) => (
+                    <button
+                      key={item.char}
+                      type="button"
+                      onClick={() => insertEmoji(item.char)}
+                      className="cursor-pointer rounded-md p-1 text-sm transition hover:bg-stone-100 active:scale-90"
+                      title={item.label}
+                    >
+                      {item.char}
+                    </button>
+                  ))}
+                </div>
+                <span className="ml-auto hidden text-[11px] text-stone-400 sm:inline">
+                  {mLabels.emojiLabel}
+                </span>
+              </div>
+              <Textarea
+                id="memory-content-textarea"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder={mLabels.contentPlaceholder}
+                rows={4}
+                className="min-h-28 rounded-xl bg-stone-50/80"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2 rounded-2xl border border-stone-200 bg-stone-50/80 p-4">
+              <Label className="flex items-center gap-1.5 text-stone-700">
+                <Shield className="h-3.5 w-3.5" aria-hidden />
+                การป้องกันสแปมบอท (กรุณาคำนวณผลลัพธ์)
+              </Label>
+              <div className="flex items-center gap-3">
+                <span className="select-none rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm font-bold text-stone-800">
+                  {captchaQuestion.num1} + {captchaQuestion.num2} = ?
+                </span>
+                <Input
+                  type="number"
+                  value={userAnswer}
+                  onChange={(e) => setUserAnswer(e.target.value)}
+                  placeholder="คำตอบของคุณ"
+                  className="min-h-10 flex-1 rounded-xl bg-white"
+                  disabled={isLoading}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={generateCaptcha}
+                  className="shrink-0 rounded-xl"
+                  title="เปลี่ยนคำถาม"
+                >
+                  <RotateCw className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+                className="min-h-10 rounded-xl"
+                disabled={isLoading}
+              >
+                ยกเลิก
+              </Button>
+              <Button
+                type="submit"
+                className="min-h-10 rounded-xl text-white"
+                style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
+                disabled={isLoading}
+              >
+                <PenTool className="h-4 w-4" aria-hidden />
+                {isLoading ? 'กำลังส่งข้อมูล...' : 'เผยแพร่เรื่องราว'}
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }

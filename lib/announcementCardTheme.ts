@@ -79,21 +79,31 @@ export function resolveAnnouncementCardTheme(
       return withMilestoneAccents(
         {
           cardBgClass:
-            'bg-[#FFF0F2] border-[#FBC5CD] text-[#8C3A4F] shadow-[0_10px_30px_rgba(251,197,205,0.3)]',
-          textMutedClass: 'text-[#A25F70]',
-          headingColorClass: 'text-[#8C3A4F]',
-          innerCardBg: 'bg-[#FFF5F6]/70 border-[#FBC5CD]/40',
-          borderGoldClass: 'border-[#FBC5CD]/60',
+            category === 'Couple'
+              ? 'bg-[#FFF6F0] border-[#EDD5C8] text-[#7A3D45] shadow-[0_10px_32px_rgba(237,213,200,0.35)]'
+              : 'bg-[#FFF0F2] border-[#FBC5CD] text-[#8C3A4F] shadow-[0_10px_30px_rgba(251,197,205,0.3)]',
+          textMutedClass: category === 'Couple' ? 'text-[#A66B62]' : 'text-[#A25F70]',
+          headingColorClass: category === 'Couple' ? 'text-[#7A3D45]' : 'text-[#8C3A4F]',
+          innerCardBg:
+            category === 'Couple'
+              ? 'bg-[#FFFBF7]/85 border-[#EDD5C8]/45'
+              : 'bg-[#FFF5F6]/70 border-[#FBC5CD]/40',
+          borderGoldClass: category === 'Couple' ? 'border-[#EDD5C8]/60' : 'border-[#FBC5CD]/60',
           hasBackgroundImage: false,
           bgImageUrl: '',
         },
         {
-          borderAccentClass: 'border-[#FBC5CD]/45',
-          accentBadgeClass: 'bg-[#FBC5CD]/45 text-[#8C3A4F]',
+          borderAccentClass: category === 'Couple' ? 'border-[#EDD5C8]/45' : 'border-[#FBC5CD]/45',
+          accentBadgeClass:
+            category === 'Couple'
+              ? 'bg-[#EDD5C8]/40 text-[#7A3D45]'
+              : 'bg-[#FBC5CD]/45 text-[#8C3A4F]',
           mapButtonClass:
-            'border-[#FBC5CD]/60 bg-white/70 text-[#8C3A4F] hover:bg-white hover:text-[#6F2D3E]',
-          dotBgClass: 'bg-[#FFF5F6]',
-          timelineLineClass: 'bg-[#FBC5CD]/55',
+            category === 'Couple'
+              ? 'border-[#EDD5C8]/60 bg-white/75 text-[#7A3D45] hover:bg-white hover:text-[#5F2D35]'
+              : 'border-[#FBC5CD]/60 bg-white/70 text-[#8C3A4F] hover:bg-white hover:text-[#6F2D3E]',
+          dotBgClass: category === 'Couple' ? 'bg-[#FFFBF7]' : 'bg-[#FFF5F6]',
+          timelineLineClass: category === 'Couple' ? 'bg-[#EDD5C8]/55' : 'bg-[#FBC5CD]/55',
         }
       );
     }

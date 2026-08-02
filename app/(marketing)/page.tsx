@@ -45,6 +45,8 @@ const TRANSLATIONS = {
     familyTitle: "มรดกวงศ์ตระกูล (Family Legacy)",
     familyDesc: "รวบรวมแผนผังครอบครัว บันทึกสูตรอาหารส่งต่อรุ่นสู่รุ่น และเก็บรักษามรดกทางความรู้ในห้องเก็บข้อมูลส่วนตัวที่ปลอดภัยสำหรับการเดินทางอันยืนยงของวงศ์ตระกูล",
     createFamilyBtn: "สร้างเว็บประวัติตระกูล",
+    familyTreeTitle: "แผนผังครอบครัวเชิงโต้ตอบ",
+    familyRecipesTitle: "สูตรอาหารสืบทอดรุ่นสู่รุ่น",
     inviteTitle: "การ์ดเชิญ & กำหนดการ 3 ช่วง",
     inviteDesc: "พิธีมงคลสมรส งานเลี้ยงฉลอง และกิจกรรมพิเศษ",
     giftTitle: "กล่องรับซอง & ของชำร่วย",
@@ -73,8 +75,9 @@ const TRANSLATIONS = {
     galleryTitle: "คลังภาพเจ้าตัวน้อย",
     galleryDesc: "รวบรวมทุกภาพถ่ายใบโปรดและวิดีโอโมเมนต์สำคัญของน้อง จัดเก็บแบ่งเป็นอัลบั้มอย่างเป็นสัดส่วน เพื่อจัดแสดงความสดใสและเก็บรักษาไว้เป็นหน้าต่างเวลาที่หยิบมาดูเมื่อไหร่ก็ยิ้มได้",
 
-    pricingTitle: "แผนสมาชิก",
-    priceUnit: "฿2,000 / ปี",
+    pricingTitle: "แผนสมาชิกรายปี",
+    priceAmount: "฿2,000",
+    pricePeriod: "/ ปี",
     storage: "พื้นที่ 1 GB",
     allFeatures: "ครบทุกฟีเจอร์",
     permanentQr: "QR Code ถาวรสำหรับพิมพ์",
@@ -114,6 +117,8 @@ const TRANSLATIONS = {
     familyTitle: "Family Legacy",
     familyDesc: "Map your ancestry, preserve family recipes, and pass down wisdom. A private, secure vault for your family's enduring narrative.",
     createFamilyBtn: "Create Family Site",
+    familyTreeTitle: "Interactive family trees",
+    familyRecipesTitle: "Heirloom recipes",
 
     friendsTitle: "Friends",
     friendsDesc: "A dedicated space to preserve shared journeys, road trips, and the story of a lifetime friendship, keeping the laughter and warm memories alive as a timeless treasure for your circle.",
@@ -136,8 +141,9 @@ const TRANSLATIONS = {
     galleryTitle: "Pet Gallery",
     galleryDesc: "Organize favorite photos and videos into beautiful albums, keeping their playful spirits and brightest moments alive.",
 
-    pricingTitle: "Subscription Plan",
-    priceUnit: "฿2,000 / Year",
+    pricingTitle: "Annual membership",
+    priceAmount: "฿2,000",
+    pricePeriod: "/ year",
     storage: "1 GB Cloud Storage",
     allFeatures: "All Features Included",
     permanentQr: "Permanent QR Code for Printing",
@@ -163,12 +169,12 @@ export default function MarketingHome() {
       
       {/* HERO SECTION */}
       <AuroraBackground
-        className="h-auto min-h-[70vh] py-20 md:py-32 bg-[#F5F5F7]"
+        className="h-auto min-h-[82vh] py-24 md:py-36 bg-[#F5F5F7]"
         showRadialGradient
       >
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 w-full">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
-            <h1 className="text-[36px] md:text-[80px] font-bold tracking-tight text-[#1D1D1F] leading-[1.05] font-sans">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto space-y-7 md:space-y-8">
+            <h1 className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both text-[38px] sm:text-[52px] md:text-[72px] lg:text-[80px] font-bold tracking-[-0.03em] text-[#1D1D1F] leading-[1.08] font-sans text-balance">
               {mounted && lang === 'en' ? (
                 t.heroTitle
               ) : (
@@ -179,19 +185,19 @@ export default function MarketingHome() {
                 </>
               )}
             </h1>
-            <p className="text-[17px] md:text-[24px] text-[#86868B] max-w-2xl font-medium leading-snug">
+            <p className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both text-[17px] md:text-[21px] text-[#6E6E73] max-w-2xl font-medium leading-relaxed text-pretty">
               {t.heroDesc}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 md:pt-4 w-full sm:w-auto">
               <Link 
                 href="/manage/create?category=Memorial" 
-                className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-all active:scale-[0.98]"
+                className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3.5 rounded-full hover:bg-[#0077ED] shadow-[0_4px_14px_rgba(0,113,227,0.35)] hover:shadow-[0_6px_20px_rgba(0,113,227,0.42)] transition-all duration-300 active:scale-[0.98]"
               >
                 {t.startMemorial}
               </Link>
               <Link 
                 href="/examples" 
-                className="inline-flex items-center justify-center bg-transparent text-[#0071e3] font-medium text-[17px] px-8 py-3 rounded-full hover:underline transition-all flex items-center gap-1"
+                className="inline-flex items-center justify-center bg-[#FFFFFF]/80 text-[#0071e3] font-medium text-[17px] px-8 py-3.5 rounded-full border border-[#0071e3]/20 hover:border-[#0071e3]/40 hover:bg-[#FFFFFF] transition-all duration-300 gap-1.5 backdrop-blur-sm"
               >
                 {t.exploreExamples} <ChevronRight className="w-4 h-4" />
               </Link>
@@ -201,13 +207,14 @@ export default function MarketingHome() {
       </AuroraBackground>
 
       {/* MEMORIAL SECTION */}
-      <section id="memorial" className="py-5 md:py-12">
+      <section id="memorial" className="py-10 md:py-16 scroll-mt-20">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-stretch gap-6 md:gap-12 bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] overflow-hidden p-6 md:p-12 lg:p-16">
-            <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-3xl overflow-hidden aspect-[16/10] md:aspect-auto bg-[#F5F5F7]">
+          <div className="flex flex-col md:flex-row md:items-stretch gap-6 md:gap-12 bg-[#FFFFFF] rounded-[24px] md:rounded-[28px] shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] overflow-hidden p-6 md:p-12 lg:p-16 transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
+            <div className="w-full md:w-1/2 order-2 md:order-1 relative rounded-2xl md:rounded-3xl overflow-hidden aspect-[16/10] md:aspect-auto bg-[#F5F5F7]">
               <img 
-                className="w-full h-full object-cover md:absolute md:inset-0" 
+                className="w-full h-full object-cover md:absolute md:inset-0 transition-transform duration-700 hover:scale-[1.02]" 
                 alt="Premium lifestyle photography for a memorial service website" 
+                loading="lazy"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpnY3Uwxk0XiEohL9UGRkc8Hc9BwOPmZ242HyhpqVqu3t52QxxmSxKuQc8FNiFclznZvPBCIV4Hxrlyt13LDNgaMd9PrfyDYKXN8LLHZpkvcVIb5xtAfXZCfPKYVidBSTtaVkZ9X-sq-6ZXQWxXEn6ScaiRB58xRknLM1zQZTYyIac-UA48-I99R2hxNNm5WWWWQZ9ekLTZwFJy9RVNdoDIyPyrVFcab0mp4SKC1NgdBnxJGs4X3k"
               />
             </div>
@@ -240,10 +247,10 @@ export default function MarketingHome() {
       </section>
 
       {/* COUPLE SECTION */}
-      <section id="couple" className="py-5 md:py-12">
+      <section id="couple" className="py-10 md:py-16 scroll-mt-20">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="rounded-[22px] md:rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
-          <div className="relative w-full rounded-[22px] md:rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-0 md:min-h-[480px]">
+          <div className="rounded-[24px] md:rounded-[32px] shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
+          <div className="relative w-full rounded-[24px] md:rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-0 md:min-h-[480px]">
             <div className="w-full md:w-1/2 p-6 md:p-12 lg:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
               <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
                 {t.coupleTitle}
@@ -272,10 +279,11 @@ export default function MarketingHome() {
                 </Link>
               </div>
             </div>
-            <div className="relative md:absolute md:inset-0 md:left-1/2 w-full md:w-1/2 h-[220px] md:h-full">
+            <div className="relative md:absolute md:inset-y-0 md:right-0 md:left-1/2 w-full md:w-1/2 h-[240px] md:h-full">
               <img 
                 alt="A beautiful, high-end editorial photo of a couple" 
-                className="w-full h-full object-cover object-center absolute inset-0" 
+                className="w-full h-full object-cover object-center absolute inset-0 transition-transform duration-700 hover:scale-[1.02]" 
+                loading="lazy"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4sFtiQx4Dpew3HfPkRhGl6Zst2ZmqJ9H6gUoYOCM92DkS31dUFPofTEXqFMhRURonfspY9nve80gTgXL49Fma9YCCnAxXqQnqwcWuzEuPi1SegvQ_-Pk-x6Gfivy_0H6TS6H4JSMPVttqFaMYP_DV9RhcUZlFsWAh-xo_ReMD_9iJdpTT5qB_U3J_NeVzI3lSufok1NLoKsTcD76c-GQKanaa20zLsrjKcSj-JAYdnH4EOhdXurE"
               />
             </div>
@@ -285,9 +293,9 @@ export default function MarketingHome() {
       </section>
 
       {/* WEDDING SECTION */}
-      <section id="wedding" className="py-5 md:py-12">
+      <section id="wedding" className="py-10 md:py-16 scroll-mt-20">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="overflow-hidden rounded-[22px] md:rounded-[32px] bg-[#FFFFFF] shadow-[0_4px_24px_rgba(0,0,0,0.08)] flex flex-col lg:flex-row lg:items-stretch">
+          <div className="overflow-hidden rounded-[24px] md:rounded-[32px] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)] flex flex-col lg:flex-row lg:items-stretch">
             <div className="flex w-full flex-col justify-center p-6 md:p-10 lg:w-1/2 lg:p-14 text-left space-y-4 md:space-y-6">
               <h2 className="text-[32px] md:text-[48px] tracking-tight font-semibold leading-tight text-[#1D1D1F]">
                 {t.weddingTitle}
@@ -322,7 +330,7 @@ export default function MarketingHome() {
               </div>
             </div>
 
-            <div className="grid w-full grid-cols-3 gap-2.5 p-4 sm:gap-3 sm:p-5 md:p-6 lg:w-1/2 lg:gap-3 lg:p-5 lg:pl-2">
+            <div className="grid w-full grid-cols-3 gap-2.5 p-4 sm:gap-3 sm:p-5 md:p-6 lg:w-1/2 lg:gap-4 lg:p-6 lg:pl-3">
               {[
                 {
                   src: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80',
@@ -339,12 +347,13 @@ export default function MarketingHome() {
               ].map((photo) => (
                 <div
                   key={photo.src}
-                  className="relative aspect-[3/4] overflow-hidden rounded-2xl md:rounded-[1.25rem] bg-[#F5F5F7] lg:aspect-auto lg:min-h-[320px]"
+                  className="relative aspect-[3/4] overflow-hidden rounded-2xl md:rounded-[1.35rem] bg-[#F5F5F7] lg:aspect-auto lg:min-h-[340px] group"
                 >
                   <img
                     src={photo.src}
                     alt={photo.alt}
-                    className="absolute inset-0 h-full w-full object-cover"
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   />
                 </div>
               ))}
@@ -354,9 +363,9 @@ export default function MarketingHome() {
       </section>
 
       {/* FAMILY LEGACY SECTION */}
-      <section id="family-legacy" className="py-5 md:py-12">
+      <section id="family-legacy" className="py-10 md:py-16 scroll-mt-20">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="rounded-[22px] md:rounded-[32px] bg-[#E8F1FB] p-6 sm:p-8 md:p-10 lg:p-12">
+          <div className="rounded-[24px] md:rounded-[32px] bg-[#E8F1FB] p-6 sm:p-8 md:p-10 lg:p-14">
             <h2 className="text-center text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">
               {mounted && lang === 'en' ? (
                 t.familyTitle
@@ -372,7 +381,7 @@ export default function MarketingHome() {
 
             <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-[1fr_1.35fr_1fr] gap-4 md:gap-5 items-stretch">
               {/* Description */}
-              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] p-6 md:p-8 flex flex-col justify-center text-left shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] p-6 md:p-8 flex flex-col justify-center text-left shadow-[0_1px_2px_rgba(0,0,0,0.03),0_8px_28px_rgba(0,0,0,0.05)]">
                 <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium leading-relaxed">
                   {t.familyDesc}
                 </p>
@@ -400,13 +409,13 @@ export default function MarketingHome() {
                 <div className="flex items-center gap-3">
                   <GitBranch className="w-6 h-6 text-[#0071e3] shrink-0" />
                   <h3 className="font-semibold text-[17px] md:text-[19px] text-[#1D1D1F] tracking-tight">
-                    Interactive Family Trees
+                    {t.familyTreeTitle}
                   </h3>
                 </div>
                 <div className="flex items-center gap-3">
                   <BookOpen className="w-6 h-6 text-[#0071e3] shrink-0" />
                   <h3 className="font-semibold text-[17px] md:text-[19px] text-[#1D1D1F] tracking-tight">
-                    Heirloom Recipes
+                    {t.familyRecipesTitle}
                   </h3>
                 </div>
                 <div className="hidden md:block pt-2">
@@ -424,10 +433,10 @@ export default function MarketingHome() {
       </section>
 
       {/* FRIENDS SECTION */}
-      <section id="friends" className="py-5 md:py-12">
+      <section id="friends" className="py-10 md:py-16 scroll-mt-20">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="rounded-[22px] md:rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
-          <div className="relative w-full rounded-[22px] md:rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-0 md:min-h-[480px]">
+          <div className="rounded-[24px] md:rounded-[32px] shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
+          <div className="relative w-full rounded-[24px] md:rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-0 md:min-h-[480px]">
             <div className="w-full md:w-1/2 p-6 md:p-12 lg:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
               <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
                 {t.friendsTitle}
@@ -444,10 +453,11 @@ export default function MarketingHome() {
                 </Link>
               </div>
             </div>
-            <div className="relative md:absolute md:inset-0 md:left-1/2 w-full md:w-1/2 h-[220px] md:h-full">
+            <div className="relative md:absolute md:inset-y-0 md:right-0 md:left-1/2 w-full md:w-1/2 h-[240px] md:h-full">
               <img 
                 alt="Friends laughing together" 
-                className="w-full h-full object-cover object-center absolute inset-0" 
+                className="w-full h-full object-cover object-center absolute inset-0 transition-transform duration-700 hover:scale-[1.02]" 
+                loading="lazy"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwyOR5_KWg2H8t5M27y7ySRwuTQLc_opZIs4G6hJ69Lp1TOYjD1c-SBJCvO3k_Li3Sh2vmqr5aEF5c1tjz-dLLDUpKTuCqBOCvKqm5us1jjVLDtC6o7tYUAl7uubQxSrFtl_Rb3Y0zOVXuzbn8xHURQFIvOJj-Q3zY039j6OO2l2uxbghYq85gz_1tMYbi0C2B9VvyqfmHCvS3s8TbghrmN56HBqbVYBxoyAWzwBWt5i2zZUVP_gI"
               />
             </div>
@@ -457,7 +467,7 @@ export default function MarketingHome() {
       </section>
 
       {/* PET MEMORIAL SECTION */}
-      <section id="pet-memorial" className="py-5 md:py-12">
+      <section id="pet-memorial" className="py-10 md:py-16 scroll-mt-20">
         <div className="max-w-[1280px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
             {/* Intro */}
@@ -482,7 +492,7 @@ export default function MarketingHome() {
             {/* Feature cards: guestbook | blue gallery | diary */}
             <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5">
               {/* 1 — Guestbook + dog with owner */}
-              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.08)] flex flex-col h-full group">
+              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] flex flex-col h-full group transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
                 <div className="relative aspect-[2/1] md:aspect-[4/3] overflow-hidden bg-[#F5F5F7]">
                   <img
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz2pGinLl6I0W9a40FYq3VtO-LvGKt-wrsWP_rd5npjmAAv8lM6I3FkjcSmiUiTppfWjtKLgXA6xfRK5Ghic1_WAXr-NDt-Fbvtvm_Lm2E62Lq16BHKP_TyM52OBktxG0kgtPDSqH1dwPQGDxPlvDGvK4PNFrFw-WJ9XhKwcNKwX9VMlJvDhqJLJ0XYYI7JratIH2v5foXRPHMOzVX8b4bGHXXQLDuNeRB2N70DyEfMaN24kptZCs"
@@ -491,13 +501,13 @@ export default function MarketingHome() {
                   />
                 </div>
                 <div className="p-5 md:p-6 flex flex-col flex-grow text-left">
-                  <h3 className="font-semibold text-[28px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight leading-tight">{t.guestbookTitle}</h3>
+                  <h3 className="font-semibold text-[21px] md:text-[22px] mb-2 text-[#1D1D1F] tracking-tight leading-tight">{t.guestbookTitle}</h3>
                   <p className="font-medium text-[14px] md:text-[15px] text-[#86868B] leading-relaxed">{t.guestbookDesc}</p>
                 </div>
               </div>
 
               {/* 3 — Gallery details on blue (center) */}
-              <div className="bg-[#0071e3] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.08)] flex flex-col sm:h-full">
+              <div className="bg-[#0071e3] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,113,227,0.25)] flex flex-col sm:h-full">
                 <div className="p-5 md:p-6 flex flex-col sm:flex-grow text-left text-white">
                   <h3 className="font-semibold text-[28px] md:text-[32px] mb-2 tracking-tight leading-tight">{t.galleryTitle}</h3>
                   <p className="font-medium text-[14px] md:text-[15px] text-white/85 leading-relaxed sm:flex-grow">{t.galleryDesc}</p>
@@ -513,7 +523,7 @@ export default function MarketingHome() {
               </div>
 
               {/* 2 — Diary + gallery polaroids image */}
-              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.08)] flex flex-col h-full group">
+              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] flex flex-col h-full group transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
                 <div className="relative aspect-[2/1] md:aspect-[4/3] overflow-hidden bg-[#F5F5F7]">
                   <img
                     src="/images/pet-polaroids.jpg"
@@ -522,7 +532,7 @@ export default function MarketingHome() {
                   />
                 </div>
                 <div className="p-5 md:p-6 flex flex-col flex-grow text-left">
-                  <h3 className="font-semibold text-[28px] md:text-[21px] mb-2 text-[#1D1D1F] tracking-tight leading-tight">{t.diaryTitle}</h3>
+                  <h3 className="font-semibold text-[21px] md:text-[22px] mb-2 text-[#1D1D1F] tracking-tight leading-tight">{t.diaryTitle}</h3>
                   <p className="font-medium text-[14px] md:text-[15px] text-[#86868B] leading-relaxed">{t.diaryDesc}</p>
                 </div>
               </div>
@@ -532,13 +542,18 @@ export default function MarketingHome() {
       </section>
 
       {/* PRICING + CTA */}
-      <section className="py-12 md:py-20 text-center">
+      <section className="py-14 md:py-24">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="space-y-6 md:space-y-8">
-            <p className="text-[14px] text-[#86868B] font-medium uppercase tracking-widest">{t.pricingTitle}</p>
-            <h2 className="text-[36px] md:text-[80px] tracking-tight text-[#1D1D1F] font-bold">{t.priceUnit}</h2>
+          <div className="max-w-lg mx-auto bg-[#FFFFFF] rounded-[28px] md:rounded-[32px] p-8 md:p-12 text-center shadow-[0_1px_2px_rgba(0,0,0,0.03),0_16px_48px_rgba(0,0,0,0.08)]">
+            <h2 className="text-[32px] md:text-[40px] font-semibold tracking-tight text-[#1D1D1F] leading-tight mb-2">
+              {t.pricingTitle}
+            </h2>
+            <p className="text-[48px] md:text-[64px] font-bold tracking-tight text-[#1D1D1F] leading-none mt-4">
+              {t.priceAmount}
+              <span className="text-[18px] md:text-[22px] font-medium text-[#6E6E73] ml-1">{t.pricePeriod}</span>
+            </p>
 
-            <div className="grid grid-cols-3 gap-3 sm:gap-6 max-w-2xl mx-auto pt-2 md:pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-4 max-w-md mx-auto pt-8 md:pt-10 border-t border-[#E8E8ED] mt-8">
               {[
                 { icon: Cloud, label: t.storage },
                 { icon: Sparkles, label: t.allFeatures },
@@ -546,43 +561,52 @@ export default function MarketingHome() {
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="flex flex-col items-center gap-2 sm:gap-3 text-center"
+                  className="flex sm:flex-col items-center sm:justify-center gap-3 sm:gap-2.5 text-center"
                 >
-                  <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#0071e3] shrink-0" />
-                  <span className="text-[13px] sm:text-[17px] text-[#1D1D1F] font-medium leading-snug">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5F5F7] shrink-0">
+                    <item.icon className="w-5 h-5 text-[#0071e3]" />
+                  </div>
+                  <span className="text-[15px] sm:text-[14px] text-[#1D1D1F] font-medium leading-snug text-left sm:text-center">
                     {item.label}
                   </span>
                 </div>
               ))}
             </div>
 
-            <div className="max-w-3xl mx-auto space-y-5 md:space-y-8 pt-4 md:pt-6">
-              <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold leading-tight">
-                {mounted && lang === 'en' ? (
-                  t.readyTitle
-                ) : (
-                  <>
-                    พร้อมเก็บความทรงจำ{' '}
-                    <br className="sm:hidden" />
-                    ของคุณหรือยัง
-                  </>
-                )}
-              </h2>
-              <Link
-                href="/manage/create?category=Memorial"
-                className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0071e3]/90 transition-colors"
-              >
-                {t.readyBtn}
-              </Link>
-            </div>
+            <Link
+              href="/manage/create?category=Memorial"
+              className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[17px] px-8 py-3 rounded-full hover:bg-[#0077ED] transition-colors mt-8 md:mt-10 w-full sm:w-auto"
+            >
+              {t.pricingBtn}
+            </Link>
+          </div>
+
+          <div className="max-w-3xl mx-auto space-y-6 md:space-y-8 pt-16 md:pt-20 text-center">
+            <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold leading-tight text-balance">
+              {mounted && lang === 'en' ? (
+                t.readyTitle
+              ) : (
+                <>
+                  พร้อมเก็บความทรงจำ{' '}
+                  <br className="sm:hidden" />
+                  ของคุณหรือยัง
+                </>
+              )}
+            </h2>
+            <Link
+              href="/manage/create?category=Memorial"
+              className="inline-flex items-center justify-center bg-[#1D1D1F] text-[#FFFFFF] font-medium text-[17px] px-10 py-3.5 rounded-full hover:bg-[#333336] transition-colors shadow-[0_4px_16px_rgba(29,29,31,0.2)]"
+            >
+              {t.readyBtn}
+            </Link>
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-[#FFFFFF] border-t border-[#bfc9c3]/20 py-12 text-xs">
+      <footer className="bg-[#FFFFFF] border-t border-[#E8E8ED] py-14 text-xs">
         <div className="max-w-[1280px] mx-auto px-6 text-left">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 border-b border-[#bfc9c3]/20 pb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 border-b border-[#E8E8ED] pb-12">
             <div className="space-y-3">
               <h4 className="font-semibold text-[#1D1D1F]">ผลิตภัณฑ์</h4>
               <ul className="space-y-2">

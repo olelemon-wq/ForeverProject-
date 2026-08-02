@@ -70,7 +70,7 @@ export default function MemorialFeed({ websiteId, slug }: MemorialFeedProps) {
   });
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
+    <div className="space-y-6">
       {/* 1. Composer Box */}
       <PostComposer 
         websiteId={websiteId} 

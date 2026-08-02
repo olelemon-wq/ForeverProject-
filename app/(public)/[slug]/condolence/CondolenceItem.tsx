@@ -35,7 +35,10 @@ const getRelationshipBadge = (rel: string) => {
   return { label: `ผู้ร่วมไว้อาลัย (${rel})`, className: 'bg-stone-50 text-stone-600 border-stone-200' };
 };
 
-export default function CondolenceItem({ condolence, hideRelationship = false }: CondolenceItemProps) {
+export default function CondolenceItem({
+  condolence,
+  hideRelationship = false,
+}: CondolenceItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const text = condolence.message || '';
   const shouldTruncate = text.length > 220;
@@ -61,19 +64,18 @@ export default function CondolenceItem({ condolence, hideRelationship = false }:
   };
 
   return (
-    <div className="relative py-7 first:pt-0 transition">
-      {/* Header row */}
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 mb-3">
-        <span className="text-sm sm:text-base font-bold text-stone-800">{condolence.senderName}</span>
+    <div className="relative py-7 transition">
+      <div className="mb-3 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="text-sm font-bold text-stone-800 sm:text-base">{condolence.senderName}</span>
         {showRelationship && (() => {
           const badge = getRelationshipBadge(condolence.relationship);
           return (
-            <span className={`px-2 py-0.5 text-[9px] font-bold border rounded-full ${badge.className}`}>
+            <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold ${badge.className}`}>
               {badge.label}
             </span>
           );
         })()}
-        <span className="text-[10px] text-stone-400 ml-auto tabular-nums">
+        <span className="ml-auto text-[10px] tabular-nums text-stone-400">
           {new Date(condolence.createdAt).toLocaleDateString('th-TH', {
             day: 'numeric',
             month: 'short',
@@ -81,19 +83,18 @@ export default function CondolenceItem({ condolence, hideRelationship = false }:
           })}
         </span>
       </div>
-      {/* Message body */}
       <div className="space-y-1.5">
-        <p className="text-stone-600 text-xs sm:text-sm leading-relaxed sm:leading-loose whitespace-pre-line break-words">
+        <p className="break-words whitespace-pre-line text-xs leading-relaxed text-stone-600 sm:text-sm sm:leading-loose">
           &ldquo;{parseMessage(displayText)}&rdquo;
         </p>
         {shouldTruncate && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-xs font-medium transition cursor-pointer focus:outline-none flex items-center gap-0.5 pt-1 hover:opacity-70"
+            className="flex cursor-pointer items-center gap-0.5 pt-1 text-xs font-medium transition hover:opacity-70 focus:outline-none"
             style={{ color: 'var(--theme-primary, #0d9488)' }}
           >
             <span>{isExpanded ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม'}</span>
-            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
         )}
       </div>

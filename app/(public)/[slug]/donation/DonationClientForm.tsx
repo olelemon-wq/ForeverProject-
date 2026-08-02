@@ -1,9 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getFeatureLabel } from '@/lib/categories';
-import { Heart, Sparkles, AlertCircle, Check, Smartphone } from 'lucide-react';
+import { getDonationFormCopy } from '@/lib/donationFormCopy';
+import { buildPromptPayQrImageUrl } from '@/lib/promptpayPayload';
+import {
+  AlertCircle,
+  Check,
+  Heart,
+  PawPrint,
+  UserRound,
+} from 'lucide-react';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
+import DonationPageShell from '@/components/public/DonationPageShell';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface Donation {
   id: string;
@@ -15,14 +28,14 @@ interface Donation {
   createdAt: string;
 }
 
-export default function DonationClientForm({ 
-  websiteId, 
-  donationPromptPay, 
+export default function DonationClientForm({
+  websiteId,
+  donationPromptPay,
   donationAccountName,
-  category
-}: { 
-  websiteId: string; 
-  donationPromptPay: string; 
+  category,
+}: {
+  websiteId: string;
+  donationPromptPay: string;
   donationAccountName: string;
   category?: string;
 }) {
@@ -33,13 +46,30 @@ export default function DonationClientForm({
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [hideAmount, setHideAmount] = useState(false);
   const [slipFile, setSlipFile] = useState<File | null>(null);
-  
+
   const [loading, setLoading] = useState(false);
   const [listLoading, setListLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // 1. Fetch donations for the merit board
+  const copy = getDonationFormCopy(category);
+  const { label: featureLabel, description: featureDescription } = getFeatureLabel(
+    category || 'Memorial',
+    'donation',
+  );
+  const isPet = category === 'Pet Memorial';
+  const FormIcon = isPet ? PawPrint : Heart;
+
+  const parsedAmount = parseFloat(amount);
+  const qrImageUrl = useMemo(
+    () =>
+      buildPromptPayQrImageUrl(
+        donationPromptPay,
+        Number.isFinite(parsedAmount) && parsedAmount > 0 ? parsedAmount : undefined,
+      ),
+    [donationPromptPay, parsedAmount],
+  );
+
   useEffect(() => {
     async function loadDonations() {
       try {
@@ -57,7 +87,6 @@ export default function DonationClientForm({
     loadDonations();
   }, [websiteId]);
 
-  // 2. Handle slip submit and API call
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -65,13 +94,13 @@ export default function DonationClientForm({
     setLoading(true);
 
     if (!donorName && !isAnonymous) {
-      setError('กรุณากรอกชื่อผู้ร่วมทำบุญ หรือเลือกแบบไม่ประสงค์ออกนาม');
+      setError(copy.errorNameRequired);
       setLoading(false);
       return;
     }
 
     if (!amount || parseFloat(amount) <= 0) {
-      setError('กรุณากรอกจำนวนเงินทำบุญที่ถูกต้อง');
+      setError(copy.errorAmountRequired);
       setLoading(false);
       return;
     }
@@ -120,8 +149,8 @@ export default function DonationClientForm({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('ส่งสลิปโอนเงินตรวจสอบสำเร็จ ขออนุโมทนาบุญค่ะ');
-      
+      setSuccess(copy.successMessage);
+
       const listRes = await fetch(`/api/donation/list?websiteId=${websiteId}`);
       const listData = await listRes.json();
       if (listRes.ok) {
@@ -134,93 +163,129 @@ export default function DonationClientForm({
       setIsAnonymous(false);
       setHideAmount(false);
       setSlipFile(null);
-    } catch (err: any) {
-      setError(err.message || 'เกิดข้อผิดพลาดในการตรวจสอบสลิป กรุณาลองใหม่อีกครั้ง');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'เกิดข้อผิดพลาดในการตรวจสอบสลิป กรุณาลองใหม่อีกครั้ง';
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden text-left max-w-2xl mx-auto">
-      {/* Page Header with CategoryOrnament and Wing lines */}
-      {(() => {
-        const { label: fLabel, description: fDesc } = getFeatureLabel(category || 'Memorial', 'donation');
-        return (
-          <div className="flex flex-col items-center text-center space-y-3">
-            <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
-              {fLabel}
-            </h2>
-            <p className="text-stone-500 text-xs max-w-md leading-normal">
-              {fDesc}
+    <DonationPageShell category={category || 'Memorial'} className="text-left">
+      <header className="mx-auto mb-8 max-w-xl space-y-3 text-center">
+        <h2
+          className="text-2xl font-black tracking-tight text-stone-900 sm:text-[1.65rem]"
+          style={{ color: 'var(--theme-primary, #0d9488)' }}
+        >
+          {featureLabel}
+        </h2>
+        <p className="text-sm leading-relaxed text-stone-500">{featureDescription}</p>
+        <div className="flex items-center justify-center gap-4 pt-2 select-none">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-stone-200" />
+          <CategoryOrnament category={category || 'Memorial'} count={1} />
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-stone-200" />
+        </div>
+      </header>
+
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)] lg:gap-10 lg:items-start">
+        <aside className="lg:sticky lg:top-6">
+          <div className="mx-auto max-w-xs space-y-4 rounded-2xl border border-stone-200/70 bg-white/80 p-5 shadow-sm backdrop-blur-[2px]">
+            <p className="text-center text-[11px] font-bold tracking-[0.14em] text-stone-400">
+              พร้อมเพย์
             </p>
-            {/* Centered Motif with Wing lines divider */}
-            <div className="w-full flex items-center justify-center gap-4 pt-4 select-none">
-              <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-stone-200" />
-              <div className="flex-shrink-0">
-                <CategoryOrnament category={category || 'Memorial'} count={1} />
+
+            <div className="mx-auto w-fit rounded-xl border border-stone-200 bg-white p-3 shadow-sm">
+              {qrImageUrl ? (
+                <img
+                  src={qrImageUrl}
+                  alt={`QR Code พร้อมเพย์ ${donationPromptPay}`}
+                  width={200}
+                  height={200}
+                  className="h-[200px] w-[200px] object-contain"
+                />
+              ) : (
+                <div className="flex h-[200px] w-[200px] items-center justify-center text-xs text-stone-400">
+                  ไม่สามารถสร้าง QR ได้
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3 text-center">
+              <div>
+                <p className="text-[11px] font-semibold text-stone-400">ชื่อบัญชีรับเงิน</p>
+                <p className="mt-0.5 text-sm font-bold text-stone-900">{donationAccountName}</p>
               </div>
-              <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-stone-200" />
+              <div>
+                <p className="text-[11px] font-semibold text-stone-400">หมายเลขพร้อมเพย์</p>
+                <p className="mt-0.5 text-sm font-bold tabular-nums text-stone-800">
+                  {donationPromptPay}
+                </p>
+              </div>
+              {parsedAmount > 0 && (
+                <p
+                  className="inline-flex rounded-full px-3 py-1 text-xs font-bold"
+                  style={{
+                    color: 'var(--theme-primary, #0d9488)',
+                    backgroundColor: 'color-mix(in srgb, var(--theme-primary, #0d9488) 10%, white)',
+                  }}
+                >
+                  ยอดใน QR: {parsedAmount.toLocaleString('th-TH')} บาท
+                </p>
+              )}
             </div>
+
+            <p className="text-center text-[11px] leading-relaxed text-stone-400">
+              สแกน QR แล้วโอนเงิน จากนั้นกรอกแบบฟอร์มด้านล่างเพื่อแนบสลิปยืนยัน
+            </p>
           </div>
-        );
-      })()}
+        </aside>
 
-      <div className="space-y-10">
-        {/* PromptPay QR Code Box */}
-        <div className="text-center space-y-6">
-          <div className="p-5 rounded-2xl bg-stone-50 text-stone-900 shadow-sm space-y-4 max-w-xs mx-auto border border-stone-200/60">
-            <div className="text-center font-bold text-[10px] tracking-wider border-b border-stone-200 pb-2 text-stone-500 uppercase">PROMPTPAY QR</div>
-            
-            <div className="w-40 h-40 bg-white rounded-lg mx-auto flex flex-col items-center justify-center gap-1 border border-stone-200 p-2">
-              <Smartphone className="w-8 h-8 text-stone-500" />
-              <span className="text-[8px] font-black text-stone-700">DONATION SCAN</span>
-              <span className="text-[9px] font-mono text-stone-500 break-all px-2">{donationPromptPay}</span>
+        <div className="min-w-0 space-y-10">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="flex items-center gap-2">
+              <FormIcon
+                className="h-4 w-4 shrink-0"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}
+                aria-hidden
+              />
+              <h3 className="text-base font-bold text-stone-900">{copy.formTitle}</h3>
             </div>
 
-            <div className="space-y-0.5 text-left">
-              <p className="text-[10px] font-bold text-stone-400">ชื่อบัญชีรับเงิน:</p>
-              <p className="text-xs font-black text-stone-900 truncate">{donationAccountName}</p>
-              <p className="text-[9px] text-stone-550">หมายเลขพร้อมเพย์: {donationPromptPay}</p>
-            </div>
-          </div>
-
-          {/* Donation slip upload form */}
-          <form onSubmit={handleSubmit} className="border-t border-stone-200 pt-6 text-left space-y-4">
-            <h3 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
-              <Heart className="w-4 h-4 text-amber-600" />
-              <span>ส่งสลิปโอนเงินยืนยันการทำบุญ (Slip Verify)</span>
-            </h3>
-            
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-xs text-red-700 rounded-xl font-semibold flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" aria-hidden />
                 <span>{error}</span>
               </div>
             )}
             {success && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 rounded-xl font-semibold flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-700">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
                 <span>{success}</span>
               </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] text-stone-500 font-bold uppercase block">ชื่อผู้ร่วมทำบุญ</label>
-                <input 
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="donor-name">{copy.donorNameLabel}</Label>
+                <Input
+                  id="donor-name"
                   type="text"
                   disabled={isAnonymous}
                   value={donorName}
                   onChange={(e) => setDonorName(e.target.value)}
-                  placeholder="เช่น นายสมใจ รักสงบ"
-                  className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs disabled:opacity-40 focus:bg-white focus:outline-none"
+                  placeholder={copy.donorNamePlaceholder}
+                  className="min-h-10 rounded-xl bg-stone-50/80"
                 />
               </div>
-              
-              <div className="space-y-1">
-                <label className="text-[10px] text-stone-500 font-bold uppercase block">จำนวนเงินทำบุญ (บาท)</label>
-                <input 
+
+              <div className="space-y-1.5">
+                <Label htmlFor="donation-amount">{copy.amountLabel}</Label>
+                <Input
+                  id="donation-amount"
                   type="number"
                   step="0.01"
                   min="1"
@@ -228,107 +293,140 @@ export default function DonationClientForm({
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="เช่น 100"
-                  className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs font-mono focus:bg-white focus:outline-none"
+                  className="min-h-10 rounded-xl bg-stone-50/80 tabular-nums"
                 />
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] text-stone-500 font-bold uppercase block">คำส่งอนุโมทนา/คำอุทิศส่วนกุศล (ระบุได้ตามปรารถนา)</label>
-              <input 
+            <div className="space-y-1.5">
+              <Label htmlFor="donation-message">{copy.messageLabel}</Label>
+              <Input
+                id="donation-message"
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="เช่น ขอให้ดวงวิญญาณไปสู่สุคติในสัมปรายภพ"
-                className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
+                placeholder={copy.messagePlaceholder}
+                className="min-h-10 rounded-xl bg-stone-50/80"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] text-stone-500 font-bold uppercase block">แนบภาพสลิปโอนเงิน (PDF / Image)</label>
-              <input 
-                type="file"
-                accept="image/*,application/pdf"
-                required
-                onChange={(e) => setSlipFile(e.target.files ? e.target.files[0] : null)}
-                className="w-full text-stone-500 text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-semibold file:bg-stone-200 file:text-stone-700 hover:file:bg-stone-300 cursor-pointer"
-              />
+            <div className="space-y-2">
+              <Label htmlFor="donation-slip">แนบภาพสลิปโอนเงิน (PDF / รูปภาพ)</Label>
+              <div className="flex flex-wrap items-center gap-3">
+                <Input
+                  id="donation-slip"
+                  type="file"
+                  accept="image/*,application/pdf"
+                  required
+                  onChange={(e) => setSlipFile(e.target.files ? e.target.files[0] : null)}
+                  className="min-h-10 rounded-xl bg-stone-50/80 file:mr-3 file:rounded-lg file:border-0 file:bg-stone-200 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-stone-700"
+                />
+                {slipFile && (
+                  <span className="text-xs font-medium text-stone-500">{slipFile.name}</span>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-4 pt-2">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input 
-                  type="checkbox"
+            <div className="flex flex-wrap gap-5 pt-1">
+              <label className="flex cursor-pointer items-center gap-2.5">
+                <Checkbox
                   checked={isAnonymous}
-                  onChange={(e) => setIsAnonymous(e.target.checked)}
-                  className="w-4 h-4 accent-emerald-600"
+                  onCheckedChange={(checked) => setIsAnonymous(checked === true)}
                 />
-                <span className="text-xs text-stone-700 font-bold">ไม่ประสงค์ออกนาม</span>
+                <span className="text-sm font-medium text-stone-700">ไม่ประสงค์ออกนาม</span>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input 
-                  type="checkbox"
+              <label className="flex cursor-pointer items-center gap-2.5">
+                <Checkbox
                   checked={hideAmount}
-                  onChange={(e) => setHideAmount(e.target.checked)}
-                  className="w-4 h-4 accent-emerald-600"
+                  onCheckedChange={(checked) => setHideAmount(checked === true)}
                 />
-                <span className="text-xs text-stone-700 font-bold">ไม่แสดงยอดเงิน</span>
+                <span className="text-sm font-medium text-stone-700">ไม่แสดงยอดเงิน</span>
               </label>
             </div>
 
-            <button 
+            <Button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-stone-950 font-bold text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5"
+              className="min-h-11 w-full rounded-xl text-sm font-bold text-white shadow-md hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
             >
-              <Heart className="w-4 h-4 text-stone-950" />
-              <span>{loading ? 'กำลังส่งและตรวจสอบสลิปอัตโนมัติ...' : 'ยืนยันยอดและร่วมอนุโมทนาบุญ'}</span>
-            </button>
+              <FormIcon className="h-4 w-4" aria-hidden />
+              {loading ? copy.submitLoading : copy.submitButton}
+            </Button>
           </form>
-        </div>
 
-        {/* Merit Wall - Display board of verified donors */}
-        <div className="border-t border-stone-200 pt-8 space-y-6">
-          <div className="text-center">
-            <h3 className="text-sm font-black text-stone-900 uppercase tracking-wider flex items-center justify-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>กระดานรายนามผู้ร่วมอนุโมทนาบุญ (Merit Wall)</span>
-            </h3>
-            <p className="text-[10px] text-stone-550 mt-1">รายนามแขกผู้มีเกียรติที่ร่วมทำบุญและได้รับการตรวจสอบสลิปเรียบร้อยแล้ว</p>
-          </div>
-
-          {listLoading ? (
-            <div className="text-center py-6 text-xs text-stone-500 animate-pulse">กำลังโหลดข้อมูลรายนาม...</div>
-          ) : donations.length === 0 ? (
-            <div className="text-center py-8 border border-dashed border-stone-200 rounded-2xl text-xs text-stone-500 italic">
-              ยังไม่มีผู้ส่งข้อมูลทำบุญในเวลานี้
+          <section className="space-y-5">
+            <div className="space-y-1">
+              <h3 className="flex items-center gap-2 text-base font-bold text-stone-900">
+                <UserRound
+                  className="h-4 w-4"
+                  style={{ color: 'var(--theme-primary, #0d9488)' }}
+                  aria-hidden
+                />
+                {copy.wallTitle}
+              </h3>
+              <p className="text-sm text-stone-500">{copy.wallDescription}</p>
             </div>
-          ) : (
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-              {donations.map(don => (
-                <div key={don.id} className="p-4 rounded-2xl border border-stone-200 bg-stone-50/50 flex justify-between items-center gap-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold text-stone-900">{don.isAnonymous ? 'ผู้ไม่ประสงค์ออกนาม' : don.donorName}</span>
-                      <span className="px-1.5 py-0.5 rounded bg-amber-100 border border-amber-200 text-amber-800 text-[8px] font-bold">
-                        ✓ ตรวจสอบแล้ว
-                      </span>
+
+            {listLoading ? (
+              <p className="py-6 text-center text-sm text-stone-400">กำลังโหลดรายนาม...</p>
+            ) : donations.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-stone-200 bg-stone-50/50 px-6 py-10 text-center text-sm text-stone-500">
+                {copy.wallEmpty}
+              </div>
+            ) : (
+              <ul className="max-h-[420px] space-y-3 overflow-y-auto pr-1">
+                {donations.map((don) => (
+                  <li
+                    key={don.id}
+                    className="flex items-start justify-between gap-4 rounded-2xl bg-white/70 px-4 py-3.5"
+                  >
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-bold text-stone-900">
+                          {don.isAnonymous ? 'ผู้ไม่ประสงค์ออกนาม' : don.donorName}
+                        </span>
+                        <span
+                          className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold"
+                          style={{
+                            backgroundColor:
+                              'color-mix(in srgb, var(--theme-primary, #0d9488) 10%, white)',
+                            borderColor:
+                              'color-mix(in srgb, var(--theme-primary, #0d9488) 24%, white)',
+                            color: 'var(--theme-primary, #0d9488)',
+                          }}
+                        >
+                          <Check className="h-3 w-3" aria-hidden />
+                          ตรวจสอบแล้ว
+                        </span>
+                      </div>
+                      {don.message && (
+                        <p className="text-sm leading-relaxed text-stone-600">
+                          &ldquo;{don.message}&rdquo;
+                        </p>
+                      )}
+                      <p className="text-[11px] font-medium text-stone-400">
+                        {new Date(don.createdAt).toLocaleDateString('th-TH', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </p>
                     </div>
-                    {don.message && <p className="text-xs text-stone-600 font-medium italic">"{don.message}"</p>}
-                    <p className="text-[8px] text-stone-400 font-semibold">{new Date(don.createdAt).toLocaleDateString('th-TH')}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-xs font-black text-amber-700">
-                      {don.hideAmount ? '*** บาท' : `${don.amount.toLocaleString()} บาท`}
+                    <p
+                      className="shrink-0 text-sm font-black tabular-nums"
+                      style={{ color: 'var(--theme-primary, #0d9488)' }}
+                    >
+                      {don.hideAmount ? '*** บาท' : `${don.amount.toLocaleString('th-TH')} บาท`}
                     </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
       </div>
-    </div>
+    </DonationPageShell>
   );
 }

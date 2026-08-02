@@ -4,6 +4,7 @@ import GalleryClient from './GalleryClient';
 import { getFeatureLabel } from '@/lib/categories';
 import { getEnabledFeatures } from '@/lib/features';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
+import { FEATURE_CARD_CLASS } from '@/lib/publicLayout';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 
@@ -63,7 +64,7 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
       {(() => {
         const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'gallery');
         return (
-          <div className="rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden">
+          <div className={`${FEATURE_CARD_CLASS} relative space-y-6 overflow-hidden rounded-3xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] sm:space-y-8 sm:p-8 md:p-12`}>
             {/* Page Header with CategoryOrnament and Wing lines */}
             <div className="flex flex-col items-center text-center space-y-3">
               <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>
