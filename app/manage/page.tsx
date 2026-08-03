@@ -22,6 +22,7 @@ import CoupleMilestonesEditor from '@/components/manage/CoupleMilestonesEditor';
 import CircularImageCropModal, { type CircularImageTransform } from '@/components/manage/CircularImageCropModal';
 import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
 import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
+import MemorialScheduleCard from '@/components/announcement/MemorialScheduleCard';
 import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { resolveCardFontFamily } from '@/lib/themeFont';
 import { getSiteThemeStyle } from '@/lib/siteTheme';
@@ -1515,7 +1516,9 @@ export default function WebmasterDashboard() {
       setAnnCardMode(ann.mode === 'custom' ? 'custom' : 'template');
       setAnnCustomCardUrl(ann.customCardUrl || '');
       setAnnText(ann.text || '');
-      setAnnStyle(ann.style || 'ELEGANT_WHITE');
+      setAnnStyle(
+        ann.style === 'THAI_TRADITIONAL' ? 'ELEGANT_WHITE' : ann.style || 'ELEGANT_WHITE',
+      );
       setAnnFontFamily(ann.fontFamily || loadedFont);
       setAnnWaterDate(ann.waterDate || '');
       setAnnWaterTime(ann.waterTime || '');
@@ -3603,42 +3606,46 @@ export default function WebmasterDashboard() {
                             ) : (
                               <>
                             {/* Theme and Font selection */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div className="space-y-1">
-                                <label className="font-bold text-stone-600">รูปแบบธีมการ์ด</label>
-                                <Select
-                              value={annStyle}
-                              onValueChange={(value) => setAnnStyle(value)}
-                            >
-                              <SelectTrigger className={"w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-<SelectItem value="ELEGANT_WHITE">Classic White (สีขาวเรียบหรู)</SelectItem>
-                                  <SelectItem value="WARM_CREAM">Warm Cream (สีครีมวินเทจ)</SelectItem>
-                                  <SelectItem value="CHARCOAL_SLATE">{getStyle3Label(selectedSite?.category || 'Memorial')}</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <div className="space-y-1.5">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                  <label className="block font-bold text-stone-600">รูปแบบธีมการ์ด</label>
+                                  <Select
+                                    value={annStyle}
+                                    onValueChange={(value) => setAnnStyle(value)}
+                                  >
+                                    <SelectTrigger className="h-10 w-full px-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper">
+                                      <SelectItem value="ELEGANT_WHITE">Classic White (สีขาวเรียบหรู)</SelectItem>
+                                      <SelectItem value="WARM_CREAM">Warm Cream (สีครีมวินเทจ)</SelectItem>
+                                      <SelectItem value="CHARCOAL_SLATE">{getStyle3Label(selectedSite?.category || 'Memorial')}</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="block font-bold text-stone-600">ฟอนต์การ์ดประกาศ</label>
+                                  <Select
+                                    value={annFontFamily}
+                                    onValueChange={(value) => setAnnFontFamily(value)}
+                                  >
+                                    <SelectTrigger className="h-10 w-full px-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper">
+                                      <SelectItem value="LINE Seed Sans TH">LINE Seed (ตัวหนา ทันสมัย)</SelectItem>
+                                      <SelectItem value="Charmonman">Charmonman (ตัวเขียนทางการ)</SelectItem>
+                                      <SelectItem value="Srisakdi">Srisakdi (ตัวอักษรไทยคลาสสิก)</SelectItem>
+                                      <SelectItem value="Charm">Charm (ตัวเขียนอ่อนช้อย)</SelectItem>
+                                      <SelectItem value="Thasadith">Thasadith (ตัวพิมพ์ทางการ)</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
                               </div>
-                              <div className="space-y-1">
-                                <label className="font-bold text-stone-600">ฟอนต์การ์ดประกาศ</label>
-                                <p className="text-[10px] leading-relaxed text-stone-400">ถ้าเลือกฟอนต์เดียวกับแท็บธีม จะเปลี่ยนตามกันอัตโนมัติ</p>
-                                <Select
-                              value={annFontFamily}
-                              onValueChange={(value) => setAnnFontFamily(value)}
-                            >
-                              <SelectTrigger className={"w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-<SelectItem value="LINE Seed Sans TH">LINE Seed (ตัวหนา ทันสมัย)</SelectItem>
-                                  <SelectItem value="Charmonman">Charmonman (ตัวเขียนทางการ)</SelectItem>
-                                  <SelectItem value="Srisakdi">Srisakdi (ตัวอักษรไทยคลาสสิก)</SelectItem>
-                                  <SelectItem value="Charm">Charm (ตัวเขียนอ่อนช้อย)</SelectItem>
-                                  <SelectItem value="Thasadith">Thasadith (ตัวพิมพ์ทางการ)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                              </div>
+                              <p className="text-[10px] leading-relaxed text-stone-400">
+                                ถ้าเลือกฟอนต์เดียวกับแท็บธีม จะเปลี่ยนตามกันอัตโนมัติ
+                              </p>
                             </div>
 
                             {/* Default Font Size selector */}
@@ -4119,191 +4126,69 @@ export default function WebmasterDashboard() {
                             contactPhone={annContactPhone}
                           />
                         ) : (
-                          <div 
-                            className={`w-full max-w-md mx-auto rounded-3xl border p-8 space-y-6 text-center shadow-lg relative overflow-hidden transition-all duration-300 ${
-                              annStyle === 'CHARCOAL_SLATE'
-                                ? getStyle3Config(selectedSite?.category || 'Memorial').classes
-                                : annStyle === 'WARM_CREAM'
-                                ? 'bg-[#FAF6EE] border-[#EADFC9] text-[#4A3E29]'
-                                : 'bg-white border-stone-200 text-stone-900'
-                            }`}
-                            style={{
-                              fontFamily: resolveCardFontFamily(annFontFamily, fontFamily) || annFontFamily,
-                              backgroundImage: annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').backgroundImage : undefined,
-                              backgroundSize: 'cover',
-                              backgroundPosition: 'center',
+                          <MemorialScheduleCard
+                            className="max-w-md"
+                            compact
+                            category={selectedSite.category}
+                            tenantName={siteName}
+                            inviteText={annText}
+                            inviteFallback={sLabels.invitePlaceholder}
+                            labels={{
+                              title: sLabels.subtitle,
+                              item1: sLabels.item1,
+                              item2: sLabels.item2,
+                              item3: sLabels.item3,
+                              venueTitle: sLabels.venueLabel,
+                              venueLabel: sLabels.venueLabel.replace(' (VENUE)', ''),
+                              venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
+                              guidelinesTitle: sLabels.guidelinesTitle,
+                              contactLabel: 'ติดต่อประสานงาน:',
+                              notesLabel: sLabels.notesLabel,
+                              footerText:
+                                selectedSite.category === 'Wedding'
+                                  ? 'ขอขอบคุณแขกผู้มีเกียรติทุกท่านที่มาร่วมแสดงความยินดี — เจ้าภาพ'
+                                  : selectedSite.category === 'Pet Memorial'
+                                    ? 'ขอขอบคุณทุกท่านที่มาร่วมส่งน้องกลับดาวและแบ่งปันความรัก — ครอบครัว'
+                                    : 'กราบขอบพระคุณทุกท่านที่มาร่วมไว้อาลัย — คณะเจ้าภาพ',
                             }}
-                          >
-                            {/* Repositioned Deceased Image */}
-                            <div className={`relative w-28 h-28 rounded-full border overflow-hidden mx-auto bg-stone-100 flex items-center justify-center shadow-md ${
-                              annStyle === 'CHARCOAL_SLATE'
-                                ? getStyle3Config(selectedSite?.category || 'Memorial').avatarBorder
-                                : 'border-amber-600/40'
-                            }`}>
-                              {deceasedAvatarUrl ? (
-                                <img
-                                  src={deceasedAvatarUrl}
-                                  alt="Avatar Preview"
-                                  className="pointer-events-none max-w-none origin-center"
-                                  style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                    transform: `translate(${((deceasedAvatarX || 0) / 224) * 100}%, ${((deceasedAvatarY || 0) / 224) * 100}%) rotate(${deceasedAvatarRotate}deg) scale(${(deceasedAvatarScale || 1) * (300 / 224)})`,
-                                    transformOrigin: 'center center',
-                                  }}
-                                />
-                              ) : (
-                                <div className="w-full h-full bg-stone-250 flex items-center justify-center text-xs font-bold text-stone-500">
-                                  รูปโปรไฟล์
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Header */}
-                            <div className="space-y-1.5">
-                              <p className="text-[10px] tracking-widest opacity-80 uppercase">{annText || sLabels.invitePlaceholder}</p>
-                              <h2 className="text-xl font-bold tracking-normal" style={{ color: primaryColor }}>
-                                {(() => {
-                                  const match = siteName.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
-                                  if (match) {
-                                    return (
-                                      <>
-                                        <span className="block sm:inline">{match[1]}</span>
-                                        <span className="hidden sm:inline"> </span>
-                                        <span className="block sm:inline">{match[2]}</span>
-                                      </>
-                                    );
+                            theme={resolveAnnouncementCardTheme(selectedSite.category, annStyle)}
+                            fontFamily={annFontFamily}
+                            siteFontFamily={fontFamily}
+                            avatarUrl={deceasedAvatarUrl}
+                            avatarScale={deceasedAvatarScale}
+                            avatarX={deceasedAvatarX}
+                            avatarY={deceasedAvatarY}
+                            avatarRotate={deceasedAvatarRotate}
+                            waterDate={annWaterDate}
+                            waterTime={annWaterTime}
+                            abhidhammaDateRange={annAbhidhammaDateRange}
+                            abhidhammaTime={annAbhidhammaTime}
+                            cremationDate={annCremationDate}
+                            cremationTime={annCremationTime}
+                            templeName={annTempleName}
+                            pavilion={annPavilion}
+                            mapLink={annMapLink}
+                            dressCode={annDressCode}
+                            contactPhone={annContactPhone}
+                            wreathPolicy={annWreathPolicy}
+                            wreathPolicies={
+                              selectedSite.category === 'Wedding'
+                                ? {
+                                    NORMAL: 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
+                                    NO_FLOWERS: 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
+                                    DONATION_ONLY: 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
+                                    NO_WREATH: 'ขออภัย เจ้าภาพงดรับซองและของขวัญทุกประเภท',
                                   }
-                                  return siteName;
-                                })()}
-                              </h2>
-                              <p className="text-[10px] opacity-75 font-semibold">{sLabels.subtitle}</p>
-                            </div>
-
-                            {/* Timelines list */}
-                            <div className="space-y-3 text-xs text-left">
-                              {isCoupleCategory(selectedSite.category) ? (
-                                coupleMilestonesForSave(annMilestones).map((milestone, index) => (
-                                  <div
-                                    key={milestone.id}
-                                    className={`p-4 rounded-2xl border transition-all ${
-                                      annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg :
-                                      annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' :
-                                      'bg-stone-50 border-stone-200/80'
-                                    }`}
-                                  >
-                                    <p className="font-bold mb-1">{milestone.title || `วันสำคัญที่ ${index + 1}`}</p>
-                                    <p className="opacity-90">
-                                      {[milestone.date, milestone.time ? `เวลา ${milestone.time}` : ''].filter(Boolean).join(' · ') || '-'}
-                                    </p>
-                                    {milestone.place && <p className="opacity-75 mt-1">{milestone.place}</p>}
-                                  </div>
-                                ))
-                              ) : usesSingleMilestoneSchedule(selectedSite.category) ? (
-                                (annWaterDate || annWaterTime) && (
-                                  <div className={`p-4 rounded-2xl border transition-all ${
-                                    annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg :
-                                    annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' :
-                                    'bg-stone-50 border-stone-200/80'
-                                  }`}>
-                                    <p className="font-bold mb-1">{sLabels.meetupTitle || 'นัดพบปะกลุ่ม'}</p>
-                                    <p className="opacity-90">
-                                      {[annWaterDate, annWaterTime ? `เวลา ${annWaterTime}` : ''].filter(Boolean).join(' · ') || '-'}
-                                    </p>
-                                  </div>
-                                )
-                              ) : (
-                                <>
-                              {(annWaterDate || annWaterTime) && (
-                                <div className={`p-4 rounded-2xl border transition-all ${
-                                  annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
-                                  annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
-                                  'bg-stone-50 border-stone-200/80'
-                                }`}>
-                                  <p className="font-bold mb-1">{sLabels.item1}</p>
-                                  <p className="opacity-90">{annWaterDate || '-'} {annWaterTime ? `เวลา ${annWaterTime}` : ''}</p>
-                                </div>
-                              )}
-
-                              {(annAbhidhammaDateRange || annAbhidhammaTime) && (
-                                <div className={`p-4 rounded-2xl border transition-all ${
-                                  annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
-                                  annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
-                                  'bg-stone-50 border-stone-200/80'
-                                }`}>
-                                  <p className="font-bold mb-1">{sLabels.item2}</p>
-                                  <p className="opacity-90">ช่วงวันที่: {annAbhidhammaDateRange || '-'} {annAbhidhammaTime ? `เวลา ${annAbhidhammaTime}` : ''}</p>
-                                </div>
-                              )}
-
-                              {(annCremationDate || annCremationTime) && (
-                                <div className={`p-4 rounded-2xl border transition-all ${
-                                  annStyle === 'CHARCOAL_SLATE' ? getStyle3Config(selectedSite?.category || 'Memorial').innerCardBg : 
-                                  annStyle === 'WARM_CREAM' ? 'bg-[#F3EBD9]/65 border-[#E5D7B7]' : 
-                                  'bg-stone-50 border-stone-200/80'
-                                }`}>
-                                  <p className="font-bold mb-1">{sLabels.item3}</p>
-                                  <p className="opacity-90">{annCremationDate || '-'} {annCremationTime ? `เวลา ${annCremationTime}` : ''}</p>
-                                </div>
-                              )}
-                                </>
-                              )}
-                            </div>
-
-                            {/* Venue & Guidelines */}
-                            {((!isCoupleCategory(selectedSite.category) && (annTempleName || annPavilion)) || annDressCode || annContactPhone) && (
-                              <div className="space-y-4 border-t border-dashed border-stone-300/30 pt-4 text-xs text-left">
-                                {!isCoupleCategory(selectedSite.category) && annTempleName && (
-                                  <div>
-                                    <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">{sLabels.venueLabel}</p>
-                                    <p className="font-bold mt-0.5">{annTempleName} {annPavilion ? `(${annPavilion})` : ''}</p>
-                                    {annMapLink && (
-                                      <span className="inline-block text-[9px] text-emerald-600 underline font-bold mt-1">
-                                        คลิกลิงก์เพื่อนำทาง Google Maps
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
-
-                                {(annDressCode || annContactPhone || (!usesSingleMilestoneSchedule(selectedSite.category) && annWreathPolicy !== 'NORMAL')) && (
-                                  <div className="space-y-1">
-                                    <p className="font-bold text-[10px] opacity-80 uppercase tracking-wide">
-                                      {sLabels.guidelinesTitle}
-                                    </p>
-                                    {annDressCode && (
-                                      <p className="opacity-90">
-                                        {usesSingleMilestoneSchedule(selectedSite.category) ? 'โน้ต: ' : 'การแต่งกาย: '}
-                                        {annDressCode}
-                                      </p>
-                                    )}
-                                    {annContactPhone && <p className="opacity-90">ติดต่อประสานงาน: {annContactPhone}</p>}
-                                    {!usesSingleMilestoneSchedule(selectedSite.category) && annWreathPolicy === 'NO_FLOWERS' && (
-                                      <p className="text-amber-800 font-bold">
-                                        {selectedSite.category === 'Wedding'
-                                          ? 'งดรับของขวัญ เน้นการร่วมอวยพรแทน'
-                                          : 'งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)'}
-                                      </p>
-                                    )}
-                                    {!usesSingleMilestoneSchedule(selectedSite.category) && annWreathPolicy === 'NO_WREATH' && (
-                                      <p className="text-red-650 font-bold">
-                                        {selectedSite.category === 'Wedding'
-                                          ? 'งดรับซองและของขวัญทุกประเภท'
-                                          : 'งดรับพวงหรีดทุกประเภท'}
-                                      </p>
-                                    )}
-                                    {!usesSingleMilestoneSchedule(selectedSite.category) && annWreathPolicy === 'DONATION_ONLY' && (
-                                      <p className="text-amber-800 font-bold">
-                                        {selectedSite.category === 'Wedding'
-                                          ? 'งดรับของขวัญ ร่วมสมทบทุนมูลนิธิแทน'
-                                          : 'งดรับพวงหรีด ร่วมทำบุญสมทบทุนแทน'}
-                                      </p>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
+                                : {
+                                    NORMAL: 'เปิดรับพวงหรีดแสดงความอาลัยตามปกติ',
+                                    NO_FLOWERS: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)',
+                                    DONATION_ONLY: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
+                                    NO_WREATH: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
+                                  }
+                            }
+                            showWreathPolicy={selectedSite.category === 'Wedding' && !!annWreathPolicy}
+                            isWedding={selectedSite.category === 'Wedding'}
+                          />
                         )}
                       </div>
                     </div>

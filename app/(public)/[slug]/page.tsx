@@ -1,18 +1,17 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { 
-  BookOpen, Calendar, MapPin, Image, Flame, ArrowRight,
-  Phone, Info, Share2, Printer, ExternalLink, Droplets, PawPrint,
+  BookOpen, Image, Flame, ArrowRight,
+  PawPrint,
 } from 'lucide-react';
 import Link from 'next/link';
-import DeceasedAvatar from './announcement/DeceasedAvatar';
 import { getEnabledFeatures } from '@/lib/features';
-import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
 import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
 import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
+import MemorialScheduleCard from '@/components/announcement/MemorialScheduleCard';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { getCategoryEbookMocks, toEbookSummaries } from '@/lib/ebookMocks';
-import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
+import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { getCategoryJourney } from '@/lib/categories';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
 import RecentGalleryBento from '@/components/public/RecentGalleryBento';
@@ -299,17 +298,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const ann = config?.announcement || {};
   const isAnnActive = enabledFeatures.announcement;
 
-  // Parse template colors
   const cardTheme = resolveAnnouncementCardTheme(tenant.category, ann.style);
-  const {
-    cardBgClass,
-    textMutedClass,
-    headingColorClass,
-    innerCardBg,
-    borderGoldClass,
-    hasBackgroundImage,
-    bgImageUrl,
-  } = cardTheme;
 
   // Deceased Image config
   const avatarUrl = config?.avatarUrl;
@@ -322,7 +311,6 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const isFriends = tenant.category === 'Friends';
   const isCouple = tenant.category === 'Couple';
   const isWedding = tenant.category === 'Wedding';
-  const isMilestoneSchedule = isFriends;
   const coupleMilestones = isCouple ? getCoupleMilestonesFromAnnouncement(ann) : [];
   const wreathPolicies: Record<string, string> = isWedding ? {
     'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
@@ -336,16 +324,6 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
     'NO_WREATH': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
   };
   const showWreathPolicy = isWedding && !!ann?.wreathPolicy;
-  const showGuidelines = !!ann?.dressCode || !!ann?.contactPhone || showWreathPolicy;
-
-  const cardStyles: React.CSSProperties = {
-    fontFamily: ann?.fontFamily || 'var(--theme-font)',
-  };
-  if (ann?.style === 'CHARCOAL_SLATE' && hasBackgroundImage) {
-    cardStyles.backgroundImage = `url(${bgImageUrl})`;
-    cardStyles.backgroundSize = 'cover';
-    cardStyles.backgroundPosition = 'center';
-  }
 
   return (
     <div className="space-y-8 animate-fade-in text-center">
@@ -407,253 +385,37 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           contactPhone={ann.contactPhone}
         />
       ) : isAnnActive ? (
-        <section 
-          id="announcement-card"
-          className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border-2 p-8 sm:p-12 shadow-md relative overflow-hidden text-center transition-all duration-300 ${cardBgClass}`}
-          style={cardStyles}
-        >
-          {/* Decorative corner lines */}
-          {!hasBackgroundImage && (
-            <>
-              <div className={`absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 pointer-events-none rounded-tl-lg ${borderGoldClass}`} />
-              <div className={`absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 pointer-events-none rounded-tr-lg ${borderGoldClass}`} />
-              <div className={`absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 pointer-events-none rounded-bl-lg ${borderGoldClass}`} />
-              <div className={`absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 pointer-events-none rounded-br-lg ${borderGoldClass}`} />
-            </>
-          )}
-          
-          <div className="text-center space-y-6 relative z-10">
-            
-            <header className="space-y-4">
-              <span className="text-[10px] font-black tracking-widest uppercase opacity-85 block">
-                {ann?.text || getInviteFallback(tenant.category)}
-              </span>
-              <DeceasedAvatar
-                avatarUrl={avatarUrl}
-                avatarScale={avatarScale}
-                avatarX={avatarX}
-                avatarY={avatarY}
-                avatarRotate={avatarRotate}
-                imageCoordSpace={config?.imageCoordSpace}
-                tenantName={tenant.name}
-                primaryColor="var(--theme-primary, #0d9488)"
-              />
-              
-              <div className="space-y-1">
-                <h2
-                  className="text-2xl sm:text-3xl font-black"
-                  style={{ color: 'var(--theme-primary)' }}
-                >
-                  {(() => {
-                    const match = tenant.name.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
-                    if (match) {
-                      return (
-                        <>
-                          <span className="block sm:inline">{match[1]}</span>
-                          <span className="hidden sm:inline"> </span>
-                          <span className="block sm:inline">{match[2]}</span>
-                        </>
-                      );
-                    }
-                    return tenant.name;
-                  })()}
-                </h2>
-                {ann.text && (() => {
-                  const deceasedName = tenant.name.replace(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*/, '');
-                  if (deceasedName && ann.text.includes(deceasedName)) {
-                    const index = ann.text.indexOf(deceasedName);
-                    const beforeName = ann.text.substring(0, index);
-                    const nameAndAfter = ann.text.substring(index);
-                    return (
-                      <p className={`text-sm leading-relaxed max-w-md mx-auto whitespace-pre-line ${textMutedClass}`}>
-                        {beforeName}
-                        <br className="hidden sm:inline" />
-                        {nameAndAfter}
-                      </p>
-                    );
-                  }
-                  return (
-                    <p className={`text-sm leading-relaxed max-w-md mx-auto whitespace-pre-line ${textMutedClass}`}>
-                      {ann.text}
-                    </p>
-                  );
-                })()}
-              </div>
-            </header>
-
-            <hr className={`border-t ${borderGoldClass}`} />
-
-            {/* Ceremony / Meetup Schedule */}
-            {isCouple && coupleMilestones.length > 0 ? (
-              <CoupleMilestoneList
-                milestones={coupleMilestones}
-                title={sLabels.title}
-                innerCardBg={innerCardBg}
-              />
-            ) : (isMilestoneSchedule
-              ? !!(ann.waterDate || ann.waterTime)
-              : !!(ann.waterDate || ann.abhidhammaDateRange || ann.cremationDate)) && (
-            <div className="space-y-4 text-left">
-              <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
-                <Calendar className="w-4 h-4" />
-                <span>{sLabels.title}</span>
-              </h3>
-
-              <div className="grid grid-cols-1 gap-3">
-                {isMilestoneSchedule ? (
-                  <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
-                    <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
-                    <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
-                      {[ann.waterDate, ann.waterTime ? `เวลา ${ann.waterTime}` : '']
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                {ann.waterDate && (
-                  <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
-                    <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
-                    <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
-                      {ann.waterDate} {ann.waterTime && `เวลา ${ann.waterTime}`}
-                    </p>
-                  </div>
-                )}
-
-                {ann.abhidhammaDateRange && (
-                  <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
-                    <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item2}</h4>
-                    <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
-                      {ann.abhidhammaDateRange} {ann.abhidhammaTime && `เวลา ${ann.abhidhammaTime}`}
-                    </p>
-                  </div>
-                )}
-
-                {ann.cremationDate && (
-                  <div className={`p-4 rounded-2xl border ${innerCardBg}`}>
-                    <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item3}</h4>
-                    <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
-                      {ann.cremationDate} {ann.cremationTime && `เวลา ${ann.cremationTime}`}
-                    </p>
-                  </div>
-                )}
-                  </>
-                )}
-              </div>
-            </div>
-            )}
-
-            {/* Location & Directions */}
-            {!isCouple && (ann.templeName || ann.pavilion) && (
-              <div className="space-y-3 text-left">
-                <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
-                  <MapPin className="w-4 h-4" />
-                  <span>{sLabels.venueTitle}</span>
-                </h3>
-                
-                <div className={`p-4 rounded-2xl border ${innerCardBg} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
-                  <div>
-                    <h4 className={`text-sm font-bold ${headingColorClass}`}>
-                      {ann.templeName || sLabels.venueLabel} {ann.pavilion && `(${ann.pavilion})`}
-                    </h4>
-                    <p className={`text-xs mt-0.5 ${textMutedClass}`}>
-                      {sLabels.venueDesc}
-                    </p>
-                  </div>
-                  {ann.mapLink && (
-                    <a 
-                      href={ann.mapLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full sm:w-auto px-4 py-2.5 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer hover:opacity-90 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--theme-primary)]/25"
-                      style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      <span>เปิด Google Maps นำทาง</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Guidelines Block — Friends: no wreath/condolence policy */}
-            {showGuidelines && (
-            <div className="space-y-3 text-left">
-              <h3
-                className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${isCouple ? '' : headingColorClass}`}
-                style={isCouple ? coupleSiteTextStyles.primary : undefined}
-              >
-                <Info className="w-4 h-4" style={isCouple ? coupleSiteTextStyles.primary : undefined} />
-                <span>{sLabels.guidelinesTitle}</span>
-              </h3>
-
-              <div className={`p-4 rounded-2xl border text-xs space-y-3.5 ${innerCardBg}`}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  {ann.dressCode && (
-                    <div className="flex flex-col gap-0.5">
-                      <span
-                        className={`font-bold ${isCouple ? '' : headingColorClass}`}
-                        style={isCouple ? coupleSiteTextStyles.primary : undefined}
-                      >
-                        {isFriends || isCouple ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
-                      </span>
-                      <span
-                        className={isCouple ? '' : textMutedClass}
-                        style={isCouple ? coupleSiteTextStyles.muted : undefined}
-                      >
-                        {ann.dressCode}
-                      </span>
-                    </div>
-                  )}
-                  {showWreathPolicy && (
-                    <div className="flex flex-col gap-0.5">
-                      <span
-                        className={`font-bold ${isCouple ? '' : headingColorClass}`}
-                        style={isCouple ? coupleSiteTextStyles.primary : undefined}
-                      >
-                        {isWedding ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
-                      </span>
-                      <span
-                        className={isCouple ? '' : textMutedClass}
-                        style={isCouple ? coupleSiteTextStyles.muted : undefined}
-                      >
-                        {wreathPolicies[ann.wreathPolicy] || wreathPolicies.NORMAL}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                {ann.contactPhone && (
-                  <div
-                    className={`flex gap-2 border-t pt-3 mt-3 items-center ${isCouple ? '' : 'border-stone-200/50'}`}
-                    style={isCouple ? coupleSiteTextStyles.border : undefined}
-                  >
-                    <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--theme-primary, #0d9488)' }} />
-                    <span
-                      className={`font-bold shrink-0 ${isCouple ? '' : headingColorClass}`}
-                      style={isCouple ? coupleSiteTextStyles.primary : undefined}
-                    >
-                      {sLabels.contactLabel}
-                    </span>
-                    <span
-                      className={isCouple ? '' : textMutedClass}
-                      style={isCouple ? coupleSiteTextStyles.muted : undefined}
-                    >
-                      {ann.contactPhone}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-            )}
-
-            <footer className="pt-4 text-center">
-              <p className={`text-[9px] font-bold tracking-wider uppercase ${textMutedClass}`}>
-                {sLabels.footerText}
-              </p>
-            </footer>
-
-          </div>
-        </section>
+        <MemorialScheduleCard
+          category={tenant.category}
+          tenantName={tenant.name}
+          inviteText={ann.text}
+          inviteFallback={getInviteFallback(tenant.category)}
+          labels={sLabels}
+          theme={cardTheme}
+          fontFamily={ann?.fontFamily}
+          siteFontFamily={config?.fontFamily}
+          avatarUrl={avatarUrl}
+          avatarScale={avatarScale}
+          avatarX={avatarX}
+          avatarY={avatarY}
+          avatarRotate={avatarRotate}
+          imageCoordSpace={config?.imageCoordSpace}
+          waterDate={ann.waterDate}
+          waterTime={ann.waterTime}
+          abhidhammaDateRange={ann.abhidhammaDateRange}
+          abhidhammaTime={ann.abhidhammaTime}
+          cremationDate={ann.cremationDate}
+          cremationTime={ann.cremationTime}
+          templeName={ann.templeName}
+          pavilion={ann.pavilion}
+          mapLink={ann.mapLink}
+          dressCode={ann.dressCode}
+          contactPhone={ann.contactPhone}
+          wreathPolicy={ann.wreathPolicy}
+          wreathPolicies={wreathPolicies}
+          showWreathPolicy={showWreathPolicy}
+          isWedding={isWedding}
+        />
       ) : null}
 
       {/* 2. Recent Gallery Snippet */}

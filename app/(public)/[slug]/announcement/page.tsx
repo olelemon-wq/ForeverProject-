@@ -1,16 +1,14 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import { 
-  Calendar, MapPin, Phone, Info, Share2, Printer, 
-  ExternalLink, Droplets, Flame, Sparkles 
-} from 'lucide-react';
+import { Calendar, Info, Share2 } from 'lucide-react';
 import React from 'react';
 import AnnouncementControls from './AnnouncementControls';
-import DeceasedAvatar from './DeceasedAvatar';
+import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
+import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
+import MemorialScheduleCard from '@/components/announcement/MemorialScheduleCard';
 import { getEnabledFeatures } from '@/lib/features';
-import CoupleMilestoneList from '@/components/announcement/CoupleMilestoneList';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
-import { resolveAnnouncementCardTheme, coupleSiteTextStyles } from '@/lib/announcementCardTheme';
+import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 import { ANNOUNCEMENT_CARD_CLASS } from '@/lib/publicLayout';
 
@@ -142,7 +140,6 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   const themeConfig = tenant.themeConfig as any;
   const announcement = themeConfig?.announcement;
 
-  // Fallback if not active but feature is enabled
   if (!announcement || !announcement.active) {
     return (
       <div className="space-y-8 animate-fade-in text-center py-16">
@@ -155,7 +152,6 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
     );
   }
 
-  // Custom uploaded card (AI / own design)
   if (announcement.mode === 'custom' && announcement.customCardUrl) {
     return (
       <div className="space-y-8 animate-fade-in print:p-0 print:m-0 print:bg-white print:shadow-none print-outer-container">
@@ -185,58 +181,37 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
     );
   }
 
-  // Parse template colors
   const cardTheme = resolveAnnouncementCardTheme(tenant.category, announcement.style);
-  const {
-    cardBgClass,
-    textMutedClass,
-    headingColorClass,
-    innerCardBg,
-    borderGoldClass,
-    hasBackgroundImage,
-    bgImageUrl,
-  } = cardTheme;
-
-  // Deceased Image config
   const avatarUrl = themeConfig?.avatarUrl;
   const avatarScale = themeConfig?.avatarScale || 1;
   const avatarX = themeConfig?.avatarX || 0;
   const avatarY = themeConfig?.avatarY || 0;
   const avatarRotate = themeConfig?.avatarRotate || 0;
 
-  // Wreath/Gift policy — Friends category has no wreath/gift policy
   const isFriends = tenant.category === 'Friends';
   const isCouple = tenant.category === 'Couple';
   const isWedding = tenant.category === 'Wedding';
-  const isMilestoneSchedule = isFriends;
   const coupleMilestones = isCouple ? getCoupleMilestonesFromAnnouncement(announcement) : [];
-  const wreathPolicies: Record<string, string> = isWedding ? {
-    'NORMAL': 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
-    'NO_FLOWERS': 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
-    'DONATION_ONLY': 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
-    'NO_WREATH': 'ขออภัย เจ้าภาพงดรับซองและของขวัญทุกประเภท',
-  } : {
-    'NORMAL': 'เปิดรับพวงหรีดแสดงความอาลัยตามปกติ',
-    'NO_FLOWERS': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)',
-    'DONATION_ONLY': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
-    'NO_WREATH': 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
-  };
+  const wreathPolicies: Record<string, string> = isWedding
+    ? {
+        NORMAL: 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
+        NO_FLOWERS: 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
+        DONATION_ONLY: 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
+        NO_WREATH: 'ขออภัย เจ้าภาพงดรับซองและของขวัญทุกประเภท',
+      }
+    : {
+        NORMAL: 'เปิดรับพวงหรีดแสดงความอาลัยตามปกติ',
+        NO_FLOWERS: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)',
+        DONATION_ONLY: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
+        NO_WREATH: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
+      };
   const showWreathPolicy = isWedding && !!announcement.wreathPolicy;
-  const showGuidelines =
-    !!announcement.dressCode || !!announcement.contactPhone || showWreathPolicy;
-
-  const cardStyles: React.CSSProperties = {
-    fontFamily: announcement?.fontFamily || 'var(--theme-font)',
-  };
-  if (hasBackgroundImage && bgImageUrl) {
-    cardStyles.backgroundImage = `url(${bgImageUrl})`;
-    cardStyles.backgroundSize = 'cover';
-    cardStyles.backgroundPosition = 'center';
-  }
 
   return (
     <div className="space-y-8 animate-fade-in print:p-0 print:m-0 print:bg-white print:shadow-none print-outer-container">
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @media print {
           @page {
             size: portrait;
@@ -268,51 +243,16 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .print-space-y-tight > * + * {
-            margin-top: 0.55rem !important;
-          }
-          .print-header-tight {
-            margin-bottom: 0.35rem !important;
-          }
-          .print-header-tight > * + * {
-            margin-top: 0.15rem !important;
-          }
-          .print-inner-card-grid {
-            gap: 0.35rem !important;
-          }
-          .print-inner-card-tight {
-            padding: 0.5rem 0.75rem !important;
-            border-radius: 0.75rem !important;
-          }
           .print-avatar-container {
             width: 76px !important;
             height: 76px !important;
             border-width: 2px !important;
           }
-          .print-card-section h2 {
-            font-size: 1.35rem !important;
-          }
-          .print-card-section h3 {
-            font-size: 0.75rem !important;
-          }
-          .print-card-section h4 {
-            font-size: 0.7rem !important;
-          }
-          .print-card-section p, 
-          .print-card-section span, 
-          .print-card-section div {
-            font-size: 0.72rem !important;
-          }
-          .print-card-section .text-\\[10px\\] {
-            font-size: 8px !important;
-          }
-          .print-card-section footer {
-            padding-top: 0.5rem !important;
-          }
         }
-      `}} />
-      
-      {/* Top Banner controls (hidden during print) */}
+      `,
+        }}
+      />
+
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white border border-stone-200/85 p-4 rounded-2xl shadow-xs print:hidden">
         <div className="text-left space-y-0.5">
           <h4 className="text-xs font-bold text-stone-850 flex items-center gap-1.5">
@@ -325,260 +265,91 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
                   : 'การ์ดกำหนดการดิจิทัลออนไลน์'}
             </span>
           </h4>
-          <p className="text-[10px] text-stone-500">คุณสามารถพิมพ์ เซฟเป็น PDF หรือคัดลอกลิงก์เพื่อส่งต่อทาง LINE/Facebook ได้ทันทีค่ะ</p>
+          <p className="text-[10px] text-stone-500">
+            คุณสามารถพิมพ์ เซฟเป็น PDF หรือคัดลอกลิงก์เพื่อส่งต่อทาง LINE/Facebook ได้ทันทีค่ะ
+          </p>
         </div>
         <AnnouncementControls slug={slug} />
       </div>
 
-      {/* Main Invitation Card Container */}
-      <section 
-        id="announcement-card"
-        className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border-2 p-8 sm:p-12 shadow-md relative overflow-hidden transition-all duration-300 print:border-stone-300 print:shadow-none print:my-0 print:mx-auto print:max-w-3xl print-card-section ${cardBgClass}`}
-        style={cardStyles}
-      >
-        {/* Decorative corner lines */}
-        {!hasBackgroundImage && (
-          <>
-            <div className={`absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 pointer-events-none rounded-tl-lg ${borderGoldClass}`} />
-            <div className={`absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 pointer-events-none rounded-tr-lg ${borderGoldClass}`} />
-            <div className={`absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 pointer-events-none rounded-bl-lg ${borderGoldClass}`} />
-            <div className={`absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 pointer-events-none rounded-br-lg ${borderGoldClass}`} />
-          </>
-        )}
-        
-        <div className="text-center space-y-6 print-space-y-tight relative z-10">
-          
-          <header className="space-y-4 print-header-tight">
-            <span className="text-[10px] font-black tracking-widest uppercase opacity-85 block">
-              {announcement.text || getInviteFallback(tenant.category)}
-            </span>
-            <DeceasedAvatar
-              avatarUrl={avatarUrl}
-              avatarScale={avatarScale}
-              avatarX={avatarX}
-              avatarY={avatarY}
-              avatarRotate={avatarRotate}
-              imageCoordSpace={themeConfig?.imageCoordSpace}
-              tenantName={tenant.name}
-              primaryColor="var(--theme-primary, #0d9488)"
-            />
-            
-            <div className="space-y-1">
-              <h2
-                className="text-2xl sm:text-3xl font-black"
-                style={{ color: 'var(--theme-primary)' }}
-              >
-                {(() => {
-                  const match = tenant.name.match(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*(.*)$/);
-                  if (match) {
-                    return (
-                      <>
-                        <span className="block sm:inline">{match[1]}</span>
-                        <span className="hidden sm:inline"> </span>
-                        <span className="block sm:inline">{match[2]}</span>
-                      </>
-                    );
-                  }
-                  return tenant.name;
-                })()}
-              </h2>
-              {announcement.text && (() => {
-                const deceasedName = tenant.name.replace(/^(ด้วยรักและคิดถึง|ด้วยรักและอาลัย|ร่วมรำลึกถึง|รำลึกถึง|คิดถึง|อาลัยแด่)\s*/, '');
-                if (deceasedName && announcement.text.includes(deceasedName)) {
-                  const index = announcement.text.indexOf(deceasedName);
-                  const beforeName = announcement.text.substring(0, index);
-                  const nameAndAfter = announcement.text.substring(index);
-                  return (
-                    <p className={`text-sm leading-relaxed max-w-md mx-auto whitespace-pre-line ${textMutedClass}`}>
-                      {beforeName}
-                      <br className="hidden sm:inline" />
-                      {nameAndAfter}
-                    </p>
-                  );
-                }
-                return (
-                  <p className={`text-sm leading-relaxed max-w-md mx-auto whitespace-pre-line ${textMutedClass}`}>
-                    {announcement.text}
-                  </p>
-                );
-              })()}
-            </div>
-          </header>
-
-          <hr className={`border-t ${borderGoldClass}`} />
-
-          {/* Ceremony / Meetup Schedule */}
-          {isCouple && coupleMilestones.length > 0 ? (
-            <CoupleMilestoneList
-              milestones={coupleMilestones}
-              title={sLabels.title}
-              innerCardBg={innerCardBg}
-              compact
-            />
-          ) : (isMilestoneSchedule
-            ? !!(announcement.waterDate || announcement.waterTime)
-            : !!(announcement.waterDate || announcement.abhidhammaDateRange || announcement.cremationDate)) && (
-          <div className="space-y-4 text-left">
-            <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
-              <Calendar className="w-4 h-4" />
-              <span>{sLabels.title}</span>
-            </h3>
-
-            <div className="grid grid-cols-1 gap-3 print-inner-card-grid">
-              {isMilestoneSchedule ? (
-                <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg}`}>
-                  <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
-                  <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
-                    {[announcement.waterDate, announcement.waterTime ? `เวลา ${announcement.waterTime}` : '']
-                      .filter(Boolean)
-                      .join(' · ')}
-                  </p>
-                </div>
-              ) : (
-                <>
-              {announcement.waterDate && (
-                <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg}`}>
-                  <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item1}</h4>
-                  <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
-                    {announcement.waterDate} {announcement.waterTime && `เวลา ${announcement.waterTime}`}
-                  </p>
-                </div>
-              )}
-
-              {announcement.abhidhammaDateRange && (
-                <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg}`}>
-                  <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item2}</h4>
-                  <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
-                    {announcement.abhidhammaDateRange} {announcement.abhidhammaTime && `เวลา ${announcement.abhidhammaTime}`}
-                  </p>
-                </div>
-              )}
-
-              {announcement.cremationDate && (
-                <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg}`}>
-                  <h4 className={`text-xs font-bold ${headingColorClass}`}>{sLabels.item3}</h4>
-                  <p className={`text-sm mt-0.5 font-bold ${headingColorClass}`}>
-                    {announcement.cremationDate} {announcement.cremationTime && `เวลา ${announcement.cremationTime}`}
-                  </p>
-                </div>
-              )}
-                </>
-              )}
-            </div>
-          </div>
-          )}
-
-          {/* Location & Directions */}
-          {!isCouple && (announcement.templeName || announcement.pavilion) && (
-            <div className="space-y-3 text-left">
-              <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${headingColorClass}`}>
-                <MapPin className="w-4 h-4" />
-                <span>{sLabels.venueTitle}</span>
-              </h3>
-              
-              <div className={`p-4 print-inner-card-tight rounded-2xl border ${innerCardBg} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`}>
-                <div>
-                  <h4 className={`text-sm font-bold ${headingColorClass}`}>
-                    {announcement.templeName || sLabels.venueLabel} {announcement.pavilion && `(${announcement.pavilion})`}
-                  </h4>
-                  <p className={`text-xs mt-0.5 ${textMutedClass}`}>
-                    {sLabels.venueDesc}
-                  </p>
-                </div>
-                {announcement.mapLink && (
-                  <a 
-                    href={announcement.mapLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto px-4 py-2.5 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition print:hidden cursor-pointer hover:opacity-90 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--theme-primary)]/25"
-                    style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>เปิด Google Maps นำทาง</span>
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Guidelines Block — Friends: no wreath/condolence policy */}
-          {showGuidelines && (
-          <div className="space-y-3 text-left">
-            <h3
-              className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${isCouple ? '' : headingColorClass}`}
-              style={isCouple ? coupleSiteTextStyles.primary : undefined}
-            >
-              <Info className="w-4 h-4" style={isCouple ? coupleSiteTextStyles.primary : undefined} />
-              <span>{sLabels.guidelinesTitle}</span>
-            </h3>
-
-            <div className={`p-4 print-inner-card-tight rounded-2xl border text-xs space-y-3.5 ${innerCardBg}`}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {announcement.dressCode && (
-                  <div className="flex flex-col gap-0.5">
-                    <span
-                      className={`font-bold ${isCouple ? '' : headingColorClass}`}
-                      style={isCouple ? coupleSiteTextStyles.primary : undefined}
-                    >
-                      {isFriends || isCouple ? (sLabels.notesLabel || 'โน้ต / รายละเอียด:') : 'การแต่งกาย:'}
-                    </span>
-                    <span
-                      className={isCouple ? '' : textMutedClass}
-                      style={isCouple ? coupleSiteTextStyles.muted : undefined}
-                    >
-                      {announcement.dressCode}
-                    </span>
-                  </div>
-                )}
-                {showWreathPolicy && (
-                  <div className="flex flex-col gap-0.5">
-                    <span
-                      className={`font-bold ${isCouple ? '' : headingColorClass}`}
-                      style={isCouple ? coupleSiteTextStyles.primary : undefined}
-                    >
-                      {isWedding ? 'ของขวัญ / ซอง:' : 'นโยบายพวงหรีด:'}
-                    </span>
-                    <span
-                      className={isCouple ? '' : textMutedClass}
-                      style={isCouple ? coupleSiteTextStyles.muted : undefined}
-                    >
-                      {wreathPolicies[announcement.wreathPolicy] || wreathPolicies.NORMAL}
-                    </span>
-                  </div>
-                )}
-              </div>
-              {announcement.contactPhone && (
-                <div
-                  className={`flex gap-2 border-t pt-3 mt-3 items-center ${isCouple ? '' : 'border-stone-200/50'}`}
-                  style={isCouple ? coupleSiteTextStyles.border : undefined}
-                >
-                  <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--theme-primary, #0d9488)' }} />
-                  <span
-                    className={`font-bold shrink-0 ${isCouple ? '' : headingColorClass}`}
-                    style={isCouple ? coupleSiteTextStyles.primary : undefined}
-                  >
-                    {sLabels.contactLabel}
-                  </span>
-                  <span
-                    className={isCouple ? '' : textMutedClass}
-                    style={isCouple ? coupleSiteTextStyles.muted : undefined}
-                  >
-                    {announcement.contactPhone}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-          )}
-
-          <footer className="pt-4 text-center">
-            <p className={`text-[9px] font-bold tracking-wider uppercase ${textMutedClass}`}>
-              {sLabels.footerText}
-            </p>
-          </footer>
-
-        </div>
-      </section>
+      {isCouple ? (
+        <CoupleJourneyCard
+          tenantName={tenant.name}
+          inviteText={announcement.text}
+          inviteFallback={getInviteFallback(tenant.category)}
+          footerText={sLabels.footerText}
+          theme={cardTheme}
+          milestones={coupleMilestones}
+          timelineTitle="เส้นทางที่ผ่านมา"
+          fontFamily={announcement?.fontFamily}
+          siteFontFamily={themeConfig?.fontFamily}
+          avatarUrl={avatarUrl}
+          avatarScale={avatarScale}
+          avatarX={avatarX}
+          avatarY={avatarY}
+          avatarRotate={avatarRotate}
+          imageCoordSpace={themeConfig?.imageCoordSpace}
+          notes={announcement.dressCode}
+          contactPhone={announcement.contactPhone}
+          className="print-card-section print:shadow-none print:my-0 print:mx-auto print:max-w-3xl"
+        />
+      ) : isFriends ? (
+        <FriendsMeetupCard
+          tenantName={tenant.name}
+          inviteText={announcement.text}
+          inviteFallback={getInviteFallback(tenant.category)}
+          footerText={sLabels.footerText}
+          theme={cardTheme}
+          fontFamily={announcement?.fontFamily}
+          siteFontFamily={themeConfig?.fontFamily}
+          avatarUrl={avatarUrl}
+          avatarScale={avatarScale}
+          avatarX={avatarX}
+          avatarY={avatarY}
+          avatarRotate={avatarRotate}
+          imageCoordSpace={themeConfig?.imageCoordSpace}
+          meetupDate={announcement.waterDate}
+          meetupTime={announcement.waterTime}
+          venueName={announcement.templeName}
+          venueDetail={announcement.pavilion}
+          mapLink={announcement.mapLink}
+          notes={announcement.dressCode}
+          contactPhone={announcement.contactPhone}
+        />
+      ) : (
+        <MemorialScheduleCard
+          category={tenant.category}
+          tenantName={tenant.name}
+          inviteText={announcement.text}
+          inviteFallback={getInviteFallback(tenant.category)}
+          labels={sLabels}
+          theme={cardTheme}
+          fontFamily={announcement?.fontFamily}
+          siteFontFamily={themeConfig?.fontFamily}
+          avatarUrl={avatarUrl}
+          avatarScale={avatarScale}
+          avatarX={avatarX}
+          avatarY={avatarY}
+          avatarRotate={avatarRotate}
+          imageCoordSpace={themeConfig?.imageCoordSpace}
+          waterDate={announcement.waterDate}
+          waterTime={announcement.waterTime}
+          abhidhammaDateRange={announcement.abhidhammaDateRange}
+          abhidhammaTime={announcement.abhidhammaTime}
+          cremationDate={announcement.cremationDate}
+          cremationTime={announcement.cremationTime}
+          templeName={announcement.templeName}
+          pavilion={announcement.pavilion}
+          mapLink={announcement.mapLink}
+          dressCode={announcement.dressCode}
+          contactPhone={announcement.contactPhone}
+          wreathPolicy={announcement.wreathPolicy}
+          wreathPolicies={wreathPolicies}
+          showWreathPolicy={showWreathPolicy}
+          isWedding={isWedding}
+          sectionClassName="print-card-section print:shadow-none print:my-0 print:mx-auto print:max-w-3xl"
+        />
+      )}
     </div>
   );
 }
