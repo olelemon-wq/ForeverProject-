@@ -8,12 +8,17 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
+import { imageTransformStyle } from '@/lib/imagePosition';
 
 const PET_CARD_PATTERN = '/patterns/pet-condolence-floral-right.png';
 
 export type PetProfileCardSubject = {
   name: string;
   avatarUrl?: string;
+  avatarScale?: number;
+  avatarX?: number;
+  avatarY?: number;
+  avatarRotate?: number;
   breed?: string;
   personality?: string;
   favorite?: string;
@@ -151,6 +156,12 @@ export default function PetProfileCard({
               height={112}
               loading="lazy"
               className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              style={imageTransformStyle({
+                x: s.avatarX ?? 0,
+                y: s.avatarY ?? 0,
+                scale: s.avatarScale ?? 1,
+                rotate: s.avatarRotate ?? 0,
+              })}
             />
           ) : (
             <PawPrint

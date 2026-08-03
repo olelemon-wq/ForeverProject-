@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import FeatureToggleList from '@/components/FeatureToggleList';
 import ScrollableSubTabs from '@/components/ScrollableSubTabs';
@@ -19,6 +19,7 @@ import {
   type CoupleMilestone,
 } from '@/lib/coupleMilestones';
 import CoupleMilestonesEditor from '@/components/manage/CoupleMilestonesEditor';
+import CircularImageCropModal, { type CircularImageTransform } from '@/components/manage/CircularImageCropModal';
 import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
 import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
 import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
@@ -60,6 +61,11 @@ type ManageSubject = {
   name: string;
   /** Pet: individual profile photo */
   avatarUrl?: string;
+  /** Pet: circular crop transform (relative coords) */
+  avatarScale?: number;
+  avatarX?: number;
+  avatarY?: number;
+  avatarRotate?: number;
   birthDate: Date | null;
   deathDate: Date | null;
   birthYearOnly: boolean;
@@ -118,6 +124,16 @@ function normalizeManageSubjects(raw: any[], category: string): ManageSubject[] 
     ? raw.map((s) => ({
         name: s?.name || '',
         avatarUrl: s?.avatarUrl || '',
+        avatarScale: s?.avatarScale ?? 1,
+        avatarX: clampImagePan(
+          toRelativeOffset(s?.avatarX || 0, 112, s?.avatarCoordSpace),
+          s?.avatarScale ?? 1,
+        ),
+        avatarY: clampImagePan(
+          toRelativeOffset(s?.avatarY || 0, 112, s?.avatarCoordSpace),
+          s?.avatarScale ?? 1,
+        ),
+        avatarRotate: s?.avatarRotate ?? 0,
         birthDate: s?.birthDate ? new Date(s.birthDate) : null,
         deathDate: s?.deathDate ? new Date(s.deathDate) : null,
         birthYearOnly: !!s?.birthYearOnly,
@@ -167,6 +183,11 @@ function serializeManageSubjects(subjects: ManageSubject[], category: string) {
     return subjects.map((s) => ({
       name: s.name || '',
       avatarUrl: s.avatarUrl || '',
+      avatarScale: s.avatarScale ?? 1,
+      avatarX: s.avatarX ?? 0,
+      avatarY: s.avatarY ?? 0,
+      avatarRotate: s.avatarRotate ?? 0,
+      avatarCoordSpace: 'relative',
       breed: s.breed || '',
       personality: s.personality || '',
       favorite: s.favorite || '',
@@ -183,11 +204,20 @@ function serializeManageSubjects(subjects: ManageSubject[], category: string) {
   return subjects;
 }
 
+function mapPetAvatarCropPatch(patch: Partial<CircularImageTransform>): Partial<ManageSubject> {
+  return {
+    ...(patch.x !== undefined ? { avatarX: patch.x } : {}),
+    ...(patch.y !== undefined ? { avatarY: patch.y } : {}),
+    ...(patch.scale !== undefined ? { avatarScale: patch.scale } : {}),
+    ...(patch.rotate !== undefined ? { avatarRotate: patch.rotate } : {}),
+  };
+}
+
 function getSubjectEditorCopy(category: string) {
   if (category === 'Pet Memorial') {
     return {
       sectionTitle: 'สมุดประจำตัวน้อง',
-      sectionHint: 'เพิ่มโปรไฟล์น้องแต่ละตัว — ใช้ได้ทั้งน้องที่อยู่ด้วยกันและน้องในความทรงจำ',
+      sectionHint: 'เพิ่มโปรไฟล์น้องแต่ละตัว — อัปโหลดรูปแล้วปรับย่อ/ขยายได้เหมือนรูปโปรไฟล์ ข้อมูลอื่นกดบันทึกด้านล่าง',
       cardTitle: (i: number) => `โปรไฟล์น้องตัวที่ ${i + 1}`,
       nameLabel: 'ชื่อ / ชื่อเล่น',
       namePlaceholder: 'เช่น เจ้าปุยฝ้าย, ตูบ',
@@ -616,6 +646,7 @@ export default function WebmasterDashboard() {
   const [biography, setBiography] = useState('');
   const [subjects, setSubjects] = useState<ManageSubject[]>([]);
   const [petAvatarUploadingIndex, setPetAvatarUploadingIndex] = useState<number | null>(null);
+  const [petCropModalIndex, setPetCropModalIndex] = useState<number | null>(null);
   const [albums, setAlbums] = useState<string[]>([]);
   const [mediaAlbums, setMediaAlbums] = useState<Record<string, string>>({});
   const [selectedAlbumFilter, setSelectedAlbumFilter] = useState('ALL');
@@ -689,6 +720,14 @@ export default function WebmasterDashboard() {
   const [defaultMediaPicker, setDefaultMediaPicker] = useState<DefaultMediaKind | null>(null);
   const [quickPreview, setQuickPreview] = useState<{ kind: DefaultMediaKind; src: string } | null>(null);
   const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+  const themeAutoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingThemeRef = useRef<{
+    primaryColor?: string;
+    secondaryColor?: string;
+    fontFamily?: string;
+    defaultFontSize?: 'NORMAL' | 'MEDIUM' | 'LARGE';
+  }>({});
+  const skipThemeAutoSave = useRef(false);
   
   const [features, setFeatures] = useState<any>({
     family: true,
@@ -861,7 +900,7 @@ export default function WebmasterDashboard() {
       setDeceasedAvatarY(0);
       setDeceasedAvatarRotate(0);
       setIsCropModalOpen(true);
-      setSuccess('อัปโหลดรูปโปรไฟล์สำเร็จ');
+      setSuccess('อัปโหลดรูปโปรไฟล์สำเร็จ — ปรับตำแหน่งแล้วกดเสร็จสิ้นเพื่ออัปเดตหน้าเว็บ');
     } catch (err: any) {
       setError(err.message || 'การอัปโหลดรูปโปรไฟล์ล้มเหลว');
     } finally {
@@ -909,12 +948,21 @@ export default function WebmasterDashboard() {
       }
       if (!data.filePath) throw new Error('ไม่ได้รับที่อยู่ไฟล์จากเซิร์ฟเวอร์');
 
-      setSubjects((prev) =>
-        prev.map((subject, subjectIndex) =>
-          subjectIndex === index ? { ...subject, avatarUrl: data.filePath } : subject
-        )
+      const updatedSubjects = subjects.map((subject, subjectIndex) =>
+        subjectIndex === index
+          ? {
+              ...subject,
+              avatarUrl: data.filePath,
+              avatarScale: 1,
+              avatarX: 0,
+              avatarY: 0,
+              avatarRotate: 0,
+            }
+          : subject
       );
-      setSuccess('อัปโหลดรูปน้องสำเร็จ — กดบันทึกการตั้งค่าเพื่อยืนยัน');
+      setSubjects(updatedSubjects);
+      setPetCropModalIndex(index);
+      setSuccess('อัปโหลดรูปสำเร็จ — ปรับตำแหน่งแล้วกดเสร็จสิ้นเพื่ออัปเดตหน้าเว็บ');
     } catch (err: any) {
       setError(err.message || 'การอัปโหลดรูปน้องล้มเหลว');
     } finally {
@@ -956,7 +1004,7 @@ export default function WebmasterDashboard() {
       setDeceasedCoverY(0);
       setDeceasedCoverRotate(0);
       setIsCoverCropModalOpen(true);
-      setSuccess('อัปโหลดรูปภาพหน้าปกสำเร็จ');
+      setSuccess('อัปโหลดรูปภาพหน้าปกสำเร็จ — ปรับตำแหน่งแล้วกดเสร็จสิ้นเพื่ออัปเดตหน้าเว็บ');
     } catch (err: any) {
       setError(err.message || 'การอัปโหลดรูปภาพหน้าปกล้มเหลว');
     } finally {
@@ -1386,9 +1434,11 @@ export default function WebmasterDashboard() {
     }
 
     // Initialize theme variables from config
+    skipThemeAutoSave.current = true;
     const config = (site as any).themeConfig as any;
     if (config) {
       setPrimaryColor(config.primaryColor || '#0d9488');
+      setSecondaryColor(config.secondaryColor || '#f59e0b');
       const scriptFonts = ['Charm', 'Srisakdi', 'Charmonman', 'Thasadith'];
       const loadedFont = config.fontFamily || 'Inter';
       setFontFamily(scriptFonts.includes(loadedFont) ? 'LINE Seed Sans TH' : loadedFont);
@@ -1397,7 +1447,7 @@ export default function WebmasterDashboard() {
       setAlbums(config.albums || []);
       setMediaAlbums(config.mediaAlbums || {});
       setDefaultFontSize(config.defaultFontSize || 'NORMAL');
-      setDeceasedAvatarUrl(config.avatarUrl || '');
+      setDeceasedAvatarUrl(resolveDefaultMediaSrc(config.avatarUrl || ''));
       {
         const avatarScale = config.avatarScale || 1;
         const coverScale = config.coverScale || 1;
@@ -1477,6 +1527,7 @@ export default function WebmasterDashboard() {
       setDeceasedCoverY(0);
       setDeceasedCoverRotate(0);
     }
+    skipThemeAutoSave.current = false;
   };
 
   const handleExportZip = async () => {
@@ -1495,14 +1546,41 @@ export default function WebmasterDashboard() {
     }
   };
 
-  // 3. Save Website Configuration (BR025, BR026, Step 7 Theme Save, Donation fields update)
-  const handleSaveConfig = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeSite) return;
+  type ThemeOverrides = {
+    primaryColor?: string;
+    secondaryColor?: string;
+    fontFamily?: string;
+    defaultFontSize?: 'NORMAL' | 'MEDIUM' | 'LARGE';
+  };
+
+  type ProfileMediaOverrides = {
+    avatarUrl?: string;
+    avatarScale?: number;
+    avatarX?: number;
+    avatarY?: number;
+    avatarRotate?: number;
+    coverUrl?: string;
+    coverScale?: number;
+    coverX?: number;
+    coverY?: number;
+    coverRotate?: number;
+  };
+
+  const persistSiteConfig = async (options?: {
+    successMessage?: string;
+    media?: ProfileMediaOverrides;
+    theme?: ThemeOverrides;
+    subjects?: ManageSubject[];
+  }): Promise<boolean> => {
+    if (!activeSite) return false;
 
     setSaveLoading(true);
     setError('');
-    setSuccess('');
+    if (!options?.successMessage) setSuccess('');
+
+    const media = options?.media;
+    const theme = options?.theme;
+    const subjectsToSave = options?.subjects ?? subjects;
 
     try {
       const res = await fetch('/api/tenant/update-config', {
@@ -1517,24 +1595,24 @@ export default function WebmasterDashboard() {
           donationAccountName,
           donationActive,
           themeConfig: {
-            primaryColor,
-            secondaryColor,
-            fontFamily,
-            defaultFontSize,
+            primaryColor: theme?.primaryColor ?? primaryColor,
+            secondaryColor: theme?.secondaryColor ?? secondaryColor,
+            fontFamily: theme?.fontFamily ?? fontFamily,
+            defaultFontSize: theme?.defaultFontSize ?? defaultFontSize,
             heroStyle: 'Classic',
-            avatarUrl: deceasedAvatarUrl,
-            avatarScale: deceasedAvatarScale,
-            avatarX: deceasedAvatarX,
-            avatarY: deceasedAvatarY,
-            avatarRotate: deceasedAvatarRotate,
-            coverUrl: deceasedCoverUrl,
-            coverScale: deceasedCoverScale,
-            coverX: deceasedCoverX,
-            coverY: deceasedCoverY,
-            coverRotate: deceasedCoverRotate,
+            avatarUrl: media?.avatarUrl ?? deceasedAvatarUrl,
+            avatarScale: media?.avatarScale ?? deceasedAvatarScale,
+            avatarX: media?.avatarX ?? deceasedAvatarX,
+            avatarY: media?.avatarY ?? deceasedAvatarY,
+            avatarRotate: media?.avatarRotate ?? deceasedAvatarRotate,
+            coverUrl: media?.coverUrl ?? deceasedCoverUrl,
+            coverScale: media?.coverScale ?? deceasedCoverScale,
+            coverX: media?.coverX ?? deceasedCoverX,
+            coverY: media?.coverY ?? deceasedCoverY,
+            coverRotate: media?.coverRotate ?? deceasedCoverRotate,
             imageCoordSpace: 'relative',
             biography,
-            subjects: serializeManageSubjects(subjects, activeSite.category),
+            subjects: serializeManageSubjects(subjectsToSave, activeSite.category),
             albums,
             mediaAlbums,
             features,
@@ -1546,24 +1624,145 @@ export default function WebmasterDashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      setSuccess('บันทึกการปรับแต่งเว็บไซต์ความทรงจำสำเร็จ');
-      
-      // Update local websites list state
-      setWebsites(websites.map(w => w.id === activeSite.id ? { 
-        ...w, 
-        name: siteName, 
+      setSuccess(options?.successMessage ?? 'บันทึกการปรับแต่งเว็บไซต์ความทรงจำสำเร็จ');
+
+      setWebsites(websites.map(w => w.id === activeSite.id ? {
+        ...w,
+        name: siteName,
         category: siteCategory,
         donationPromptPay,
         donationAccountName,
         donationActive,
-        themeConfig: data.tenant.themeConfig
+        themeConfig: data.tenant.themeConfig,
       } : w));
       setActiveSite(data.tenant);
+      return true;
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+      return false;
     } finally {
       setSaveLoading(false);
     }
+  };
+
+  const saveProfileMediaSelection = async (kind: 'avatar' | 'cover', src: string) => {
+    const reset = { scale: 1, x: 0, y: 0, rotate: 0 };
+    if (kind === 'avatar') {
+      setDeceasedAvatarUrl(src);
+      setDeceasedAvatarScale(reset.scale);
+      setDeceasedAvatarX(reset.x);
+      setDeceasedAvatarY(reset.y);
+      setDeceasedAvatarRotate(reset.rotate);
+      return persistSiteConfig({
+        successMessage: 'บันทึกรูปโปรไฟล์สำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+        media: {
+          avatarUrl: src,
+          avatarScale: reset.scale,
+          avatarX: reset.x,
+          avatarY: reset.y,
+          avatarRotate: reset.rotate,
+        },
+      });
+    }
+
+    setDeceasedCoverUrl(src);
+    setDeceasedCoverScale(reset.scale);
+    setDeceasedCoverX(reset.x);
+    setDeceasedCoverY(reset.y);
+    setDeceasedCoverRotate(reset.rotate);
+    return persistSiteConfig({
+      successMessage: 'บันทึกรูปหน้าปกสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+      media: {
+        coverUrl: src,
+        coverScale: reset.scale,
+        coverX: reset.x,
+        coverY: reset.y,
+        coverRotate: reset.rotate,
+      },
+    });
+  };
+
+  const confirmProfileMediaCrop = async (kind: 'avatar' | 'cover') => {
+    const ok = await persistSiteConfig({
+      successMessage:
+        kind === 'avatar'
+          ? 'บันทึกการปรับรูปโปรไฟล์สำเร็จ — หน้าเว็บจริงอัปเดตแล้ว'
+          : 'บันทึกการปรับรูปหน้าปกสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+    });
+    if (ok) {
+      if (kind === 'avatar') setIsCropModalOpen(false);
+      else setIsCoverCropModalOpen(false);
+    }
+  };
+
+  const removePetAvatar = async (index: number) => {
+    const updatedSubjects = subjects.map((subject, subjectIndex) =>
+      subjectIndex === index
+        ? {
+            ...subject,
+            avatarUrl: '',
+            avatarScale: 1,
+            avatarX: 0,
+            avatarY: 0,
+            avatarRotate: 0,
+          }
+        : subject
+    );
+    setSubjects(updatedSubjects);
+    if (petCropModalIndex === index) setPetCropModalIndex(null);
+    await persistSiteConfig({
+      successMessage: 'ลบรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+      subjects: updatedSubjects,
+    });
+  };
+
+  const confirmPetAvatarCrop = async () => {
+    if (petCropModalIndex === null) return;
+    const ok = await persistSiteConfig({
+      successMessage: 'บันทึกรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+      subjects,
+    });
+    if (ok) setPetCropModalIndex(null);
+  };
+
+  const queueThemeAutoSave = (partial: ThemeOverrides) => {
+    if (skipThemeAutoSave.current) return;
+    pendingThemeRef.current = { ...pendingThemeRef.current, ...partial };
+    if (themeAutoSaveTimer.current) clearTimeout(themeAutoSaveTimer.current);
+    themeAutoSaveTimer.current = setTimeout(() => {
+      const pendingTheme = pendingThemeRef.current;
+      pendingThemeRef.current = {};
+      void persistSiteConfig({
+        successMessage: 'บันทึกธีมสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+        theme: pendingTheme,
+      });
+    }, 700);
+  };
+
+  const applyThemeSelection = async (
+    theme: ThemeOverrides,
+    successMessage = 'บันทึกธีมสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+  ) => {
+    if (theme.primaryColor !== undefined) setPrimaryColor(theme.primaryColor);
+    if (theme.secondaryColor !== undefined) setSecondaryColor(theme.secondaryColor);
+    if (theme.fontFamily !== undefined) {
+      setAnnFontFamily((prev) => (prev === fontFamily ? theme.fontFamily! : prev));
+      setFontFamily(theme.fontFamily);
+    }
+    if (theme.defaultFontSize !== undefined) setDefaultFontSize(theme.defaultFontSize);
+    return persistSiteConfig({ successMessage, theme });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (themeAutoSaveTimer.current) clearTimeout(themeAutoSaveTimer.current);
+    };
+  }, []);
+
+  // 3. Save Website Configuration (BR025, BR026, Step 7 Theme Save, Donation fields update)
+  const handleSaveConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await persistSiteConfig();
   };
 
   // 4. Moderate Condolence (Approve / Delete - BR027)
@@ -2854,6 +3053,12 @@ export default function WebmasterDashboard() {
                                         src={resolveMediaSrc(sub.avatarUrl)}
                                         alt={`รูปประจำตัวของ ${sub.name || `น้องตัวที่ ${index + 1}`}`}
                                         className="h-full w-full object-cover"
+                                        style={imageTransformStyle({
+                                          x: sub.avatarX ?? 0,
+                                          y: sub.avatarY ?? 0,
+                                          scale: sub.avatarScale ?? 1,
+                                          rotate: sub.avatarRotate ?? 0,
+                                        })}
                                       />
                                     ) : (
                                       <PawPrint className="h-8 w-8 text-stone-300" aria-hidden />
@@ -2862,7 +3067,7 @@ export default function WebmasterDashboard() {
                                   <div className="min-w-0 flex-1 space-y-2">
                                     <div>
                                       <p className="text-sm font-bold text-stone-800">รูปประจำตัวน้อง</p>
-                                      <p className="text-xs text-stone-400">แนะนำรูปสี่เหลี่ยมจัตุรัส ขนาดไม่เกิน 10MB</p>
+                                      <p className="text-xs text-stone-400">แนะนำรูปสี่เหลี่ยมจัตุรัส — ปรับย่อ/ขยายและตำแหน่งได้หลังอัปโหลด</p>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                       <Input
@@ -2897,9 +3102,20 @@ export default function WebmasterDashboard() {
                                       {sub.avatarUrl && (
                                         <Button
                                           type="button"
+                                          variant="outline"
+                                          className="min-h-11 rounded-xl border-stone-200/60 bg-white px-4 text-xs shadow-none hover:bg-stone-50"
+                                          onClick={() => setPetCropModalIndex(index)}
+                                        >
+                                          <Settings className="h-4 w-4" />
+                                          ปรับรูป
+                                        </Button>
+                                      )}
+                                      {sub.avatarUrl && (
+                                        <Button
+                                          type="button"
                                           variant="ghost"
                                           className="min-h-11 rounded-xl px-4 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700"
-                                          onClick={() => updateSubject(index, { avatarUrl: '' })}
+                                          onClick={() => void removePetAvatar(index)}
                                         >
                                           <Trash2 className="h-4 w-4" />
                                           ลบรูป
@@ -3318,7 +3534,11 @@ export default function WebmasterDashboard() {
                               <label className="font-bold text-stone-600">ขนาดตัวอักษรเริ่มต้นของเว็บไซต์</label>
                               <Select
                               value={defaultFontSize}
-                              onValueChange={(value) => setDefaultFontSize(value as any)}
+                              onValueChange={(value) => {
+                                void applyThemeSelection({
+                                  defaultFontSize: value as 'NORMAL' | 'MEDIUM' | 'LARGE',
+                                });
+                              }}
                             >
                               <SelectTrigger className={"w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
                                 <SelectValue />
@@ -4059,12 +4279,7 @@ export default function WebmasterDashboard() {
                     category={activeSite?.category}
                     selectedSrc={deceasedAvatarUrl}
                     onSelect={(src) => {
-                      setDeceasedAvatarUrl(src);
-                      setDeceasedAvatarScale(1);
-                      setDeceasedAvatarX(0);
-                      setDeceasedAvatarY(0);
-                      setDeceasedAvatarRotate(0);
-                      setSuccess('เลือกรูปโปรไฟล์จากชุดธีมแล้ว — กดบันทึกเพื่อยืนยัน');
+                      void saveProfileMediaSelection('avatar', src);
                     }}
                   />
                   <DefaultMediaPicker
@@ -4074,12 +4289,7 @@ export default function WebmasterDashboard() {
                     category={activeSite?.category}
                     selectedSrc={deceasedCoverUrl}
                     onSelect={(src) => {
-                      setDeceasedCoverUrl(src);
-                      setDeceasedCoverScale(1);
-                      setDeceasedCoverX(0);
-                      setDeceasedCoverY(0);
-                      setDeceasedCoverRotate(0);
-                      setSuccess('เลือกภาพหน้าปกจากชุดธีมแล้ว — กดบันทึกเพื่อยืนยัน');
+                      void saveProfileMediaSelection('cover', src);
                     }}
                   />
 
@@ -4337,24 +4547,14 @@ export default function WebmasterDashboard() {
                         <button
                           type="button"
                           onClick={() => {
-                            if (quickPreview.kind === 'avatar') {
-                              setDeceasedAvatarUrl(quickPreview.src);
-                              setDeceasedAvatarScale(1);
-                              setDeceasedAvatarX(0);
-                              setDeceasedAvatarY(0);
-                              setDeceasedAvatarRotate(0);
-                            } else {
-                              setDeceasedCoverUrl(quickPreview.src);
-                              setDeceasedCoverScale(1);
-                              setDeceasedCoverX(0);
-                              setDeceasedCoverY(0);
-                              setDeceasedCoverRotate(0);
-                            }
-                            setQuickPreview(null);
+                            void saveProfileMediaSelection(quickPreview.kind, quickPreview.src).then((ok) => {
+                              if (ok) setQuickPreview(null);
+                            });
                           }}
-                          className="rounded-xl bg-[#0071e3] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#0071e3]/90 active:scale-95"
+                          disabled={saveLoading}
+                          className="rounded-xl bg-[#0071e3] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#0071e3]/90 active:scale-95 disabled:opacity-50"
                         >
-                          ยืนยัน
+                          {saveLoading ? 'กำลังบันทึก...' : 'ยืนยัน'}
                         </button>
                       </div>
                     )}
@@ -4488,7 +4688,7 @@ export default function WebmasterDashboard() {
                       <Palette className="size-4 text-[#0071e3]" />
                       <span>ธีม & สี & ฟอนต์</span>
                     </h3>
-                    <p className="text-xs text-stone-500">เลือกโทนสีและฟอนต์ที่เข้ากับเว็บไซต์ของคุณ</p>
+                    <p className="text-xs text-stone-500">เลือกโทนสีและฟอนต์ — บันทึกอัตโนมัติไปยังหน้าเว็บจริง</p>
                   </div>
 
                   {/* Theme Templates */}
@@ -4500,9 +4700,12 @@ export default function WebmasterDashboard() {
                       <button
                         type="button"
                         onClick={() => {
-                          setPrimaryColor('#0d9488');
-                          setSecondaryColor('#f59e0b');
+                          void applyThemeSelection(
+                            { primaryColor: '#0d9488', secondaryColor: '#f59e0b' },
+                            'รีเซ็ตธีมสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+                          );
                         }}
+                        disabled={saveLoading}
                         className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[10px] font-bold text-stone-500 transition hover:bg-stone-50 hover:text-stone-700 active:scale-95"
                       >
                         <RotateCw className="size-3" />
@@ -4525,9 +4728,12 @@ export default function WebmasterDashboard() {
                             key={t.name}
                             type="button"
                             onClick={() => {
-                              setPrimaryColor(t.primary);
-                              setSecondaryColor(t.secondary);
+                              void applyThemeSelection({
+                                primaryColor: t.primary,
+                                secondaryColor: t.secondary,
+                              });
                             }}
+                            disabled={saveLoading}
                             className={`relative flex h-auto w-full flex-col rounded-2xl border-2 bg-white overflow-hidden transition-all duration-200 hover:shadow-md ${
                               isActive
                                 ? 'border-[#0071e3] shadow-sm ring-4 ring-[#0071e3]/10'
@@ -4568,7 +4774,11 @@ export default function WebmasterDashboard() {
                         <input
                           type="color"
                           value={primaryColor}
-                          onChange={(e) => setPrimaryColor(e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setPrimaryColor(value);
+                            queueThemeAutoSave({ primaryColor: value });
+                          }}
                           className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-0.5"
                         />
                         <div className="flex-1 space-y-0.5">
@@ -4576,7 +4786,11 @@ export default function WebmasterDashboard() {
                           <Input
                             type="text"
                             value={primaryColor}
-                            onChange={(e) => setPrimaryColor(e.target.value)}
+                            onChange={(e) => {
+                            const value = e.target.value;
+                            setPrimaryColor(value);
+                            queueThemeAutoSave({ primaryColor: value });
+                          }}
                             className="h-8 rounded-lg border border-stone-200 bg-white px-2.5 font-mono text-xs text-stone-900 focus-visible:border-[#0071e3]/50 focus-visible:ring-0"
                           />
                         </div>
@@ -4585,7 +4799,11 @@ export default function WebmasterDashboard() {
                         <input
                           type="color"
                           value={secondaryColor}
-                          onChange={(e) => setSecondaryColor(e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setSecondaryColor(value);
+                            queueThemeAutoSave({ secondaryColor: value });
+                          }}
                           className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-0.5"
                         />
                         <div className="flex-1 space-y-0.5">
@@ -4593,7 +4811,11 @@ export default function WebmasterDashboard() {
                           <Input
                             type="text"
                             value={secondaryColor}
-                            onChange={(e) => setSecondaryColor(e.target.value)}
+                            onChange={(e) => {
+                            const value = e.target.value;
+                            setSecondaryColor(value);
+                            queueThemeAutoSave({ secondaryColor: value });
+                          }}
                             className="h-8 rounded-lg border border-stone-200 bg-white px-2.5 font-mono text-xs text-stone-900 focus-visible:border-[#0071e3]/50 focus-visible:ring-0"
                           />
                         </div>
@@ -4610,8 +4832,7 @@ export default function WebmasterDashboard() {
                     <Select
                       value={fontFamily}
                       onValueChange={(value) => {
-                        setAnnFontFamily((prev) => (prev === fontFamily ? value : prev));
-                        setFontFamily(value);
+                        void applyThemeSelection({ fontFamily: value });
                       }}
                     >
                       <SelectTrigger
@@ -5950,11 +6171,12 @@ export default function WebmasterDashboard() {
             {/* Save Crop button */}
             <Button variant="ghost"
               type="button"
-              onClick={() => setIsCoverCropModalOpen(false)}
-              className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+              disabled={saveLoading}
+              onClick={() => void confirmProfileMediaCrop('cover')}
+              className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <Check className="w-4 h-4" />
-              <span>เสร็จสิ้นและนำไปใช้</span>
+              <span>{saveLoading ? 'กำลังบันทึก...' : 'เสร็จสิ้นและนำไปใช้'}</span>
             </Button>
           </div>
         </div>
@@ -6125,14 +6347,43 @@ export default function WebmasterDashboard() {
             {/* Save Crop button */}
             <Button variant="ghost"
               type="button"
-              onClick={() => setIsCropModalOpen(false)}
-              className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+              disabled={saveLoading}
+              onClick={() => void confirmProfileMediaCrop('avatar')}
+              className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <Check className="w-4 h-4" />
-              <span>เสร็จสิ้นและนำไปใช้</span>
+              <span>{saveLoading ? 'กำลังบันทึก...' : 'เสร็จสิ้นและนำไปใช้'}</span>
             </Button>
           </div>
         </div>
+      )}
+
+      {/* Pet avatar crop modal */}
+      {petCropModalIndex !== null && subjects[petCropModalIndex]?.avatarUrl && (
+        <CircularImageCropModal
+          open
+          imageUrl={resolveMediaSrc(subjects[petCropModalIndex].avatarUrl!)}
+          title={`ปรับรูปประจำตัว — ${subjects[petCropModalIndex].name || `น้องตัวที่ ${petCropModalIndex + 1}`}`}
+          transform={{
+            x: subjects[petCropModalIndex].avatarX ?? 0,
+            y: subjects[petCropModalIndex].avatarY ?? 0,
+            scale: subjects[petCropModalIndex].avatarScale ?? 1,
+            rotate: subjects[petCropModalIndex].avatarRotate ?? 0,
+          }}
+          saving={saveLoading}
+          onClose={() => setPetCropModalIndex(null)}
+          onTransformChange={(patch) => {
+            const idx = petCropModalIndex;
+            if (idx === null) return;
+            const mapped = mapPetAvatarCropPatch(patch);
+            setSubjects((prev) =>
+              prev.map((subject, subjectIndex) =>
+                subjectIndex === idx ? { ...subject, ...mapped } : subject
+              )
+            );
+          }}
+          onConfirm={confirmPetAvatarCrop}
+        />
       )}
 
       {/* Custom confirm modal dialog */}
