@@ -913,8 +913,12 @@ export default function WebmasterDashboard() {
 
   const uploadPetAvatar = async (file: File, index: number) => {
     if (!activeSite) return;
-    if (!file.type.startsWith('image/')) {
-      setError('กรุณาเลือกไฟล์รูปภาพ');
+    const rawExt = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const allowedExt = ['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif'] as const;
+    const extOk = allowedExt.includes(rawExt as (typeof allowedExt)[number]);
+    const mimeOk = file.type.startsWith('image/');
+    if (!mimeOk && !extOk) {
+      setError('กรุณาเลือกไฟล์รูปภาพ JPG, PNG หรือ WEBP');
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
@@ -1650,6 +1654,10 @@ export default function WebmasterDashboard() {
         themeConfig: data.tenant.themeConfig,
       } : w));
       setActiveSite(data.tenant);
+      const savedConfig = data.tenant.themeConfig as { subjects?: unknown[] } | null;
+      if (savedConfig?.subjects && Array.isArray(savedConfig.subjects)) {
+        setSubjects(normalizeManageSubjects(savedConfig.subjects, activeSite.category));
+      }
       return true;
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -3114,7 +3122,7 @@ export default function WebmasterDashboard() {
                                       <Input
                                         id={`pet-avatar-${index}`}
                                         type="file"
-                                        accept="image/jpeg,image/png,image/webp"
+                                        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
                                         className="sr-only"
                                         disabled={petAvatarUploadingIndex !== null}
                                         onChange={(e) => {

@@ -42,6 +42,14 @@ export function toStoredMediaPath(src: string | null | undefined): string {
   return trimmed;
 }
 
+function shouldServeUploadsLocally(): boolean {
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    return host === 'localhost' || host === '127.0.0.1';
+  }
+  return process.env.NODE_ENV !== 'production';
+}
+
 /** Resolve stored media paths for public rendering (local defaults + R2 uploads). */
 export function resolveMediaSrc(src: string | null | undefined): string {
   if (!src) return '';
@@ -67,11 +75,11 @@ export function resolveMediaSrc(src: string | null | undefined): string {
   }
 
   if (normalized.startsWith('/uploads/')) {
-    if (UPLOADS_CDN && UPLOADS_CDN !== 'https://storage.forever.co.th') {
-      return encodePathSegments(`${UPLOADS_CDN.replace(/\/$/, '')}${normalized}`);
+    if (shouldServeUploadsLocally()) {
+      return encodePathSegments(normalized);
     }
-    // Local uploads are written to public/uploads (mock uploader).
-    return encodePathSegments(normalized);
+    const cdn = UPLOADS_CDN.replace(/\/$/, '');
+    return encodePathSegments(`${cdn}${normalized}`);
   }
 
   if (normalized.startsWith('/')) {
