@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Flame, Menu as MenuIcon, X, Eye, Type } from 'lucide-react';
+import { ArrowLeft, ChevronUp, Flame, Menu as MenuIcon, X, Type } from 'lucide-react';
 import { getEnabledFeatures } from '@/lib/features';
 import { getFeatureLabel } from '@/lib/categories';
 import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
@@ -42,6 +42,7 @@ export default function PublicLayoutClient({
   const [zoomLevel, setZoomLevel] = useState<number>(0);
   const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const config = (tenant.themeConfig as any) || {};
 
@@ -51,6 +52,20 @@ export default function PublicLayoutClient({
       setZoomLevel(parseInt(saved, 10));
     }
   }, [slug]);
+
+  React.useEffect(() => {
+    const onScroll = () => {
+      setShowScrollTop(window.scrollY > 350);
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const changeZoom = (newZoom: number) => {
     setZoomLevel(newZoom);
@@ -188,29 +203,43 @@ export default function PublicLayoutClient({
       {/* Dynamic Navigation Menu */}
       <nav className="border-b border-stone-200/60 bg-white/85 backdrop-blur-sm sticky top-0 z-40 shadow-xs">
         {/* Desktop Navigation Links */}
-        <div className="hidden sm:flex max-w-5xl mx-auto px-4 items-center justify-center gap-1 sm:gap-2 h-14">
-          {navItems.map((item, idx) => (
-            <Link 
-              key={idx} 
-              href={item.href} 
-              className="px-4 py-2 text-xs sm:text-sm font-semibold rounded-full text-stone-500 hover:text-stone-900 hover:bg-stone-200/30 transition flex-shrink-0"
-            >
-              {item.title}
-            </Link>
-          ))}
+        <div className="hidden sm:flex max-w-5xl mx-auto px-4 items-center justify-between h-14">
+          <Link
+            href="/"
+            className="shrink-0 text-xs font-black tracking-[0.18em] text-stone-400 transition hover:text-stone-700"
+          >
+            FOREVER
+          </Link>
+          <div className="flex items-center justify-center gap-1 sm:gap-2">
+            {navItems.map((item, idx) => (
+              <Link
+                key={idx}
+                href={item.href}
+                className="px-4 py-2 text-xs sm:text-sm font-semibold rounded-full text-stone-500 hover:text-stone-900 hover:bg-stone-200/30 transition flex-shrink-0"
+              >
+                {item.title}
+              </Link>
+            ))}
+          </div>
+          <div className="w-14 shrink-0" aria-hidden />
         </div>
 
         {/* Mobile Navigation Header */}
         <div className="flex sm:hidden justify-between items-center h-14 px-4 max-w-5xl mx-auto">
-          <span className="text-xs font-bold text-stone-600 tracking-wide uppercase">
-            เมนูนำทาง
-          </span>
+          <Link
+            href="/"
+            className="text-xs font-black tracking-[0.18em] text-stone-500 transition hover:text-stone-800"
+          >
+            FOREVER
+          </Link>
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-xl hover:bg-stone-100/80 text-stone-600 transition focus:outline-none cursor-pointer flex items-center justify-center"
+            className="p-2 rounded-xl hover:bg-stone-100/80 text-stone-600 transition focus:outline-none cursor-pointer flex items-center justify-center gap-1.5"
             aria-label="Toggle navigation menu"
+            aria-expanded={isMobileMenuOpen}
           >
+            <span className="text-[10px] font-bold uppercase tracking-wide text-stone-500">เมนู</span>
             {isMobileMenuOpen ? (
               <X className="w-5 h-5" />
             ) : (
@@ -221,12 +250,21 @@ export default function PublicLayoutClient({
 
         {/* Mobile Dropdown Panel */}
         {isMobileMenuOpen && (
-          <div className="sm:hidden absolute left-0 right-0 top-full border-b border-stone-200/65 bg-white shadow-xl z-50 animate-fade-in divide-y divide-stone-100">
-            <div className="flex flex-col p-2 gap-0.5 bg-white">
+          <div className="sm:hidden absolute left-0 right-0 top-full border-b border-stone-200/65 bg-white shadow-xl z-50 animate-fade-in">
+            <div className="flex flex-col p-2 gap-0.5 bg-white max-w-5xl mx-auto">
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-4 py-3 text-sm font-bold rounded-xl text-[#0071e3] hover:bg-blue-50/60 transition"
+              >
+                <ArrowLeft className="size-4 shrink-0" aria-hidden />
+                <span>หน้าแรก FOREVER</span>
+              </Link>
+              <div className="mx-2 my-1 border-b border-stone-100" />
               {navItems.map((item, idx) => (
-                <Link 
-                  key={idx} 
-                  href={item.href} 
+                <Link
+                  key={idx}
+                  href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="px-4 py-3 text-sm font-semibold rounded-xl text-stone-700 hover:text-stone-900 hover:bg-stone-100/50 transition block"
                 >
@@ -307,6 +345,18 @@ export default function PublicLayoutClient({
                 : 'ขนาดปกติของหน้าเว็บ (สามารถปรับเพิ่ม A+ ได้สูงสุด 2 ระดับ)'}
             </p>
           </div>
+        )}
+
+        {showScrollTop && (
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="flex size-12 cursor-pointer items-center justify-center rounded-full border border-stone-200 bg-white text-stone-700 shadow-lg transition hover:bg-stone-50 hover:shadow-xl active:scale-[0.93] animate-fade-in"
+            title="กลับขึ้นด้านบน"
+            aria-label="กลับขึ้นด้านบน"
+          >
+            <ChevronUp className="size-5" aria-hidden />
+          </button>
         )}
 
         {/* Floating Trigger Button */}
