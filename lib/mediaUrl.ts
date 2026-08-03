@@ -12,6 +12,36 @@ function encodePathSegments(path: string): string {
     .join('/');
 }
 
+/** Normalize upload API / CDN URLs to a stable site-relative path for themeConfig. */
+export function toStoredMediaPath(src: string | null | undefined): string {
+  if (!src) return '';
+  const trimmed = src.trim();
+  if (!trimmed) return '';
+
+  if (
+    trimmed.startsWith('/uploads/') ||
+    trimmed.startsWith('/demo-media/') ||
+    trimmed.startsWith('/defaults/')
+  ) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith('uploads/')) {
+    return `/${trimmed}`;
+  }
+
+  try {
+    const url = new URL(trimmed);
+    if (url.pathname.startsWith('/uploads/')) {
+      return url.pathname;
+    }
+  } catch {
+    // not an absolute URL
+  }
+
+  return trimmed;
+}
+
 /** Resolve stored media paths for public rendering (local defaults + R2 uploads). */
 export function resolveMediaSrc(src: string | null | undefined): string {
   if (!src) return '';

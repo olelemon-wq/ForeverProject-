@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
+import { isDemoSiteSlug } from '@/lib/demoSites';
 
 export async function POST(request: Request) {
   try {
@@ -65,12 +66,17 @@ export async function POST(request: Request) {
     }
 
     // 4. Update fields
+    const themeConfigPayload =
+      themeConfig && tenant && isDemoSiteSlug(tenant.slug)
+        ? { ...themeConfig, isDemo: true, demoCustomized: true }
+        : themeConfig;
+
     const updatedTenant = await db.tenant.update({
       where: { id: websiteId },
       data: {
         ...(name && { name }),
         ...(category && { category }),
-        ...(themeConfig && { themeConfig }),
+        ...(themeConfigPayload && { themeConfig: themeConfigPayload }),
         ...(visibility && { visibility }),
         ...(donationPromptPay !== undefined && { donationPromptPay }),
         ...(donationAccountName !== undefined && { donationAccountName }),

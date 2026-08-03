@@ -66,8 +66,18 @@ async function seedSite(site: JsonRecord, webmasterId: string, ownerPhone: strin
 
   let record = await db.tenant.findUnique({ where: { slug } });
   if (record) {
-    record = await db.tenant.update({ where: { slug }, data: tenantData });
-    await clearTenantChildren(record.id);
+    const existingConfig = (record.themeConfig as JsonRecord | null) ?? {};
+    const keepCustomized = existingConfig.demoCustomized === true;
+    record = await db.tenant.update({
+      where: { slug },
+      data: {
+        ...tenantData,
+        themeConfig: (keepCustomized ? existingConfig : themeConfig) as Prisma.InputJsonValue,
+      },
+    });
+    if (!keepCustomized) {
+      await clearTenantChildren(record.id);
+    }
   } else {
     record = await db.tenant.create({ data: { slug, ...tenantData } });
   }

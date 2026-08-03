@@ -11,7 +11,7 @@ import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categ
 import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import type { DefaultMediaKind } from '@/lib/defaultMedia';
 import { getDefaultMediaForCategory, resolveDefaultMediaSrc } from '@/lib/defaultMedia';
-import { resolveMediaSrc } from '@/lib/mediaUrl';
+import { resolveMediaSrc, toStoredMediaPath } from '@/lib/mediaUrl';
 import {
   parseCoupleMilestones,
   coupleMilestonesForSave,
@@ -182,7 +182,7 @@ function serializeManageSubjects(subjects: ManageSubject[], category: string) {
   if (category === 'Pet Memorial') {
     return subjects.map((s) => ({
       name: s.name || '',
-      avatarUrl: s.avatarUrl || '',
+      avatarUrl: toStoredMediaPath(s.avatarUrl || ''),
       avatarScale: s.avatarScale ?? 1,
       avatarX: s.avatarX ?? 0,
       avatarY: s.avatarY ?? 0,
@@ -951,11 +951,12 @@ export default function WebmasterDashboard() {
       }
       if (!data.filePath) throw new Error('ไม่ได้รับที่อยู่ไฟล์จากเซิร์ฟเวอร์');
 
+      const storedPath = toStoredMediaPath(data.filePath);
       const updatedSubjects = subjects.map((subject, subjectIndex) =>
         subjectIndex === index
           ? {
               ...subject,
-              avatarUrl: data.filePath,
+              avatarUrl: storedPath,
               avatarScale: 1,
               avatarX: 0,
               avatarY: 0,
@@ -964,8 +965,18 @@ export default function WebmasterDashboard() {
           : subject
       );
       setSubjects(updatedSubjects);
+      subjectsRef.current = updatedSubjects;
+      const saved = await persistSiteConfig({
+        successMessage: 'บันทึกรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+        subjects: updatedSubjects,
+      });
+      if (!saved) {
+        setError('อัปโหลดรูปสำเร็จ แต่บันทึกลงเว็บไซต์ไม่สำเร็จ กรุณาลองกดบันทึกการตั้งค่าด้านล่าง');
+      }
       setPetCropModalIndex(index);
-      setSuccess('อัปโหลดรูปสำเร็จ — ปรับตำแหน่งแล้วกดเสร็จสิ้นเพื่ออัปเดตหน้าเว็บ');
+      if (saved) {
+        setSuccess('อัปโหลดและบันทึกรูปแล้ว — ปรับตำแหน่งเพิ่มเติมได้ตามต้องการ');
+      }
     } catch (err: any) {
       setError(err.message || 'การอัปโหลดรูปน้องล้มเหลว');
     } finally {
@@ -1719,13 +1730,18 @@ export default function WebmasterDashboard() {
     });
   };
 
+  const closePetCropModal = async () => {
+    if (petCropModalIndex !== null) {
+      await persistSiteConfig({
+        successMessage: 'บันทึกการปรับรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+        subjects: subjectsRef.current,
+      });
+    }
+    setPetCropModalIndex(null);
+  };
+
   const confirmPetAvatarCrop = async () => {
-    if (petCropModalIndex === null) return;
-    const ok = await persistSiteConfig({
-      successMessage: 'บันทึกรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-      subjects: subjectsRef.current,
-    });
-    if (ok) setPetCropModalIndex(null);
+    await closePetCropModal();
   };
 
   const queueSubjectsAutoSave = (nextSubjects: ManageSubject[]) => {
@@ -6407,7 +6423,7 @@ export default function WebmasterDashboard() {
             rotate: subjects[petCropModalIndex].avatarRotate ?? 0,
           }}
           saving={saveLoading}
-          onClose={() => setPetCropModalIndex(null)}
+          onClose={() => void closePetCropModal()}
           onTransformChange={(patch) => {
             const idx = petCropModalIndex;
             if (idx === null) return;
