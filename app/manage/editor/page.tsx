@@ -363,7 +363,7 @@ function EditorWorkspace() {
               bg = getStyle3Config(config.category || 'Memorial').bg;
             } else if (ann.style === 'ELEGANT_WHITE') {
               bg = '#ffffff';
-
+            }
 
             if (ann.canvasBg) {
               if (ann.canvasBg === '#1c1917' && ann.style === 'CHARCOAL_SLATE') {
@@ -615,7 +615,7 @@ function EditorWorkspace() {
         bg = getStyle3Config(siteCategory).bg;
       } else if (value === 'ELEGANT_WHITE') {
         bg = '#ffffff';
-
+      }
       setBackground(bg);
 
       const colors = getTextColors(siteCategory, value);
