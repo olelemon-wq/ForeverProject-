@@ -217,7 +217,7 @@ function getSubjectEditorCopy(category: string) {
   if (category === 'Pet Memorial') {
     return {
       sectionTitle: 'สมุดประจำตัวน้อง',
-      sectionHint: 'เพิ่มโปรไฟล์น้องแต่ละตัว — อัปโหลดรูปแล้วปรับย่อ/ขยายได้เหมือนรูปโปรไฟล์ ข้อมูลอื่นกดบันทึกด้านล่าง',
+      sectionHint: 'เพิ่มโปรไฟล์น้องแต่ละตัว — บันทึกอัตโนมัติไปยังหน้าเว็บจริงของเว็บนี้',
       cardTitle: (i: number) => `โปรไฟล์น้องตัวที่ ${i + 1}`,
       nameLabel: 'ชื่อ / ชื่อเล่น',
       namePlaceholder: 'เช่น เจ้าปุยฝ้าย, ตูบ',
@@ -721,6 +721,9 @@ export default function WebmasterDashboard() {
   const [quickPreview, setQuickPreview] = useState<{ kind: DefaultMediaKind; src: string } | null>(null);
   const [isCropModalOpen, setIsCropModalOpen] = useState(false);
   const themeAutoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const subjectsAutoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const subjectsRef = useRef<ManageSubject[]>([]);
+  const pendingSubjectsRef = useRef<ManageSubject[] | null>(null);
   const pendingThemeRef = useRef<{
     primaryColor?: string;
     secondaryColor?: string;
@@ -1720,9 +1723,24 @@ export default function WebmasterDashboard() {
     if (petCropModalIndex === null) return;
     const ok = await persistSiteConfig({
       successMessage: 'บันทึกรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-      subjects,
+      subjects: subjectsRef.current,
     });
     if (ok) setPetCropModalIndex(null);
+  };
+
+  const queueSubjectsAutoSave = (nextSubjects: ManageSubject[]) => {
+    if (skipThemeAutoSave.current) return;
+    pendingSubjectsRef.current = nextSubjects;
+    if (subjectsAutoSaveTimer.current) clearTimeout(subjectsAutoSaveTimer.current);
+    subjectsAutoSaveTimer.current = setTimeout(() => {
+      const pending = pendingSubjectsRef.current;
+      pendingSubjectsRef.current = null;
+      if (!pending) return;
+      void persistSiteConfig({
+        successMessage: 'บันทึกข้อมูลน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+        subjects: pending,
+      });
+    }, 800);
   };
 
   const queueThemeAutoSave = (partial: ThemeOverrides) => {
@@ -1754,8 +1772,13 @@ export default function WebmasterDashboard() {
   };
 
   useEffect(() => {
+    subjectsRef.current = subjects;
+  }, [subjects]);
+
+  useEffect(() => {
     return () => {
       if (themeAutoSaveTimer.current) clearTimeout(themeAutoSaveTimer.current);
+      if (subjectsAutoSaveTimer.current) clearTimeout(subjectsAutoSaveTimer.current);
     };
   }, []);
 
@@ -2965,8 +2988,10 @@ export default function WebmasterDashboard() {
                     const copy = getSubjectEditorCopy(cat);
                     const updateSubject = (index: number, patch: Partial<ManageSubject>) => {
                       setSubjects((prev) => {
-                        const next = [...prev];
-                        next[index] = { ...next[index], ...patch };
+                        const next = prev.map((subject, subjectIndex) =>
+                          subjectIndex === index ? { ...subject, ...patch } : subject
+                        );
+                        if (cat === 'Pet Memorial') queueSubjectsAutoSave(next);
                         return next;
                       });
                     };
@@ -3325,7 +3350,18 @@ export default function WebmasterDashboard() {
                         {copy.canAdd && (
                           <button
                             type="button"
-                            onClick={() => setSubjects((prev) => [...prev, emptyManageSubject()])}
+                            onClick={() => {
+                              setSubjects((prev) => {
+                                const next = [
+                                  ...prev,
+                                  cat === 'Pet Memorial'
+                                    ? { ...emptyManageSubject(), isAlive: true }
+                                    : emptyManageSubject(),
+                                ];
+                                if (cat === 'Pet Memorial') queueSubjectsAutoSave(next);
+                                return next;
+                              });
+                            }}
                             className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-dashed border-stone-200/70 bg-stone-50/40 py-3 text-xs font-bold text-stone-500 transition hover:border-[#0071e3]/30 hover:bg-[#0071e3]/5 hover:text-[#0071e3]"
                           >
                             {copy.addLabel}
