@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { toStoredMediaPath } from '@/lib/mediaUrl';
 
 export async function POST(request: Request) {
   try {
@@ -193,10 +194,10 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({
+      return NextResponse.json({
       success: true,
       uploadUrl,
-      filePath: media.filePath,
+      filePath: toStoredMediaPath(fileUrl) || `/${fileKey}`,
       mediaId: media.id,
     });
   } catch (error) {

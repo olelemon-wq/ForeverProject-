@@ -647,6 +647,7 @@ export default function WebmasterDashboard() {
   const [subjects, setSubjects] = useState<ManageSubject[]>([]);
   const [petAvatarUploadingIndex, setPetAvatarUploadingIndex] = useState<number | null>(null);
   const [petCropModalIndex, setPetCropModalIndex] = useState<number | null>(null);
+  const [petAvatarLocalPreview, setPetAvatarLocalPreview] = useState<Record<number, string>>({});
   const [albums, setAlbums] = useState<string[]>([]);
   const [mediaAlbums, setMediaAlbums] = useState<Record<string, string>>({});
   const [selectedAlbumFilter, setSelectedAlbumFilter] = useState('ALL');
@@ -724,6 +725,7 @@ export default function WebmasterDashboard() {
   const subjectsAutoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const subjectsRef = useRef<ManageSubject[]>([]);
   const pendingSubjectsRef = useRef<ManageSubject[] | null>(null);
+  const persistSiteConfigRef = useRef<((options?: unknown) => Promise<boolean>) | null>(null);
   const pendingThemeRef = useRef<{
     primaryColor?: string;
     secondaryColor?: string;
@@ -731,6 +733,14 @@ export default function WebmasterDashboard() {
     defaultFontSize?: 'NORMAL' | 'MEDIUM' | 'LARGE';
   }>({});
   const skipThemeAutoSave = useRef(false);
+
+  const cancelSubjectsAutoSave = () => {
+    if (subjectsAutoSaveTimer.current) {
+      clearTimeout(subjectsAutoSaveTimer.current);
+      subjectsAutoSaveTimer.current = null;
+    }
+    pendingSubjectsRef.current = null;
+  };
   
   const [features, setFeatures] = useState<any>({
     family: true,
@@ -929,8 +939,11 @@ export default function WebmasterDashboard() {
     setPetAvatarUploadingIndex(index);
     setError('');
     setSuccess('');
+    const localPreview = URL.createObjectURL(file);
+    setPetAvatarLocalPreview((prev) => ({ ...prev, [index]: localPreview }));
 
     try {
+      cancelSubjectsAutoSave();
       const res = await fetch('/api/media/upload-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -956,7 +969,10 @@ export default function WebmasterDashboard() {
       if (!data.filePath) throw new Error('ไม่ได้รับที่อยู่ไฟล์จากเซิร์ฟเวอร์');
 
       const storedPath = toStoredMediaPath(data.filePath);
-      const updatedSubjects = subjects.map((subject, subjectIndex) =>
+      if (!storedPath) {
+        throw new Error('บันทึกที่อยู่รูปไม่สำเร็จ กรุณาลองอัปโหลดใหม่อีกครั้ง');
+      }
+      const updatedSubjects = subjectsRef.current.map((subject, subjectIndex) =>
         subjectIndex === index
           ? {
               ...subject,
@@ -970,18 +986,32 @@ export default function WebmasterDashboard() {
       );
       setSubjects(updatedSubjects);
       subjectsRef.current = updatedSubjects;
-      const saved = await persistSiteConfig({
+      cancelSubjectsAutoSave();
+      const persist = persistSiteConfigRef.current;
+      if (!persist) throw new Error('ระบบบันทึกยังไม่พร้อม กรุณารีเฟรชหน้าแล้วลองใหม่');
+      const saved = await persist({
         successMessage: 'บันทึกรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
         subjects: updatedSubjects,
       });
       if (!saved) {
         setError('อัปโหลดรูปสำเร็จ แต่บันทึกลงเว็บไซต์ไม่สำเร็จ กรุณาลองกดบันทึกการตั้งค่าด้านล่าง');
+      } else {
+        setPetAvatarLocalPreview((prev) => {
+          const next = { ...prev };
+          delete next[index];
+          return next;
+        });
       }
       setPetCropModalIndex(index);
       if (saved) {
         setSuccess('อัปโหลดและบันทึกรูปแล้ว — ปรับตำแหน่งเพิ่มเติมได้ตามต้องการ');
       }
     } catch (err: any) {
+      setPetAvatarLocalPreview((prev) => {
+        const next = { ...prev };
+        delete next[index];
+        return next;
+      });
       setError(err.message || 'การอัปโหลดรูปน้องล้มเหลว');
     } finally {
       setPetAvatarUploadingIndex(null);
@@ -1658,6 +1688,7 @@ export default function WebmasterDashboard() {
       if (savedConfig?.subjects && Array.isArray(savedConfig.subjects)) {
         setSubjects(normalizeManageSubjects(savedConfig.subjects, activeSite.category));
       }
+      cancelSubjectsAutoSave();
       return true;
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -1666,6 +1697,7 @@ export default function WebmasterDashboard() {
       setSaveLoading(false);
     }
   };
+  persistSiteConfigRef.current = persistSiteConfig as (options?: unknown) => Promise<boolean>;
 
   const saveProfileMediaSelection = async (kind: 'avatar' | 'cover', src: string) => {
     const reset = { scale: 1, x: 0, y: 0, rotate: 0 };
@@ -1718,7 +1750,8 @@ export default function WebmasterDashboard() {
   };
 
   const removePetAvatar = async (index: number) => {
-    const updatedSubjects = subjects.map((subject, subjectIndex) =>
+    cancelSubjectsAutoSave();
+    const updatedSubjects = subjectsRef.current.map((subject, subjectIndex) =>
       subjectIndex === index
         ? {
             ...subject,
@@ -1731,8 +1764,16 @@ export default function WebmasterDashboard() {
         : subject
     );
     setSubjects(updatedSubjects);
+    subjectsRef.current = updatedSubjects;
+    setPetAvatarLocalPreview((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
     if (petCropModalIndex === index) setPetCropModalIndex(null);
-    await persistSiteConfig({
+    const persist = persistSiteConfigRef.current;
+    if (!persist) return;
+    await persist({
       successMessage: 'ลบรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
       subjects: updatedSubjects,
     });
@@ -1740,10 +1781,14 @@ export default function WebmasterDashboard() {
 
   const closePetCropModal = async () => {
     if (petCropModalIndex !== null) {
-      await persistSiteConfig({
-        successMessage: 'บันทึกการปรับรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-        subjects: subjectsRef.current,
-      });
+      cancelSubjectsAutoSave();
+      const persist = persistSiteConfigRef.current;
+      if (persist) {
+        await persist({
+          successMessage: 'บันทึกการปรับรูปน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+          subjects: subjectsRef.current,
+        });
+      }
     }
     setPetCropModalIndex(null);
   };
@@ -1752,17 +1797,16 @@ export default function WebmasterDashboard() {
     await closePetCropModal();
   };
 
-  const queueSubjectsAutoSave = (nextSubjects: ManageSubject[]) => {
+  const queueSubjectsAutoSave = () => {
     if (skipThemeAutoSave.current) return;
-    pendingSubjectsRef.current = nextSubjects;
     if (subjectsAutoSaveTimer.current) clearTimeout(subjectsAutoSaveTimer.current);
     subjectsAutoSaveTimer.current = setTimeout(() => {
-      const pending = pendingSubjectsRef.current;
-      pendingSubjectsRef.current = null;
-      if (!pending) return;
-      void persistSiteConfig({
+      subjectsAutoSaveTimer.current = null;
+      const persist = persistSiteConfigRef.current;
+      if (!persist) return;
+      void persist({
         successMessage: 'บันทึกข้อมูลน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-        subjects: pending,
+        subjects: subjectsRef.current,
       });
     }, 800);
   };
@@ -3015,7 +3059,8 @@ export default function WebmasterDashboard() {
                         const next = prev.map((subject, subjectIndex) =>
                           subjectIndex === index ? { ...subject, ...patch } : subject
                         );
-                        if (cat === 'Pet Memorial') queueSubjectsAutoSave(next);
+                        subjectsRef.current = next;
+                        if (cat === 'Pet Memorial') queueSubjectsAutoSave();
                         return next;
                       });
                     };
@@ -3097,11 +3142,15 @@ export default function WebmasterDashboard() {
                               <div className={`space-y-4 ${subjectSectionDividerClass}`}>
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                                   <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-stone-100 shadow-sm ring-2 ring-white ring-offset-1 ring-offset-stone-50">
-                                    {sub.avatarUrl ? (
+                                    {sub.avatarUrl || petAvatarLocalPreview[index] ? (
                                       <img
-                                        src={resolveMediaSrc(sub.avatarUrl)}
+                                        src={
+                                          petAvatarLocalPreview[index] ||
+                                          resolveMediaSrc(sub.avatarUrl)
+                                        }
                                         alt={`รูปประจำตัวของ ${sub.name || `น้องตัวที่ ${index + 1}`}`}
                                         className="h-full w-full object-cover"
+                                        key={sub.avatarUrl || petAvatarLocalPreview[index]}
                                         style={imageTransformStyle({
                                           x: sub.avatarX ?? 0,
                                           y: sub.avatarY ?? 0,
@@ -3382,7 +3431,10 @@ export default function WebmasterDashboard() {
                                     ? { ...emptyManageSubject(), isAlive: true }
                                     : emptyManageSubject(),
                                 ];
-                                if (cat === 'Pet Memorial') queueSubjectsAutoSave(next);
+                                if (cat === 'Pet Memorial') {
+                                  subjectsRef.current = next;
+                                  queueSubjectsAutoSave();
+                                }
                                 return next;
                               });
                             }}
