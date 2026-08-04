@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+import CondolenceReportDialog from '@/components/public/CondolenceReportDialog';
+
 interface Condolence {
   id: string;
   senderName: string;
@@ -14,6 +16,7 @@ interface Condolence {
 
 interface CondolenceItemProps {
   condolence: Condolence;
+  websiteId: string;
   hideRelationship?: boolean;
 }
 
@@ -37,6 +40,7 @@ const getRelationshipBadge = (rel: string) => {
 
 export default function CondolenceItem({
   condolence,
+  websiteId,
   hideRelationship = false,
 }: CondolenceItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -97,6 +101,7 @@ export default function CondolenceItem({
             {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
         )}
+        <CondolenceReportDialog websiteId={websiteId} condolenceId={condolence.id} />
       </div>
     </div>
   );

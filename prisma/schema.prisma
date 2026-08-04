@@ -28,6 +28,7 @@ model Tenant {
   payments      Payment[]
   medias        Media[]
   condolences   Condolence[]
+  condolenceReports CondolenceReport[]
   menus         Menu[]
   auditLogs     AuditLog[]
   memoryPosts   MemoryPost[]
@@ -138,7 +139,26 @@ model Condolence {
   isApproved   Boolean  @default(false) // Default requires approval (BR027)
   createdAt    DateTime @default(now())
 
-  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  website Tenant             @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  reports CondolenceReport[]
+}
+
+model CondolenceReport {
+  id           String    @id @default(uuid())
+  condolenceId String
+  websiteId    String
+  reason       String    // SPAM, OFFENSIVE, FALSE_INFO, OFF_TOPIC, OTHER
+  details      String?
+  status       String    @default("OPEN") // OPEN, RESOLVED_DELETED, RESOLVED_KEPT
+  reporterHash String
+  createdAt    DateTime  @default(now())
+  resolvedAt   DateTime?
+
+  condolence Condolence @relation(fields: [condolenceId], references: [id], onDelete: Cascade)
+  website    Tenant     @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@unique([condolenceId, reporterHash])
+  @@index([websiteId, status])
 }
 
 model Menu {

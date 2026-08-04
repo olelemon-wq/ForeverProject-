@@ -185,6 +185,7 @@ export default async function PublicCondolencePage(props: {
                       <CondolenceItem
                         key={c.id}
                         condolence={c}
+                        websiteId={tenant.id}
                         hideRelationship={tenant.category === 'Pet Memorial'}
                       />
                     ))}

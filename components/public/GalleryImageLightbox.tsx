@@ -41,7 +41,7 @@ export default function GalleryImageLightbox({
       <DialogContent
         showCloseButton={false}
         overlayClassName="bg-black/88 supports-backdrop-filter:backdrop-blur-sm"
-        className="fixed inset-x-2 top-[max(0.5rem,env(safe-area-inset-top,0px))] bottom-[max(0.5rem,env(safe-area-inset-bottom,0px))] left-1/2 flex h-auto max-h-none w-[min(calc(100vw-1rem),1100px)] max-w-[min(calc(100vw-1rem),1100px)] -translate-x-1/2 translate-y-0 flex-col overflow-hidden border-none bg-transparent p-2 shadow-none ring-0 sm:inset-auto sm:top-1/2 sm:bottom-auto sm:max-h-[100dvh] sm:w-[min(96vw,1100px)] sm:max-w-[min(96vw,1100px)] sm:-translate-y-1/2 sm:p-3"
+        className="fixed left-1/2 z-50 flex w-[min(calc(100vw-1rem),1100px)] max-w-[min(calc(100vw-1rem),1100px)] -translate-x-1/2 flex-col overflow-hidden border-none bg-transparent p-2 shadow-none ring-0 top-[max(0.5rem,env(safe-area-inset-top,0px))] bottom-[max(0.5rem,env(safe-area-inset-bottom,0px))] h-auto max-h-[calc(100dvh-1rem)] translate-y-0 sm:top-1/2 sm:bottom-auto sm:h-[min(92dvh,860px)] sm:max-h-[92dvh] sm:w-[min(96vw,1100px)] sm:max-w-[min(96vw,1100px)] sm:-translate-y-1/2 sm:p-3"
       >
         {item && (
           <div className="flex h-full min-h-0 flex-1 flex-col gap-2 sm:gap-3">
@@ -64,7 +64,7 @@ export default function GalleryImageLightbox({
               </button>
             </div>
 
-            <div className="relative flex min-h-0 flex-1 items-center justify-center gap-2">
+            <div className="relative flex min-h-0 flex-1 items-center justify-center gap-2 sm:min-h-[min(62dvh,680px)]">
               {showNav && (
                 <button
                   type="button"
@@ -81,7 +81,7 @@ export default function GalleryImageLightbox({
                 <img
                   src={item.displayUrl}
                   alt={item.fileName}
-                  className="max-h-full w-auto max-w-full rounded-xl object-contain shadow-2xl"
+                  className="max-h-[min(62dvh,680px)] w-auto max-w-full rounded-xl object-contain shadow-2xl"
                 />
 
                 {showNav && (

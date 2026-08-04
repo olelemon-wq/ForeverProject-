@@ -92,19 +92,19 @@ function DemoCard({
           ))}
         </div>
 
-        <div className="mt-auto flex flex-col sm:flex-row gap-2 pt-2">
+        <div className="mt-auto flex flex-row flex-wrap items-center gap-2 pt-2">
           <Link
             href={`/${site.slug}`}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-[#0071e3]/90"
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#0071e3] px-3.5 py-2 text-[13px] font-medium text-white transition hover:bg-[#0071e3]/90 sm:px-5 sm:py-2.5 sm:text-[14px]"
           >
             <span>{openLabel}</span>
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="size-3.5 sm:size-4" />
           </Link>
           <Link
             href={`/manage/create?category=${encodeURIComponent(site.category)}`}
-            className="inline-flex flex-1 items-center justify-center gap-1 rounded-full border border-stone-300 px-5 py-2.5 text-[14px] font-medium text-[#1D1D1F] transition hover:bg-stone-50"
+            className="inline-flex shrink-0 items-center justify-center gap-1 rounded-full border border-stone-300 px-3.5 py-2 text-[13px] font-medium text-[#1D1D1F] transition hover:bg-stone-50 sm:px-5 sm:py-2.5 sm:text-[14px]"
           >
-            <UserRound className="w-4 h-4" />
+            <UserRound className="size-3.5 sm:size-4" />
             <span>{createLabel}</span>
           </Link>
         </div>

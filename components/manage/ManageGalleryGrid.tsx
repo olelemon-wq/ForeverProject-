@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 
 export type ManageGalleryMedia = {
   id: string;
@@ -42,9 +43,11 @@ export default function ManageGalleryGrid({
   onAlbumChange,
 }: ManageGalleryGridProps) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 sm:gap-2 lg:grid-cols-5 xl:grid-cols-6">
       {items.map((m, index) => {
         const isDraggingItem = draggedIndex === index;
+        const albumName = mediaAlbums[m.id] || '';
+
         return (
           <div
             key={m.id}
@@ -53,57 +56,56 @@ export default function ManageGalleryGrid({
             onDragOver={(e) => onDragOver(e, index)}
             onDrop={(e) => onDrop(e, index)}
             onDragEnd={onDragEnd}
-            className={`
-              group flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition-all duration-200
-              ${isDraggingItem
+            className={cn(
+              'group relative aspect-square overflow-hidden rounded-lg border bg-stone-100 transition-all duration-150',
+              isDraggingItem
                 ? 'scale-[0.97] border-emerald-500 opacity-50 ring-2 ring-emerald-500/20'
-                : 'border-stone-200 hover:border-stone-300 hover:shadow-md'
-              }
-            `}
+                : 'border-stone-200 hover:border-stone-300',
+            )}
           >
-            <div className="relative aspect-square bg-stone-100">
-              <img
-                src={m.filePath}
-                alt={m.fileName}
-                className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-                draggable={false}
-              />
-              <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-1 bg-gradient-to-b from-black/55 via-black/25 to-transparent p-1.5">
-                <span
-                  className="flex h-7 w-7 cursor-grab items-center justify-center rounded-lg bg-black/35 text-white backdrop-blur-sm active:cursor-grabbing"
-                  title="ลากเพื่อเรียงลำดับ"
-                >
-                  <GripVertical className="h-3.5 w-3.5" />
-                </span>
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(m.id);
-                  }}
-                  className="h-7 w-7 shrink-0 rounded-lg border-0 bg-red-600/90 p-0 text-white hover:bg-red-700"
-                  title="ลบรูปภาพ"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
+            <img
+              src={m.filePath}
+              alt={m.fileName}
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+              draggable={false}
+            />
+
+            <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-1 bg-gradient-to-b from-black/50 to-transparent p-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+              <span
+                className="flex size-6 cursor-grab items-center justify-center rounded-md bg-black/35 text-white backdrop-blur-sm active:cursor-grabbing"
+                title="ลากเพื่อเรียงลำดับ"
+              >
+                <GripVertical className="size-3" />
+              </span>
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(m.id);
+                }}
+                className="size-6 rounded-md border-0 bg-red-600/90 p-0 text-white hover:bg-red-700"
+                title="ลบรูปภาพ"
+                aria-label="ลบรูปภาพ"
+              >
+                <Trash2 className="size-3" />
+              </Button>
             </div>
 
             {albums.length > 0 && (
               <div
-                className="border-t border-stone-100 bg-stone-50/80 p-1.5"
+                className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 via-black/25 to-transparent p-1 pt-4"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Select
-                  value={(mediaAlbums[m.id] || '') || '__empty__'}
+                  value={albumName || '__empty__'}
                   onValueChange={(raw) => {
                     const value = raw === '__empty__' ? '' : raw;
                     onAlbumChange(m.id, value);
                   }}
                 >
-                  <SelectTrigger className="h-7 w-full cursor-pointer rounded-lg border-stone-200 bg-white px-2 text-[10px] font-semibold text-stone-800 focus:outline-none">
+                  <SelectTrigger className="h-6 w-full cursor-pointer rounded-md border-0 bg-white/95 px-1.5 text-[9px] font-semibold text-stone-800 shadow-none focus-visible:ring-1 focus-visible:ring-white/80 sm:text-[10px]">
                     <SelectValue placeholder="อัลบั้ม" />
                   </SelectTrigger>
                   <SelectContent position="popper">

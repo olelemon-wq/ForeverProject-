@@ -26,7 +26,9 @@ import MemorialScheduleCard from '@/components/announcement/MemorialScheduleCard
 import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { resolveCardFontFamily } from '@/lib/themeFont';
 import { getSiteThemeStyle } from '@/lib/siteTheme';
+import { cn } from '@/lib/utils';
 import ManageGalleryGrid from '@/components/manage/ManageGalleryGrid';
+import ModerationPanel from '@/components/manage/ModerationPanel';
 import {
   Select,
   SelectContent,
@@ -583,6 +585,17 @@ interface Condolence {
   createdAt: string;
 }
 
+interface ReportedCondolenceItem {
+  condolence: Condolence;
+  reports: Array<{
+    id: string;
+    reason: string;
+    reasonLabel: string;
+    details: string | null;
+    createdAt: string;
+  }>;
+}
+
 interface MemoryPost {
   id: string;
   title: string | null;
@@ -615,6 +628,7 @@ export default function WebmasterDashboard() {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [activeSite, setActiveSite] = useState<Website | null>(null);
   const [condolences, setCondolences] = useState<Condolence[]>([]);
+  const [reportedCondolences, setReportedCondolences] = useState<ReportedCondolenceItem[]>([]);
   const [pendingPosts, setPendingPosts] = useState<MemoryPost[]>([]);
   
   // Active site editable configs
@@ -1435,6 +1449,16 @@ export default function WebmasterDashboard() {
       console.error('Error fetching condolences:', err);
     }
 
+    try {
+      const res = await fetch(`/api/condolence/reported?websiteId=${site.id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setReportedCondolences(data.items || []);
+      }
+    } catch (err) {
+      console.error('Error fetching reported condolences:', err);
+    }
+
     // Fetch pending memory posts for this site (Memory Wall)
     try {
       const res = await fetch(`/api/memory/pending?websiteId=${site.id}`);
@@ -1906,6 +1930,47 @@ export default function WebmasterDashboard() {
       setCondolences(condolences.filter(c => c.id !== id));
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการคัดกรองข้อมูล');
+    }
+  };
+
+  const handleModerateReportedCondolence = async (
+    condolenceId: string,
+    action: 'DELETE' | 'KEEP',
+    force = false,
+  ) => {
+    if (!activeSite) return;
+    const isHappy =
+      activeSite.category === 'Friends' ||
+      activeSite.category === 'Couple' ||
+      activeSite.category === 'Wedding';
+    if (action === 'DELETE' && !force) {
+      showConfirm(
+        'ยืนยันการลบข้อความ',
+        isHappy
+          ? 'ลบข้อความนี้ตามรายงานจากผู้เยี่ยมชมใช่หรือไม่? การลบนี้ไม่สามารถย้อนกลับได้'
+          : 'ลบคำไว้อาลัยนี้ตามรายงานจากผู้เยี่ยมชมใช่หรือไม่? การลบนี้ไม่สามารถย้อนกลับได้',
+        () => handleModerateReportedCondolence(condolenceId, 'DELETE', true),
+      );
+      return;
+    }
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('/api/condolence/report/moderate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          condolenceId,
+          action,
+          websiteId: activeSite.id,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setSuccess(data.message || 'จัดการรายงานเรียบร้อยแล้ว');
+      setReportedCondolences(reportedCondolences.filter((item) => item.condolence.id !== condolenceId));
+    } catch (err: any) {
+      setError(err.message || 'เกิดข้อผิดพลาดในการจัดการรายงาน');
     }
   };
 
@@ -2701,9 +2766,9 @@ export default function WebmasterDashboard() {
                           : 'กลั่นกรองคำไว้อาลัย'}
                   </span>
                 </div>
-                {(condolences.length + pendingPosts.length) > 0 && (
-                  <span className="flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[9px] font-black text-white ring-2 ring-rose-300/30 animate-pulse">
-                    {condolences.length + pendingPosts.length}
+                {(condolences.length + reportedCondolences.length + pendingPosts.length) > 0 && (
+                  <span className="flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[9px] font-black text-white">
+                    {condolences.length + reportedCondolences.length + pendingPosts.length}
                   </span>
                 )}
               </Button>
@@ -5044,18 +5109,21 @@ export default function WebmasterDashboard() {
             : photoMedias.filter(m => mediaAlbums[m.id] === selectedAlbumFilter);
 
           return (
-            <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-              <div className="flex justify-between items-center border-b border-stone-100 pb-4">
-                <div>
-                  <h3 className="text-lg font-black text-stone-900 flex items-center gap-1.5">
-                    <Camera className="w-5 h-5 text-emerald-700" />
-                    <span>คลังภาพถ่ายความทรงจำ ({photoMedias.length})</span>
+            <section className="space-y-3 rounded-2xl border border-stone-200/90 bg-white p-3 shadow-sm sm:space-y-4 sm:rounded-3xl sm:p-5">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="flex items-center gap-1.5 text-base font-bold text-stone-900 sm:text-lg">
+                    <Camera className="size-4 text-[#0071e3]" />
+                    <span>คลังภาพ ({photoMedias.length})</span>
                   </h3>
-                  <p className="text-xs text-stone-500">อัปโหลดและจัดการภาพถ่ายของแกลเลอรีความทรงจำ</p>
+                  <p className="mt-0.5 hidden text-xs text-stone-500 sm:block">
+                    อัปโหลด จัดอัลบั้ม และเรียงลำดับรูปภาพ
+                  </p>
                 </div>
-                <label className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-200 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>อัปโหลดรูปภาพใหม่</span>
+                <label className="inline-flex h-8 shrink-0 cursor-pointer items-center gap-1 rounded-lg border border-[#0071e3]/20 bg-[#0071e3]/10 px-2.5 text-[11px] font-bold text-[#0071e3] transition hover:bg-[#0071e3]/15 sm:h-9 sm:px-3 sm:text-xs">
+                  <Plus className="size-3.5" />
+                  <span className="hidden sm:inline">อัปโหลดรูป</span>
+                  <span className="sm:hidden">อัปโหลด</span>
                   <Input 
                     type="file" 
                     accept="image/*" 
@@ -5091,42 +5159,45 @@ export default function WebmasterDashboard() {
                 </label>
               </div>
 
-              {/* Albums manager bar */}
-              <div className="flex flex-wrap items-center gap-2 border-b border-stone-100 pb-4 select-none">
-                <Button variant="ghost"
+              <div className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-0.5 select-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => setSelectedAlbumFilter('ALL')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                  className={cn(
+                    'h-7 shrink-0 rounded-lg px-2.5 text-[11px] font-bold transition',
                     selectedAlbumFilter === 'ALL'
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'bg-stone-50 hover:bg-stone-100 text-stone-600 border border-stone-200'
-                  }`}
+                      ? 'bg-[#0071e3] text-white shadow-sm'
+                      : 'border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100',
+                  )}
                 >
                   ทั้งหมด ({photoMedias.length})
                 </Button>
 
                 {albums.map((albumName) => {
-                  const albumPhotosCount = photoMedias.filter(m => mediaAlbums[m.id] === albumName).length;
+                  const albumPhotosCount = photoMedias.filter((m) => mediaAlbums[m.id] === albumName).length;
                   const isSelected = selectedAlbumFilter === albumName;
-                  
+
                   return (
-                    <div key={albumName} className="flex items-center gap-1">
-                      <Button variant="ghost"
+                    <div key={albumName} className="flex shrink-0 items-center gap-0.5">
+                      <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => setSelectedAlbumFilter(albumName)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                        className={cn(
+                          'h-7 rounded-lg px-2.5 text-[11px] font-bold transition',
                           isSelected
-                            ? 'bg-emerald-600 text-white shadow-sm'
-                            : 'bg-stone-50 hover:bg-stone-100 text-stone-600 border border-stone-200'
-                        }`}
+                            ? 'bg-[#0071e3] text-white shadow-sm'
+                            : 'border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100',
+                        )}
                       >
                         {albumName} ({albumPhotosCount})
                       </Button>
-                      
+
                       {isSelected && (
-                        <div className="flex items-center gap-1 bg-stone-100 p-0.5 rounded-lg border border-stone-200">
-                          {/* Rename */}
-                          <Button variant="ghost"
+                        <div className="flex items-center rounded-lg border border-stone-200 bg-stone-50 p-0.5">
+                          <Button
+                            variant="ghost"
                             type="button"
                             onClick={() => {
                               const newName = prompt('เปลี่ยนชื่ออัลบั้มใหม่:', albumName);
@@ -5134,23 +5205,27 @@ export default function WebmasterDashboard() {
                                 handleRenameAlbum(albumName, newName.trim());
                               }
                             }}
-                            className="p-1 hover:bg-stone-200 rounded text-stone-650 transition"
+                            className="size-6 rounded-md p-0 text-stone-600 hover:bg-stone-200"
                             title="เปลี่ยนชื่ออัลบั้ม"
                           >
-                            <Edit3 className="w-3 h-3" />
+                            <Edit3 className="size-3" />
                           </Button>
-                          {/* Delete */}
-                          <Button variant="ghost"
+                          <Button
+                            variant="ghost"
                             type="button"
                             onClick={() => {
-                              if (confirm(`คุณต้องการลบอัลบั้ม "${albumName}" ใช่หรือไม่?\n(รูปภาพภายในอัลบั้มจะยังคงอยู่ในระบบแต่จะถูกย้ายออกจากอัลบั้มนี้)`)) {
+                              if (
+                                confirm(
+                                  `คุณต้องการลบอัลบั้ม "${albumName}" ใช่หรือไม่?\n(รูปภาพภายในอัลบั้มจะยังคงอยู่ในระบบแต่จะถูกย้ายออกจากอัลบั้มนี้)`,
+                                )
+                              ) {
                                 handleDeleteAlbum(albumName);
                               }
                             }}
-                            className="p-1 hover:bg-red-50 text-red-650 hover:text-red-755 rounded transition"
+                            className="size-6 rounded-md p-0 text-rose-600 hover:bg-rose-50"
                             title="ลบอัลบั้ม"
                           >
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="size-3" />
                           </Button>
                         </div>
                       )}
@@ -5158,9 +5233,8 @@ export default function WebmasterDashboard() {
                   );
                 })}
 
-                {/* Add Album Button */}
                 {isCreatingAlbum ? (
-                  <div className="flex items-center gap-1.5 bg-stone-50 border border-stone-200 rounded-xl p-1">
+                  <div className="flex shrink-0 items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 p-0.5">
                     <Input
                       type="text"
                       autoFocus
@@ -5177,55 +5251,58 @@ export default function WebmasterDashboard() {
                           setTempAlbumName('');
                         }
                       }}
-                      className="px-2 py-1 text-xs border border-stone-200 rounded-lg text-stone-900 bg-white focus:outline-none focus:border-emerald-500 max-w-[120px]"
+                      className="h-7 max-w-[7.5rem] rounded-md border-stone-200 bg-white px-2 text-[11px] text-stone-900"
                     />
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => {
                         handleAddAlbum(tempAlbumName);
                         setIsCreatingAlbum(false);
                         setTempAlbumName('');
                       }}
-                      className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold transition"
+                      className="h-7 rounded-md bg-[#0071e3] px-2 text-[10px] font-bold text-white hover:bg-[#0071e3]/90"
                     >
                       เพิ่ม
                     </Button>
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => {
                         setIsCreatingAlbum(false);
                         setTempAlbumName('');
                       }}
-                      className="px-2 py-1 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-[10px] font-bold transition"
+                      className="h-7 rounded-md bg-stone-200 px-2 text-[10px] font-bold text-stone-700 hover:bg-stone-300"
                     >
                       ยกเลิก
                     </Button>
                   </div>
                 ) : (
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={() => setIsCreatingAlbum(true)}
-                    className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-850 border border-emerald-250 border-dashed rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                    className="h-7 shrink-0 rounded-lg border border-dashed border-stone-300 bg-stone-50 px-2.5 text-[11px] font-bold text-stone-600 hover:bg-stone-100"
                   >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>สร้างอัลบั้มใหม่</span>
+                    <Plus className="size-3" />
+                    อัลบั้ม
                   </Button>
                 )}
               </div>
 
               {galleryUploading && (
-                <div className="p-4 bg-stone-50 border border-stone-200 text-xs text-stone-600 rounded-2xl font-semibold animate-pulse flex items-center gap-2">
-                  <RotateCw className="w-4 h-4 animate-spin text-emerald-600" />
-                  <span>กำลังอัปโหลดไฟล์สื่อไปยังคลังเก็บข้อมูล...</span>
+                <div className="flex items-center gap-2 rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-[11px] font-semibold text-stone-600">
+                  <RotateCw className="size-3.5 animate-spin text-[#0071e3]" />
+                  <span>กำลังอัปโหลด...</span>
                 </div>
               )}
 
               {photoMedias.length === 0 ? (
-                <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-sm">
+                <div className="rounded-xl border border-dashed border-stone-200 px-4 py-8 text-center text-xs text-stone-500 sm:text-sm">
                   ยังไม่มีการอัปโหลดไฟล์รูปภาพความทรงจำ
                 </div>
               ) : filteredPhotoMedias.length === 0 ? (
-                <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-sm">
+                <div className="rounded-xl border border-dashed border-stone-200 px-4 py-8 text-center text-xs text-stone-500 sm:text-sm">
                   ยังไม่มีรูปภาพในอัลบั้มนี้
                 </div>
               ) : (
@@ -5856,147 +5933,20 @@ export default function WebmasterDashboard() {
         </section>
         )}
         {activeTab === 'condolences' && (
-          <div className="space-y-6">
-            {features.condolence && (
-              <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
-                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
-                      <Flame className="w-4 h-4 text-[#0071e3]" />
-                    </div>
-                    <span>
-                      {selectedSite.category === 'Friends'
-                        ? 'ข้อความถึงกันรออนุมัติ'
-                        : selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
-                          ? 'คำอวยพรรออนุมัติ'
-                          : 'คำไว้อาลัยรออนุมัติ'}
-                    </span>
-                    {condolences.length > 0 && (
-                      <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black">{condolences.length}</span>
-                    )}
-                  </h3>
-                </div>
-
-                {condolences.length === 0 ? (
-                  <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
-                    <Flame className="w-10 h-10 text-stone-300 mx-auto" />
-                    <p className="text-sm text-stone-500">ไม่มีข้อความค้างอนุมัติ</p>
-                    <p className="text-xs text-stone-400">
-                      {selectedSite.category === 'Friends'
-                        ? 'ข้อความใหม่จะแสดงที่นี่'
-                        : selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
-                          ? 'คำอวยพรใหม่จะแสดงที่นี่'
-                          : 'ข้อความไว้อาลัยใหม่จะแสดงที่นี่'}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {condolences.map(c => (
-                      <div key={c.id} className="p-5 rounded-2xl border border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm transition-all duration-200">
-                        <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                          <div className="space-y-2 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <div className="size-8 rounded-full bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3] text-xs font-bold shrink-0">
-                                {c.senderName?.charAt(0) || '?'}
-                              </div>
-                              <span className="text-sm font-bold text-stone-900">{c.senderName}</span>
-                              {c.relationship && c.relationship !== '—' && (
-                                <span className="px-2 py-0.5 text-[9px] font-bold bg-stone-100 text-stone-500 rounded-full">
-                                  {c.relationship}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-sm text-stone-600 leading-relaxed pl-10">"{c.message}"</p>
-                          </div>
-                          <div className="flex gap-2 self-end sm:self-start shrink-0">
-                            <Button variant="default" type="button" 
-                              onClick={() => handleModerateCondolence(c.id, 'APPROVE')}
-                              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white text-xs font-bold transition active:scale-95"
-                            >
-                              อนุมัติ
-                            </Button>
-                            <Button variant="ghost" type="button" 
-                              onClick={() => handleModerateCondolence(c.id, 'DELETE')}
-                              className="px-4 py-2 rounded-xl text-rose-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition active:scale-95"
-                            >
-                              ลบออก
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            )}
-
-            {features.memory && (
-              <section className="p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
-                    <div className="flex size-8 items-center justify-center rounded-xl bg-[#0071e3]/10">
-                      <Camera className="w-4 h-4 text-[#0071e3]" />
-                    </div>
-                    <span>Memory Wall รออนุมัติ</span>
-                    {pendingPosts.length > 0 && (
-                      <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-amber-500 text-white text-[10px] font-black">{pendingPosts.length}</span>
-                    )}
-                  </h3>
-                </div>
-
-                {pendingPosts.length === 0 ? (
-                  <div className="py-16 text-center border border-dashed border-stone-200 rounded-2xl space-y-2">
-                    <Camera className="w-10 h-10 text-stone-300 mx-auto" />
-                    <p className="text-sm text-stone-500">ไม่มีเรื่องราวค้างอนุมัติ</p>
-                    <p className="text-xs text-stone-400">เรื่องราวและรูปถ่ายใหม่จะแสดงที่นี่</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {pendingPosts.map(p => (
-                      <div key={p.id} className="p-5 rounded-2xl border border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm transition-all duration-200">
-                        <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                          <div className="space-y-2 min-w-0 flex-1">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <div className="size-8 rounded-full bg-[#0071e3]/10 flex items-center justify-center text-[#0071e3] text-xs font-bold shrink-0">
-                                {p.senderName?.charAt(0) || '?'}
-                              </div>
-                              <div>
-                                <span className="text-sm font-bold text-stone-900">{p.senderName}</span>
-                                {p.title && <span className="text-xs text-stone-400 ml-2">{p.title}</span>}
-                              </div>
-                            </div>
-                            {p.mediaUrl && (
-                              <div className="pl-10">
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#0071e3]">
-                                  <ImageIcon className="w-3 h-3" />
-                                  แนบรูปภาพ
-                                </span>
-                              </div>
-                            )}
-                            {p.content && <p className="text-sm text-stone-600 leading-relaxed pl-10">"{p.content}"</p>}
-                          </div>
-                          <div className="flex gap-2 self-end sm:self-start shrink-0">
-                            <Button variant="default" type="button" 
-                              onClick={() => handleModerateMemoryPost(p.id, 'APPROVE')}
-                              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white text-xs font-bold transition active:scale-95"
-                            >
-                              อนุมัติ
-                            </Button>
-                            <Button variant="ghost" type="button" 
-                              onClick={() => handleModerateMemoryPost(p.id, 'DELETE')}
-                              className="px-4 py-2 rounded-xl text-rose-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition active:scale-95"
-                            >
-                              ลบออก
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            )}
-          </div>
+          <ModerationPanel
+            category={selectedSite.category}
+            showCondolence={features.condolence}
+            showMemory={features.memory}
+            condolences={condolences}
+            reportedCondolences={reportedCondolences}
+            pendingPosts={pendingPosts}
+            onApproveCondolence={(id) => handleModerateCondolence(id, 'APPROVE')}
+            onDeleteCondolence={(id) => handleModerateCondolence(id, 'DELETE')}
+            onKeepReported={(id) => handleModerateReportedCondolence(id, 'KEEP')}
+            onDeleteReported={(id) => handleModerateReportedCondolence(id, 'DELETE')}
+            onApproveMemory={(id) => handleModerateMemoryPost(id, 'APPROVE')}
+            onDeleteMemory={(id) => handleModerateMemoryPost(id, 'DELETE')}
+          />
         )}      {/* Cover Crop Modal */}
       {isCoverCropModalOpen && (
         <div className="fixed inset-0 z-55 flex flex-col items-center justify-center bg-stone-900/40 backdrop-blur-sm p-4 animate-fade-in select-none">

@@ -350,10 +350,9 @@ export default function MemorialScheduleCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    'flex w-full items-center justify-center gap-1.5 rounded-xl font-bold text-white transition hover:brightness-105 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--theme-primary)]/25 print:hidden',
+                    'inline-flex w-auto items-center justify-center gap-1.5 rounded-xl border bg-[color:var(--theme-primary)]/6 border-[color:var(--theme-primary)]/30 font-bold text-[color:var(--theme-primary)] transition hover:bg-[color:var(--theme-primary)]/10 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--theme-primary)]/25 print:hidden',
                     compact ? 'px-3 py-2 text-[10px]' : 'px-4 py-2.5 text-xs',
                   )}
-                  style={{ backgroundColor: 'var(--theme-primary, #78716c)' }}
                 >
                   <ExternalLink className="size-3.5" aria-hidden />
                   <span>เปิด Google Maps นำทาง</span>
