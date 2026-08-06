@@ -10,7 +10,7 @@ import {
   getFeatureLabel, 
   MANDATORY_FEATURES 
 } from '@/lib/categories';
-import { type FeatureMap } from '@/lib/features';
+import { DEFAULT_FEATURE_ORDER, type FeatureMap, type FeatureKey } from '@/lib/features';
 import { Button } from '@/components/ui/button';
 
 function SetupFeaturesInner() {
@@ -21,6 +21,9 @@ function SetupFeaturesInner() {
 
   const [features, setFeatures] = useState<FeatureMap>(() => 
     getInitialFeatureMapForCategory(category)
+  );
+  const [featureOrder, setFeatureOrder] = useState<FeatureKey[]>(() =>
+    DEFAULT_FEATURE_ORDER.filter((key) => getVisibleKeys(category).includes(key)),
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -36,7 +39,7 @@ function SetupFeaturesInner() {
       const res = await fetch('/api/tenant/update-features', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ websiteId, features }),
+        body: JSON.stringify({ websiteId, features, featureOrder }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -79,7 +82,9 @@ function SetupFeaturesInner() {
 
           <FeatureToggleList 
             value={features} 
-            onChange={setFeatures} 
+            onChange={setFeatures}
+            order={featureOrder}
+            onOrderChange={setFeatureOrder}
             disabled={isLoading}
             mandatoryKeys={MANDATORY_FEATURES}
             visibleKeys={getVisibleKeys(category)}

@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ChevronUp, Flame, Menu as MenuIcon, X, Type } from 'lucide-react';
-import { getEnabledFeatures } from '@/lib/features';
+import { getEnabledFeatures, buildPublicNavItems, getFeatureOrderFromThemeConfig } from '@/lib/features';
 import { getFeatureLabel } from '@/lib/categories';
 import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import { resolveDefaultMediaSrc } from '@/lib/defaultMedia';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
+import PublicOverflowNav from '@/components/public/PublicOverflowNav';
 
 interface Menu {
   id: string;
@@ -95,7 +96,8 @@ export default function PublicLayoutClient({
   const avatarRotate = config.avatarRotate || 0;
 
   const enabledFeatures = getEnabledFeatures(config, tenant);
-  
+  const featureOrder = getFeatureOrderFromThemeConfig(config);
+
   const getLabel = (key: string, defaultLabel: string) => {
     try {
       return getFeatureLabel(tenant.category, key as any).label || defaultLabel;
@@ -104,45 +106,12 @@ export default function PublicLayoutClient({
     }
   };
 
-  const navItems: { title: string; href: string }[] = [];
-
-  // 1. Home (always shown)
-  navItems.push({ title: 'หน้าแรก', href: `/${slug}` });
-
-  // 2. Gallery
-  if (enabledFeatures.gallery) {
-    navItems.push({ title: getLabel('gallery', 'คลังภาพรำลึก'), href: `/${slug}/gallery` });
-  }
-
-  // 3. Condolence (สมุดไว้อาลัย / สมุดส่งความคิดถึง)
-  if (enabledFeatures.condolence) {
-    navItems.push({ title: getLabel('condolence', 'สมุดไว้อาลัย'), href: `/${slug}/condolence` });
-  }
-
-  // 4. Videos
-  if (enabledFeatures.videos) {
-    navItems.push({ title: getLabel('videos', 'คลังวิดีโอ'), href: `/${slug}/videos` });
-  }
-
-  // 5. Memory / ไดอารี่ความสุข
-  if (enabledFeatures.memory) {
-    navItems.push({ title: getLabel('memory', 'กระดานความทรงจำ'), href: `/${slug}/memory` });
-  }
-
-  // 6. Family
-  if (enabledFeatures.family) {
-    navItems.push({ title: getLabel('family', 'ผังครอบครัว'), href: `/${slug}/family` });
-  }
-
-  // 7. Ebooks
-  if (enabledFeatures.ebooks) {
-    navItems.push({ title: getLabel('ebooks', 'หนังสือที่ระลึก'), href: `/${slug}/ebooks` });
-  }
-
-  // 8. Donation
-  if (enabledFeatures.donation && tenant.donationActive) {
-    navItems.push({ title: getLabel('donation', 'ร่วมทำบุญ'), href: `/${slug}/donation` });
-  }
+  const navItems = buildPublicNavItems({
+    slug,
+    enabledFeatures,
+    featureOrder,
+    labelFor: (key, defaultLabel) => getLabel(key, defaultLabel),
+  });
 
   return (
     <div 
@@ -203,24 +172,14 @@ export default function PublicLayoutClient({
       {/* Dynamic Navigation Menu */}
       <nav className="border-b border-stone-200/60 bg-white/85 backdrop-blur-sm sticky top-0 z-40 shadow-xs">
         {/* Desktop Navigation Links */}
-        <div className="hidden sm:flex max-w-5xl mx-auto px-4 items-center justify-between h-14">
+        <div className="relative hidden sm:flex max-w-5xl mx-auto px-4 items-center gap-3 h-14">
           <Link
             href="/"
             className="shrink-0 text-xs font-black tracking-[0.18em] text-stone-400 transition hover:text-stone-700"
           >
             FOREVER
           </Link>
-          <div className="flex items-center justify-center gap-1 sm:gap-2">
-            {navItems.map((item, idx) => (
-              <Link
-                key={idx}
-                href={item.href}
-                className="px-4 py-2 text-xs sm:text-sm font-semibold rounded-full text-stone-500 hover:text-stone-900 hover:bg-stone-200/30 transition flex-shrink-0"
-              >
-                {item.title}
-              </Link>
-            ))}
-          </div>
+          <PublicOverflowNav items={navItems} slug={slug} />
           <div className="w-14 shrink-0" aria-hidden />
         </div>
 
@@ -261,9 +220,9 @@ export default function PublicLayoutClient({
                 <span>หน้าแรก FOREVER</span>
               </Link>
               <div className="mx-2 my-1 border-b border-stone-100" />
-              {navItems.map((item, idx) => (
+              {navItems.map((item) => (
                 <Link
-                  key={idx}
+                  key={item.key}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="px-4 py-3 text-sm font-semibold rounded-xl text-stone-700 hover:text-stone-900 hover:bg-stone-100/50 transition block"

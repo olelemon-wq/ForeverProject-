@@ -214,19 +214,19 @@ export default function CondolenceReportDialog({
               </div>
             </div>
 
-            <DialogFooter className="border-t border-stone-100 bg-stone-50/50 px-5 py-3 sm:justify-end">
+            <DialogFooter className="mx-0 mb-0 flex-row justify-end gap-2 border-t border-stone-100 bg-stone-50/50 px-5 py-3">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
-                className="rounded-xl border-stone-200"
+                className="h-9 shrink-0 rounded-xl border-stone-200 px-4"
                 disabled={isLoading}
               >
                 ยกเลิก
               </Button>
               <Button
                 type="submit"
-                className="rounded-xl font-bold text-white hover:brightness-105"
+                className="h-9 shrink-0 rounded-xl px-4 font-bold text-white hover:brightness-105"
                 style={{ backgroundColor: 'var(--theme-primary, #0d9488)' }}
                 disabled={isLoading}
               >

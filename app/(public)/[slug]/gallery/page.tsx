@@ -6,6 +6,7 @@ import { getEnabledFeatures } from '@/lib/features';
 import CategoryOrnament from '@/components/public/CategoryOrnament';
 import { FEATURE_CARD_CLASS } from '@/lib/publicLayout';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
+import { getPhotoGalleryAlbums } from '@/lib/galleryAlbums';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 
 export const dynamic = 'force-dynamic';
@@ -85,7 +86,18 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
 
             {/* Gallery Grid */}
             <div>
-              <GalleryClient mediaList={mediaList} slug={slug} themeConfig={tenant.themeConfig} />
+              <GalleryClient
+                mediaList={mediaList}
+                slug={slug}
+                themeConfig={{
+                  ...(tenant.themeConfig as object),
+                  albums: getPhotoGalleryAlbums(
+                    ((tenant.themeConfig as { albums?: string[] })?.albums) || [],
+                    mediaList.map((m) => m.id),
+                    ((tenant.themeConfig as { mediaAlbums?: Record<string, string> })?.mediaAlbums) || {},
+                  ),
+                }}
+              />
             </div>
           </div>
         );

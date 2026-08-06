@@ -13,6 +13,7 @@ const WEDDING_PATTERN = '/patterns/wedding-condolence-floral-right.png';
 const MEMORIAL_PATTERN = '/patterns/memorial-condolence-floral-right.png';
 const FRIENDS_PATTERN = '/patterns/friends-condolence-floral-right.png';
 const PET_PATTERN = '/patterns/pet-condolence-floral-right.png';
+const FAMILY_LEGACY_PATTERN = '/patterns/family-legacy-branch-right.png';
 
 /** Category-specific condolence section decoration. */
 export function getCondolenceSectionTheme(
@@ -60,6 +61,15 @@ export function getCondolenceSectionTheme(
       overlayClass: 'bg-white/80',
       borderClass: 'border-emerald-100/60',
       surfaceClass: 'bg-[#fbfdfb]',
+    };
+  }
+
+  if (category === 'Family Legacy') {
+    return {
+      patternUrl: FAMILY_LEGACY_PATTERN,
+      overlayClass: 'bg-white/82',
+      borderClass: 'border-sky-100/75',
+      surfaceClass: 'bg-[#f7f9fb]',
     };
   }
 

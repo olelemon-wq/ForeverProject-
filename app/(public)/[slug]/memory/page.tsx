@@ -57,7 +57,9 @@ export default async function PublicMemoryWallPage(props: { params: Promise<{ sl
         patternOpacity={
           tenant.category === 'Couple'
             ? { mobile: 0.28, desktop: 0.34 }
-            : { mobile: 0.28, desktop: 0.32 }
+            : tenant.category === 'Family Legacy'
+              ? { mobile: 0.3, desktop: 0.36 }
+              : { mobile: 0.28, desktop: 0.32 }
         }
       >
         {(() => {

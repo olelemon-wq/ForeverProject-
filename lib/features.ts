@@ -115,6 +115,15 @@ export const FEATURE_CATALOG: FeatureDef[] = [
 
 export type FeatureMap = Record<FeatureKey, boolean>;
 
+/** Default nav/manage order — mirrors FEATURE_CATALOG. */
+export const DEFAULT_FEATURE_ORDER: FeatureKey[] = FEATURE_CATALOG.map((f) => f.key);
+
+export interface PublicNavItem {
+  key: FeatureKey | 'home';
+  title: string;
+  href: string;
+}
+
 /** Features hidden from manage UI and the public site until a future release. */
 export const PHASE_HIDDEN_FEATURES: readonly FeatureKey[] = ['feed'];
 
@@ -147,6 +156,7 @@ export const DEFAULT_FEATURES_ON_CREATE: FeatureMap = presetFromCatalog();
 
 interface ThemeConfigShape {
   features?: Partial<Record<FeatureKey, unknown>>;
+  featureOrder?: unknown;
   announcement?: { active?: boolean | null } | null;
 }
 
@@ -205,4 +215,73 @@ export function normalizeFeatureMap(input: unknown): FeatureMap {
       return acc;
     }, {} as FeatureMap)
   );
+}
+
+/** Merge saved order with catalog defaults; unknown keys are dropped. */
+export function normalizeFeatureOrder(
+  input: unknown,
+  allowedKeys?: readonly FeatureKey[],
+): FeatureKey[] {
+  const allowed =
+    allowedKeys ??
+    FEATURE_CATALOG.map((f) => f.key).filter((key) => !isPhaseHiddenFeature(key));
+  const allowedSet = new Set<FeatureKey>(allowed);
+
+  const fromInput = Array.isArray(input)
+    ? input.filter(
+        (key): key is FeatureKey =>
+          typeof key === 'string' && allowedSet.has(key as FeatureKey),
+      )
+    : [];
+
+  const seen = new Set<FeatureKey>(fromInput);
+  const remainder = DEFAULT_FEATURE_ORDER.filter(
+    (key) => allowedSet.has(key) && !seen.has(key),
+  );
+
+  return [...fromInput, ...remainder];
+}
+
+export function getFeatureOrderFromThemeConfig(
+  themeConfig: unknown,
+  allowedKeys?: readonly FeatureKey[],
+): FeatureKey[] {
+  const cfg: ThemeConfigShape =
+    themeConfig && typeof themeConfig === 'object' && !Array.isArray(themeConfig)
+      ? (themeConfig as ThemeConfigShape)
+      : {};
+
+  return normalizeFeatureOrder(cfg.featureOrder, allowedKeys);
+}
+
+/** Build public nav items (home first) from enabled features and saved order. */
+export function buildPublicNavItems(options: {
+  slug: string;
+  enabledFeatures: FeatureMap;
+  featureOrder: FeatureKey[];
+  labelFor: (key: FeatureKey, defaultLabel: string) => string;
+}): PublicNavItem[] {
+  const { slug, enabledFeatures, featureOrder, labelFor } = options;
+  const catalogByKey = Object.fromEntries(
+    FEATURE_CATALOG.map((feature) => [feature.key, feature]),
+  ) as Record<FeatureKey, FeatureDef>;
+
+  const items: PublicNavItem[] = [
+    { key: 'home', title: 'หน้าแรก', href: `/${slug}` },
+  ];
+
+  for (const key of featureOrder) {
+    if (isPhaseHiddenFeature(key) || !enabledFeatures[key]) continue;
+
+    const feature = catalogByKey[key];
+    if (!feature) continue;
+
+    items.push({
+      key,
+      title: labelFor(key, feature.label),
+      href: `/${slug}/${feature.pathSegment}`,
+    });
+  }
+
+  return items;
 }

@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
 import { MANDATORY_FEATURES } from '@/lib/categories';
-import { normalizeFeatureMap } from '@/lib/features';
+import { normalizeFeatureMap, normalizeFeatureOrder } from '@/lib/features';
 
 /**
  * Save the per-feature visibility map for a tenant.
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Parse params
-    const { websiteId, features } = await request.json();
+    const { websiteId, features, featureOrder } = await request.json();
 
     if (!websiteId) {
       return NextResponse.json({ error: 'กรุณาระบุรหัสเว็บไซต์ความทรงจำ' }, { status: 400 });
@@ -86,6 +86,9 @@ export async function POST(request: Request) {
     const newThemeConfig = {
       ...currentConfig,
       features: featureMap,
+      ...(Array.isArray(featureOrder)
+        ? { featureOrder: normalizeFeatureOrder(featureOrder) }
+        : {}),
       announcement: {
         ...currentAnnouncement,
         active: featureMap.announcement,

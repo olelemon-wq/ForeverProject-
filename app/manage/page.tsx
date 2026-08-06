@@ -8,6 +8,11 @@ import ThaiDatePicker from '@/components/ThaiDatePicker';
 import BackupPhoneSection from '@/components/BackupPhoneSection';
 import DefaultMediaPicker from '@/components/DefaultMediaPicker';
 import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categories';
+import {
+  DEFAULT_FEATURE_ORDER,
+  getFeatureOrderFromThemeConfig,
+  type FeatureKey,
+} from '@/lib/features';
 import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import type { DefaultMediaKind } from '@/lib/defaultMedia';
 import { getDefaultMediaForCategory, resolveDefaultMediaSrc } from '@/lib/defaultMedia';
@@ -27,6 +32,7 @@ import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { resolveCardFontFamily } from '@/lib/themeFont';
 import { getSiteThemeStyle } from '@/lib/siteTheme';
 import { cn } from '@/lib/utils';
+import { getPhotoGalleryAlbums } from '@/lib/galleryAlbums';
 import ManageGalleryGrid from '@/components/manage/ManageGalleryGrid';
 import ModerationPanel from '@/components/manage/ModerationPanel';
 import {
@@ -748,6 +754,7 @@ export default function WebmasterDashboard() {
     defaultFontSize?: 'NORMAL' | 'MEDIUM' | 'LARGE';
   }>({});
   const skipThemeAutoSave = useRef(false);
+  const galleryAlbumsPrunedRef = useRef<string | null>(null);
 
   const cancelSubjectsAutoSave = () => {
     if (subjectsAutoSaveTimer.current) {
@@ -768,6 +775,7 @@ export default function WebmasterDashboard() {
     memory: true,
     feed: true,
   });
+  const [featureOrder, setFeatureOrder] = useState<FeatureKey[]>(DEFAULT_FEATURE_ORDER);
   const [familyIsDragActive, setFamilyIsDragActive] = useState(false);
   const [familyFormOpen, setFamilyFormOpen] = useState(false);
 
@@ -1284,6 +1292,7 @@ export default function WebmasterDashboard() {
             albums: updatedAlbums,
             mediaAlbums: updatedMediaAlbums,
             features,
+            featureOrder,
             announcement: buildAnnouncementPayload(activeSite.category),
           },
         }),
@@ -1583,6 +1592,7 @@ export default function WebmasterDashboard() {
           feed: visible.has('feed') && config.features.feed !== false,
         });
       }
+      setFeatureOrder(getFeatureOrderFromThemeConfig(config, getVisibleKeys(site.category)));
     } else {
       setPrimaryColor('#0d9488');
       setSecondaryColor('#f59e0b');
@@ -1691,6 +1701,7 @@ export default function WebmasterDashboard() {
             albums,
             mediaAlbums,
             features,
+            featureOrder,
             announcement: buildAnnouncementPayload(activeSite.category),
           },
         }),
@@ -1876,6 +1887,37 @@ export default function WebmasterDashboard() {
       if (subjectsAutoSaveTimer.current) clearTimeout(subjectsAutoSaveTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    galleryAlbumsPrunedRef.current = null;
+  }, [activeSite?.id]);
+
+  useEffect(() => {
+    if (!activeSite || activeTab !== 'gallery' || galleryLoading) return;
+
+    const photoIds = galleryMedias
+      .filter((m) => !m.mimeType?.startsWith('video/') && m.mimeType !== 'video/youtube')
+      .map((m) => m.id);
+    const prunedAlbums = getPhotoGalleryAlbums(albums, photoIds, mediaAlbums);
+
+    if (prunedAlbums.length >= albums.length) return;
+    if (galleryAlbumsPrunedRef.current === activeSite.id) return;
+    galleryAlbumsPrunedRef.current = activeSite.id;
+
+    setAlbums(prunedAlbums);
+    void saveAlbumConfig(prunedAlbums, mediaAlbums);
+    if (selectedAlbumFilter !== 'ALL' && !prunedAlbums.includes(selectedAlbumFilter)) {
+      setSelectedAlbumFilter('ALL');
+    }
+  }, [
+    activeSite?.id,
+    activeTab,
+    galleryLoading,
+    albums,
+    galleryMedias,
+    mediaAlbums,
+    selectedAlbumFilter,
+  ]);
 
   // 3. Save Website Configuration (BR025, BR026, Step 7 Theme Save, Donation fields update)
   const handleSaveConfig = async (e: React.FormEvent) => {
@@ -2474,6 +2516,11 @@ export default function WebmasterDashboard() {
 
   const photoMedias = galleryMedias.filter(m => !m.mimeType?.startsWith('video/') && m.mimeType !== 'video/youtube');
   const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
+  const galleryAlbums = getPhotoGalleryAlbums(
+    albums,
+    photoMedias.map((m) => m.id),
+    mediaAlbums,
+  );
 
   if (!activeSite) {
     return (
@@ -4936,6 +4983,8 @@ export default function WebmasterDashboard() {
                   <FeatureToggleList 
                     value={features}
                     onChange={setFeatures}
+                    order={featureOrder}
+                    onOrderChange={setFeatureOrder}
                     disabled={saveLoading}
                     mandatoryKeys={MANDATORY_FEATURES}
                     visibleKeys={getVisibleKeys(selectedSite.category)}
@@ -5174,7 +5223,7 @@ export default function WebmasterDashboard() {
                   ทั้งหมด ({photoMedias.length})
                 </Button>
 
-                {albums.map((albumName) => {
+                {galleryAlbums.map((albumName) => {
                   const albumPhotosCount = photoMedias.filter((m) => mediaAlbums[m.id] === albumName).length;
                   const isSelected = selectedAlbumFilter === albumName;
 
@@ -5308,7 +5357,7 @@ export default function WebmasterDashboard() {
               ) : (
                 <ManageGalleryGrid
                   items={filteredPhotoMedias}
-                  albums={albums}
+                  albums={galleryAlbums}
                   mediaAlbums={mediaAlbums}
                   draggedIndex={draggedIndex}
                   onDragStart={handleDragStart}

@@ -15,7 +15,7 @@ import {
   useReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Maximize2, Minimize2, GitBranch, X, Heart, RotateCw } from 'lucide-react';
+import { Maximize2, Minimize2, GitBranch, Heart, RotateCw, ArrowLeft } from 'lucide-react';
 import { getInitialLetter } from '@/lib/utils';
 import Link from 'next/link';
 import { getFeatureLabel } from '@/lib/categories';
@@ -229,6 +229,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
   const { fitView } = useReactFlow();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const { label: familyLabel } = getFeatureLabel(tenant.category || 'Memorial', 'family');
 
   // Group members into 4 generations for direct presentation
   const parents = members.filter(m => m.relationship === 'PARENT_1' || m.relationship === 'PARENT_2');
@@ -636,9 +637,19 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
     };
   }, [isFullscreen]);
 
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isFullscreen]);
+
+  const exitFullscreen = () => setIsFullscreen(false);
+  const enterFullscreen = () => setIsFullscreen(true);
 
   const handleResetLayout = () => {
     const { nodes: newNodes, edges: newEdges } = buildReactFlowElements();
@@ -649,64 +660,106 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
     }, 50);
   };
 
+  const treeToolbarClass =
+    'absolute z-20 flex items-center gap-1 rounded-xl border border-stone-200 bg-white/95 p-1 shadow-sm backdrop-blur-sm';
+
+  const renderTreeControls = (positionClass: string) => (
+    <div className={`${treeToolbarClass} ${positionClass}`}>
+      <button
+        type="button"
+        onClick={handleResetLayout}
+        title="จัดตำแหน่งกึ่งกลางและรีเซ็ตการลาก"
+        className="inline-flex size-9 items-center justify-center rounded-lg text-stone-500 transition hover:bg-stone-50 hover:text-stone-900"
+      >
+        <RotateCw className="size-4" />
+      </button>
+      {!isFullscreen ? (
+        <button
+          type="button"
+          onClick={enterFullscreen}
+          title="ขยายเต็มจอ"
+          className="inline-flex size-9 items-center justify-center rounded-lg text-stone-500 transition hover:bg-stone-50 hover:text-stone-900"
+        >
+          <Maximize2 className="size-4" />
+        </button>
+      ) : null}
+    </div>
+  );
+
+  const renderFlow = (className: string) => (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      nodeTypes={nodeTypes}
+      fitView
+      fitViewOptions={{ padding: 0.2 }}
+      minZoom={0.2}
+      maxZoom={2}
+      preventScrolling
+      zoomOnScroll
+      zoomOnPinch
+      panOnDrag
+      nodesConnectable={false}
+      nodesDraggable
+      elementsSelectable={false}
+      className={className}
+    >
+      <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#e7e5e4" />
+      <MiniMap
+        position="bottom-left"
+        nodeColor={(node) => (node.type === 'unionNode' ? '#f43f5e' : '#e7e5e4')}
+        maskColor="rgba(245, 245, 244, 0.4)"
+        style={{ borderRadius: '12px', border: '1px solid #e7e5e4', width: 120, height: 80 }}
+      />
+      <Controls
+        position="bottom-right"
+        showInteractive={false}
+        style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e7e5e4' }}
+      />
+    </ReactFlow>
+  );
+
   return (
     <div className="animate-fade-in text-center">
       {isFullscreen ? (
-        <div 
-          ref={viewportRef}
-          className="fixed inset-0 z-50 p-6 w-screen h-screen select-none bg-stone-50"
-        >
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            nodeTypes={nodeTypes}
-            fitView
-            fitViewOptions={{ padding: 0.2 }}
-            minZoom={0.2}
-            maxZoom={2}
-            preventScrolling={true}
-            zoomOnScroll={true}
-            zoomOnPinch={true}
-            panOnDrag={true}
-            nodesConnectable={false}
-            nodesDraggable={true}
-            elementsSelectable={false}
-            className="w-full h-full"
-          >
-            <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#e7e5e4" />
-            <MiniMap 
-              position="bottom-left" 
-              nodeColor={(node) => {
-                if (node.type === 'unionNode') return '#f43f5e';
-                return '#e7e5e4';
-              }}
-              maskColor="rgba(245, 245, 244, 0.4)"
-              style={{ borderRadius: '12px', border: '1px solid #e7e5e4', width: 120, height: 80 }}
-            />
-            <Controls 
-              position="bottom-right" 
-              showInteractive={false}
-              style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e7e5e4' }}
-            />
-          </ReactFlow>
+        <div className="fixed inset-0 z-50 flex flex-col bg-stone-50 select-none">
+          <header className="flex shrink-0 items-center justify-between gap-2 border-b border-stone-200 bg-white px-3 py-2.5 sm:gap-3 sm:px-5 sm:py-3">
+            <button
+              type="button"
+              onClick={exitFullscreen}
+              className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-2 text-[11px] font-semibold text-stone-700 transition hover:bg-stone-50 sm:px-4 sm:text-xs"
+            >
+              <Minimize2 className="size-3.5 shrink-0" />
+              <span>ปิดเต็มจอ</span>
+            </button>
 
-          <button 
-            onClick={handleResetLayout}
-            title="จัดตำแหน่งกึ่งกลางและรีเซ็ตการลาก (Reset positions)"
-            className="absolute z-20 p-3 rounded-full shadow-md bg-white border border-stone-200 text-stone-500 hover:text-stone-900 hover:bg-stone-50 flex items-center justify-center cursor-pointer transition top-6 right-20"
-          >
-            <RotateCw className="w-4 h-4" />
-          </button>
+            <h2
+              className="min-w-0 truncate text-xs font-bold text-stone-800 sm:text-sm"
+              style={{ color: 'var(--theme-primary, #0d9488)' }}
+            >
+              {familyLabel}
+            </h2>
 
-          <button 
-            onClick={toggleFullscreen}
-            title="ออกจากหน้าต่างเต็มจอ"
-            className="absolute z-20 p-3 rounded-full shadow-md bg-white border border-stone-200 text-stone-500 hover:text-stone-900 hover:bg-stone-50 flex items-center justify-center cursor-pointer transition top-6 right-6"
-          >
-            <X className="w-5 h-5" />
-          </button>
+            <Link
+              href={`/${tenant.slug}`}
+              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-stone-300 px-3 py-2 text-[11px] font-semibold text-stone-600 transition hover:bg-stone-100 hover:text-stone-900 sm:px-4 sm:text-xs"
+            >
+              <ArrowLeft className="size-3.5" />
+              <span className="hidden sm:inline">ย้อนกลับหน้าแรก</span>
+              <span className="sm:hidden">กลับ</span>
+            </Link>
+          </header>
+
+          <div ref={viewportRef} className="relative min-h-0 flex-1">
+            {renderFlow('h-full w-full')}
+            {renderTreeControls('top-3 right-3 sm:top-4 sm:right-4')}
+          </div>
+
+          <p className="shrink-0 border-t border-stone-200 bg-white py-2 text-[10px] text-stone-400 sm:text-[11px]">
+            กด <kbd className="rounded border border-stone-200 bg-stone-50 px-1.5 py-0.5 font-mono text-[10px] text-stone-500">Esc</kbd> เพื่อออกจากโหมดเต็มจอ
+          </p>
         </div>
       ) : (
         <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden`}>
@@ -733,62 +786,12 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
             );
           })()}
 
-          {/* React Flow Viewport Container */}
-          <div 
+          <div
             ref={viewportRef}
-            className="w-full h-[550px] sm:h-[650px] rounded-2xl border border-stone-200 bg-stone-50 relative select-none overflow-hidden"
+            className="relative h-[550px] w-full select-none overflow-hidden rounded-2xl border border-stone-200 bg-stone-50 sm:h-[650px]"
           >
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              nodeTypes={nodeTypes}
-              fitView
-              fitViewOptions={{ padding: 0.2 }}
-              minZoom={0.2}
-              maxZoom={2}
-              preventScrolling={true}
-              zoomOnScroll={true}
-              zoomOnPinch={true}
-              panOnDrag={true}
-              nodesConnectable={false}
-              nodesDraggable={true}
-              elementsSelectable={false}
-              className="w-full h-full"
-            >
-              <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#e7e5e4" />
-              <MiniMap 
-                position="bottom-left" 
-                nodeColor={(node) => {
-                  if (node.type === 'unionNode') return '#f43f5e';
-                  return '#e7e5e4';
-                }}
-                maskColor="rgba(245, 245, 244, 0.4)"
-                style={{ borderRadius: '12px', border: '1px solid #e7e5e4', width: 120, height: 80 }}
-              />
-              <Controls 
-                position="bottom-right" 
-                showInteractive={false}
-                style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e7e5e4' }}
-              />
-            </ReactFlow>
-
-            <button 
-              onClick={handleResetLayout}
-              title="จัดตำแหน่งกึ่งกลางและรีเซ็ตการลาก (Reset positions)"
-              className="absolute z-20 p-2.5 rounded-lg bg-white border border-stone-200 text-stone-500 hover:text-stone-900 shadow-xs hover:bg-stone-50 flex items-center justify-center cursor-pointer transition bottom-4 right-28"
-            >
-              <RotateCw className="w-4 h-4" />
-            </button>
-
-            <button 
-              onClick={toggleFullscreen}
-              title="แสดงเต็มจอ (Fullscreen)"
-              className="absolute z-20 p-2.5 rounded-lg bg-white border border-stone-200 text-stone-500 hover:text-stone-900 shadow-xs hover:bg-stone-50 flex items-center justify-center cursor-pointer transition bottom-4 right-16"
-            >
-              <Maximize2 className="w-4 h-4" />
-            </button>
+            {renderFlow('h-full w-full')}
+            {renderTreeControls('top-3 right-3 sm:top-4 sm:right-4')}
           </div>
 
           {/* Back button */}
