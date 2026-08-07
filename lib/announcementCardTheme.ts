@@ -10,10 +10,10 @@ export type AnnouncementStyle =
 const themePrimary = 'var(--theme-primary, #e09f9f)';
 const themeSecondary = 'var(--theme-secondary, #e6c1a8)';
 
-const MEMORIAL_PATTERN = '/patterns/memorial-condolence-floral-right.png';
-const WEDDING_PATTERN = '/patterns/wedding-condolence-floral-right.png';
-const PET_PATTERN = '/patterns/pet-condolence-floral-right.png';
-const FRIENDS_PATTERN = '/patterns/friends-condolence-floral-right.png';
+const MEMORIAL_PATTERN = '/patterns/memorial-condolence-floral-right.jpg';
+const WEDDING_PATTERN = '/patterns/wedding-condolence-floral-right.jpg';
+const PET_PATTERN = '/patterns/pet-condolence-floral-right.jpg';
+const FRIENDS_PATTERN = '/patterns/friends-condolence-floral-right.jpg';
 
 /** Shared site-theme text colors for Couple announcement sections. */
 export const coupleSiteTextStyles = {

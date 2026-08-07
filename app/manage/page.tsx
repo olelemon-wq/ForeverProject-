@@ -1207,6 +1207,15 @@ export default function WebmasterDashboard() {
         }
       }
 
+      if (file.type.startsWith('video/') && data.mediaId) {
+        try {
+          const { uploadVideoThumbnail } = await import('@/lib/uploadVideoThumbnail');
+          await uploadVideoThumbnail(activeSite.id, data.mediaId, file);
+        } catch (thumbErr) {
+          console.warn('Video thumbnail generation failed:', thumbErr);
+        }
+      }
+
       setSuccess('อัปโหลดไฟล์สำเร็จ');
 
       // Refresh list
@@ -5462,6 +5471,7 @@ export default function WebmasterDashboard() {
                       embedUrl = `https://www.youtube.com/embed/${match[1]}`;
                     }
                   }
+                  const thumbSrc = m.thumbnailPath ? resolveMediaSrc(m.thumbnailPath) : null;
 
                   return (
                     <div key={m.id} className="group relative rounded-2xl overflow-hidden border border-stone-200 bg-stone-50 flex flex-col justify-between shadow-sm aspect-video">
@@ -5472,8 +5482,10 @@ export default function WebmasterDashboard() {
                           allowFullScreen
                           title={m.fileName}
                         />
+                      ) : thumbSrc ? (
+                        <img src={thumbSrc} alt={m.fileName} className="w-full h-full object-cover" />
                       ) : (
-                        <video src={m.filePath} controls className="w-full h-full object-cover" />
+                        <video src={resolveMediaSrc(m.filePath)} controls className="w-full h-full object-cover" />
                       )}
                       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition">
                         <Button variant="ghost" type="button"

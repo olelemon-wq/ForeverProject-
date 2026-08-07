@@ -54,6 +54,7 @@ export async function GET(request: Request) {
         filePath: m.filePath,
         fileName: m.fileName,
         mimeType: m.mimeType,
+        thumbnailPath: m.thumbnailPath,
         fileSize: m.fileSize.toString(),
         createdAt: m.createdAt.toISOString(),
       })),

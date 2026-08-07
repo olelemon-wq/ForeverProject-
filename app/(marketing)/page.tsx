@@ -469,60 +469,62 @@ export default function MarketingHome() {
       {/* PET MEMORIAL SECTION */}
       <section id="pet-memorial" className="py-10 md:py-16 scroll-mt-20">
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
-            {/* Intro */}
-            <div className="lg:col-span-4 flex flex-col justify-center text-left space-y-4 md:space-y-5">
-              <h2 className="text-[32px] md:text-[48px] tracking-tight font-semibold leading-tight text-[#1D1D1F]">
-                {mounted && lang === 'en' ? (
-                  t.petTitle
-                ) : (
-                  <>
-                    สัตว์เลี้ยง
-                    <br className="hidden md:block" />
-                    <span className="md:hidden"> </span>
-                    (Pet Memorial)
-                  </>
-                )}
-              </h2>
-              <p className="text-[17px] md:text-[19px] text-[#86868B] font-medium leading-relaxed max-w-md">
-                {t.petDesc}
-              </p>
-            </div>
-
-            {/* Feature cards: guestbook | blue gallery | diary */}
-            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5">
-              {/* 1 — Guestbook + dog with owner */}
-              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] flex flex-col h-full group transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
-                <div className="relative aspect-[2/1] md:aspect-[4/3] overflow-hidden bg-[#F5F5F7]">
-                  <img
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz2pGinLl6I0W9a40FYq3VtO-LvGKt-wrsWP_rd5npjmAAv8lM6I3FkjcSmiUiTppfWjtKLgXA6xfRK5Ghic1_WAXr-NDt-Fbvtvm_Lm2E62Lq16BHKP_TyM52OBktxG0kgtPDSqH1dwPQGDxPlvDGvK4PNFrFw-WJ9XhKwcNKwX9VMlJvDhqJLJ0XYYI7JratIH2v5foXRPHMOzVX8b4bGHXXQLDuNeRB2N70DyEfMaN24kptZCs"
-                    alt={t.guestbookTitle}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+          <div className="rounded-[24px] md:rounded-[32px] shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
+            <div className="relative w-full rounded-[24px] md:rounded-[32px] overflow-hidden bg-[#FFFFFF] flex flex-col md:flex-row items-stretch min-h-0 md:min-h-[480px]">
+              <div className="w-full md:w-1/2 p-6 md:p-12 lg:p-20 flex flex-col justify-center z-10 bg-[#FFFFFF] text-left">
+                <h2 className="text-[32px] md:text-[48px] tracking-tight text-[#1D1D1F] font-semibold mb-4 leading-tight">
+                  {mounted && lang === 'en' ? (
+                    t.petTitle
+                  ) : (
+                    <>
+                      สัตว์เลี้ยง
+                      <br className="hidden md:block" />
+                      <span className="md:hidden"> </span>
+                      (Pet Memorial)
+                    </>
+                  )}
+                </h2>
+                <p className="text-[17px] md:text-[21px] text-[#86868B] font-medium mb-5 md:mb-8 max-w-md">
+                  {t.petDesc}
+                </p>
+                <div>
+                  <Link
+                    href="/manage/create?category=Pet Memorial"
+                    className="inline-flex items-center justify-center bg-[#0071e3] text-[#FFFFFF] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#0071e3]/90 transition-colors"
+                  >
+                    {t.createPetBtn}
+                  </Link>
                 </div>
+              </div>
+              <div className="relative md:absolute md:inset-y-0 md:right-0 md:left-1/2 w-full md:w-1/2 h-[240px] md:h-full">
+                <img
+                  alt="Pet Paradise memorial cover"
+                  className="w-full h-full object-cover object-center absolute inset-0 transition-transform duration-700 hover:scale-[1.02]"
+                  loading="lazy"
+                  src="/defaults/pet-memorial/cover/3.png"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5">
+              {/* 1 — Guestbook */}
+              <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] flex flex-col h-full transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
                 <div className="p-5 md:p-6 flex flex-col flex-grow text-left">
                   <h3 className="font-semibold text-[21px] md:text-[22px] mb-2 text-[#1D1D1F] tracking-tight leading-tight">{t.guestbookTitle}</h3>
                   <p className="font-medium text-[14px] md:text-[15px] text-[#86868B] leading-relaxed">{t.guestbookDesc}</p>
                 </div>
               </div>
 
-              {/* 3 — Gallery details on blue (center) */}
+              {/* 2 — Gallery details on blue (center) */}
               <div className="bg-[#0071e3] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,113,227,0.25)] flex flex-col sm:h-full">
                 <div className="p-5 md:p-6 flex flex-col sm:flex-grow text-left text-white">
                   <h3 className="font-semibold text-[28px] md:text-[32px] mb-2 tracking-tight leading-tight">{t.galleryTitle}</h3>
                   <p className="font-medium text-[14px] md:text-[15px] text-white/85 leading-relaxed sm:flex-grow">{t.galleryDesc}</p>
-                  <div className="mt-4 sm:mt-6 flex justify-start md:justify-center">
-                    <Link
-                      href="/manage/create?category=Pet Memorial"
-                      className="inline-flex items-center justify-center bg-[#E8F1FB] text-[#0071e3] font-medium text-[15px] px-8 py-2.5 rounded-full hover:bg-[#d6e8fa] transition-colors"
-                    >
-                      {t.createPetBtn}
-                    </Link>
-                  </div>
                 </div>
               </div>
 
-              {/* 2 — Diary + gallery polaroids image */}
+              {/* 3 — Diary + gallery polaroids image */}
               <div className="bg-[#FFFFFF] rounded-[22px] md:rounded-[28px] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_rgba(0,0,0,0.07)] flex flex-col h-full group transition-shadow duration-500 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_52px_rgba(0,0,0,0.09)]">
                 <div className="relative aspect-[2/1] md:aspect-[4/3] overflow-hidden bg-[#F5F5F7]">
                   <img
@@ -536,7 +538,6 @@ export default function MarketingHome() {
                   <p className="font-medium text-[14px] md:text-[15px] text-[#86868B] leading-relaxed">{t.diaryDesc}</p>
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </section>
@@ -602,54 +603,6 @@ export default function MarketingHome() {
           </div>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="bg-[#FFFFFF] border-t border-[#E8E8ED] py-14 text-xs">
-        <div className="max-w-[1280px] mx-auto px-6 text-left">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 border-b border-[#E8E8ED] pb-12">
-            <div className="space-y-3">
-              <h4 className="font-semibold text-[#1D1D1F]">ผลิตภัณฑ์</h4>
-              <ul className="space-y-2">
-                <li><a className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="#features">ฟีเจอร์</a></li>
-                <li><Link className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="/examples">ตัวอย่าง</Link></li>
-                <li><Link className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="/pricing">ราคา</Link></li>
-              </ul>
-            </div>
-            <div className="space-y-3">
-              <h4 className="font-semibold text-[#1D1D1F]">ประเภท</h4>
-              <ul className="space-y-2">
-                <li><Link className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="/login">อนุสรณ์บุคคล</Link></li>
-                <li><Link className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="/login">งานแต่งงาน</Link></li>
-                <li><Link className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="/login">สัตว์เลี้ยง</Link></li>
-              </ul>
-            </div>
-            <div className="space-y-3">
-              <h4 className="font-semibold text-[#1D1D1F]">บริษัท</h4>
-              <ul className="space-y-2">
-                <li><a className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="#">เกี่ยวกับเรา</a></li>
-                <li><a className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="#">ติดต่อ</a></li>
-                <li><a className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="#">ร่วมงานกับเรา</a></li>
-              </ul>
-            </div>
-            <div className="space-y-3">
-              <h4 className="font-semibold text-[#1D1D1F]">ช่วยเหลือ</h4>
-              <ul className="space-y-2">
-                <li><a className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="#">ศูนย์ช่วยเหลือ</a></li>
-                <li><a className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="#">คำถามที่พบบ่อย</a></li>
-                <li><a className="text-[#86868B] hover:text-[#1D1D1F] transition-colors" href="#">ความปลอดภัย</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[#86868B]">
-            <p>© 2026 FOREVER. All rights reserved.</p>
-            <div className="flex gap-4">
-              <a className="hover:text-[#1D1D1F] transition-colors" href="#">Privacy Policy</a>
-              <span className="hidden md:inline">|</span>
-              <a className="hover:text-[#1D1D1F] transition-colors" href="#">Terms of Service</a>
-            </div>
-          </div>
-        </div>
-      </footer>
 
     </main>
   );

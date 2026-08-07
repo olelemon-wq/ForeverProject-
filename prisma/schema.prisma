@@ -114,17 +114,18 @@ model Payment {
 }
 
 model Media {
-  id        String   @id @default(uuid())
-  websiteId String
-  filePath  String   // S3/R2 object storage path
-  fileName  String
-  fileSize  BigInt   // file size in bytes
-  mimeType  String
-  fileHash  String   // MD5/SHA hash of file for duplicate warning check (BR031)
-  album     String?  // e.g. "GALLERY", "VIDEO", "AUDIO", "DOCUMENT"
-  isDeleted Boolean  @default(false)
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
+  id            String   @id @default(uuid())
+  websiteId     String
+  filePath      String   // S3/R2 object storage path
+  thumbnailPath String?  // optional JPEG preview for uploaded videos
+  fileName      String
+  fileSize      BigInt   // file size in bytes
+  mimeType      String
+  fileHash      String   // MD5/SHA hash of file for duplicate warning check (BR031)
+  album         String?  // e.g. "GALLERY", "VIDEO", "AUDIO", "DOCUMENT"
+  isDeleted     Boolean  @default(false)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
 
   website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 }

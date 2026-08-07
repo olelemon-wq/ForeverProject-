@@ -9,11 +9,11 @@ export type CondolenceSectionTheme = {
   surfaceClass: string;
 };
 
-const WEDDING_PATTERN = '/patterns/wedding-condolence-floral-right.png';
-const MEMORIAL_PATTERN = '/patterns/memorial-condolence-floral-right.png';
-const FRIENDS_PATTERN = '/patterns/friends-condolence-floral-right.png';
-const PET_PATTERN = '/patterns/pet-condolence-floral-right.png';
-const FAMILY_LEGACY_PATTERN = '/patterns/family-legacy-branch-right.png';
+const WEDDING_PATTERN = '/patterns/wedding-condolence-floral-right.jpg';
+const MEMORIAL_PATTERN = '/patterns/memorial-condolence-floral-right.jpg';
+const FRIENDS_PATTERN = '/patterns/friends-condolence-floral-right.jpg';
+const PET_PATTERN = '/patterns/pet-condolence-floral-right.jpg';
+const FAMILY_LEGACY_PATTERN = '/patterns/family-legacy-branch-right.jpg';
 
 /** Category-specific condolence section decoration. */
 export function getCondolenceSectionTheme(

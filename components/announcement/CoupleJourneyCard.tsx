@@ -21,7 +21,7 @@ import {
 import { cn } from '@/lib/utils';
 import { resolveCardFontFamily } from '@/lib/themeFont';
 
-const COUPLE_PATTERN = '/patterns/wedding-condolence-floral-right.png';
+const COUPLE_PATTERN = '/patterns/wedding-condolence-floral-right.jpg';
 
 const PATTERN_MASK =
   'linear-gradient(to left, black 0%, black 28%, rgba(0,0,0,0.55) 52%, transparent 100%)';

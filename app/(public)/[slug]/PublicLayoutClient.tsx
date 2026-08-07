@@ -198,8 +198,7 @@ export default function PublicLayoutClient({
             aria-label="Toggle navigation menu"
             aria-expanded={isMobileMenuOpen}
           >
-            <span className="text-[10px] font-bold uppercase tracking-wide text-stone-500">เมนู</span>
-            {isMobileMenuOpen ? (
+{isMobileMenuOpen ? (
               <X className="w-5 h-5" />
             ) : (
               <MenuIcon className="w-5 h-5" />

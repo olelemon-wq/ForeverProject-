@@ -11,7 +11,7 @@ import { resolveCardFontFamily } from '@/lib/themeFont';
 import type { AnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { ANNOUNCEMENT_CARD_CLASS } from '@/lib/publicLayout';
 
-const FRIENDS_PATTERN = '/patterns/friends-condolence-floral-right.png';
+const FRIENDS_PATTERN = '/patterns/friends-condolence-floral-right.jpg';
 
 const PATTERN_MASK =
   'linear-gradient(to left, black 0%, black 28%, rgba(0,0,0,0.55) 52%, transparent 100%)';

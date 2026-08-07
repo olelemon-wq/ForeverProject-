@@ -1,119 +1,278 @@
-import React from 'react';
 import Link from 'next/link';
-import { 
-  Clock, 
-  Palette, 
-  Calendar, 
-  Camera, 
-  BookOpen, 
-  QrCode, 
-  ShieldCheck, 
+import {
+  ArrowRight,
+  BookOpen,
+  Calendar,
+  Camera,
+  Clock,
+  Palette,
+  QrCode,
+  ShieldCheck,
   Users,
-  ArrowRight
+  type LucideIcon,
 } from 'lucide-react';
 
-export default function FeaturesPage() {
-  const featureList = [
-    {
-      icon: <Clock className="w-6 h-6 text-emerald-600" />,
-      title: "สร้างเว็บไซต์เสร็จสิ้นใน 3 นาที",
-      description: "ระบบออกออกแบบสไตล์ Self-Service 100% ตอบคำถามง่ายๆ ระบบจะสร้างเว็บให้ทันที ไม่ต้องมีพื้นฐานเขียนโปรแกรมใดๆ"
-    },
-    {
-      icon: <Palette className="w-6 h-6 text-emerald-600" />,
-      title: "ปรับแต่งโทนสีและฟอนต์อักษร",
-      description: "เลือกโทนสีสุภาพและฟอนต์อักษรอันประณีต เช่น LINE Seed Sans TH, Charm, Sarabun เพื่อแสดงความเคารพอย่างสูง"
-    },
-    {
-      icon: <Calendar className="w-6 h-6 text-emerald-600" />,
-      title: "กำหนดการพิธีการ์ดออนไลน์",
-      description: "สร้างการ์ดแจ้งกำหนดการฌาปนกิจและพิธีสวดที่แชร์ได้ง่ายผ่านโซเชียล พร้อมลิงก์แผนที่นำทางไปยังวัดปลายทาง"
-    },
-    {
-      icon: <Camera className="w-6 h-6 text-emerald-600" />,
-      title: "แกลเลอรีรูปถ่ายความทรงจำ",
-      description: "จัดเก็บและแสดงภาพบรรยากาศวันวานในดีไซน์ Masonry สวยงามและโหลดรวดเร็ว คัดกรองภาพส่วนตัวได้อย่างมีระเบียบ"
-    },
-    {
-      icon: <BookOpen className="w-6 h-6 text-emerald-600" />,
-      title: "หนังสือที่ระลึก Web Reader",
-      description: "ผู้เข้ามาร่วมงานสามารถสแกนเปิดอ่านหนังสือธรรมทานหรือบันทึกคำขอบคุณออนไลน์ผ่านสมาร์ทโฟนได้ทันที"
-    },
-    {
-      icon: <QrCode className="w-6 h-6 text-emerald-600" />,
-      title: "ดาวน์โหลดคิวอาร์โค้ดถาวร",
-      description: "รับ QR Code ประจำหน้าเว็บสำหรับจัดพิมพ์ลงในการ์ดกระดาษ ของชำร่วย หรือบอร์ดหน้างานฌาปนสถานอย่างสวยงาม"
-    },
-    {
-      icon: <ShieldCheck className="w-6 h-6 text-emerald-600" />,
-      title: "ระบบคัดกรองคำไว้อาลัยความปลอดภัยสูง",
-      description: "ทุกข้อความคำรำลึกและภาพบนกระดานแชร์ความทรงจำร่วม จะแสดงผลหลังได้รับการอนุมัติจากญาติผู้ดูแลระบบเท่านั้น"
-    },
-    {
-      icon: <Users className="w-6 h-6 text-emerald-600" />,
-      title: "แผนผังเครือญาติแสดงความกตัญญู",
-      description: "จัดเรียงสมาชิกในครอบครัวและทายาทอย่างเป็นสัดส่วนเพื่อรำลึกถึงรากเหง้าครอบครัวและส่งต่อประวัติศาสตร์อย่างงดงาม"
-    }
-  ];
+type FeatureItem = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  span?: 'wide' | 'tall' | 'full';
+  accent?: 'emerald' | 'teal' | 'stone';
+};
+
+const pillars = [
+  {
+    title: 'ทำเองได้ทั้งหมด',
+    description: 'ไม่ต้องรอทีมเทคนิค — ตั้งค่าและเผยแพร่ได้ในไม่กี่นาที',
+  },
+  {
+    title: 'ออกแบบมาเพื่อความทรงจำ',
+    description: 'โทนสี ฟอนต์ และเลย์เอาต์ที่สงบ เรียบหรู และเคารพบริบทไทย',
+  },
+  {
+    title: 'ปลอดภัยและควบคุมได้',
+    description: 'อนุมัติข้อความก่อนเผยแพร่ พร้อมระบบเข้าสู่ระบบ OTP',
+  },
+];
+
+const featureGroups: { label: string; items: FeatureItem[] }[] = [
+  {
+    label: 'เริ่มต้นและออกแบบ',
+    items: [
+      {
+        icon: Clock,
+        title: 'สร้างเว็บไซต์เสร็จสิ้นใน 3 นาที',
+        description:
+          'ระบบ Self-Service 100% ตอบคำถามง่าย ๆ ระบบจะสร้างเว็บให้ทันที ไม่ต้องมีพื้นฐานเขียนโปรแกรม',
+        span: 'wide',
+        accent: 'emerald',
+      },
+      {
+        icon: Palette,
+        title: 'ปรับแต่งโทนสีและฟอนต์อักษร',
+        description:
+          'เลือกโทนสีสุภาพและฟอนต์อันประณีต เช่น LINE Seed Sans TH, Charm, Sarabun เพื่อแสดงความเคารพอย่างสูง',
+        accent: 'teal',
+      },
+    ],
+  },
+  {
+    label: 'เนื้อหาและความทรงจำ',
+    items: [
+      {
+        icon: Calendar,
+        title: 'กำหนดการพิธีการ์ดออนไลน์',
+        description:
+          'สร้างการ์ดแจ้งกำหนดการฌาปนกิจและพิธีสวดที่แชร์ได้ง่าย พร้อมลิงก์แผนที่นำทาง',
+        accent: 'stone',
+      },
+      {
+        icon: Camera,
+        title: 'แกลเลอรีรูปถ่ายความทรงจำ',
+        description:
+          'จัดเก็บและแสดงภาพในดีไซน์ Masonry สวยงาม โหลดรวดเร็ว คัดกรองภาพได้อย่างเป็นระเบียบ',
+        span: 'tall',
+        accent: 'emerald',
+      },
+      {
+        icon: BookOpen,
+        title: 'หนังสือที่ระลึก Web Reader',
+        description:
+          'ผู้เข้าร่วมงานสแกนเปิดอ่านหนังสือธรรมทานหรือบันทึกคำขอบคุณออนไลน์ผ่านสมาร์ทโฟนได้ทันที',
+        accent: 'stone',
+      },
+      {
+        icon: QrCode,
+        title: 'ดาวน์โหลดคิวอาร์โค้ดถาวร',
+        description:
+          'รับ QR Code ประจำหน้าเว็บสำหรับพิมพ์ลงการ์ดกระดาษ ของชำร่วย หรือบอร์ดหน้างาน',
+        accent: 'teal',
+      },
+    ],
+  },
+  {
+    label: 'ความไว้วางใจ',
+    items: [
+      {
+        icon: ShieldCheck,
+        title: 'ระบบคัดกรองคำไว้อาลัย',
+        description:
+          'ทุกข้อความและภาพบนกระดานแชร์ความทรงจำ จะแสดงหลังได้รับการอนุมัติจากผู้ดูแลระบบเท่านั้น',
+        span: 'wide',
+        accent: 'emerald',
+      },
+      {
+        icon: Users,
+        title: 'แผนผังเครือญาติ',
+        description:
+          'จัดเรียงสมาชิกในครอบครัวและทายาทอย่างเป็นสัดส่วน เพื่อรำลึกรากเหง้าและส่งต่อประวัติศาสตร์',
+        accent: 'stone',
+      },
+    ],
+  },
+];
+
+const accentStyles = {
+  emerald: {
+    icon: 'text-emerald-700',
+    surface: 'bg-emerald-50',
+    ring: 'ring-emerald-100',
+  },
+  teal: {
+    icon: 'text-teal-700',
+    surface: 'bg-teal-50',
+    ring: 'ring-teal-100',
+  },
+  stone: {
+    icon: 'text-[#1D1D1F]',
+    surface: 'bg-[#F5F5F7]',
+    ring: 'ring-[#E8E8ED]',
+  },
+} as const;
+
+function spanClass(span?: FeatureItem['span']) {
+  if (span === 'wide') return 'md:col-span-2';
+  if (span === 'tall') return 'md:row-span-2';
+  if (span === 'full') return 'md:col-span-3';
+  return '';
+}
+
+function FeatureCard({ feature }: { feature: FeatureItem }) {
+  const Icon = feature.icon;
+  const accent = accentStyles[feature.accent ?? 'stone'];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      {/* Page Header */}
-      <div className="text-center max-w-3xl mx-auto mb-20 animate-fade-in">
-        <span className="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-full">
-          Platform Features
-        </span>
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-stone-900 mt-4 leading-tight">
-          ฟังก์ชันพรีเมียมเพื่อบันทึก <br />
-          <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent">
-            ความทรงจำอันทรงคุณค่า
-          </span>
-        </h1>
-        <p className="text-stone-600 mt-6 text-sm sm:text-base leading-relaxed">
-          เราออกแบบทุกฟีเจอร์อย่างพิถีพิถันเพื่อมอบหน้าเว็บอันทรงเกียรติและเรียบหรู 
-          ช่วยอำนวยความสะดวกในการจัดงานและเก็บบันทึกประวัติศาสตร์ชีวิตของคนที่รักให้คงอยู่อย่างอบอุ่น
-        </p>
-      </div>
-
-      {/* Features Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {featureList.map((feat, idx) => (
-          <div 
-            key={idx}
-            className="p-8 rounded-3xl border border-stone-200 bg-white hover:border-stone-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.015)] transition duration-300 flex flex-col justify-between"
-          >
-            <div className="space-y-6">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-                {feat.icon}
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-bold text-stone-950">{feat.title}</h3>
-                <p className="text-stone-600 text-xs leading-relaxed">{feat.description}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Call to Action Footer */}
-      <div className="mt-20 p-10 sm:p-12 rounded-3xl bg-gradient-to-br from-stone-900 to-stone-950 text-white text-center relative overflow-hidden shadow-xl">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold leading-tight">
-            เริ่มต้นดูแลเว็บไซต์รำลึกออนไลน์ตั้งแต่วันนี้
-          </h2>
-          <p className="text-stone-400 text-xs sm:text-sm leading-relaxed">
-            ทดลองสร้างหน้าเว็บรำลึกได้ฟรี ปรับแต่งกำหนดการและแกลเลอรีภาพได้ทันที 
-            มอบสิ่งที่ดีที่สุดแด่ผู้วายชนม์ที่อยู่ในความทรงจำของคุณ
+    <article
+      className={`group relative overflow-hidden rounded-[28px] border border-[#E8E8ED] bg-white p-7 sm:p-8 shadow-[0_1px_0_rgba(0,0,0,0.03)] transition duration-300 hover:-translate-y-0.5 hover:border-[#d8d8de] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] ${spanClass(feature.span)}`}
+    >
+      <div
+        className={`pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-60 blur-2xl transition duration-500 group-hover:opacity-90 ${accent.surface}`}
+        aria-hidden
+      />
+      <div className="relative flex h-full flex-col gap-5">
+        <div
+          className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${accent.surface} ${accent.ring}`}
+        >
+          <Icon className={`h-6 w-6 ${accent.icon}`} strokeWidth={1.75} />
+        </div>
+        <div className="space-y-2.5">
+          <h3 className="text-[17px] font-semibold leading-snug tracking-tight text-[#1D1D1F]">
+            {feature.title}
+          </h3>
+          <p className="max-w-prose text-[14px] leading-relaxed text-[#6E6E73]">
+            {feature.description}
           </p>
-          <div className="pt-4 flex flex-wrap gap-4 justify-center">
-            <Link href="/login" className="px-6 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:brightness-105 transition font-bold text-sm shadow-md active:scale-95 flex items-center gap-1.5">
-              <span>เริ่มสร้างเว็บไซต์ความทรงจำฟรี</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
         </div>
       </div>
-    </div>
+    </article>
+  );
+}
+
+export default function FeaturesPage() {
+  return (
+    <main className="overflow-hidden">
+      {/* Hero */}
+      <section className="relative border-b border-[#E8E8ED] bg-white">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(16,185,129,0.08),transparent)]"
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-[1080px] px-6 pb-16 pt-14 sm:pb-20 sm:pt-20">
+          <div className="mx-auto max-w-[720px] text-center">
+            <h1 className="text-[40px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#1D1D1F] sm:text-[56px]">
+              ทุกเครื่องมือที่จำเป็น
+              <br className="hidden sm:block" />
+              เพื่อเก็บเรื่องราวให้คงอยู่
+            </h1>
+            <p className="mx-auto mt-5 max-w-[560px] text-[17px] leading-relaxed text-[#6E6E73]">
+              ออกแบบมาให้ญาติและเพื่อนใช้งานได้ง่าย ในขณะที่หน้าเว็บยังดูสง่างาม
+              เรียบหรู และเหมาะกับบริบทงานพิธีและความทรงจำของครอบครัวไทย
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center rounded-full bg-[#1D1D1F] px-7 py-3 text-[15px] font-medium text-white transition hover:bg-[#333336] active:scale-[0.98]"
+              >
+                เริ่มสร้างเว็บไซต์
+              </Link>
+              <Link
+                href="/examples"
+                className="inline-flex items-center justify-center rounded-full border border-[#D2D2D7] bg-white px-7 py-3 text-[15px] font-medium text-[#1D1D1F] transition hover:bg-[#F5F5F7] active:scale-[0.98]"
+              >
+                ดูตัวอย่างจริง
+              </Link>
+            </div>
+          </div>
+
+          <div className="mx-auto mt-14 grid max-w-[920px] gap-4 sm:grid-cols-3">
+            {pillars.map((pillar) => (
+              <div
+                key={pillar.title}
+                className="rounded-3xl border border-[#E8E8ED] bg-[#FBFBFD] px-5 py-5 text-left"
+              >
+                <p className="text-[15px] font-semibold text-[#1D1D1F]">{pillar.title}</p>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-[#6E6E73]">
+                  {pillar.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Feature groups */}
+      {featureGroups.map((group) => (
+        <section key={group.label} className="mx-auto max-w-[1080px] px-6 py-14 sm:py-16">
+          <div className="mb-8 flex items-end justify-between gap-4 border-b border-[#E8E8ED] pb-5">
+            <h2 className="text-[28px] font-semibold tracking-[-0.02em] text-[#1D1D1F] sm:text-[32px]">
+              {group.label}
+            </h2>
+            <p className="hidden text-[13px] text-[#86868B] sm:block">
+              {group.items.length} ฟีเจอร์
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:auto-rows-[minmax(180px,auto)]">
+            {group.items.map((feature) => (
+              <FeatureCard key={feature.title} feature={feature} />
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {/* CTA */}
+      <section className="mx-auto max-w-[1080px] px-6 pb-20 pt-4">
+        <div className="relative overflow-hidden rounded-[32px] bg-[#1D1D1F] px-8 py-12 text-center sm:px-12 sm:py-14">
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(16,185,129,0.18),transparent_45%),radial-gradient(circle_at_80%_100%,rgba(45,212,191,0.12),transparent_40%)]"
+            aria-hidden
+          />
+          <div className="relative mx-auto max-w-[560px] space-y-5">
+            <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] text-white sm:text-[34px]">
+              พร้อมเปิดพื้นที่ความทรงจำของคุณแล้วหรือยัง
+            </h2>
+            <p className="text-[15px] leading-relaxed text-white/72">
+              ทดลองสร้างหน้าเว็บได้ฟรี ปรับกำหนดการและแกลเลอรีได้ทันที
+              แล้วแชร์ลิงก์หรือ QR Code ให้คนที่คุณรัก
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 text-[15px] font-semibold text-[#1D1D1F] transition hover:bg-[#F5F5F7] active:scale-[0.98]"
+              >
+                เริ่มสร้างฟรี
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center justify-center rounded-full border border-white/20 px-7 py-3 text-[15px] font-medium text-white transition hover:bg-white/10 active:scale-[0.98]"
+              >
+                ดูราคา
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

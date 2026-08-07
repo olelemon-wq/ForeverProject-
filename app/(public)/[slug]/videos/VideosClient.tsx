@@ -13,6 +13,7 @@ interface GalleryMedia {
   fileName: string;
   mimeType: string;
   displayUrl: string;
+  thumbnailUrl?: string;
   createdAt: string;
 }
 
@@ -196,6 +197,9 @@ function VideoCard({ media, onClick }: { media: GalleryMedia; onClick: () => voi
   const platform = detectPlatform(media.mimeType, media.filePath);
   const colors = PLATFORM_COLORS[platform];
   const ytId = platform === 'youtube' ? getYoutubeId(media.filePath) : null;
+  const thumbSrc = ytId
+    ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
+    : media.thumbnailUrl;
 
   return (
     <button
@@ -206,9 +210,9 @@ function VideoCard({ media, onClick }: { media: GalleryMedia; onClick: () => voi
       {/* 16:9 thumbnail area — all cards identical height */}
       <div className="relative w-full" style={{ aspectRatio: '16 / 9' }}>
         {/* Background */}
-        {ytId ? (
+        {thumbSrc ? (
           <img
-            src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
+            src={thumbSrc}
             alt={media.fileName}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />

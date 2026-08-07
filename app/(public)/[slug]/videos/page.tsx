@@ -35,6 +35,7 @@ async function getVideoMedia(websiteId: string) {
     fileName: m.fileName,
     mimeType: m.mimeType,
     displayUrl: getDisplayUrl(m.filePath, m.mimeType, idx),
+    thumbnailUrl: m.thumbnailPath ? resolveMediaSrc(m.thumbnailPath) : undefined,
     createdAt: m.createdAt.toISOString(),
   }));
 }

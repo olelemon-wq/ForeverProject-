@@ -10,7 +10,7 @@ import {
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 import { imageTransformStyle } from '@/lib/imagePosition';
 
-const PET_CARD_PATTERN = '/patterns/pet-condolence-floral-right.png';
+const PET_CARD_PATTERN = '/patterns/pet-condolence-floral-right.jpg';
 
 export type PetProfileCardSubject = {
   name: string;
