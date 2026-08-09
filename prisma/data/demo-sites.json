@@ -82,50 +82,51 @@
         },
         "visibility": "PUBLIC",
         "status": "ACTIVE",
-        "expiredAt": "2036-07-24T08:41:47.116Z",
+        "expiredAt": "2036-08-04T04:54:45.741Z",
         "donationPromptPay": "",
         "donationAccountName": "",
         "donationActive": false,
         "createdAt": "2026-07-13T07:42:42.662Z",
-        "updatedAt": "2026-07-27T08:41:47.121Z"
+        "updatedAt": "2026-08-07T04:54:45.764Z"
       },
       "menus": [
         {
-          "id": "561872ff-f25a-4809-9d46-3a58cf30e2fc",
+          "id": "cd183525-ba6d-4806-a00e-c4be5037b20b",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "หน้าแรก",
           "pageType": "HOME",
           "isVisible": true,
           "sortOrder": 1,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.140Z"
+          "createdAt": "2026-08-07T04:54:45.910Z"
         },
         {
-          "id": "feda5d96-e150-4cfb-9441-17d94a8bdb8e",
+          "id": "ab06cf18-60be-4aa8-96b1-95b0f1fa0ee8",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "คลังภาพรำลึก",
           "pageType": "GALLERY",
           "isVisible": true,
           "sortOrder": 2,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.140Z"
+          "createdAt": "2026-08-07T04:54:45.910Z"
         },
         {
-          "id": "766a4f9c-0847-41ac-b454-84137ddd912e",
+          "id": "6da21418-f880-4c3f-96aa-256eb176593a",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "สมุดไว้อาลัย",
           "pageType": "CONDOLENCE",
           "isVisible": true,
           "sortOrder": 3,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.140Z"
+          "createdAt": "2026-08-07T04:54:45.910Z"
         }
       ],
       "medias": [
         {
-          "id": "6a0a0110-9ec1-43d2-bc6b-bb415d86eea9",
+          "id": "cf2b6ffa-b1d9-40c9-9960-9debdb7e81e0",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "https://www.youtube.com/watch?v=_rJQ-yOoxiY",
+          "thumbnailPath": null,
           "fileName": "สไลด์ชโมความทรงจำคุณพ่อ",
           "fileSize": "0",
           "mimeType": "video/youtube",
@@ -133,12 +134,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "84bf5f56-cf36-413b-a9a1-c3c0bd4cefaa",
+          "id": "aee3badc-703f-4512-b493-a7cabd45f2b8",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "https://storage.forever.co.th/uploads/71c8328d-857d-440e-a77d-8de0a06b3232/1782111654502-avatar-1782111654443-tribute-maem.png",
+          "thumbnailPath": null,
           "fileName": "avatar-1782111654443-tribute-maem.png",
           "fileSize": "618249",
           "mimeType": "image/png",
@@ -146,12 +148,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "080816ae-9e40-4731-8624-ccad235bcd9b",
+          "id": "55834bd7-65c4-494d-8293-863317f91c80",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782112651117-avatar-1782112651038-tribute-maem.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782112651038-tribute-maem.png",
           "fileSize": "618249",
           "mimeType": "image/png",
@@ -159,12 +162,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "20c589b4-1fea-412b-b353-e649eab324db",
+          "id": "3845a0b9-d193-4a1d-9309-70efbe9489c6",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782120661075-deceased-avatar-1782120661030-album-288.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1782120661030-album-288.jpg",
           "fileSize": "111973",
           "mimeType": "image/jpeg",
@@ -172,12 +176,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "4cf6857b-1be9-4a52-89f7-cc2b5b095372",
+          "id": "93b5351c-3eff-4600-b041-5e5791021c34",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782128777506-avatar-1782128777338-album-315.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782128777338-album-315.jpg",
           "fileSize": "414100",
           "mimeType": "image/jpeg",
@@ -185,12 +190,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "ad17aec9-266c-479d-a7d6-46fde4b2795c",
+          "id": "37e9b536-74a3-4390-a2c7-ea3dc078533e",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129455863-avatar-1782129455769-tribute-145.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129455769-tribute-145.png",
           "fileSize": "562715",
           "mimeType": "image/png",
@@ -198,12 +204,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "775e83d5-bfeb-49fd-aa40-0583082ef6c5",
+          "id": "27d0dbf7-8e98-4855-86ec-d469056f0572",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129487156-avatar-1782129487108-tribute-king.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129487108-tribute-king.png",
           "fileSize": "303300",
           "mimeType": "image/png",
@@ -211,12 +218,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "e6b0e792-fd58-45c0-acf8-c833a4c5c650",
+          "id": "676a1f73-9677-4b41-837b-684abca5a972",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129580917-avatar-1782129580871-album-97.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129580871-album-97.jpg",
           "fileSize": "1199532",
           "mimeType": "image/jpeg",
@@ -224,12 +232,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "ad6185bf-e2e6-48fd-8443-48238e2f747a",
+          "id": "93627ba3-7d72-4ce3-8fdd-80bc93140811",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129652054-avatar-1782129652006-tribute-jenny.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129652006-tribute-jenny.png",
           "fileSize": "629582",
           "mimeType": "image/png",
@@ -237,12 +246,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "1b0ad061-366a-4810-a9b5-1e3798181574",
+          "id": "9d78c7ca-0c1c-444d-b373-eca7399974d7",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129668462-avatar-1782129668405-tribute-ood.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129668405-tribute-ood.png",
           "fileSize": "201130",
           "mimeType": "image/png",
@@ -250,12 +260,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "240bb087-eb0b-4263-b837-f96ad62377c0",
+          "id": "05f5aac0-4d15-4743-ad80-8852aa0a7c4b",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129707722-avatar-1782129707688-tribute-jay.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129707688-tribute-jay.png",
           "fileSize": "246152",
           "mimeType": "image/png",
@@ -263,12 +274,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "042f5ad0-744f-4ceb-8f78-ff75ba3f0797",
+          "id": "39792306-3620-40c1-a6ab-671ef69c442d",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129797318-avatar-1782129797274-tribute-amy.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129797274-tribute-amy.png",
           "fileSize": "300417",
           "mimeType": "image/png",
@@ -276,12 +288,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "c9b39958-dc1b-49cd-9e8e-d766501c4672",
+          "id": "2e989055-d3e7-4ce8-881c-ad4349251a89",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129813013-avatar-1782129812972-tribute-jojo.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129812972-tribute-jojo.png",
           "fileSize": "267585",
           "mimeType": "image/png",
@@ -289,12 +302,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "80453888-3643-453f-bcfd-105d5e590d46",
+          "id": "f3f36b2d-4e95-4d98-b09e-a5636d2092b7",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782129826466-avatar-1782129826435-tribute-mano.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1782129826435-tribute-mano.png",
           "fileSize": "341119",
           "mimeType": "image/png",
@@ -302,12 +316,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "daffdc3a-c7f1-4f0c-a2be-785a1c8ae99f",
+          "id": "7d1e966a-c21e-4426-9edb-d6a1f1cb6ff4",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "https://storage.forever.co.th/uploads/71c8328d-857d-440e-a77d-8de0a06b3232/1782111209251-avatar-1782111209046-tribute-maem.png",
+          "thumbnailPath": null,
           "fileName": "avatar-1782111209046-tribute-maem.png",
           "fileSize": "618249",
           "mimeType": "image/png",
@@ -315,12 +330,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "c0e1d5f4-5950-4e7e-8eb0-549c0bfb0cad",
+          "id": "5fe0ef14-6cf0-4975-89f1-ec2a0b789366",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663166-gallery-1782186662813-album-183.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662813-album-183.jpg",
           "fileSize": "293888",
           "mimeType": "image/jpeg",
@@ -328,12 +344,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 1,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "d43d1b7c-1d51-4f99-a0ff-a2de2e914ff3",
+          "id": "6ed0e0ef-db51-4f21-a76c-cc6ed3cac0c2",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663308-gallery-1782186662815-img-7169.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662815-img-7169.jpg",
           "fileSize": "463976",
           "mimeType": "image/jpeg",
@@ -341,12 +358,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "5c7f38a7-8a49-4e4c-a04d-8ff04a67a11c",
+          "id": "0d8d87df-730c-4518-8a4c-31646d8d35eb",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663222-gallery-1782186662815-group-photo.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662815-group-photo.jpeg",
           "fileSize": "657047",
           "mimeType": "image/jpeg",
@@ -354,12 +372,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 4,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "2fb5117e-622c-4b85-b213-afe43a763071",
+          "id": "5daa96b1-77b9-4b0b-838e-689ffa90c71c",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663177-gallery-1782186662814-album-225.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662814-album-225.jpg",
           "fileSize": "259649",
           "mimeType": "image/jpeg",
@@ -367,12 +386,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 5,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "07d64782-aab2-42c5-8fc0-7ba8cd884fa6",
+          "id": "e9b1405a-2f91-47c4-b1ab-e26f0176d129",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663179-gallery-1782186662814-album-233.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662814-album-233.jpg",
           "fileSize": "389933",
           "mimeType": "image/jpeg",
@@ -380,12 +400,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 6,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "58f9582d-5559-415e-acfe-464b4ac70ff1",
+          "id": "aeee5c1b-5450-4e59-9b9c-2ab4b638d22f",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663103-gallery-1782186662811-album-106.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662811-album-106.jpg",
           "fileSize": "290881",
           "mimeType": "image/jpeg",
@@ -393,12 +414,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 9,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "2bfe2a15-9809-4329-8aa6-3d4c3c3bad8a",
+          "id": "173a43b4-a8cb-476e-b0f6-0e2118ec25ed",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663161-gallery-1782186662813-album-181.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662813-album-181.jpg",
           "fileSize": "243695",
           "mimeType": "image/jpeg",
@@ -406,12 +428,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 10,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "aba494bc-9b95-456d-9cb3-43502d8f42e2",
+          "id": "e4500e52-4177-4cb5-80a6-842c655dd76e",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663175-gallery-1782186662814-album-211.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662814-album-211.jpg",
           "fileSize": "215793",
           "mimeType": "image/jpeg",
@@ -419,12 +442,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 11,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "f6c716f9-fb59-44b4-b84c-3471f10a448b",
+          "id": "4b3145a0-09cc-40cc-a029-c6809d385043",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559506-gallery-1782185559196-album-289.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559196-album-289.jpg",
           "fileSize": "232591",
           "mimeType": "image/jpeg",
@@ -432,12 +456,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 3,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "555ea254-48ec-40ea-a920-6e9409f3db28",
+          "id": "b15334f2-2ab2-49c9-ab05-f67c7d997245",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663106-gallery-1782186662812-album-142.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662812-album-142.jpg",
           "fileSize": "316546",
           "mimeType": "image/jpeg",
@@ -445,12 +470,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 12,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "d6f705b2-6d2e-429d-88e8-25c84c759558",
+          "id": "22060e09-8d75-4b88-aa4d-e964115dd591",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559514-gallery-1782185559203-album-233.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559203-album-233.jpg",
           "fileSize": "389933",
           "mimeType": "image/jpeg",
@@ -458,12 +484,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 18,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "8ac45043-67ce-4986-bd36-4d3f009a231d",
+          "id": "2843c8c2-65bf-4f0e-a53f-71de30fc9df1",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663071-gallery-1782186662813-album-173.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662813-album-173.jpg",
           "fileSize": "388399",
           "mimeType": "image/jpeg",
@@ -471,12 +498,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 19,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "e1d5563f-4470-4d4b-9d38-3b46bae66f64",
+          "id": "93ae0ef8-2f9e-401e-a2d5-49157581d4d3",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559511-gallery-1782185559196-album-288.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559196-album-288.jpg",
           "fileSize": "111973",
           "mimeType": "image/jpeg",
@@ -484,12 +512,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 20,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "66c8cddc-af95-4805-8547-ffaa0701b307",
+          "id": "0df46195-d8d5-413e-a379-09d027908fe2",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559512-gallery-1782185559203-album-238.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559203-album-238.jpg",
           "fileSize": "367615",
           "mimeType": "image/jpeg",
@@ -497,12 +526,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 22,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "e3747330-5330-4e66-a19e-f8d6d19bd25a",
+          "id": "13de5c84-b491-47b3-99ea-392a1b199656",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559385-gallery-1782185559195-album-301.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559195-album-301.jpg",
           "fileSize": "249452",
           "mimeType": "image/jpeg",
@@ -510,12 +540,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 8,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "15645505-f9cf-4121-8fbd-dc908a0d93fe",
+          "id": "b38cd901-b555-4fd2-921a-96a47bc84c6d",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663170-gallery-1782186662814-album-189.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662814-album-189.jpg",
           "fileSize": "442689",
           "mimeType": "image/jpeg",
@@ -523,12 +554,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 14,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "184b0440-5016-4d13-8950-281bc4b599d3",
+          "id": "63d034a8-9dca-4344-aa1f-ecbb78082d48",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663076-gallery-1782186662812-album-146.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662812-album-146.jpg",
           "fileSize": "493909",
           "mimeType": "image/jpeg",
@@ -536,12 +568,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 13,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "d91cc51c-08ef-4895-aacb-08e4b4a114ea",
+          "id": "3170b173-bfd3-45d6-8f4f-519e8e28081c",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663095-gallery-1782186662810-album-18.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662810-album-18.jpg",
           "fileSize": "920328",
           "mimeType": "image/jpeg",
@@ -549,12 +582,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 15,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "6d27e715-f686-4a9e-9d3c-36c40c66558b",
+          "id": "f720c7f7-6f9f-4b34-8f82-320de1592fbe",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663077-gallery-1782186662800-album-14.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662800-album-14.jpg",
           "fileSize": "1017473",
           "mimeType": "image/jpeg",
@@ -562,12 +596,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 16,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "5cb6587e-34ce-4661-ab18-eebc7093f528",
+          "id": "936d5245-04c6-4f2a-8303-35df8f3d6063",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559387-gallery-1782185559195-album-310.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559195-album-310.jpg",
           "fileSize": "427975",
           "mimeType": "image/jpeg",
@@ -575,12 +610,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 21,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "5287e3aa-5a6f-4ff6-b3b7-8d0fe1e8cef6",
+          "id": "6bc61ee2-54a8-4eb4-a4a7-639a528bd806",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559364-gallery-1782185559193-album-97.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559193-album-97.jpg",
           "fileSize": "1199532",
           "mimeType": "image/jpeg",
@@ -588,12 +624,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 23,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "3e960202-cf02-4438-b5be-01cc87c8e601",
+          "id": "93469ca3-f6ea-471e-b2b9-a4f26c78172f",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559378-gallery-1782185559195-album-315.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559195-album-315.jpg",
           "fileSize": "414100",
           "mimeType": "image/jpeg",
@@ -601,12 +638,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 2,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "168d31e7-cebb-477c-858f-2a906abadac4",
+          "id": "2eed8e30-2724-4987-aaf1-4508f2126ac9",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559369-gallery-1782185559194-album-94.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559194-album-94.jpg",
           "fileSize": "848529",
           "mimeType": "image/jpeg",
@@ -614,12 +652,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 17,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "e3a861cf-b921-4e10-b5b2-79b823925f12",
+          "id": "350bd3a1-1a61-4c78-81ca-ad64849c1919",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782185559372-gallery-1782185559194-album-320.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782185559194-album-320.jpg",
           "fileSize": "599075",
           "mimeType": "image/jpeg",
@@ -627,12 +666,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 24,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "5ee574d9-ffec-4ddb-b982-f6b28d407d74",
+          "id": "0a1d6b25-4f67-4cbc-a1c7-05da1c7e51d3",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71482e01-77df-48a6-a950-880be5467ccf/1784178445365-announcement-card-1784178445282.jpg",
+          "thumbnailPath": null,
           "fileName": "announcement-card-1784178445282.png",
           "fileSize": "6593730",
           "mimeType": "image/png",
@@ -640,12 +680,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "fd329772-4a7b-45f4-a793-5241e50f1ff4",
+          "id": "7d4e11a9-6a6b-4dd9-9d86-db4f1ca25619",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782708519903-announcement-boonkrua-family.jpg",
+          "thumbnailPath": null,
           "fileName": "announcement-boonkrua-family.jpg",
           "fileSize": "3346364",
           "mimeType": "image/jpeg",
@@ -653,12 +694,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         },
         {
-          "id": "41638e82-e72b-4862-8451-be78647b9f8c",
+          "id": "9d45e4a1-081f-4c31-9900-f5568231d091",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "filePath": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782186663270-gallery-1782186662815-img-4412.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1782186662815-img-4412.jpeg",
           "fileSize": "1108308",
           "mimeType": "image/jpeg",
@@ -666,74 +708,74 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 7,
-          "createdAt": "2026-07-27T08:41:47.143Z"
+          "createdAt": "2026-08-07T04:54:45.931Z"
         }
       ],
       "condolences": [
         {
-          "id": "aa5a33d0-9f09-414a-bf35-b146b37eb849",
+          "id": "90126e90-665d-4b88-bdc2-0a7329909823",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "senderName": "นายวิสันติ์ เศรษฐกูลวิชัย (อู๊ด)",
           "relationship": "ลูกเขย",
           "message": "พ่อตาของผม พ่อของแหม่ม ได้จากไปจากโลกนี้แล้ว ท่านเป็นผู้มีพระคุณต่อครอบครัวของผมอย่างที่สุด ตั้งแต่ผมแต่งงานมาก็ได้อาศัยอยู่ที่บ้านของท่านมาตลอด ตั้งแต่ที่บ้านเรามีหลังเดียวจนท่านสร้างให้อีกหลังให้อยู่กันเอง แต่อยู่ในพื้นที่ติดกัน ท่านเป็นผู้ที่ให้ครอบครัวเราทุกอย่างทั้งเงิน, งาน และ ความรู้ ผมถือว่าเป็นคนโชคดีคนหนึ่งที่ได้มาอาศัยอยู่กับท่าน ตอนที่มีบ้านหลังเดียวก็ได้นั่งทานอาหารกับท่านเป็นประจำทั้งเช้าและเย็น ลูกผมทั้งสองคน ก็เกิดและเติบโตมาในบ้างหลังนี้ ท่านให้ความรักกับลูกผมเป็นอย่างที่สุด ผมจะบอกลูกๆ ผมเสมอว่า ที่พวกเรามีกินมีใช้แบบทุกวันนี้ ก็เพราะคุณตา ต้องรักและเคารพคุณตาให้มากๆ นะท่านเป็นคนที่มีความจำเป็นเลิศที่สุดคนหนึ่ง ท่านชอบเล่าเรื่องราวต่างๆในอดีตให้ฟัง, จำชื่อคนเก่งมาก ทั้งชื่อและนามสกุลเขียว … เรื่องที่ท่านเล่าก็สนุกและมีหลากหลาย แต่ก็เป็นการสอนและยกตัวอย่างในอดีตให้ฟังให้ระวัง หรือให้ข้อคิดต่างๆ\n\nท่านให้มาช่วยงาน ผมก็ยินดีเสมอ เพราะผมรู้ว่าจะได้ช่วยแบ่งเบาให้ท่านสบายใจบ้าง และแน่นอนผมจะได้โอกาสในการเรียนรู้งานอีกหลายด้านจากท่านท่านเป็นคนที่มีชีวิตเรียบง่ายไม่ฟุ้งเฟ้อ แม้จะมีเงินอยู่มากมาย มีจิตใจที่อ่อนโยนต่อสิ่งมีชีวิตทุกสิ่ง ท่านช่วยคนมาเยอะ ผู้คนก็มาอาศัยพึ่งพาบารมีเยอะ ที่ผ่านมา ท่านคือเสาหลักที่แข็งแกร่งที่สุดของบ้าน เขมาภิรัตน์ … แต่ทุกสิ่งในโลกนี้ก็มีเวลาของมัน มันคงถึงเวลาแล้วที่ท่านจะได้พักผ่อนให้เต็มที่ ขอให้พ่อพักผ่อนให้สบายนะครับ คลายทุกข์คลายกังวลทุกอย่างให้หมด และเดินทางไปสู่สุขคติอย่างสงบครับ",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.150Z"
+          "createdAt": "2026-08-07T04:54:45.979Z"
         },
         {
-          "id": "79cc689d-7878-489b-9206-d356c898a5f5",
+          "id": "2938e03d-6201-4a62-881b-4f5ed9fe97ff",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "senderName": "นายคนธีร์ เขมาภิรัตน์(หนึ่ง)",
           "relationship": "Son",
           "message": "วันที่ 15 พฤศจิกายน 2567 พ่อผู้ที่ไม่เคยแพ้ใคร ได้ต่อสู้และพ่ายแพ้เป็นครั้งแรกและครั้งสุดท้าย คงไม่มีลูกคนไหนจะสามารถหาคำพูดมาบรรยายแม้เพียงส่วนเสี้ยวของความเสียใจของความสูญเสียนี้ได้ ทำได้เพียงก้มหน้ายอมรับชะตา พ่ายแพ้แก่สัจจะธรรมแห่งชีวิต เกิด แก่ เจ็บ และตาย\n\nกรรมไม่ดีอันใด ถ้าบังเอิญพ่อได้ก่อแก่ใครในโลกนี้ กระผมนายคนธีร์ เขมาภิรัตน์ กราบขออโหสิกรรมแทนพ่อผู้ล่วงลับ ขอให้พ่อได้จากไปอย่างสงบ หลุดพ้นจากทุกข์ภัย หมดภาระความห่วงใยที่คอยมอบให้แก่ทุกคนรอบข้าง ถ้าชาติหน้ามีจริงลูกจะขอตามไปเกิดเป็นลูกของพ่อทุกชาติไป\n\nน้ำตาของลูกผู้ที่สูญเสียพ่อไปไหลได้ไม่มีวันหมด นับจากนี้ไปจะไม่มีนายบุญเครือ เขมาภิรัตน์ อยู่ในโลกนี้แล้ว เหลือเพียงเถ้ากระดูกกองเล็กๆ และความทรงจำอันยิ่งใหญ่ของพ่อที่จะยังคงอยู่ในหัวใจลูกตราบชั่วชีวิต ไปดีนะพ่อ”",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.150Z"
+          "createdAt": "2026-08-07T04:54:45.979Z"
         },
         {
-          "id": "6b9c7d06-a8c3-4ce0-998d-46044dc1a752",
+          "id": "a9f91553-d924-44a4-a1e7-09fc368e91f9",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "senderName": "นางกมลรัตน์ เขมาภิรัตน์ (เจนนี่)",
           "relationship": "ลูกสะใภ้",
           "message": "ตั้งแต่หนูเริ่มก้าวเข้ามาเป็นส่วนหนึ่งของครอบครัวเขมาภิรัตน์หนูก็รับรู้ถึงความรักและความห่วงใยที่ คุณพ่อบุญเครือ และคุณแม่ธิดามีให้หนู และครอบครัวเสมอมา หนูขอกราบขอบพระคุณคุณพ่อจากหัวใจ\n\nพ่อเป็นบุคคลที่เป็นต้นแบบของลูกๆ หลานๆ และทุกคนที่รู้จักพ่อพ่อเสียสละเหน็ดหนี่อย สร้างครอบครัวให้ทุกคนอยู่สุขสบายที่สุด ภายใต้ร่มโพธิ์ร่มไทรของพ่อ ที่ให้ความร่มเย็นกับพวกเราทุกคน ความรัก และความปรารถนาดีของพ่อจะยังปกป้องลูกๆ หลานๆ อยู่เสมอไป แม้พ่อออกเดินทางจากไปที่ไกลแสนไกลแล้ว หนูจะขอระลึกถึงพ่อและจดจำในความดีของพ่อตลอดไป ขอให้คุณพ่อสุขสงบในทิพย์วิมานค่ะ",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.150Z"
+          "createdAt": "2026-08-07T04:54:45.979Z"
         },
         {
-          "id": "85715614-7881-4126-9365-d8bc15279dc2",
+          "id": "cd84ca8c-95de-437c-b532-2fec49e2b7f5",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "senderName": "เสริมสุข ",
           "relationship": "พนักงานบริษัท",
           "message": "ขอให้คุณบุญเครือ ไปสู่สุคติค่ะ ขอแสดงความเสียใจกับครอบครัวเขมาภิรัตน์ด้วยนะคะ 🤍🖤🙏🖤🤍🕯️🕯️",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.150Z"
+          "createdAt": "2026-08-07T04:54:45.979Z"
         },
         {
-          "id": "0412bda7-6d90-4ad4-a6ce-3cb97fed6ecc",
+          "id": "8fbf5b6a-a52e-4f19-bd67-8d5ffc593378",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "senderName": "ลูกสาวน้องใหญ่",
           "relationship": "ลูกสาว",
           "message": "คิดถึงพ่อทุกวันค่ะ ขอบคุณที่เลี้ยงดูเรามาด้วยความรักเสมอ",
           "type": "FAMILY",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.150Z"
+          "createdAt": "2026-08-07T04:54:45.979Z"
         },
         {
-          "id": "03870be9-9c84-4b7c-8704-155bd6770d24",
+          "id": "6cd9d885-bf90-4754-a232-4fe41c54ab0f",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "senderName": "เพื่อนร่วมงาน",
           "relationship": "เพื่อน",
           "message": "ขอแสดงความเสียใจอย่างสุดซึ้ง พ่อเป็นที่รักของทุกคนในออฟฟิศ",
           "type": "GENERAL",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.150Z"
+          "createdAt": "2026-08-07T04:54:45.979Z"
         }
       ],
       "memoryPosts": [
         {
-          "id": "0802f455-4bf5-4790-8a5c-ce4cfcaf1111",
+          "id": "e0c02e8a-12dc-47d0-bd1d-c216ddaf8870",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "",
           "content": "\"การได้เกิดเป็นมนุษย์ก็ถือว่ามีบุญมากแล้วนะ แต่การได้เกิดเป็นมนุษย์และได้เกิดเป็นลูกของผู้ชายที่ชื่อบุญเครือคนนี้ เราต้องทำบุญมามากขนาดไหนเหรอ ต้องสร้างกุศลมากี่ภพชาติ พ่อคนนี้เกิดมาเพื่อเสียสละสร้างและมอบทุกสิ่งให้กับครอบครัวอย่างแท้จริง ถ้าผมจะมีเรื่องที่โชคดีที่สุดในชีวิต ก็คงต้องบอกว่าโชคดีที่สุดที่ได้เกิดเป็นลูก พ่อบุญเครือ และแม่ธิดา นี่แหละครับ\n\nพ่อ…เด็กยากจนตรอกจันทน์เรียนโรงเรียนวัดสุทธิวราราม ที่มาพบรักกับ แม่…สาวลูกเศรษฐี เรียนโรงเรียนมาแตร์เดอี ตั้งแต่อายุ 16 ปี ถึงจะมีฐานะแตกต่างกันแบบดอกฟ้ากับหมาวัด ถูกครอบครัวทางแม่กีดกันอย่างไร แต่แม่ก็ยังเลือกพ่อ ด้วยการศึกษา ม. 8 และเงินติดตัวเพียง 700 บาท พ่อและแม่ย้ายมาตั้งรกรากด้วยกันที่ศรีราชา มีลูกด้วยกัน 4 คน ตั้งแต่ปี 2507 รวมแล้ว 60 ปี ที่ครอบครัวเล็กๆ ของเราได้เป็นส่วนหนึ่งของคนศรีราชาและจนถึงวันนี้ พ่อกับแม่คบกันมานานถึง 67 ปี\n\nชีวิตการทำงานของพ่อมีสีสัน มีเรื่องราวมากมาย พ่อดิ้นรนจากเด็กยากจนที่เกเรชอบเล่นพนัน จากเชียนสนุกเกอร์ฉายา Young Lion มาทำงานกินเงินเดือนเป็นพนักงานบริษัทไทยออยล์รุ่นที่หนึ่ง จนวันหนึ่งตัดสินใจลาออกจากงาน เพราะมองว่าเงินที่หาได้คงไม่พอเลี้ยงดูครอบครัวมุ่งสู่การทำงานรับจ้างต่างๆ เป็นผู้รับเหมาเล็กๆ จนต่อยอดสร้างตัวขึ้นเรื่อยๆปรับเป็นบริษัทรับเหมาก่อสร้างขนาดใหญ่ ดำเนินธุรกิจต่อเนื่องจนสามารถนำบริษัทเข้าจดทะเบียนในตลาดหลักทรัพย์ได้ในปี 2555\n\nพ่อชอบอ่านหนังสือ อ่านได้แทบทุกประเภทและอ่านหลายรอบมาก พ่อมักจะเปรียบคน เปรียบเรื่องราวต่างๆ กับ พงศาวดารจีน ทั้งสามกักทั้งเลียดกัก จนบางคนมองว่าพ่อมักมองโลกในแง่ร้ายไปละป่าว จริงแล้วผมคิดว่า ถ้าพ่อไม่มีครอบครัวให้เป็นห่วง ก็คงจะกล้าได้กล้าเสีย กล้าเสียงตามนิสัยนักพนันที่ติดตัวมา แต่คนรักครอบครัวอย่างพ่อ จำเป็นต้องใช้ชีวิตด้วยความระมัดระวัง และไม่ประมาท เพื่อไม่ให้ครอบครัวต้องไปเสี่ยงต้องไปเดือดร้อนด้วย ในการทำงานพ่อยิ่งต้องรับบทคนมองโลกในแง่ร้ายท่ามกลางกลุ่มคนที่มองโลกในแง่ดี มองโลกสวยงาม ผมคิดว่าพ่อเป็นคนที่มีเชิงธุรกิจดี มีความเก่าในแบบของเขา นับวันยิ่งเก่ง ยิ่งมองขาด อ่านออกทั้งงาน ทั้งคน แต่ก็ไม่เคยเอาเปรียบใคร รักลูกน้อง รักพนักงาน อยากให้ทุกคนได้ดี ถ้ามีความสามารถจริง พ่อผมจะให้โอกาสเสมอ หลายคนรอบตัวพ่อมีฐานะดีขึ้นมากจากการได้มาร่วมงานกับพ่อ คำว่า “ร่มโพธิ์ร่มไทร” เป็นคำที่เหมาะกับพ่อมากที่สุด\n\nเรื่องราวของพ่อในส่วนชีวิตการทำงานนี้ ผมอยากให้ทุกท่านลองอ่านเนื้อในของหนังสือเล่มนี้ ในส่วนของ “มหาวิทยาลัยชีวิตของ บุญเครือ เขมาภิรัตน์” พ่อให้คนเรียบเรียงบันทึกไว้อย่างน่าสนใจ มีข้อคิด คำสอนดีๆ จากพ่อผมมากมาย\n\nอีกด้านที่เป็นชีวิตส่วนตัวของพ่อกลับไม่มีสีสันอะไรนัก พ่อมีรู้ทีนชีวิตที่ชัดเจน ตื่นเช้าไปทำงานไม่เกิน 8 โมง นั่งอ่านหนังสือพิมพ์ พูดคุยกับคนต่างๆที่มาพบ นั่งรถวนดูที่ดินที่ซื้อไว้ ดูที่ดินที่มีคนมาบอกขาย เลิกงาน 4 โมงครึ่ง ถ้าไม่แวะเล่นหมากรุก ซึ่งเป็นเกมส์ที่พ่อชื่นชอบมากที่สุดก็จะตรงกลับบ้าน มากินข้าวเย็นที่แม่ผมเตรียมให้ที่บ้านเสมอ ไม่เคยไปค้างคืนนอกบ้าน หรือไปแฮงค์เอาท์เที่ยวเตร่กับเพื่อนเลย พ่อไม่สูบบุหรี่ ไม่กินเหล้าพ่อมีคุณย่าเป็นแบบอย่างของความมัธยัสถ์ รู้ค่าของเงิน ไม่ชอบเป็นหนี้ ไม่ชอบโอ้อวด ไม่ชอบใช้ของแพง หรืออาจจะพูดง่ายๆ ว่าพ่อผมไม่ใช้เงินเพื่อความสุขส่วนตัวเลย ผมคิดว่าพ่อผมน่าจะไม่เคยกินโอมากาเสะเลยซักมื้อ ทั้งที่ไม่น่าจะเป็นเรื่องใหญ่อะไรเลยเมื่อเทียบกับฐานะของพ่อ เมื่อพ่อผมเก็บเงินแล้ว จะไม่มีใครเอาเงินออกจากกระเป๋าพ่อผมได้เลย เงินที่พ่อหามาทั้งหมดพ่อเก็บไว้ให้กับเมียและลูกเท่านั้น\n\nพ่อไม่ใช่คนที่อบอุ่น ไม่หวานจี่จำ ไม่ใช่คนที่จะคอยเฝ้าห่วงใยรายละเอียดของลูกๆ ในแต่ละวัน งานส่วนนั้นพ่อปล่อยให้แม่เป็นคนทำและแม่ก็ทำได้ดีที่สุด เป็นเรื่องน่าเศร้าที่ลูกๆ ก็มักจะเข้าหาแม่ คุยกับแม่มากกว่าคุยกับพ่อ แต่พ่อก็ไม่ได้น้อยใจอะไร ความรักของพ่อคือการห่วงใยอนาคตของทุกคนในครอบครัว พ่อห่วงใยไปไกลทะลุจากลูกไปถึงหลานเลยไปถึงเหลนเลยทีเดียว พ่อแสดงความรักในแบบของพ่อ ด้วยการรับผิดชอบเรื่องการหาเงิน มุ่งมั่นทำงาน อ่านและคิดตลอดเวลา ว่าจะหาเงินอย่างไรเพื่อจะสร้างฐานะของครอบครัวให้มีความมั่นคง ให้แน่ใจว่า เมียลูก รวมถึงหลานๆ จะมีชีวิตที่ดีไม่ยากลำบาก\n\nพ่อรักแม่มาก แม้บางครั้งที่ทะเลาะกัน ก็ยังเป็นห่วงแม่ เช่นเดียวกับแม่ที่ก็รักพ่อมากเช่นกัน ในวันที่ทะเลาะกัน ก็ยังคอยห่วงว่าได้กินอะไรละยังเด็กๆ เอาของไปให้พ่อกินละยัง พ่อมีเรื่องสั่งเสียหลักๆ อยู่ 3 เรื่องที่พูดถึงเสมอๆ คือ 1.ให้ดูแลแม่ให้ดี 2.พี่น้องอย่าทะเลาะกัน และ 3.ให้จัดการทรัพย์สินต่างๆ ที่พ่อหามาให้ดี ในช่วงท้ายของพ่อที่อยู่ ICU แม้พ่อจะใส่ท่อช่วยหายใจพูดไม่ได้ และสติก็เริ่มจะสับสนบ้างเพราะฤทธิ์ยาที่อัดเข้าไป แต่ก็ยังไม่วายสื่อสารกับผมว่ารักแม่มาก เป็นห่วงแม่ อยากให้ลูกทุกคนดูแลแม่ให้ดีที่สุด\n\nในช่วงชีวิตหลังอายุ 55 ปีของพ่อ นอกจากจะต้องต่อสู้กับงานอันแสนวุ่นวายแล้ว พ่อยังต้องต่อสู้กับโรคส่วนตัวต่างๆ มากมาย ทั้งเบาหวาน โรคหัวใจ ไตที่ไม่ค่อยดี เปิดฉากด้วยเส้นเลือดหัวใจตีบ ต้องเปิดหน้าอกทำบายพาสหัวใจ ตามต่อด้วยการทำบอลลูนอีก 8 ครั้ง พ่อเคยผ่าตัดกระดูกคอ ทั้งหมด 3 ครั้ง กระดูกหลัง 1 ครั้ง พ่อมีความหวังในการรักษาเสมอ พ่อดูแลตัวเองดีมาก คอยควบคุมตัวเองด้านต่างๆ คอยหาหมอทานยาเป็นประจำ\n\nช่วงปีสุดท้าย พ่อล้มฟาดศรีษะกระแทก ส่งผลต่อสุขภาพพ่อเป็นอย่างมาก แม้ไม่ถึงจะติดเตียง แต่ก็ต้องติดห้อง เดินเหินเคลื่อนไหวไม่สะดวก แต่พ่อก็ยังมีความหวังในการรักษาตัว มักแสวงหาแนวทางที่จะทำให้เดินได้ดีขึ้น เพื่อที่จะได้มีคุณภาพชีวิตที่ดีกว่านี้ ลึกๆ ในใจเหมือนพ่อจะรู้ว่าเวลาเหลือน้อยแล้ว เป็นห่วงลูกหลาน เริ่มสั่งเสียบ่อยขึ้น มักจะบ่นว่า อยากมีชีวิตอีกซัก 2-3 ปี ส่งต่อสิ่งต่างๆ ให้กับลูกๆ อย่างเหมาะสม\n\nจนกระทั่งการเข้าโรงพยาบาลครั้งล่าสุด ที่เกิดเรื่องไม่คาดคิดในช่วงรักษาตัวหลังผ่าตัด ทำให้พ่อต้องเข้า ICU เป็นเวลา 30 วัน อาการของพ่อหนักจนต้องใส่ท่อช่วยหายใจ ใช้เครื่องฟอกไต พ่อมีอาการหัวใจเต้นผิดจังหวะมาก เต้นเร็วขึ้นเรื่อยๆ จนหมอต้องช็อตไฟฟ้าเพื่อให้หัวใจกลับมาเต้นปกติ พ่อโดนช็อตถึง 32 ครั้งระหว่างที่อยู่ใน ICU พ่อมีอาการหัวใจหยุดเต้นทั้งหมด 6 ครั้ง แต่สามารถปั๊มหัวใจกู้กลับมาได้ จนกระทั่งครั้งที่ 7 ที่เป็นครั้งสุดท้าย ครั้งนี้หัวใจของพ่อไม่ได้เต้นเร็วผิดจังหวะแล้วแต่กลับเต้นช้าลงเรื่อยๆ และหยุดเต้นในที่สุด ณ.เวลา 04.16 น. วันที่ 15 พฤศจิกายน 2567 พ่อได้จากครอบครัวที่รักของเขาไปอย่างสงบแล้ว\n\nที่ผ่านมา…ผมเคยฟังพ่อสั่งเสียเรื่องราวต่างๆ มาเป็นร้อยครั้ง จนบางครั้งก็แอบเดินหนี เพราะคิดว่าเข้าใจทุกอย่างดีแล้ว จนวันนี้ วันที่พ่อไม่อยู่แล้ว ผมกลับคิดว่าผมยังรู้เรื่องต่างๆ ไม่หมดเลย ยังมีเรื่องที่อยากถามพ่ออีกมากมาย ใช่ครับ…ผมยังไม่พร้อมที่จะเสียพ่อไปแบบนี้เลย มันเป็นอะไรที่เกิดขึ้นเร็วและคาดไม่ถึงมาก คงใช้เวลานานกว่าที่จะบรรเทาความรู้สึกของการสูญเสียพ่อไปเร็วกว่าเวลาที่ควร ความเสียใจที่ต้องเห็นพ่อตัวเองตายไปต่อหน้าถึง 7 ครั้ง มันคงเป็นเรื่องที่ติดค้างอยู่ในใจไปตลอด\n\nพ่อครับ..คิงรู้ว่าพ่อเป็นห่วงลูกๆ ทุกคนเสมอ ในบริบทที่ต่างกันตามลักษณะนิสัยของลูกแต่ละคน และคิงรู้ว่าถ้าเป็นเรื่องการใช้เงินละก็พ่อเป็นห่วงคิงมากที่สุด ด้วยนิสัยและวิถีการใช้ชีวิตอันสุ่มเสี่ยงของคิงที่ผ่านมา คิงขอกราบแทบเท้า ขออภัยพ่อ ไอ้เสี่ยวของพ่อเป็นลูกที่ไม่ได้เรื่องทำให้พ่อต้องคอยช่วยเหลือ ต้องคอยกังวลใจเป็นห่วง พระคุณอันแสนยิ่งใหญ่นี้ คิงไม่รู้จะทดแทนได้อย่างไร วันนี้พ่อไม่อยู่แล้ว คิงสัญญาว่าจะไม่ใช้ชีวิตประมาท อะไรที่พ่อสั่งไว้ คิงจะนำไปปฏิบัติ จะไม่ทำให้ชีวิตตัวเองต้องลำบากให้สมกับความห่วงใยของพ่อ ที่เหนื่อยสร้างสิ่งต่างๆ ไว้ให้กับคิง\n\nคิงรู้ว่าในโลกนี้มีคนที่ยิ่งใหญ่มากมาย แต่สำหรับคิงแล้ว พ่อคือคนที่ยิ่งใหญ่ที่สุดครับ เป็นฮีโร่ในใจ เป็นต้นแบบชีวิต นับจากนี้พ่ออย่าได้ห่วงอะไรอีกเลยครับ หลับให้สบายนะครับ เหนื่อยกับทุกเรื่องมามากแล้วจริงๆ พ่อได้สร้างทุกสิ่งให้กับคนในครอบครัวไว้อย่างล้นเหลือ พ่อเป็นพ่อที่ยิ่งใหญ่มาก พ่อได้ทำหน้าที่ของพ่ออย่างดีเยี่ยมแล้วครับ ลูกและหลานทุกคนจะมีชีวิตที่สุขสบายไม่ลำบาก และทุกคนจะช่วยกันดูแลแม่ให้ดีที่สุดครับ 🤍🤍\n\nสุดท้ายนี้…ผมขออฐิษฐานต่อเจ้ากรรมนายเวรทั้งหลายของพ่อ ในช่วงท้ายของชีวิตพ่อผม พ่อทุกข์และทรมานมากพอแล้ว ถ้าสิ่งเหล่านั้นมันเกิดจากกรรมของพ่อ พ่อก็คงจะชดใช้ไปมากแล้วล่ะ พ่อสมควรได้พักผ่อน และ เดินทางไปพบแต่สิ่งที่ดีๆได้แล้ว จากนี้ไป….ถ้ายังมีกรรมใดที่พ่อผมยังติดค้าง ผมขอใช้ชีวิตที่เหลือสร้างกุศล สร้างผลบุญอุทิศให้กับท่าน ทั้งหลายแทนพ่อผม ขอเจ้ากรรมนายเวรทั้งหลายได้โปรดให้อโหสิกรรมต่อพ่อผมด้วยครับ ให้พ่อผมได้ไปสู่สุคติ ไม่เจ็บ ไม่ปวด ไม่ทรมาน สู่ภาพภูมิที่ดี สะอาด สดใส สว่าง และสวยสงบด้วยครับ\"",
@@ -741,10 +783,10 @@
           "mediaType": "NONE",
           "senderName": "นายฉัตรมงคล เขมาภิรัตน์ (คิง)",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         },
         {
-          "id": "ded65a5f-b408-4fdd-a947-c5540bf8834c",
+          "id": "c32dbb55-da59-419d-87a2-2e48335f4e52",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "",
           "content": "**\"Dear Grandpa, 🤍  the strongest person I have ever known,**\n\nFrom the day I was born, I lived under your roof, surrounded by the love you built. Our home was always full of peace and happiness because of you. As I grew up, I learned that you were the hero of our family, the one who worked so hard to give us a better life. You were always there, teaching me important lessons about life and how to be strong and smart like you.\n\nHowever, as I grew older and had to move away for school, I didn't see you as often as before. But even then, you always stayed close through calls and messages, You never let me forget how much you loved me, and I hope you always knew how much I loved you too. 🤍🤍🤍\n\nI will forever be grateful for everything you gave to our family-for your sacrifices, your wisdom, and your endless love. You touched the lives of everyone who met you, and you will always hold a special place in our hearts. I hope you're at peace now, surrounded by love in the next world. If there's such a thing as another life, I hope I get the honor of being your granddaughter all over again. Rest well, Grandpa. You are deeply loved, and you will be profoundly missed.\" 🕯️🕊️🤍\n",
@@ -752,10 +794,10 @@
           "mediaType": "NONE",
           "senderName": "Siriyanee Sethakulvichai (Amy)",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         },
         {
-          "id": "42cab758-84c9-42aa-82c6-437e7f92a0bf",
+          "id": "6182dce1-fc6b-4028-99fc-5a8e14697c82",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "To my beloved Grandfather",
           "content": "Ever since I was a kid, people have compared me to you. Saying that my face was as close to a carbon copy as you can get, a mirror image. Growing up, you may have been distant with work, but by having the opportunity to be by your side, experiencing working at the company you built, and seeing what you have done, all of it has inspired me to follow in you footsteps. Everything that I have today, came all from your perseverance and strive to continuous success, even in the hardest times. 🤍🖤🤍🖤\n\nToday I am studying hard to become an engineer, sacrificing blood, sweat and tears to ensure that I can make you proud. And that is a good chunk due to your kind words towards me. I hope you can be proud of the people you have given inspiration, and the immeasurable amounts of work you have done for the company to the very end. You have sacrificed so much for this family in order for us all to live a good life. I hope that wherever you are now, you know that your life has influenced countless others, and that as a family, we love and miss you dearly.\" 🤍🤍🕯️🕊️",
@@ -763,10 +805,10 @@
           "mediaType": "NONE",
           "senderName": "Thai Khemaphiratana (Jojo)",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         },
         {
-          "id": "3b6cc3eb-eeae-4793-b957-69449429bddd",
+          "id": "df123ba7-cd2f-45d8-836d-5470127174d8",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "",
           "content": "\"ผู้ชายคนนี้ เกิดและโตที่กรุงเทพฯ เป็นผู้ชายที่จบเพียงแค่มัธยมแปดจากโรงเรียนวัดสุทธิ เติบโตมาจากครอบครัวใหญ่ แต่ฐานะไม่ได้มีอะไร ยังดีที่ได้เรียนแต่ก็เกเรกว่าจะจบ ม.8 ก็นานมากกก ทั้งชอบเล่นสนุ๊กทั้งเกเร ทั้งจีบสาว สมัยก่อนจบ ม.8 นี่ยากนะ แต่โชคดีบ้านอยู่ใกล้ร้านหนังสือเลยชอบไปฝังตัวอ่านหนังสือจนแทบจะหมดร้านและกลายเป็นคน อ่านทุกอย่าง เป็นคนที่มีความจำดีมากๆ อ่านอะไรก็จำได้หมด เป็นต้นแบบในการรักการอ่านของครอบครัวต้องอ่านหนังสือพิมพ์ทุกเช้า อ่านแทบจะทุกหน้า อ่านจนไม่มีหนังสือพิมพ์เลิกทำไม่มีให้อ่าน ตอนเราเด็กๆพ่อเคยพาไปเวิ้งนาครเกษม ไปเหมาหนังสือนิยายจีนกำลังภายในมา จนมีเต็มบ้านอ่านกันแทบทุกคน เราติดงอมแงมตั้งแต่ ป.5 แต่เราชอบอ่านมาตั้งแต่อ่านหนังสือออกแล้ว\n\nพอเรียนจบ ม.8 ความรักผจญภัยของพ่อ ก็พาให้ได้ไปทำงานกับบริษัทไทยออยล์ที่ชลบุรี ตอนนั้นบริษัทเพิ่งเปิดได้ไม่นาน รับพนักงานค่อนข้างมากแถมมีสวัสดิการบ้านพักให้ด้วย ท่านก็เริ่มการทำงานที่นี่ อยู่มาตั้งแต่ยังไม่มีลูก จนคลอดลูกครบ 4 คน แต่ความที่เป็นคนที่มีไหวพริบดีมีผู้ใหญ่ให้ความเมตตา เป็นคนกตัญญรู้คุณ จึงมีแต่คนรัก คนช่วยเหลือพอทำงานไปสักพัก พอมองเห็นช่องทาง ก็เสียงลาออกมาทำรับเหมาก่อสร้างเอง ทำกับไทยออยล์นั่นแหล่ะเริ่มจากรับตัดหญ้ามั่ง รับเก็บขยะมั่งโน่นนี่นั่น ขยับทำไปเรื่อยๆ ตอนแรกๆ ก็ทำกับน้าชายเรา จากนั้นเริ่มส่งคนงานให้ไทยออยล์ ค่อยๆ ทำโน่นนี่นั่น จนได้มาเจอกับวิศวหนุ่มนักเรียนนอก ก็จับมือกัน เริ่มรับเหมางานกับบริษัทญี่ปุ่นได้กำไรมาก็ค่อยๆ ขยายไปเรื่อยๆ จนได้ไปเจอกับนายช่างเก่งๆ มาร่วมงานเพิ่มขึ้นเรื่อยๆ กลายเป็นทีมที่แข็งแกร่งที่สุดในด้านงานก่อสร้างโครงสร้างเหล็ก มีชื่อเสียงเป็น\n\nที่รู้จักในระดับโลก มีจุดแข็งคือทีมงานวิศกรที่เชี่ยวชาญ มีความชำนาญด้านความปลอดภัยในการทำงานสูงตามมาตรฐานไทยออยล์ที่เข้มมากๆในเรื่อง safety ผ่านมาตรฐานระดับโลก ด้วยการไปทำงานในต่างประเทศหลายงาน ชื่อเสียงด้านการทำงาน ในการทำงานเสร็จตามกำหนดหรือเร็วกว่ากำหนดเป็นที่รับรู้กันในแวดวงด้านนี้ มีการรับงานที่ต่างประเทศ ทั้งในการ์ต้า มาดากัสการ์ สิงคโปร์ ฯลฯ สร้างงานและเม็ดเงินเข้าประเทศมากมาย มีธรรมาภิบาลสูงอย่างยิ่งไม่เคยเรียกเก็บค่าหัวคนงาน ให้รางวัลให้ค่าแรงที่แฟร์กับทุกคน สำคัญสุดคือไม่เคยเลทในการจ่ายค่าแรงใดๆถือเป็นหัวใจหลักในการทำงานเลยก็ว่าได้ เราได้รับการสั่งสอนมาตลอดว่าทุกคนต้องกินต้องใช้ ทำงานต้องได้เงิน ทุกคนที่ทำงานกับเราต้องมีกินทำไปทำมาจนในที่สุดก็ได้เข้าตลาดหลักทรัพย์ในปี 2555ตลอดชีวิตของพ่อ ท่านได้ช่วยเหลือคนเป็นจำนวนมาก โดยไม่เคยป่าวประกาศใดๆ ไม่เคยหวังโล่ห์ รางวัลไหนๆ ความสุขของท่านคือการทำงานจริงๆ พ่อส่งเสียลูกๆ ทั้งสี่จนจบโทเมืองนอกแทบทุกคน เวลากินข้าวหรือพูดคุยก็จะคอยสั่งสอน ให้ประหยัด ให้เห็นค่าของเงิน ไม่ใช่แค่พูด แต่ทำให้เห็นโดยตลอด เน้นหนักเรื่องการกตัญญกับคนที่มีบุญคุณการดูแลให้ข้าวให้น้ำให้งานให้เงินบริวารผู้ตกทุกข์ได้ยากต่างๆ การอภิบาลพ่อแม่ ญาติพี่น้องไปจนถึงครอบครัวคู่สมรสลูกๆ ซึมซับหลายๆ สิ่งจากท่าน ท่านอาจจะไม่ใช่คนที่บอกรักลูกหรือแสดงออกใดๆกับลูกมากมายนักแม้แต่ชมยังแทบไม่มี แต่พ่อให้และให้และให้ในทุกสิ่ง ทำให้เรามีชีวิตที่ดีในทุกวันนี้ ด้วยสองมือของท่านแท้ๆ\n\nพ่อแทบไม่เคยได้ไปเที่ยวไหนเลย มีแต่งานๆๆ มีบ้างก็ไปใกล้ๆพ่อชอบเล่นคาสิโน แต่ปีนึ่งก็ไปที่นึ่ง ถ้าเสียปุ๊ป แทบจะบินกลับเลย ได้ก็แทบบินกลับทันทีเหมือนกัน กินอยู่แบบง่ายๆ ถ้าซื้ออะไรแพงๆ มาให้กินพ่อจะไม่ชอบเลย จะบ่นตลอด ถ้ารู้ว่าเรากินอะไร ราคาเท่าไหร่ พ่อคงยึดเงินคืนหมด เสื้อผ้าพ่อก็ไม่ซื้อเมื่อก่อนตัดปีละครั้ง เป็นชุดซาฟารีที่เหมือน\n\nเครื่องแบบประจำตัวพ่อ ครั้งละกี่ชุดก็ว่าไป หลังๆ อยากเปลี่ยนแนว แม่เลยซื้อให้แทน แต่ก็ไม่ชอบให้ซื้อเยอะเครื่องประดับแพงๆ ก็เคยมีบ้างแต่สุดท้ายก็รำคาญ ถอดยกให้ลูกๆ ไปหมด พออายุมากนาฬิกาแบบ auto จะไม่ค่อยทำงานเพราะเคลื่อนไหวน้อย ก็จะต้องเป็น quartz ก็ใส่นาฬิกาธรรมดาๆ ไม่กี่หมื่น รองเท้าก็ง่ายๆ ผ้าใบไม่กี่บาท รถสปอร์ตนี่ ใครซื้อพ่อจะว่าให้อีก ว่าเห็นแก่ตัว ไม่มีประโยชน์ หลังๆ ใช้แต่รถตู้ แล้วใช้รถอะไรรู้มั้ยคะ ใช้ hyundai ล้านต้นๆ บอกพอแล้ว นั่งสบาย ไม่ต้องแพง พ่อประหยัดทุกบาท พูดไปลูกก็ละอายใจ พ่อเป็นเบาหวานมาหลายสิบปีและมีปัญหาเส้นเลือดตีบบ่อยๆ ต้องทำ bypass ครั้งแรกเมื่อ 27 ปีที่แล้ว ตอนนั้นอายุประมาณ 56 ปีได้ และยังทำ ballon ไปอีก 8 ครั้ง ครั้งสุดท้ายเมื่อสี่เดือนที่แล้ว เป็นแมวเก้าชีวิตของแท้\n\nพ่อเป็นนักสู้ และกล้าเสียง พ่อศึกษาเรื่องเจ็บป่วยอยู่ตลอด สองสามปีหลัง พ่อเริ่มเดินไม่ค่อยไหว แต่พ่อก็พยายามทำทุกทาง ให้แข็งแรง เมื่อปีที่แล้วพ่อล้ม กระทบกระเทือนจนไม่สามารถลุกได้เอง หรือเดินได้เอง แต่ไม่ได้ป่วยติดเตียง แขน ขาไม่เสีย สมองไม่เสีย แต่อยู่คนเดียวไม่ได้ ต้องมีคนช่วยตลอด แต่ยังคงทำงาน แม้จะน้อยลงมาก พ่อมีสายตา กว้างไกล และยังให้ความคิดในการแก้ไขวิกฤติการณ์ต่างๆ ของบริษัทอยู่เสมอ ชีวิตพ่อมีแต่ความเรียบง่าย ไม่หรูหรา ไม่ฟุ่มเฟื่อยสอนให้ประหยัด อยู่ตลอด แต่ลูกไม่ค่อยรักดี ไม่ค่อยจะทำเท่าไหร่ ใครเจอพ่อนี่นึกว่าเป็นชาวบ้าน ตาสีตาสา จะเห็นพ่อไปนั่งเล่นหมากรุกในสวนสาธารณะเป็นประจำ หารู้ไม่คุมอาณาจักรหลายพันล้าน มีคนงานฝากชีวิตหลายพันคนพ่อเป็น the great man เป็น the legend เป็น the giver ที่แท้จริงพ่อเข้ารพ. ครั้งนี้เพราะหวังว่าการผ่าตัดจะช่วยให้หาย และเดินได้อีกครั้ง การผ่าตัดเป็นไปด้วยดี อยู่รพ. พักฟื้นหลายวัน จนใกล้จะกลับก็มีเหตุให้เข้าไปอยู่ ICU คืนแรกใน ICU พ่อก็เกิดหัวใจหยุดเต้นไป 16 นาที ปั๊มไฟฟ้าไป 31 ครั้ง แล้วก็กลับมา ทำท่าจะดีขึ้นๆ ก็เกิดปอดติดเชื้อ แต่ยังพอสื่อสารได้ ยังตื่นได้ คุยได้เป็นพักๆ รู้เรื่องบ้างไม่รู้เรื่องบ้าง กำลังจะดีขึ้นแล้ว ก็ให้เกิดติดเชื้ออีกรอบ คราวนี้มีแต่ทรุด และทรง และทรุด ไปเรื่อยๆ ตลอดหนึ่งเดือนใน ICU พ่อหัวใจหยุดเต้นไปหกครั้ง แล้วกลับมาใหม่ทุกครั้ง พ่อเป็นนักสู้จริงๆ หมอยังว่าเป็น extraordinary case มากแล้วแต่มันสุดจะยื้อให้ท่านทรมานต่อไป สุดท้ายต้องปล่อยมือ\n\nคิดว่าตัวเองโชคดีมากที่มีผู้ชายคนนี้เป็น “พ่อ” เราภูมิใจในตัวพ่ออย่างที่สุด เดินทางไกลคนเดียวเหงาหน่อย แต่ก็มีพี่ๆ เพื่อนๆ ไปรอหลายคน คงจะไม่เหงามาก จะหมั่นทำบุญ ทำความดี ขยัน ประหยัดตามรอยพ่อนะคะ แล้วเราจะได้พบกันใหม่ค่ะ\n\n**รักพ่อ** 🤍🤍\n\nพ่อจากไปเมื่อวันศุกร์ที่ 15 พฤศจิกายน 2567 เวลา 04:16 น.\"",
@@ -774,10 +816,10 @@
           "mediaType": "NONE",
           "senderName": "นางสุดจินดา เศรษฐกูลวิชัย (แหม่ม)",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         },
         {
-          "id": "3394f99f-5c42-46d8-b25d-d3e9eb0f64bd",
+          "id": "2d1a226a-2e1c-4c55-bfb5-6eb62e320c0e",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "",
           "content": "**\"My grandfather was a strict and uncompromising man. Yet, beneath his hardened exterior lay a heart of gold, and a soul that worked tirelessly to build a comfortable life for his family.**\n\nHe was never one for gentle words or coddling, but rather a businessman with a sharp tongue and an unwavering belief in tough love. His guiding principle was to instill in us the virtues of hard work and self-reliance, teaching us that success comes only through one's own determined efforts. Personally, I strive to become even half the man he believed I could be. His absence has left an immense void, one that I am now expected to fill. But perhaps such voids are never truly filled – we simply learn to honor them in our own ways.\n\nWe would not be where we are today without his countless sacrifices and infinite blessings, a debt we can never fully repay. Though he is no longer with us, we can honor his memory by making a solemn vow to live by his virtues and become people who would make him proud.\n\n**Thank you for everything, Grandpa. May you rest in peace.\"** 🤍🌹🌹",
@@ -785,10 +827,10 @@
           "mediaType": "NONE",
           "senderName": "Angkrit Khemaphiratana (Jay)",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         },
         {
-          "id": "a06d2f22-6fb7-4fc5-8d5f-33870ce9e8c6",
+          "id": "1a8f3343-1947-4dae-be4f-b69ce64f9392",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "ถึงพ่อ",
           "content": "ตั้งแต่เล็กจนโต ในฐานะลูกชายคนเล็ก ตอนเป็นเด็กก็เรียนแบบเอาตัวรอดหวุดหวิด ตอนช่วงวัยรุ่นพ่อส่งเข้าไปเรียนในกรุงเทพฯ แจ๊กก็ทำตัวเหลวไหล เห็นแต่ความสนุก ไม่สนใจเรียน ทำให้พ่อเสียใจ และผิดหวังมาตลอด จนวันนึ่งมีลูกของตัวเอง ถึงเข้าใจจิตใจของพ่อว่า ถึงจะทำตัวไม่ดีและเหลวไหลแค่ไหน พ่อก็ยังรัก และปกป้องอยู่เสมอ ทำให้เข้าใจคำว่า “รักแบบไม่มีเงื่อนไขของพ่อ” เป็นอย่างไร\n\nจำได้ว่า ไปเที่ยวกับพ่อนับครั้งได้ เพราะพ่อเองเป็นคนไม่ชอบเดินทาง ชอบทำงานมากกว่า พ่อเป็นคนเสียดายเงิน เพราะเงินแต่ล่ะบาทที่พ่อหามาได้ มีหลายปากท้องที่พ่อต้องดูแล ไม่ใช่แค่คนในครอบครัว แต่คนที่ทำงานกับพ่อ นับพันคน พ่อได้ทิ้งรอยเท้าที่ใหญ่เอาไว้ เกินกว่าลูกๆคนไหนจะไปเทียบรอยเท้าพ่อได้เลยทุกครั้งที่พ่อต้องเข้าโรงพยาบาล พ่อก็จะกลับบ้านปลอดภัยทุกครั้งในชีวิตของพ่อจะผ่านการผ่าตัดที่เสี่ยงมากๆ มาหลายครั้ง พ่อก็ผ่านมันมาได้เสมอ แต่ครั้งนี้ต่างไปจากทุกครั้งที่ผ่านมา\n\nพ่อเป็นนักสู้มาทั้งชีวิต แม้กระทั่งช่วงเดือนสุดท้ายของพ่อ พ่อก็สู้จนหมอต้องยกนิ้วให้พร้อมกับพูดคำว่า “พ่อของคุณเขาเป็นนักสู้ และเก่งมากเลยนะ” อย่างไรก็ดี พ่อเหนื่อยมามากแล้ว ถึงเวลาที่พ่อได้พักผ่อนไม่ต้องเจ็บ ไม่ต้องทรมาน หมดความกังวลทั้งปวง คำสอนของพ่อ แจ๊กจำได้เสมอ ขอให้พ่อหลับพักผ่อนนะครับ พ่อจะอยู่ในใจและความนึกคิดของลูกชายคนเล็กของพ่อเสมอ\"",
@@ -796,10 +838,10 @@
           "mediaType": "NONE",
           "senderName": "นายบัลลังก์ เขมาภิรัตน์ (แจ็ก)",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         },
         {
-          "id": "7bdc0bf4-33db-49d3-8de3-cb48813de9ba",
+          "id": "e1103573-dddf-4699-b675-785f0d93a6a7",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "ถึงพ่อ",
           "content": "ตั้งแต่เล็กจนโต ในฐานะลูกชายคนเล็ก ตอนเป็นเด็กก็เรียนแบบเอาตัวรอดหวุดหวิด ตอนช่วงวัยรุ่นพ่อส่งเข้าไปเรียนในกรุงเทพฯ แจ๊กก็ทำตัวเหลวไหล เห็นแต่ความสนุก ไม่สนใจเรียน ทำให้พ่อเสียใจ และผิดหวังมาตลอด จนวันนึ่งมีลูกของตัวเอง ถึงเข้าใจจิตใจของพ่อว่า ถึงจะทำตัวไม่ดีและเหลวไหลแค่ไหน พ่อก็ยังรัก และปกป้องอยู่เสมอ ทำให้เข้าใจคำว่า “รักแบบไม่มีเงื่อนไขของพ่อ” เป็นอย่างไร\n\nจำได้ว่า ไปเที่ยวกับพ่อนับครั้งได้ เพราะพ่อเองเป็นคนไม่ชอบเดินทาง ชอบทำงานมากกว่า พ่อเป็นคนเสียดายเงิน เพราะเงินแต่ล่ะบาทที่พ่อหามาได้ มีหลายปากท้องที่พ่อต้องดูแล ไม่ใช่แค่คนในครอบครัว แต่คนที่ทำงานกับพ่อ นับพันคน พ่อได้ทิ้งรอยเท้าที่ใหญ่เอาไว้ เกินกว่าลูกๆคนไหนจะไปเทียบรอยเท้าพ่อได้เลยทุกครั้งที่พ่อต้องเข้าโรงพยาบาล พ่อก็จะกลับบ้านปลอดภัยทุกครั้งในชีวิตของพ่อจะผ่านการผ่าตัดที่เสี่ยงมากๆ มาหลายครั้ง พ่อก็ผ่านมันมาได้เสมอ แต่ครั้งนี้ต่างไปจากทุกครั้งที่ผ่านมา\n\nพ่อเป็นนักสู้มาทั้งชีวิต แม้กระทั่งช่วงเดือนสุดท้ายของพ่อ พ่อก็สู้จนหมอต้องยกนิ้วให้พร้อมกับพูดคำว่า “พ่อของคุณเขาเป็นนักสู้ และเก่งมากเลยนะ” อย่างไรก็ดี พ่อเหนื่อยมามากแล้ว ถึงเวลาที่พ่อได้พักผ่อนไม่ต้องเจ็บ ไม่ต้องทรมาน หมดความกังวลทั้งปวง คำสอนของพ่อ แจ๊กจำได้เสมอ ขอให้พ่อหลับพักผ่อนนะครับ พ่อจะอยู่ในใจและความนึกคิดของลูกชายคนเล็กของพ่อเสมอ\"",
@@ -807,10 +849,10 @@
           "mediaType": "NONE",
           "senderName": "นายบัลลังก์ เขมาภิรัตน์ (แจ็ก)",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         },
         {
-          "id": "ab0d7ba4-3a9f-41ed-a2f3-a9164c5878de",
+          "id": "436ea884-c2e6-443f-924a-1ff3c0725006",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "ความทรงจำวันพ่อสอนปั่นจักรยาน",
           "content": "ยังจำได้ดีว่าพ่ออดทนสอนเราทุกเย็น จนปั่นได้โดยไม่ล้ม ขอบคุณพ่อที่สอนให้ไม่ยอมแพ้",
@@ -818,10 +860,10 @@
           "mediaType": "NONE",
           "senderName": "หลานชาย",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         },
         {
-          "id": "73aaa7cd-3779-44f1-9716-81c01dbf6767",
+          "id": "e16cf08a-f274-4154-8a8f-00206a3431bf",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "title": "",
           "content": "ฝากภาพวันครอบครัวไปเที่ยวทะเลครั้งสุดท้ายที่ได้ไปด้วยกัน ยิ้มของพ่อยังอยู่ในใจเสมอ",
@@ -829,12 +871,12 @@
           "mediaType": "NONE",
           "senderName": "ญาติผู้ใหญ่",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.164Z"
+          "createdAt": "2026-08-07T04:54:46.034Z"
         }
       ],
       "familyMembers": [
         {
-          "id": "96bdcf7b-3bd6-4f29-8556-80cf7b6033f3",
+          "id": "1ddbc504-0846-4c50-853b-fe9b1f5d46a9",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "นายคนธีร์ เขมาภิรัตน์",
           "nickname": "หนึ่ง",
@@ -850,10 +892,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.174Z"
+          "createdAt": "2026-08-07T04:54:46.072Z"
         },
         {
-          "id": "518db08e-7ea4-4e57-953e-0d43fdd97e47",
+          "id": "dbb0c87d-3769-46f2-8e5e-148200503066",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "นายบัลลังก์ เขมาภิรัตน์",
           "nickname": "แจ็ก",
@@ -869,10 +911,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.175Z"
+          "createdAt": "2026-08-07T04:54:46.100Z"
         },
         {
-          "id": "2e90333e-bb76-4c57-90b6-c322076bd042",
+          "id": "5b8d37f8-8353-4e37-b36b-ac6d02da1cd8",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "นางสุดจินดา เศรษฐกูลวิชัย",
           "nickname": "แหม่ม",
@@ -888,10 +930,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.176Z"
+          "createdAt": "2026-08-07T04:54:46.115Z"
         },
         {
-          "id": "fb6fb3b2-12b0-4a00-8b49-c8962be4c86c",
+          "id": "c60888da-09ee-4f78-bc84-56c21d92fb59",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "คุณธิดา เขมาภิรัตน์",
           "nickname": "แจ๋ว",
@@ -907,10 +949,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.177Z"
+          "createdAt": "2026-08-07T04:54:46.126Z"
         },
         {
-          "id": "2b196a80-4cda-400d-88d0-c5143599d458",
+          "id": "cd0f7af8-e71f-44c4-b324-280b2470ff80",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "นายฉัตรมงคล เขมาภิรัตน์",
           "nickname": "คิง",
@@ -926,10 +968,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.178Z"
+          "createdAt": "2026-08-07T04:54:46.149Z"
         },
         {
-          "id": "67888eaf-bd3f-4f8a-9afb-0160a1869742",
+          "id": "4eb17ab7-e189-44ce-856e-894fd3b4d3cb",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "Thai Khemaphiratana",
           "nickname": null,
@@ -944,11 +986,11 @@
           "avatarY": 25,
           "avatarRotate": 0,
           "spouseOfId": null,
-          "parentId": "518db08e-7ea4-4e57-953e-0d43fdd97e47",
-          "createdAt": "2026-07-27T08:41:47.173Z"
+          "parentId": "dbb0c87d-3769-46f2-8e5e-148200503066",
+          "createdAt": "2026-08-07T04:54:46.171Z"
         },
         {
-          "id": "e0c4c20a-abc4-42db-9f7c-6f2f02dc8b08",
+          "id": "8c65f994-fe32-4a97-b1d4-057bd10ccc9a",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "มาโน่",
           "nickname": null,
@@ -963,11 +1005,11 @@
           "avatarY": -2,
           "avatarRotate": 0,
           "spouseOfId": null,
-          "parentId": "2e90333e-bb76-4c57-90b6-c322076bd042",
-          "createdAt": "2026-07-27T08:41:47.179Z"
+          "parentId": "5b8d37f8-8353-4e37-b36b-ac6d02da1cd8",
+          "createdAt": "2026-08-07T04:54:46.183Z"
         },
         {
-          "id": "18ad5754-f10c-4511-9a31-b3bff050f049",
+          "id": "0d21121c-3d2d-4a40-b572-55931de80cd9",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "นางกมลรัตน์ เขมาภิรัตน์",
           "nickname": "เจนนี่",
@@ -981,12 +1023,12 @@
           "avatarX": 5,
           "avatarY": 19,
           "avatarRotate": 0,
-          "spouseOfId": "518db08e-7ea4-4e57-953e-0d43fdd97e47",
+          "spouseOfId": "dbb0c87d-3769-46f2-8e5e-148200503066",
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.179Z"
+          "createdAt": "2026-08-07T04:54:46.193Z"
         },
         {
-          "id": "47e49bb0-26c8-41e2-b815-77ebcd32a964",
+          "id": "fbdefcee-b65d-4fa5-b4c0-956748fd6f53",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "นายวิสันติ์ เศรษฐกูลวิชัย",
           "nickname": "อู๊ด",
@@ -1000,12 +1042,12 @@
           "avatarX": -16,
           "avatarY": -5,
           "avatarRotate": 0,
-          "spouseOfId": "2e90333e-bb76-4c57-90b6-c322076bd042",
+          "spouseOfId": "5b8d37f8-8353-4e37-b36b-ac6d02da1cd8",
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.181Z"
+          "createdAt": "2026-08-07T04:54:46.222Z"
         },
         {
-          "id": "9cb34c99-8505-45a2-b941-e60521155c42",
+          "id": "988bffb5-af6d-4217-b77f-e541dc106b21",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "Angkrit Khemaphiratana",
           "nickname": null,
@@ -1020,11 +1062,11 @@
           "avatarY": -5,
           "avatarRotate": 0,
           "spouseOfId": null,
-          "parentId": "518db08e-7ea4-4e57-953e-0d43fdd97e47",
-          "createdAt": "2026-07-27T08:41:47.181Z"
+          "parentId": "dbb0c87d-3769-46f2-8e5e-148200503066",
+          "createdAt": "2026-08-07T04:54:46.231Z"
         },
         {
-          "id": "ef29f02f-759f-45bb-a520-1a470c6ace2a",
+          "id": "13172e00-c681-467f-a827-bbd114cae84f",
           "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
           "name": "Siriyanee Sethakulvichai",
           "nickname": null,
@@ -1039,8 +1081,8 @@
           "avatarY": -16,
           "avatarRotate": 0,
           "spouseOfId": null,
-          "parentId": "2e90333e-bb76-4c57-90b6-c322076bd042",
-          "createdAt": "2026-07-27T08:41:47.182Z"
+          "parentId": "5b8d37f8-8353-4e37-b36b-ac6d02da1cd8",
+          "createdAt": "2026-08-07T04:54:46.250Z"
         }
       ],
       "ebooks": [],
@@ -1140,50 +1182,51 @@
         },
         "visibility": "PUBLIC",
         "status": "ACTIVE",
-        "expiredAt": "2036-07-24T08:41:47.189Z",
+        "expiredAt": "2036-08-04T04:54:46.306Z",
         "donationPromptPay": "",
         "donationAccountName": "",
         "donationActive": false,
         "createdAt": "2026-07-15T04:31:02.105Z",
-        "updatedAt": "2026-07-30T09:18:08.761Z"
+        "updatedAt": "2026-08-07T04:54:46.315Z"
       },
       "menus": [
         {
-          "id": "525d51e9-f7fe-4dd1-a90a-87aeed594ed7",
+          "id": "f28eb6ef-8be1-4a09-8f09-c753b22d6ae4",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "หน้าแรก",
           "pageType": "HOME",
           "isVisible": true,
           "sortOrder": 1,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.196Z"
+          "createdAt": "2026-08-07T04:54:46.493Z"
         },
         {
-          "id": "af00d2ae-6959-405a-8ebb-50b42fce7cff",
+          "id": "2672c146-d546-4093-bc7e-8b3bbb3aa050",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "คลังภาพรำลึก",
           "pageType": "GALLERY",
           "isVisible": true,
           "sortOrder": 2,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.196Z"
+          "createdAt": "2026-08-07T04:54:46.493Z"
         },
         {
-          "id": "ab17b3ed-5501-41db-a402-c51b1af65f18",
+          "id": "b43f2836-8c77-468c-89e1-317f334ab6e0",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "สมุดไว้อาลัย",
           "pageType": "CONDOLENCE",
           "isVisible": true,
           "sortOrder": 3,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.196Z"
+          "createdAt": "2026-08-07T04:54:46.493Z"
         }
       ],
       "medias": [
         {
-          "id": "9b187665-22a2-417c-b4d1-ceeb7ddb19c4",
+          "id": "793b1d28-1308-4695-a0b0-bb7c3134f548",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220694-gallery-1785401220641-0b198e66-3d04-403a-9c6f-9ca6770334de.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785401220641-0b198e66-3d04-403a-9c6f-9ca6770334de.jpeg",
           "fileSize": "274526",
           "mimeType": "image/jpeg",
@@ -1191,12 +1234,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:00.695Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "2c10bf8c-0499-4bcc-b019-b0389fbaa6aa",
+          "id": "fbc5beea-aa5c-4f36-99f4-78fd3e5416f0",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220798-gallery-1785401220778-298bf361-e8b9-40bd-bdb3-0d60c92498cd.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785401220778-298bf361-e8b9-40bd-bdb3-0d60c92498cd.jpeg",
           "fileSize": "228534",
           "mimeType": "image/jpeg",
@@ -1204,12 +1248,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:00.799Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "c121a9f0-7367-403e-8edb-8f4efd0c0ba6",
+          "id": "8384f8dd-d11a-4447-80c9-34f874627993",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220845-gallery-1785401220828-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785401220828-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
           "fileSize": "258597",
           "mimeType": "image/jpeg",
@@ -1217,12 +1262,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:00.846Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "88807032-9485-4311-a00e-5792c8df2588",
+          "id": "1b7fa0a6-70a1-436c-9c9e-283fafecf7ec",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220942-gallery-1785401220924-3628ac2a-0411-45e5-bd1e-dd3e2146e9ce.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785401220924-3628ac2a-0411-45e5-bd1e-dd3e2146e9ce.jpeg",
           "fileSize": "237156",
           "mimeType": "image/jpeg",
@@ -1230,12 +1276,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:00.943Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "c227eee7-f911-470f-93ad-b70a816822b3",
+          "id": "ebc0b6db-ef22-4ba7-abe0-303cdd9c22b5",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220997-gallery-1785401220969-2b220236-b5af-4f00-ba16-a4f6af2afce0.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785401220969-2b220236-b5af-4f00-ba16-a4f6af2afce0.jpeg",
           "fileSize": "302631",
           "mimeType": "image/jpeg",
@@ -1243,12 +1290,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:00.998Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "7d34602b-d5aa-47f2-8384-8520806e6772",
+          "id": "bd730f24-61c2-403f-aa61-51cb7859ced8",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401221173-gallery-1785401221128-89ff900d-6578-48b3-94f0-adadf74f44fe.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785401221128-89ff900d-6578-48b3-94f0-adadf74f44fe.jpeg",
           "fileSize": "261604",
           "mimeType": "image/jpeg",
@@ -1256,12 +1304,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:01.174Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "13afba17-f164-410f-a6a7-401a6d5b4f15",
+          "id": "c7a4804c-d58a-448a-ac34-51961718faed",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401245880-deceased-avatar-1785401245825-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1785401245825-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
           "fileSize": "258597",
           "mimeType": "image/jpeg",
@@ -1269,12 +1318,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:25.881Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "c71bd30c-0e39-4122-ac32-8f6984194174",
+          "id": "953f9ab1-e2ef-4782-a8b0-5186718f8863",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401266497-deceased-cover-1785401266442-298bf361-e8b9-40bd-bdb3-0d60c92498cd.jpeg",
+          "thumbnailPath": null,
           "fileName": "deceased-cover-1785401266442-298bf361-e8b9-40bd-bdb3-0d60c92498cd.jpeg",
           "fileSize": "228534",
           "mimeType": "image/jpeg",
@@ -1282,12 +1332,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:46.498Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "02aa20ad-313e-42af-ba6e-101ebc08d14f",
+          "id": "bbc43786-c579-4c3a-a51b-9c65d571acd9",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220744-gallery-1785401220728-5367b0b2-7235-4e80-b5d2-2a7668b87409.jpg",
+          "thumbnailPath": null,
           "fileName": "1785401220744-gallery-1785401220728-5367b0b2-7235-4e80-b5d2-2a7668b87409.jpg",
           "fileSize": "261379",
           "mimeType": "image/jpeg",
@@ -1295,12 +1346,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:00.745Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "c482b954-b036-4fae-9c02-8d69f5840739",
+          "id": "f3aa950b-d7d5-4ca9-a5f7-af3330c0bee2",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220893-gallery-1785401220876-fa2cb0a5-f36d-426c-af7e-131ae4bf8aa9.jpg",
+          "thumbnailPath": null,
           "fileName": "1785401220893-gallery-1785401220876-fa2cb0a5-f36d-426c-af7e-131ae4bf8aa9.jpg",
           "fileSize": "260763",
           "mimeType": "image/jpeg",
@@ -1308,12 +1360,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:00.894Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "bdf989d2-a1e8-481d-b232-e94183de166a",
+          "id": "6eb74fbb-936d-462d-98b7-8f971f6ac190",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401221049-gallery-1785401221033-a0463dc1-01e5-4998-9cbe-f097480bdef5.jpg",
+          "thumbnailPath": null,
           "fileName": "1785401221049-gallery-1785401221033-a0463dc1-01e5-4998-9cbe-f097480bdef5.jpg",
           "fileSize": "303774",
           "mimeType": "image/jpeg",
@@ -1321,12 +1374,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:47:01.050Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "9f7a179b-615f-4318-971a-6d245054b3a2",
+          "id": "72fd7659-6063-4f95-a28d-bf6f19f6d1fe",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/family-demo-bts.mp4",
+          "thumbnailPath": null,
           "fileName": "คลิปประวัติศาสตร์ตระกูลจิตใจดี",
           "fileSize": "2621131",
           "mimeType": "video/mp4",
@@ -1334,13 +1388,13 @@
           "album": "VIDEO",
           "isDeleted": false,
           "sortOrder": 1,
-          "createdAt": "2026-07-27T08:41:47.197Z",
-          "thumbnailPath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/family-demo-bts-thumb.jpg"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "2ebdedf7-5957-4ffd-9766-f81c48fae5ec",
+          "id": "33ee1f9d-9eaf-4150-a96a-bed49a35c2ac",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784090429015-deceased-avatar-1784090428920-mmqnltegh5P24iVOT1x-o.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1784090428920-mmqnltegh5P24iVOT1x-o.jpg",
           "fileSize": "121589",
           "mimeType": "image/jpeg",
@@ -1348,12 +1402,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "8c8276d8-04b9-4b21-b948-9e29b520919c",
+          "id": "70f29bce-6c23-49cc-8deb-e3a9b45fbeb2",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784090512680-deceased-cover-1784090512609-054cb23c60e2f5fc307a3aa66fede435.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-cover-1784090512609-054cb23c60e2f5fc307a3aa66fede435.jpg",
           "fileSize": "188250",
           "mimeType": "image/jpeg",
@@ -1361,12 +1416,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "02282be4-8f09-48d7-adff-34e9e7883bb4",
+          "id": "58e05e90-cbfb-43b8-8b9c-395c9c3a4893",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784092028294-avatar-1784092028252-suga-bts-1-696x1226.jpeg",
+          "thumbnailPath": null,
           "fileName": "avatar-1784092028252-suga-bts-1-696x1226.jpeg",
           "fileSize": "35882",
           "mimeType": "image/jpeg",
@@ -1374,12 +1430,13 @@
           "album": "FAMILY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "61a63104-3b1d-4074-9a09-6f76df8fcfae",
+          "id": "26843aa0-e523-4e1f-9532-9c3a2e9765cc",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784092122204-avatar-1784092122168-qzbwyf49x9CxAKrWTF6R-o.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1784092122168-qzbwyf49x9CxAKrWTF6R-o.jpg",
           "fileSize": "80385",
           "mimeType": "image/jpeg",
@@ -1387,12 +1444,13 @@
           "album": "FAMILY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "19a60ca0-f083-4964-a2fd-dc388146118d",
+          "id": "7e4d2121-1917-4041-9f45-e71751c5430c",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784092172813-avatar-1784092172750-images (1).jpeg",
+          "thumbnailPath": null,
           "fileName": "avatar-1784092172750-images (1).jpeg",
           "fileSize": "24392",
           "mimeType": "image/jpeg",
@@ -1400,12 +1458,13 @@
           "album": "FAMILY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "a7ada23e-9e83-46db-9e50-e80b5c29e9af",
+          "id": "54af7a19-af8c-41b1-950c-a75919f3c153",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784092190372-avatar-1784092190335-07.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1784092190335-07.jpg",
           "fileSize": "233335",
           "mimeType": "image/jpeg",
@@ -1413,12 +1472,13 @@
           "album": "FAMILY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "1d1df720-08ae-4faa-9bd7-ce566f93043a",
+          "id": "1ce5b767-e861-4c92-92cb-4ae4066a9215",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784092080639-avatar-1784092080602-05.jpg",
+          "thumbnailPath": null,
           "fileName": "1784092080639-avatar-1784092080602-05.jpg",
           "fileSize": "163825",
           "mimeType": "image/jpeg",
@@ -1426,12 +1486,13 @@
           "album": "FAMILY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "e25f31a3-78b8-4780-8ab9-6d56af9e2b02",
+          "id": "4c4906ac-22d9-49b8-ae23-62d2de9b9ef1",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784091534908-avatar-1784091534881-BTS_Jin_at_Maison_Fred,_13_March_2025_04.jpg",
+          "thumbnailPath": null,
           "fileName": "avatar-1784091534881-BTS_Jin_at_Maison_Fred,_13_March_2025_04.jpg",
           "fileSize": "1461957",
           "mimeType": "image/png",
@@ -1439,12 +1500,13 @@
           "album": "FAMILY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "c0f7af51-a117-4d12-9bee-affa9e009650",
+          "id": "dd39bcc9-fb42-4a25-942b-6c3c9371a1bc",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784092247873-avatar-1784092247813-pd6htb463ErTzv1SdC-o.jpg",
+          "thumbnailPath": null,
           "fileName": "1784092247873-avatar-1784092247813-pd6htb463ErTzv1SdC-o.jpg",
           "fileSize": "130292",
           "mimeType": "image/jpeg",
@@ -1452,12 +1514,13 @@
           "album": "FAMILY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "bf197f6d-d7cd-46c6-a991-300ca9dfc735",
+          "id": "1c663e79-c44d-440a-bf41-40b9523bed50",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784091918993-avatar-1784091918915-BTS_Jin_at_Maison_Fred,_13_March_2025_04.jpg",
+          "thumbnailPath": null,
           "fileName": "1784091918993-avatar-1784091918915-BTS_Jin_at_Maison_Fred,_13_March_2025_04.jpg",
           "fileSize": "86765",
           "mimeType": "image/jpeg",
@@ -1465,24 +1528,13 @@
           "album": "FAMILY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.197Z"
+          "createdAt": "2026-08-07T04:54:46.542Z"
         }
       ],
       "condolences": [],
       "memoryPosts": [
         {
-          "id": "e0b2ad6a-1849-406d-8254-7df78977251b",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "title": "ความทรงจำงานรวมญาติประจำปี",
-          "content": "ทุกปีเราจะรวมญาติกัน แล้วเล่าเรื่องเก่า ๆ ของคุณปู่ชาย ว่าเคยทำอะไรให้ตระกูลภูมิใจ ลูกหลานฟังกันทุกคน ยิ้มไม่หุบ",
-          "mediaUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220694-gallery-1785401220641-0b198e66-3d04-403a-9c6f-9ca6770334de.jpeg",
-          "mediaType": "IMAGE",
-          "senderName": "คุณย่า",
-          "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.201Z"
-        },
-        {
-          "id": "3cc3f672-c317-413b-8943-94afa6aa2c72",
+          "id": "aa3badd3-b19f-4966-bc09-e08ecec2689b",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "โมเมนต์เล็ก ๆ ที่อยากเก็บไว้",
           "content": "ตอนเดินทางกลับบ้าน ทุกคนยังร้องเพลงครอบครัวในรถด้วยกัน แม้จะเหนื่อยแต่หัวเราะกันจนลืมความเหนื่อยไปเลย อยากเก็บความรู้สึกนี้ไว้ตลอด",
@@ -1490,10 +1542,10 @@
           "mediaType": "IMAGE",
           "senderName": "น้องชาย",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.201Z"
+          "createdAt": "2026-08-07T04:54:46.570Z"
         },
         {
-          "id": "9b5d2b19-aa68-46ad-b885-316bad517e52",
+          "id": "7a21ca84-594f-410b-a325-baf55aa29144",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "วันที่ทั้งครอบครัวรวมตัวกันที่บ้านเกิด",
           "content": "ทุกคนในบ้านตื่นเต้นมาก ตั้งแต่คุณปู่จนถึงหลานเล็ก ได้นั่งทานข้าวและถ่ายรูปพร้อมกันทั้งบ้าน เป็นวันที่รู้สึกว่าเรายังเป็นครอบครัวเดียวกันเสมอ",
@@ -1501,10 +1553,10 @@
           "mediaType": "IMAGE",
           "senderName": "ลูกหลานรุ่นใหม่",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.201Z"
+          "createdAt": "2026-08-07T04:54:46.570Z"
         },
         {
-          "id": "abf0d69d-a8fe-455b-8706-7ff4a824a524",
+          "id": "f851570d-a54a-4d84-8b4a-26cdfd602f14",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "คำสอนจากคุณปู่",
           "content": "คุณปู่เคยบอกว่า \"ตระกูลเราอยู่ด้วยกันเมื่อยังมีชีวิต และอยู่ด้วยกันในความทรงจำ\" ขอจดจำไว้เสมอ",
@@ -1512,10 +1564,10 @@
           "mediaType": "IMAGE",
           "senderName": "ลูกหลานรุ่นใหม่",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.201Z"
+          "createdAt": "2026-08-07T04:54:46.570Z"
         },
         {
-          "id": "0715fb96-afe4-4f71-8538-b98852e78a19",
+          "id": "0ac95995-e0c4-4006-89d5-8cd875ae41e0",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "ฝากความคิดถึงจากต่างจังหวัด",
           "content": "ฝากเรื่องเล่าวันงานรวมตระกูลปีที่แล้ว บรรยากาศอบอุ่นมาก อยากให้จัดอีกเร็ว ๆ นี้ คิดถึงทุกคนในตระกูลจิตใจดีค่ะ",
@@ -1523,10 +1575,10 @@
           "mediaType": "IMAGE",
           "senderName": "ญาติต่างจังหวัด",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.201Z"
+          "createdAt": "2026-08-07T04:54:46.570Z"
         },
         {
-          "id": "d0aac15a-2c96-445b-81bf-8e75beea8852",
+          "id": "ccf92314-0260-4153-9ba2-fc73fcea058c",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "คำสอนที่ส่งต่อมาทุกรุ่น",
           "content": "คุณปู่บอกเสมอว่า ความสำเร็จของครอบครัวไม่ได้อยู่ที่ชื่อเสียงอย่างเดียว แต่อยู่ที่การดูแลกัน เราจะจำคำนี้ไว้และส่งต่อให้ลูกหลาน",
@@ -1534,145 +1586,23 @@
           "mediaType": "IMAGE",
           "senderName": "พี่สาว",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.201Z"
+          "createdAt": "2026-08-07T04:54:46.570Z"
+        },
+        {
+          "id": "2f4be7b5-c0a6-481a-8381-90ad5142566d",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "title": "ความทรงจำงานรวมญาติประจำปี",
+          "content": "ทุกปีเราจะรวมญาติกัน แล้วเล่าเรื่องเก่า ๆ ของคุณปู่ชาย ว่าเคยทำอะไรให้ตระกูลภูมิใจ ลูกหลานฟังกันทุกคน ยิ้มไม่หุบ",
+          "mediaUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220694-gallery-1785401220641-0b198e66-3d04-403a-9c6f-9ca6770334de.jpeg",
+          "mediaType": "IMAGE",
+          "senderName": "คุณย่า",
+          "isApproved": true,
+          "createdAt": "2026-08-07T04:54:46.570Z"
         }
       ],
       "familyMembers": [
         {
-          "id": "dbf70ed9-c381-4d8a-8ce2-090220846300",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นาย วิชัย จิตใจดี",
-          "nickname": "พี่วิช",
-          "relationship": "CHILD",
-          "birthYear": "2535",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220845-gallery-1785401220828-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "ca9fc267-8e88-4852-b009-3b12bb8b37e8",
-          "createdAt": "2026-07-27T08:41:47.206Z"
-        },
-        {
-          "id": "2da49b50-91e2-44b0-8974-b96446bad632",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นาย สุรชัย จิตใจดี",
-          "nickname": "พี่ชัย",
-          "relationship": "CHILD",
-          "birthYear": "2536",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401221173-gallery-1785401221128-89ff900d-6578-48b3-94f0-adadf74f44fe.jpeg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "ca9fc267-8e88-4852-b009-3b12bb8b37e8",
-          "createdAt": "2026-07-27T08:41:47.206Z"
-        },
-        {
-          "id": "5d57be38-47f0-45e3-a0aa-6c6065944b60",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นาย ประเสริฐ จิตใจดี",
-          "nickname": "พี่เป้",
-          "relationship": "CHILD",
-          "birthYear": "2537",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220893-gallery-1785401220876-fa2cb0a5-f36d-426c-af7e-131ae4bf8aa9.jpg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "ca9fc267-8e88-4852-b009-3b12bb8b37e8",
-          "createdAt": "2026-07-27T08:41:47.207Z"
-        },
-        {
-          "id": "ad50b083-3363-4c63-984a-d172c2d3d57d",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นางสาว นภา จิตใจดี",
-          "nickname": "น้องนภา",
-          "relationship": "CHILD",
-          "birthYear": "2540",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401221049-gallery-1785401221033-a0463dc1-01e5-4998-9cbe-f097480bdef5.jpg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "ca9fc267-8e88-4852-b009-3b12bb8b37e8",
-          "createdAt": "2026-07-27T08:41:47.203Z"
-        },
-        {
-          "id": "60e4b5bb-800b-4a93-b84a-0ce263378780",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นางสาว มณี จิตใจดี",
-          "nickname": "พี่มณี",
-          "relationship": "CHILD",
-          "birthYear": "2538",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220798-gallery-1785401220778-298bf361-e8b9-40bd-bdb3-0d60c92498cd.jpeg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "ca9fc267-8e88-4852-b009-3b12bb8b37e8",
-          "createdAt": "2026-07-27T08:41:47.205Z"
-        },
-        {
-          "id": "1eee20fc-9c75-4e6b-a54a-b743e1ee1162",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นาย ธนกฤต จิตใจดี",
-          "nickname": "พี่ต้น",
-          "relationship": "CHILD",
-          "birthYear": "2537",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220997-gallery-1785401220969-2b220236-b5af-4f00-ba16-a4f6af2afce0.jpg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "ca9fc267-8e88-4852-b009-3b12bb8b37e8",
-          "createdAt": "2026-07-27T08:41:47.208Z"
-        },
-        {
-          "id": "4416c1f8-7781-4386-a056-9dfa9fc10c9d",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นาย ภูมิพัฒน์ จิตใจดี",
-          "nickname": "น้องภูมิ",
-          "relationship": "CHILD",
-          "birthYear": "2538",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220942-gallery-1785401220924-3628ac2a-0411-45e5-bd1e-dd3e2146e9ce.jpeg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "ca9fc267-8e88-4852-b009-3b12bb8b37e8",
-          "createdAt": "2026-07-27T08:41:47.208Z"
-        },
-        {
-          "id": "ca9fc267-8e88-4852-b009-3b12bb8b37e8",
+          "id": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "name": "นาย สมชาย จิตใจดี",
           "nickname": "คุณปู่ชาย",
@@ -1688,12 +1618,145 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-30T08:57:16.575Z"
+          "createdAt": "2026-08-07T04:54:46.674Z"
+        },
+        {
+          "id": "06e7b4c6-a694-4c98-bf70-81e11ba29d31",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นาย วิชัย จิตใจดี",
+          "nickname": "พี่วิช",
+          "relationship": "CHILD",
+          "birthYear": "2535",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220845-gallery-1785401220828-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.610Z"
+        },
+        {
+          "id": "20f131d0-a3f2-4847-a056-0a2f4a18b410",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นาย สุรชัย จิตใจดี",
+          "nickname": "พี่ชัย",
+          "relationship": "CHILD",
+          "birthYear": "2536",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401221173-gallery-1785401221128-89ff900d-6578-48b3-94f0-adadf74f44fe.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.618Z"
+        },
+        {
+          "id": "049837f7-9c54-4126-a65b-240708419b8b",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นาย ประเสริฐ จิตใจดี",
+          "nickname": "พี่เป้",
+          "relationship": "CHILD",
+          "birthYear": "2537",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220893-gallery-1785401220876-fa2cb0a5-f36d-426c-af7e-131ae4bf8aa9.jpg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.628Z"
+        },
+        {
+          "id": "c503e7da-2198-4f77-a01c-53d013be550c",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นางสาว นภา จิตใจดี",
+          "nickname": "น้องนภา",
+          "relationship": "CHILD",
+          "birthYear": "2540",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401221049-gallery-1785401221033-a0463dc1-01e5-4998-9cbe-f097480bdef5.jpg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.641Z"
+        },
+        {
+          "id": "ba84dbff-37c0-48a3-9162-0ca49ae91ed6",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นางสาว มณี จิตใจดี",
+          "nickname": "พี่มณี",
+          "relationship": "CHILD",
+          "birthYear": "2538",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220798-gallery-1785401220778-298bf361-e8b9-40bd-bdb3-0d60c92498cd.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.646Z"
+        },
+        {
+          "id": "75fdb927-af6e-4eb7-8c15-ee65b041e330",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นาย ธนกฤต จิตใจดี",
+          "nickname": "พี่ต้น",
+          "relationship": "CHILD",
+          "birthYear": "2537",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220997-gallery-1785401220969-2b220236-b5af-4f00-ba16-a4f6af2afce0.jpg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.656Z"
+        },
+        {
+          "id": "b594da4f-7f33-440c-8148-6bc82241fe54",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นาย ภูมิพัฒน์ จิตใจดี",
+          "nickname": "น้องภูมิ",
+          "relationship": "CHILD",
+          "birthYear": "2538",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220942-gallery-1785401220924-3628ac2a-0411-45e5-bd1e-dd3e2146e9ce.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.667Z"
         }
       ],
       "ebooks": [
         {
-          "id": "8f70f87b-6327-4381-bc4b-71b57ed09a27",
+          "id": "710140ee-1d0a-4787-932c-1f2e4443aedd",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "บันทึกประวัติตระกูลจิตใจดี",
           "author": "คณะผู้จัดทำตระกูล",
@@ -1705,10 +1768,10 @@
             "หน้า 3: มรดกทางใจ\n\n\"ตระกูลเราอยู่ด้วยกันเมื่อยังมีชีวิต และอยู่ด้วยกันในความทรงจำ\" — คำสอนนี้ถูกส่งต่อจากคุณปู่สู่ลูกหลานทุกรุ่น ไม่ว่าจะเป็นวันรวมญาติ การเดินทาง หรือช่วงเวลาสำคัญ ทุกคนในตระกูลจะกลับมารวมตัวกันเสมอ",
             "บทส่งท้าย\n\nขอขอบคุณลูกหลานและญาติทุกท่านที่ร่วมกันบันทึกเรื่องราว ภาพความทรงจำ และคำสอนที่มีค่า ขอให้มรดกทางใจของตระกูลจิตใจดีคงอยู่ในใจทุกคนตลอดไป\n\nด้วยความเคารพและรัก\nคณะผู้จัดทำ"
           ],
-          "createdAt": "2026-07-30T09:18:08.784Z"
+          "createdAt": "2026-08-07T04:54:46.587Z"
         },
         {
-          "id": "d4f60381-150c-4566-8607-dd4d85101fe2",
+          "id": "5323a184-e0f1-4f68-a9d4-1e2d971b534c",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "คำสอนและเรื่องเล่าจากคุณปู่ชาย",
           "author": "ลูกหลานรุ่นใหม่",
@@ -1719,7 +1782,7 @@
             "หน้า 2: เรื่องเล่าที่ยังจำได้\n\nทุกปีเราจะรวมญาติกัน แล้วเล่าเรื่องเก่า ๆ ของคุณปู่ชาย ว่าเคยช่วยเหลือเพื่อนบ้านและสร้างความอบอุ่นให้ชุมชน ลูกหลานฟังกันทุกปีและไม่เคยเบื่อ",
             "หน้า 3: คำสัญญาของลูกหลาน\n\n\"เราสัญญาว่าจะดูแลกัน จะรักษามรดกทางใจของตระกูล และจะกลับมารวมตัวกันเสมอ ไม่ว่าจะอยู่ที่ไหน ตระกูลจิตใจดีคือบ้านของเราเสมอ\""
           ],
-          "createdAt": "2026-07-30T09:18:08.784Z"
+          "createdAt": "2026-08-07T04:54:46.587Z"
         }
       ],
       "donations": []
@@ -1860,50 +1923,51 @@
         },
         "visibility": "PUBLIC",
         "status": "ACTIVE",
-        "expiredAt": "2036-07-24T08:41:47.209Z",
+        "expiredAt": "2036-08-04T04:54:46.791Z",
         "donationPromptPay": "089-87655432",
         "donationAccountName": "คุณศิรินภา เหรัญญิกตลอดมาและตลอดไป",
         "donationActive": false,
         "createdAt": "2026-07-15T08:37:51.045Z",
-        "updatedAt": "2026-07-27T08:41:47.211Z"
+        "updatedAt": "2026-08-07T04:54:46.810Z"
       },
       "menus": [
         {
-          "id": "e22b364c-d861-493a-a00b-aa8487736b93",
+          "id": "8bf29c62-3f09-4a38-9d7f-9a42bc9af7e2",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "title": "หน้าแรก",
           "pageType": "HOME",
           "isVisible": true,
           "sortOrder": 1,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.217Z"
+          "createdAt": "2026-08-07T04:54:46.884Z"
         },
         {
-          "id": "c76c6958-ecb8-4e4a-a8e4-7bc3a6221810",
+          "id": "0a78f82a-ba0d-4375-aa25-0185140a78f0",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "title": "คลังภาพของกลุ่ม",
           "pageType": "GALLERY",
           "isVisible": true,
           "sortOrder": 2,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.217Z"
+          "createdAt": "2026-08-07T04:54:46.884Z"
         },
         {
-          "id": "7798775e-14e5-4d81-ad74-48c75c52d633",
+          "id": "6a7a0174-5de2-4a84-a004-f14590ae85bc",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "title": "สมุดข้อความถึงกัน",
           "pageType": "CONDOLENCE",
           "isVisible": true,
           "sortOrder": 3,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.217Z"
+          "createdAt": "2026-08-07T04:54:46.884Z"
         }
       ],
       "medias": [
         {
-          "id": "33c78f40-582b-41c5-b98b-0a42e09f122f",
+          "id": "5811acc0-d38f-479f-a83e-66015edc4aa1",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/defaults/friends/cover/1.jpg",
+          "thumbnailPath": null,
           "fileName": "ทริปทะเลหัวหิน 2568.jpg",
           "fileSize": "180000",
           "mimeType": "image/jpeg",
@@ -1911,12 +1975,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 1,
-          "createdAt": "2026-07-27T08:41:47.218Z"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "94fa137d-59da-4bd8-8bf5-31a3f686c2f1",
+          "id": "cf54dba6-0564-4acd-a82f-c6eb10a3c166",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/defaults/friends/cover/2.jpg",
+          "thumbnailPath": null,
           "fileName": "รวมตัวปีใหม่ที่คาเฟ่.jpg",
           "fileSize": "192000",
           "mimeType": "image/jpeg",
@@ -1924,12 +1989,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 2,
-          "createdAt": "2026-07-27T08:41:47.218Z"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "f97b8bff-8579-4a20-b232-b23e08011e30",
+          "id": "326f043f-7fc8-4f5e-acdc-bf471501286f",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/defaults/friends/cover/3.jpg",
+          "thumbnailPath": null,
           "fileName": "คอนเสิร์ตวงโปรดของกลุ่ม.jpg",
           "fileSize": "204000",
           "mimeType": "image/jpeg",
@@ -1937,12 +2003,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 3,
-          "createdAt": "2026-07-27T08:41:47.218Z"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "2a45710d-49fb-4c0c-bc6e-4ec612d88dde",
+          "id": "d2c8446b-68c4-426a-91c7-53901b7e8c9d",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784993640439-gallery-1784993640385-5f87b724-6dba-4f3c-9a29-2c26b33fcf43.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784993640385-5f87b724-6dba-4f3c-9a29-2c26b33fcf43.jpeg",
           "fileSize": "195336",
           "mimeType": "image/jpeg",
@@ -1950,12 +2017,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.218Z"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "613e4818-7d6c-46f6-9aec-f057645556b7",
+          "id": "e914987d-5846-4982-84df-f75977dc7a71",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784993607104-gallery-1784993606994-b7b93478-45b9-40c1-8162-3349be8b5174.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784993606994-b7b93478-45b9-40c1-8162-3349be8b5174.jpg",
           "fileSize": "1768880",
           "mimeType": "image/jpeg",
@@ -1963,12 +2031,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.218Z"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "6a9fec28-c49b-4628-a755-40ee5c2b12e9",
+          "id": "6be45a03-c112-419e-a1e9-e826da15f435",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784993620283-gallery-1784993620224-674abea3-a01d-46f8-a4ff-562c275121b1.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784993620224-674abea3-a01d-46f8-a4ff-562c275121b1.jpg",
           "fileSize": "2428785",
           "mimeType": "image/jpeg",
@@ -1976,12 +2045,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.218Z"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "da40f222-a614-45e3-803d-89d3a5666659",
+          "id": "42e7168b-073c-4087-87c4-ae9d262193bc",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784993636294-gallery-1784993636244-bd3ee67c-4e25-4d67-b19e-66ca06b1c2b3.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784993636244-bd3ee67c-4e25-4d67-b19e-66ca06b1c2b3.jpg",
           "fileSize": "1710737",
           "mimeType": "image/jpeg",
@@ -1989,12 +2059,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.218Z"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "571449e3-d841-40e9-b97e-b87948bef0c3",
+          "id": "f9f163c3-706f-4237-9f37-38a434a09d89",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784994182638-gallery-1784994182553-093b4abc-9db0-4f2f-a524-cd72ca3ddb97.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784994182553-093b4abc-9db0-4f2f-a524-cd72ca3ddb97.jpg",
           "fileSize": "2516586",
           "mimeType": "image/jpeg",
@@ -2002,12 +2073,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.218Z"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "777b8318-e821-48a4-aed1-ca60567ca9a2",
+          "id": "6302ebd8-58e7-4e7a-a8b5-4451ad3b2bd7",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "filePath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/friends-demo-cn-gang.mp4",
+          "thumbnailPath": null,
           "fileName": "ทริปท่องเที่ยว CN the Gang",
           "fileSize": "2440356",
           "mimeType": "video/mp4",
@@ -2015,85 +2087,84 @@
           "album": "VIDEO",
           "isDeleted": false,
           "sortOrder": 1,
-          "createdAt": "2026-07-27T08:41:47.218Z",
-          "thumbnailPath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/friends-demo-cn-gang-thumb.jpg"
+          "createdAt": "2026-08-07T04:54:46.909Z"
         }
       ],
       "condolences": [
         {
-          "id": "d4142c36-22b0-4106-8d81-ec3c3a7cbdd8",
+          "id": "553fc9fc-f655-4aad-9a88-3dd662503249",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "senderName": "แอนนา",
           "relationship": "Friend",
           "message": "ขอบคุณที่ทุกคนยังมีที่ให้กันเสมอ ไม่ว่าจะผ่านวันดีหรือวันที่เหนื่อย กลุ่มนี้คือพื้นที่ปลอดภัยของเราจริง ๆ",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.221Z"
+          "createdAt": "2026-08-07T04:54:46.935Z"
         },
         {
-          "id": "f01c7877-a907-4f9b-8502-9cffdfa2dfb0",
+          "id": "37013f22-c8d6-436c-9bed-d6dc435c04f4",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "senderName": "โอ๋",
           "relationship": "Friend",
           "message": "คิดถึงทริปญี่ปุ่นที่วางแผนไว้ตั้งนาน แต่ไม่เป็นไร ขอแค่ปีนี้เราได้นั่งกินข้าวพร้อมหน้าก่อนก็พอแล้ว",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.221Z"
+          "createdAt": "2026-08-07T04:54:46.935Z"
         },
         {
-          "id": "dc8982c8-3aa7-4a46-a281-46f2ec38f2d3",
+          "id": "f0dd167b-9ee5-4166-8d9a-8d1c2ac33ae0",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "senderName": "เบนซ์",
           "relationship": "Friend",
           "message": "ขอบคุณที่ยังมีกันแบบเดิม ไม่ต้องแกล้งทำเป็นโอเคตลอดเวลา มานั่งเล่าเรื่องจริง ๆ กันได้เสมอนะ",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.221Z"
+          "createdAt": "2026-08-07T04:54:46.935Z"
         },
         {
-          "id": "baa4e7b8-c296-482d-b616-eff8703c411d",
+          "id": "3a1458d6-8359-48b5-ab0d-175e69da6670",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "senderName": "มิ้นท์ & ต้อม",
           "relationship": "Friend",
           "message": "ฝากบอกว่าขอบคุณที่ช่วยกันดูแลกันมาตลอด จากวัยเรียนจนถึงวันนี้ ยังอยากเป็นเพื่อนกันไปอีกนาน ๆ",
           "type": "FAMILY",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.221Z"
+          "createdAt": "2026-08-07T04:54:46.935Z"
         },
         {
-          "id": "549ba3a0-0139-466c-908e-085783d64f01",
+          "id": "39921e71-1bcb-4fa6-9ed2-53a045a07bdc",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "senderName": "ป้าแจ๊ส",
           "relationship": "Friend",
           "message": "รักทุกคนในกลุ่มนี้มาก ขอให้เรายังมีเวลารวมตัวแบบนี้เรื่อย ๆ แม้จะยุ่งแค่ไหนก็ขอให้มีวันที่หัวเราะด้วยกัน",
           "type": "FAMILY",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.221Z"
+          "createdAt": "2026-08-07T04:54:46.935Z"
         },
         {
-          "id": "def99bee-6a94-4d90-b48b-c054edce5116",
+          "id": "f24d9eaf-824d-4953-af66-3179cc322dc9",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "senderName": "น้องเบล",
           "relationship": "เพื่อนในกลุ่ม",
           "message": "คิดถึงวันที่เรานั่งเล่ากันทุกศุกร์ ขอให้กลุ่มเรายังเจอกันบ่อย ๆ แบบนี้นะ",
           "type": "GENERAL",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.221Z"
+          "createdAt": "2026-08-07T04:54:46.935Z"
         },
         {
-          "id": "100e8764-f45a-4452-ba18-8b6c4eb0733f",
+          "id": "6f94a4d1-8ab8-4791-a15c-dd7d0c8ed6aa",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "senderName": "พี่โอ๋",
           "relationship": "เพื่อนร่วมรุ่น",
           "message": "ขอบคุณที่ยังรักษามิตรภาพกันมาตลอด 20 กว่าปี ภูมิใจที่ได้เป็นเพื่อนกัน",
           "type": "GENERAL",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.221Z"
+          "createdAt": "2026-08-07T04:54:46.935Z"
         }
       ],
       "memoryPosts": [
         {
-          "id": "c3622ec0-280d-4037-a9ac-e8114e0a27aa",
+          "id": "67ccd047-fade-4b9b-9521-24da2f04e243",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "title": "ทริปหัวหินที่ยังหัวเราะไม่หยุด",
           "content": "จำได้ไหมวันที่ฝนตกแรงแต่เรายังยืนหยิบขนมตลาดน้ำอยู่ 555 ทริปนี้สรุปว่า “แพลนไม่สำคัญ ขอแค่มาครบก็พอ” ปีหน้าขอไปอีกนะเพื่อน ๆ",
@@ -2101,10 +2172,10 @@
           "mediaType": "IMAGE",
           "senderName": "พี่ต้อม",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.224Z"
+          "createdAt": "2026-08-07T04:54:46.950Z"
         },
         {
-          "id": "e79f8269-1f72-4e21-ba20-2d98ba6f7194",
+          "id": "1046b687-6cfe-4128-a78a-19091efdbcc3",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "title": "Flashback วันสอบจบ",
           "content": "เปิดอัลบั้มเก่าแล้วเจอรูปตอนรวมตัวอ่านหนังสือก่อนสอบ ทุกคนหน้าเครียดแต่ยังแอบส่งขนมให้กัน นี่แหละมิตรภาพ CN the Gang",
@@ -2112,10 +2183,10 @@
           "mediaType": "IMAGE",
           "senderName": "น้องมิ้นท์",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.224Z"
+          "createdAt": "2026-08-07T04:54:46.950Z"
         },
         {
-          "id": "75bc2025-fd79-44f8-a825-4c8be8d52617",
+          "id": "676ab078-0da0-4364-acb9-0a1b0bba541a",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "title": "นัดรวมตัวเดือนสิงหา — ใครว่างบ้าง?",
           "content": "ขอเช็กใจก่อนลงมือจองร้านนะคะ เป้าหมายคืองานรวมตัวแบบไม่เร่งรีบ มีเวลานั่งเล่าเรื่องเก่า กินของอร่อย และถ่ายรูปให้ครบทุกคน",
@@ -2123,10 +2194,10 @@
           "mediaType": "NONE",
           "senderName": "ป้าแจ๊ส",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.224Z"
+          "createdAt": "2026-08-07T04:54:46.950Z"
         },
         {
-          "id": "6bf87f80-f8d7-48a4-b243-09dea64ff4fd",
+          "id": "6ce71331-b169-4155-8e6d-1b2f0ce1d19a",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "title": "",
           "content": "ฝากรูปวันรวมตัวรุ่น ยิ้มกันจนแก้มปวด ขอให้มีแบบนี้ทุกปี",
@@ -2134,10 +2205,10 @@
           "mediaType": "NONE",
           "senderName": "มิ้นท์",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.224Z"
+          "createdAt": "2026-08-07T04:54:46.950Z"
         },
         {
-          "id": "7700154c-008e-4181-8881-10abc4edf916",
+          "id": "d3ae2cd4-64e5-440c-86be-36e48263040c",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
           "title": "ทริปทะเลปี 2568",
           "content": "แชร์โมเมนต์ตลก ๆ ตอนรถเสียกลางทาง แต่สุดท้ายก็หัวเราะกันทั้งรถ นี่แหละเพื่อนแท้",
@@ -2145,7 +2216,7 @@
           "mediaType": "NONE",
           "senderName": "แก๊ง CN",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.224Z"
+          "createdAt": "2026-08-07T04:54:46.950Z"
         }
       ],
       "familyMembers": [],
@@ -2165,6 +2236,7 @@
           ],
           "coverX": 0,
           "coverY": 0,
+          "isDemo": true,
           "avatarX": 0,
           "avatarY": 0,
           "coverUrl": "/defaults/pet-memorial/cover/3.png",
@@ -2182,33 +2254,43 @@
           "subjects": [
             {
               "name": "คิตตี้",
-              "breed": "แมวสามสี ตัวอ้วนปุ๊กปิ๊ก",
+              "breed": "แมวส้ม ตัวอ้วนปุ๊กปิ๊ก",
+              "avatarX": 0,
+              "avatarY": 0,
               "dislike": "ไม่ชอบอาบน้ำ และกินยา",
               "isAlive": false,
               "favorite": "เปียก และจุ้งต้ม",
-              "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784363585861-pet-avatar-1-1784363585710-731218.jpg",
+              "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108759796-pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png",
               "birthDate": "2008-12-31T17:00:00.000Z",
               "birthYear": 2009,
               "deathDate": "2023-12-31T17:00:00.000Z",
               "deathYear": 2024,
+              "avatarScale": 1.55,
               "personality": "เลือกกินนิดหน่อย ขี้อ้อน",
+              "avatarRotate": 0,
               "birthYearOnly": true,
-              "deathYearOnly": true
+              "deathYearOnly": true,
+              "avatarCoordSpace": "relative"
             },
             {
               "name": "แชปแมวหัวแปะ",
               "breed": "แมวลายวัว หัวแปะ ",
+              "avatarX": -0.1510416666666667,
+              "avatarY": -0.078125,
               "dislike": "กลัวผะ ผะ ผี ",
               "isAlive": true,
               "favorite": "คานิว่า รสแซลม่อน ม่อน ม่อน",
-              "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784363601011-pet-avatar-2-1784363600970-631154607_881550914587830_839028099716792050_n.jpg",
+              "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108786322-pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
               "birthDate": "2018-12-31T17:00:00.000Z",
               "birthYear": 2019,
               "deathDate": null,
               "deathYear": null,
+              "avatarScale": 1.4,
               "personality": "แมววัวจอมทะเล้น ร่าเริง และหวังจะครองโลกกกก",
+              "avatarRotate": 0,
               "birthYearOnly": true,
-              "deathYearOnly": false
+              "deathYearOnly": false,
+              "avatarCoordSpace": "relative"
             }
           ],
           "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398783773-deceased-avatar-1785398783710-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg",
@@ -2257,57 +2339,94 @@
             "abhidhammaDateRange": ""
           },
           "avatarRotate": 0,
+          "featureOrder": [
+            "gallery",
+            "videos",
+            "condolence",
+            "memory",
+            "donation"
+          ],
           "primaryColor": "#e09f9f",
+          "demoCustomized": true,
           "secondaryColor": "#f59e0b",
           "defaultFontSize": "NORMAL",
           "imageCoordSpace": "relative"
         },
         "visibility": "PUBLIC",
         "status": "ACTIVE",
-        "expiredAt": "2036-07-24T08:41:47.225Z",
+        "expiredAt": "2036-08-04T04:54:46.959Z",
         "donationPromptPay": "0891234567",
         "donationAccountName": "กองทุนช่วยเหลือสัตว์จรจัด (ตัวอย่าง)",
         "donationActive": true,
         "createdAt": "2026-07-14T03:37:50.590Z",
-        "updatedAt": "2026-07-30T08:12:00.821Z"
+        "updatedAt": "2026-08-07T13:20:12.905Z"
       },
       "menus": [
         {
-          "id": "a536f5d4-1b5a-4e82-bd1d-4951b608808e",
+          "id": "6195b2df-2657-4745-aa3b-783776e8b35b",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "หน้าแรก",
           "pageType": "HOME",
           "isVisible": true,
           "sortOrder": 1,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.233Z"
+          "createdAt": "2026-08-07T04:54:47.053Z"
         },
         {
-          "id": "c3243283-39e9-4718-835e-466df6398126",
+          "id": "dcbe6327-08cc-4753-b167-01a321415bc0",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "คลังภาพเจ้าตัวน้อย",
           "pageType": "GALLERY",
           "isVisible": true,
           "sortOrder": 2,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.233Z"
+          "createdAt": "2026-08-07T04:54:47.053Z"
         },
         {
-          "id": "746049b7-0c61-4fa2-b799-78194666be9e",
+          "id": "35dbd98b-e21b-4259-8d99-5d9c7053c864",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "สมุดส่งความคิดถึง",
           "pageType": "CONDOLENCE",
           "isVisible": true,
           "sortOrder": 3,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.233Z"
+          "createdAt": "2026-08-07T04:54:47.053Z"
         }
       ],
       "medias": [
         {
-          "id": "97c55ddf-f10f-49aa-a078-42ae2b36ff18",
+          "id": "08b1f9f7-4999-4648-9ed5-c0ea248f266d",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108759796-pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png",
+          "thumbnailPath": null,
+          "fileName": "pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png",
+          "fileSize": "1984590",
+          "mimeType": "image/png",
+          "fileHash": "hash-dmyfl",
+          "album": "PROFILE",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-07T13:19:19.797Z"
+        },
+        {
+          "id": "6fdb69dd-d593-434e-ba2f-a33052490942",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108786322-pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
+          "thumbnailPath": null,
+          "fileName": "pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
+          "fileSize": "194937",
+          "mimeType": "image/jpeg",
+          "fileHash": "hash-dven4t",
+          "album": "PROFILE",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-07T13:19:46.323Z"
+        },
+        {
+          "id": "d3e3dcdc-3457-44ac-b272-16177afcd971",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636099-gallery-1785398636083-695b3d20-4fb0-4c96-afd2-21a121fff880.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785398636083-695b3d20-4fb0-4c96-afd2-21a121fff880.jpeg",
           "fileSize": "193649",
           "mimeType": "image/jpeg",
@@ -2315,12 +2434,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.100Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "918b2f83-508f-42c8-94b9-1d4e884aba72",
+          "id": "9d30fdc5-c16b-4c83-85c8-dc04343b3251",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636147-gallery-1785398636131-0374c879-75e3-4960-870f-771d215f9d5b.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785398636131-0374c879-75e3-4960-870f-771d215f9d5b.jpeg",
           "fileSize": "226421",
           "mimeType": "image/jpeg",
@@ -2328,12 +2448,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.147Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "a758bba2-7ffb-4caf-aa3a-394eecea1f73",
+          "id": "f3bf1e80-2cfd-4618-9b2a-7b783dc4c660",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636190-gallery-1785398636177-be1d970a-2094-4771-b7f8-6e9208ce7e16.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785398636177-be1d970a-2094-4771-b7f8-6e9208ce7e16.jpeg",
           "fileSize": "203576",
           "mimeType": "image/jpeg",
@@ -2341,12 +2462,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.191Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "f653d3f0-0434-4e24-9ecd-9899ddb67de9",
+          "id": "9341d278-df0b-4e41-819f-49b2cd1ae95a",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636232-gallery-1785398636217-d1a27035-77a0-4531-9f31-36dc77574e81.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785398636217-d1a27035-77a0-4531-9f31-36dc77574e81.jpeg",
           "fileSize": "179854",
           "mimeType": "image/jpeg",
@@ -2354,12 +2476,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.234Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "be9c2e01-8975-4d6e-97ff-0353fdfb36fb",
+          "id": "15f0c8c6-7e58-483c-a7fa-1f62d381abde",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636282-gallery-1785398636262-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785398636262-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
           "fileSize": "194937",
           "mimeType": "image/jpeg",
@@ -2367,12 +2490,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.283Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "1ccd1d6d-4b73-4ca2-82d8-e1f8d6ad0194",
+          "id": "4e5f0948-989e-44b1-8a21-8abb97813a0c",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636318-gallery-1785398636305-2159e4f4-a876-4d89-8ec5-2f33430b4744.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785398636305-2159e4f4-a876-4d89-8ec5-2f33430b4744.jpeg",
           "fileSize": "178558",
           "mimeType": "image/jpeg",
@@ -2380,12 +2504,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.319Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "16d82c40-5601-4484-af6d-989e326325d5",
+          "id": "76aba6c5-91dd-48ed-96d8-9175ce1afa37",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636358-gallery-1785398636345-1ca184df-4cf0-47f4-b9d2-34e78b9d674c.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785398636345-1ca184df-4cf0-47f4-b9d2-34e78b9d674c.jpeg",
           "fileSize": "145316",
           "mimeType": "image/jpeg",
@@ -2393,12 +2518,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.359Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "9f9dfa3c-a52e-45f1-96c4-adb1999b4b7b",
+          "id": "a4440245-7b10-4a60-bb0c-4fbf136c10fe",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636401-gallery-1785398636387-47beb55b-4e2c-41ab-ab93-777921176363.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785398636387-47beb55b-4e2c-41ab-ab93-777921176363.jpeg",
           "fileSize": "197345",
           "mimeType": "image/jpeg",
@@ -2406,12 +2532,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.402Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "e187ea2c-f072-4d2d-afbe-ecfdcd69eae0",
+          "id": "4cde4e6a-ca3f-4b5d-889e-854e9f4b062e",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398635928-gallery-1785398635709-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg",
+          "thumbnailPath": null,
           "fileName": "1785398635928-gallery-1785398635709-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg",
           "fileSize": "168343",
           "mimeType": "image/jpeg",
@@ -2419,12 +2546,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:55.931Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "6932a8d0-30e1-46fe-b7b0-652ec0b96f69",
+          "id": "0e6ba19f-6588-4c5a-b8f1-47cbbc662083",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636047-gallery-1785398636035-1ad2aa01-639f-4d2d-840f-3df8cba4b9b3.jpg",
+          "thumbnailPath": null,
           "fileName": "1785398636047-gallery-1785398636035-1ad2aa01-639f-4d2d-840f-3df8cba4b9b3.jpg",
           "fileSize": "119102",
           "mimeType": "image/jpeg",
@@ -2432,12 +2560,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:03:56.048Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "9dd67240-d646-4f3a-9fbc-c766e1d4de37",
+          "id": "b4dfb7ff-dd49-4e49-b724-4b5001a01484",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398783773-deceased-avatar-1785398783710-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg",
+          "thumbnailPath": null,
           "fileName": "1785398783773-deceased-avatar-1785398783710-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg",
           "fileSize": "133160",
           "mimeType": "image/jpeg",
@@ -2445,12 +2574,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-30T08:06:23.774Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "1e975f34-89f3-4e8d-8159-ea58a0880452",
+          "id": "fe31530d-424a-4074-8f22-b4785776ca72",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784005768035-deceased-avatar-1784005767799-631154607_881550914587830_839028099716792050_n.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1784005767799-631154607_881550914587830_839028099716792050_n.jpg",
           "fileSize": "109151",
           "mimeType": "image/jpeg",
@@ -2458,12 +2588,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "9420b9d2-9ae8-4b14-bbc0-624315f91ef6",
+          "id": "e0200efd-6236-4020-b750-c9f56f19dc1f",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784005789681-deceased-cover-1784005789647-images (1).jpeg",
+          "thumbnailPath": null,
           "fileName": "deceased-cover-1784005789647-images (1).jpeg",
           "fileSize": "25154",
           "mimeType": "image/jpeg",
@@ -2471,12 +2602,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "b2e6a218-d680-462d-8dec-2d682b59756d",
+          "id": "f64e7ceb-7d64-40b7-b183-0247df69cb7e",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784005828072-deceased-cover-1784005828043-images (1).jpeg",
+          "thumbnailPath": null,
           "fileName": "deceased-cover-1784005828043-images (1).jpeg",
           "fileSize": "25154",
           "mimeType": "image/jpeg",
@@ -2484,12 +2616,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "bb6ad3f6-04f5-47c3-928b-47f8b7c51105",
+          "id": "7b3d4a85-90a0-4df4-8560-5b9a8f6df68e",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784005854987-deceased-avatar-1784005854946-img_7297-1.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1784005854946-img_7297-1.jpg",
           "fileSize": "121712",
           "mimeType": "image/jpeg",
@@ -2497,12 +2630,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "30f5145c-d89f-4e9e-b929-24dcd17f53b3",
+          "id": "b3c8870c-352a-4614-837f-082551ff680a",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784005944407-deceased-cover-1784005944362-CleanShot 2569-07-06 at 10.47.24.jpg",
+          "thumbnailPath": null,
           "fileName": "1784005944407-deceased-cover-1784005944362-CleanShot 2569-07-06 at 10.47.24.jpg",
           "fileSize": "34947",
           "mimeType": "image/jpeg",
@@ -2510,12 +2644,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "1f13a2b0-b533-4dbe-b98c-71b85e911c6a",
+          "id": "bc86f380-aa2d-4371-b8c5-ab49b27b24e2",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784024152637-deceased-avatar-1784024152518-images.jpeg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1784024152518-images.jpeg",
           "fileSize": "24763",
           "mimeType": "image/jpeg",
@@ -2523,12 +2658,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "c3522961-c44d-4e03-8439-ea7028befdb0",
+          "id": "aad1829e-a6fe-46e6-8155-bb7c4d6a553b",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/pet-demo-kittiemeaw.mp4",
+          "thumbnailPath": null,
           "fileName": "คลิปรำลึกคิตตี้เหมียว",
           "fileSize": "2692280",
           "mimeType": "video/mp4",
@@ -2536,13 +2672,13 @@
           "album": "VIDEO",
           "isDeleted": false,
           "sortOrder": 1,
-          "createdAt": "2026-07-27T08:41:47.235Z",
-          "thumbnailPath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/pet-demo-kittiemeaw-thumb.jpg"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "3eb4e198-d8d9-471a-a07a-9cccdc3cd350",
+          "id": "6d13aeb5-d53a-4a7a-9a9e-33428393a5f6",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/pet-demo-kittiemeaw2.mp4",
+          "thumbnailPath": null,
           "fileName": "ช่วงเวลาน่ารักของคิตตี้เหมียว",
           "fileSize": "2644991",
           "mimeType": "video/mp4",
@@ -2550,13 +2686,13 @@
           "album": "VIDEO",
           "isDeleted": false,
           "sortOrder": 2,
-          "createdAt": "2026-07-27T08:41:47.235Z",
-          "thumbnailPath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/pet-demo-kittiemeaw2-thumb.jpg"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "e90d2802-f818-4644-ad44-c6bd8144edfd",
+          "id": "9303b05d-096a-4905-b2a9-6f0d8782972e",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784363585861-pet-avatar-1-1784363585710-731218.jpg",
+          "thumbnailPath": null,
           "fileName": "pet-avatar-1-1784363585710-731218.jpg",
           "fileSize": "100546",
           "mimeType": "image/jpeg",
@@ -2564,12 +2700,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "5641a1a2-c4df-47ce-89ae-85342d2a3e89",
+          "id": "44925ea2-4abc-42ff-bf4c-e09501de9c16",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784363601011-pet-avatar-2-1784363600970-631154607_881550914587830_839028099716792050_n.jpg",
+          "thumbnailPath": null,
           "fileName": "pet-avatar-2-1784363600970-631154607_881550914587830_839028099716792050_n.jpg",
           "fileSize": "109151",
           "mimeType": "image/jpeg",
@@ -2577,12 +2714,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "42491ab6-d499-40ae-93fc-0afa77c0c1eb",
+          "id": "5ccfea9e-d164-469b-8b0b-48478ab2f4c3",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784024180154-deceased-cover-1784024180110-CleanShot 2569-07-06 at 10.47.24.jpg",
+          "thumbnailPath": null,
           "fileName": "1784024180154-deceased-cover-1784024180110-CleanShot 2569-07-06 at 10.47.24.jpg",
           "fileSize": "34947",
           "mimeType": "image/jpeg",
@@ -2590,84 +2728,84 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.235Z"
+          "createdAt": "2026-08-07T04:54:47.062Z"
         }
       ],
       "condolences": [
         {
-          "id": "b80dbc81-ad6c-4cc6-a324-b721bf6e6fc2",
+          "id": "d1b4c47e-2103-4396-afde-bbbf27ab5291",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "senderName": "เพื่อนบ้าน",
           "relationship": "Friend",
           "message": "คิดถึงคิตตี้มาก ๆ นะน้อง ขอบคุณที่มาทำให้บ้านอบอุ่นและมีเสียงเหมียวหวาน ๆ ตลอดเวลา ขอให้น้องไปสบายที่ดาวแมวนะ",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.239Z"
+          "createdAt": "2026-08-07T04:54:47.086Z"
         },
         {
-          "id": "86c3a412-c5d5-4a23-b6f2-0d86a5ac6f5b",
+          "id": "1cedc965-0827-422f-af86-42eb0ddae24e",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "senderName": "พี่เลี้ยง",
           "relationship": "Family",
           "message": "คิตตี้ของพี่ ขอบคุณที่อยู่ด้วยกันมา 15 ปี ทุกวันที่ผ่านไปยังคิดถึงน้องเหมือนเดิม แชปยังนั่งรอน้องอยู่เสมอ",
           "type": "FAMILY",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.239Z"
+          "createdAt": "2026-08-07T04:54:47.086Z"
         },
         {
-          "id": "07abf9cf-082d-46ec-8c4b-db3fec3bdc11",
+          "id": "96d95e85-981d-432f-ab25-d6fb20a9bb4a",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "senderName": "คุณหมอ",
           "relationship": "Friend",
           "message": "คิตตี้เป็นเด็กดีมาก ขอบคุณที่ให้เราได้ดูแลจนถึงวันสุดท้าย ขอให้น้องไปสบาย ไม่เจ็บ ไม่หนาว ที่ดาวแมวมีเปียกกับจุ้งต้มเยอะ ๆ นะ",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.239Z"
+          "createdAt": "2026-08-07T04:54:47.086Z"
         },
         {
-          "id": "1519e6be-2699-452e-86a3-715222520da9",
+          "id": "1ad10bf3-abac-4553-8ebd-e73d9a5c5daa",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "senderName": "เพื่อนแมวออนไลน์",
           "relationship": "Friend",
           "message": "ส่งกอดอุ่น ๆ ถึงคิตตี้และครอบครัวค่ะ น้องแชปเก่งมากที่ยังอยู่ดูแลบ้านต่อ ขอให้มีความสุขทุกวันนะ",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.239Z"
+          "createdAt": "2026-08-07T04:54:47.086Z"
         },
         {
-          "id": "a41c2de3-1a79-41ad-ae01-ced624fd29a0",
+          "id": "65c3e48a-3ec0-4e30-be8e-e1c9fde0501a",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "senderName": "ลูก ๆ ในบ้าน",
           "relationship": "Family",
           "message": "คิดถึงพี่คิตตี้ทุกวัน ขอบคุณที่เคยนอนคลุมเตียงให้ รักพี่คิตตี้เสมอ แชปจะดูแลบ้านให้ดี ๆ นะ",
           "type": "FAMILY",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.239Z"
+          "createdAt": "2026-08-07T04:54:47.086Z"
         },
         {
-          "id": "9b00583d-275f-41a0-9477-285a6a1b143d",
+          "id": "600a992b-acae-4b58-8308-3466eb3388fd",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "senderName": "เพื่อนบ้าน",
           "relationship": "เพื่อนบ้าน",
           "message": "คิดถึงน้องคิตตี้ที่ชอบมานั่งหน้าบ้านทุกเย็น ขอให้น้องมีความสุขบนดาวสัตว์เลี้ยง",
           "type": "GENERAL",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.239Z"
+          "createdAt": "2026-08-07T04:54:47.086Z"
         },
         {
-          "id": "89291777-c238-4271-927a-735ab37c6b71",
+          "id": "54cb3cab-dd02-463c-a714-ba52925ac3b8",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "senderName": "คุณแม่บ้าน",
           "relationship": "คนใกล้ชิด",
           "message": "ขอบคุณน้องที่ทำให้ทุกวันมีรอยยิ้ม จะจำน้องไว้ตลอดไปค่ะ",
           "type": "GENERAL",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.239Z"
+          "createdAt": "2026-08-07T04:54:47.086Z"
         }
       ],
       "memoryPosts": [
         {
-          "id": "960673f8-296e-4fcf-be8e-97208eca16ff",
+          "id": "819170c2-56c5-40c0-b914-7c26d2d9fbb0",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "วันที่คิตตี้ชอบนอนตัก",
           "content": "ทุกเย็นหลังเลิกงาน คิตตี้จะวิ่งมารอที่ประตูแล้วกระโดดขึ้นตักทันที ขี้อ้อนที่สุดในโลก แต่ก็น่ารักที่สุดในโลกไปด้วย คิดถึงน้องทุกวันเลย",
@@ -2675,10 +2813,10 @@
           "mediaType": "IMAGE",
           "senderName": "พี่เลี้ยง",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.241Z"
+          "createdAt": "2026-08-07T04:54:47.104Z"
         },
         {
-          "id": "28b5481c-0e3e-48d5-ac6a-3bb5dba97ba3",
+          "id": "1c6dcbfb-39a3-4b1b-b78d-6589be9e3064",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "คู่หูแมววัวกับแมวสามสี",
           "content": "แชปชอบแกล้งคิตตี้ แต่พอคิตตี้ไม่อยู่ แชปก็นั่งมองประตูนานมาก น้องสองตัวรักกันมากกว่าที่แสดงออกนะ",
@@ -2686,10 +2824,10 @@
           "mediaType": "IMAGE",
           "senderName": "แชป & คิตตี้",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.241Z"
+          "createdAt": "2026-08-07T04:54:47.104Z"
         },
         {
-          "id": "26760c7a-8fa5-44bf-a5dc-29fc4592da7c",
+          "id": "ea5c2486-c5e0-4b04-8c2d-201bce9754de",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "โมเมนต์เปียกกับจุ้งต้ม",
           "content": "ของโปรดคิตตี้คือเปียกกับจุ้งต้ม ได้กินแล้วจะมีความสุขมาก ๆ จำได้ทุกครั้งที่ได้ยินเสียงถุงเปียกดังแว๊บ ๆ",
@@ -2697,10 +2835,10 @@
           "mediaType": "NONE",
           "senderName": "ครอบครัวเหมียว",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.241Z"
+          "createdAt": "2026-08-07T04:54:47.104Z"
         },
         {
-          "id": "177d7938-a3c1-49e6-89e6-52311f5dbc76",
+          "id": "6ceeee2a-59ac-49c8-b8fb-5b8470eaed5c",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "วันที่รับน้องมา",
           "content": "ยังจำวันแรกที่น้องตัวจิ๋ววิ่งมากอดขา ตั้งแต่นั้นมาบ้านก็ไม่เคยเงียบอีกเลย",
@@ -2708,10 +2846,10 @@
           "mediaType": "NONE",
           "senderName": "พี่เลี้ยง",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.241Z"
+          "createdAt": "2026-08-07T04:54:47.104Z"
         },
         {
-          "id": "aa44f681-8adb-4117-833d-5e23d6d02ceb",
+          "id": "21f4d8e1-209a-42d8-ba63-1395525063ea",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "",
           "content": "ฝากคลิปน้องชอบนอนตัก ดูแล้วคิดถึงทุกครั้ง",
@@ -2719,14 +2857,14 @@
           "mediaType": "NONE",
           "senderName": "น้องชาย",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.241Z"
+          "createdAt": "2026-08-07T04:54:47.104Z"
         }
       ],
       "familyMembers": [],
       "ebooks": [],
       "donations": [
         {
-          "id": "36c6ae02-498c-4600-8bbf-e1b08934258c",
+          "id": "bc40876a-ded3-4d7c-9dd3-41e63e015244",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "donorName": "คุณมิ้นท์",
           "amount": 500,
@@ -2735,10 +2873,10 @@
           "hideAmount": false,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-07-27T08:41:47.242Z"
+          "createdAt": "2026-08-07T04:54:47.121Z"
         },
         {
-          "id": "5c9bf887-68d9-4c3d-b850-bea8b3f8f598",
+          "id": "55216a5a-8681-45a1-8b2a-08d6341b8a55",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "donorName": "ผู้ไม่ประสงค์ออกนาม",
           "amount": 200,
@@ -2747,10 +2885,10 @@
           "hideAmount": true,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-07-27T08:41:47.242Z"
+          "createdAt": "2026-08-07T04:54:47.121Z"
         },
         {
-          "id": "187c828d-17dc-456d-ac64-517e072565a0",
+          "id": "a53c4770-8a7a-4216-bd42-fd54632f7cef",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "donorName": "พี่ต้น & ครอบครัว",
           "amount": 1000,
@@ -2759,7 +2897,7 @@
           "hideAmount": false,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-07-27T08:41:47.242Z"
+          "createdAt": "2026-08-07T04:54:47.121Z"
         }
       ]
     },
@@ -2861,50 +2999,51 @@
         },
         "visibility": "PUBLIC",
         "status": "ACTIVE",
-        "expiredAt": "2036-07-24T08:41:47.244Z",
+        "expiredAt": "2036-08-04T04:54:47.142Z",
         "donationPromptPay": "0891234567",
         "donationAccountName": "กิ๊ฟ & มิยา (คู่บ่าวสาว)",
         "donationActive": true,
         "createdAt": "2026-07-20T13:47:25.384Z",
-        "updatedAt": "2026-07-27T08:41:47.246Z"
+        "updatedAt": "2026-08-07T04:54:47.154Z"
       },
       "menus": [
         {
-          "id": "c1f1ee1c-9aa4-4374-9f22-404ba7a070ea",
+          "id": "c45bd7b6-10f5-4108-9d19-f21020009d96",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "title": "หน้าแรก",
           "pageType": "HOME",
           "isVisible": true,
           "sortOrder": 1,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.253Z"
+          "createdAt": "2026-08-07T04:54:47.234Z"
         },
         {
-          "id": "d65c8096-9fd1-4561-9519-011ec21704b2",
+          "id": "91405b53-def3-4b44-8b3d-672b3aec1ad2",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "title": "แกลเลอรีคู่บ่าวสาว",
           "pageType": "GALLERY",
           "isVisible": true,
           "sortOrder": 2,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.253Z"
+          "createdAt": "2026-08-07T04:54:47.234Z"
         },
         {
-          "id": "e5a9cd7f-61a4-46b7-9c40-d5e198b9c76b",
+          "id": "20349371-51a1-46df-b043-f4fbf8ec1e94",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "title": "สมุดลงนามอวยพร",
           "pageType": "CONDOLENCE",
           "isVisible": true,
           "sortOrder": 3,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.253Z"
+          "createdAt": "2026-08-07T04:54:47.234Z"
         }
       ],
       "medias": [
         {
-          "id": "1c50aa1f-65cb-4708-8803-0d8ea275df98",
+          "id": "42ebf599-eca1-4bf9-869d-1f4125669764",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1784605509740-deceased-avatar-1784605509573-60716a17-55e8-4736-88c3-3cd38ccbb3f4.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1784605509573-60716a17-55e8-4736-88c3-3cd38ccbb3f4.jpg",
           "fileSize": "205007",
           "mimeType": "image/jpeg",
@@ -2912,12 +3051,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "1f473d5d-adda-4b2e-8e93-b6aeb17d783c",
+          "id": "0facec1a-3df3-4233-82ed-c14d229e3198",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1784608875889-announcement-card-1784608875729.webp",
+          "thumbnailPath": null,
           "fileName": "announcement-card-1784608875729.webp",
           "fileSize": "288214",
           "mimeType": "image/webp",
@@ -2925,12 +3065,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "37dacf4e-9fad-4927-9dd6-b6a470af1db9",
+          "id": "3bbfc002-ca9f-49e4-98c0-3e31a07e1147",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1784642371339-deceased-avatar-1784642371280-5a1aa6a1-0e4f-4549-b171-949ea1efb5d6.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1784642371280-5a1aa6a1-0e4f-4549-b171-949ea1efb5d6.jpg",
           "fileSize": "134342",
           "mimeType": "image/jpeg",
@@ -2938,12 +3079,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "e52ae595-8226-42bb-8eb3-d334d1ac6286",
+          "id": "fe60f3a1-302a-46d9-ab95-dfff955f47da",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1784642380875-deceased-avatar-1784642380827-fin33.jpg",
+          "thumbnailPath": null,
           "fileName": "deceased-avatar-1784642380827-fin33.jpg",
           "fileSize": "76327",
           "mimeType": "image/jpeg",
@@ -2951,12 +3093,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "b10b750c-5de4-4e12-b090-a8bdf2459fcf",
+          "id": "9c4554c1-a7aa-4ab1-9c7c-9315cdb7efad",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/wedding-demo-kukimiya.mp4",
+          "thumbnailPath": null,
           "fileName": "Highlight วันแต่งงาน",
           "fileSize": "2482378",
           "mimeType": "video/mp4",
@@ -2964,13 +3107,13 @@
           "album": "VIDEO",
           "isDeleted": false,
           "sortOrder": 1,
-          "createdAt": "2026-07-27T08:41:47.254Z",
-          "thumbnailPath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/wedding-demo-kukimiya-thumb.jpg"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "1a7edbb8-ba90-45a3-b3bf-70a506daa994",
+          "id": "772a7c16-db3b-4114-8829-754d0fd0699d",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1784609462838-announcement-card-1784609462687.jpg",
+          "thumbnailPath": null,
           "fileName": "1784609462838-announcement-card-1784609462687.jpg",
           "fileSize": "182559",
           "mimeType": "image/jpeg",
@@ -2978,12 +3121,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "a658ea6f-53b5-45eb-bdd8-782f222fa677",
+          "id": "87339d65-5bb1-4ce9-8dbe-69637169ae44",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1785128145977-announcement-card-1785128145848.jpg",
+          "thumbnailPath": null,
           "fileName": "announcement-card-1785128145848.jpg",
           "fileSize": "191808",
           "mimeType": "image/jpeg",
@@ -2991,12 +3135,13 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "0e0250f0-04cc-4c75-aea7-11024826db5c",
+          "id": "0a75d86e-8a76-4078-9678-f8e00ec442bc",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1785128226721-gallery-1785128226660-560c7546-bc8d-4835-98ff-64f48b323d3a.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785128226660-560c7546-bc8d-4835-98ff-64f48b323d3a.jpeg",
           "fileSize": "209649",
           "mimeType": "image/jpeg",
@@ -3004,12 +3149,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "141d206d-e9c5-48d0-b3c0-71966f1aa4bb",
+          "id": "c22f1cbe-d770-4401-8c4e-b265929c02ec",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1785128226791-gallery-1785128226774-b58c55af-ac7b-4ca7-b933-7b479ac65a61.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785128226774-b58c55af-ac7b-4ca7-b933-7b479ac65a61.jpeg",
           "fileSize": "180169",
           "mimeType": "image/jpeg",
@@ -3017,12 +3163,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "c023db70-f8f2-4592-8b0b-3d113827b66c",
+          "id": "cd5980bb-5b74-463d-9c67-efc482c1a147",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1785128226993-gallery-1785128226907-78e2714e-d135-4e55-96cf-2d160b129311.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785128226907-78e2714e-d135-4e55-96cf-2d160b129311.jpeg",
           "fileSize": "281354",
           "mimeType": "image/jpeg",
@@ -3030,12 +3177,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "415a1e53-b78c-4bc1-893e-968e54c086dc",
+          "id": "aa206ad1-e200-410e-bb93-6d40a24afe3a",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1785128227059-gallery-1785128227040-acae5e51-8af8-4e6c-a30c-fa6a8e9b93e7.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785128227040-acae5e51-8af8-4e6c-a30c-fa6a8e9b93e7.jpeg",
           "fileSize": "187599",
           "mimeType": "image/jpeg",
@@ -3043,12 +3191,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "c71d0834-1070-4d02-a89d-6f2e5db8fcb5",
+          "id": "9a944834-5b71-479a-92eb-9a182cd02606",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1785128227109-gallery-1785128227090-14a5b9b0-e1f6-41b2-b8d9-c2fcdb9cb210.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1785128227090-14a5b9b0-e1f6-41b2-b8d9-c2fcdb9cb210.jpeg",
           "fileSize": "277264",
           "mimeType": "image/jpeg",
@@ -3056,12 +3205,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
-          "id": "5d11f681-5e8d-4c7b-9d7e-8ac10461b95d",
+          "id": "4161b93f-3f06-42c6-92ba-3cddb8f248aa",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1785128227161-gallery-1785128227142-6db57f57-b26b-44a1-9d28-5039e4442659.jpg",
+          "thumbnailPath": null,
           "fileName": "1785128227161-gallery-1785128227142-6db57f57-b26b-44a1-9d28-5039e4442659.jpg",
           "fileSize": "159750",
           "mimeType": "image/jpeg",
@@ -3069,84 +3219,84 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.254Z"
+          "createdAt": "2026-08-07T04:54:47.243Z"
         }
       ],
       "condolences": [
         {
-          "id": "2f08e00d-859d-423b-a18c-459b8eda8eb7",
+          "id": "49b2c066-db15-4705-9780-fe06e61a5fe1",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "senderName": "ทีมงานโปรดักช์",
           "relationship": "Colleague",
           "message": "ยินดีกับทั้งสองคน ขอให้ชีวิตคู่รักเต็มไปด้วยรอยยิ้มและโปรเจกต์ใหม่ ๆ ที่ทำด้วยกัน",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.257Z"
+          "createdAt": "2026-08-07T04:54:47.257Z"
         },
         {
-          "id": "0b80c43d-e6f0-44d1-a401-76f3a41e9296",
+          "id": "af81f9b9-e274-443b-8c3f-e1b0db38f80e",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "senderName": "เพื่อนร่วมรุ่น ม.ปลาย",
           "relationship": "Friend",
           "message": "จากวันที่นั่งข้างกันในห้องเรียน มาวันนี้ได้มายืนเป็นเพื่อนให้กำลังใจ ขอให้มีความสุขมาก ๆ นะ",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.257Z"
+          "createdAt": "2026-08-07T04:54:47.257Z"
         },
         {
-          "id": "b2de1d03-fdb6-44b8-908a-f8a2ab0e6c21",
+          "id": "d6e13633-a4c9-4ff0-b5ec-976f4d995bf4",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "senderName": "คุณแม่จิ๋ม",
           "relationship": "Family",
           "message": "ขอให้ลูกทั้งสองมีความสุขยาวนาน เป็นคู่ที่เข้าใจและเติมเต็มกันในทุกวัน แม่ภูมิใจมากค่ะ",
           "type": "FAMILY",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.257Z"
+          "createdAt": "2026-08-07T04:54:47.257Z"
         },
         {
-          "id": "f6c6107a-e2df-4dc6-9005-12a651ccd2b0",
+          "id": "e2a8dc4e-3c88-41f4-9900-9413708c044c",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "senderName": "พี่ต้น",
           "relationship": "Relative",
           "message": "ยินดีด้วยน้อง ๆ ทั้งคู่ ขอให้รักกันนาน ๆ แบบที่วันนี้ทุกคนได้เห็นกัน",
           "type": "FAMILY",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.257Z"
+          "createdAt": "2026-08-07T04:54:47.257Z"
         },
         {
-          "id": "4285a1aa-c75b-46f0-90a2-ae7db3cf813c",
+          "id": "e1eb6051-7328-4bf8-942e-088fabfb4ba5",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "senderName": "มิ้นท์ & บีม",
           "relationship": "Friend",
           "message": "ขอบคุณที่ชวนมาร่วมงาน สนุกมาก ๆ ภาพสวยทุกมุม ขอให้มีความสุขตลอดไปนะคู่รัก",
           "type": "GENERAL",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.257Z"
+          "createdAt": "2026-08-07T04:54:47.257Z"
         },
         {
-          "id": "db47b2c0-409a-4b2f-a401-f08891197b4d",
+          "id": "0e69a40f-b319-43b5-92d9-4cbe27c92634",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "senderName": "พี่หนุ่ม วงศ์สุข",
           "relationship": "พี่ชายเจ้าบ่าว",
           "message": "ยินดีกับน้องกิ๊ฟและน้องมิยาครับ ขอให้มีความสุขในชีวิตคู่ยืนยาว รักและเข้าใจกันเสมอนะ",
           "type": "FAMILY",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.257Z"
+          "createdAt": "2026-08-07T04:54:47.257Z"
         },
         {
-          "id": "fd5eb537-c379-4bc2-ab42-cf602fbf2007",
+          "id": "fe8d3657-7cc5-4711-82cc-b5e4cb5faa09",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "senderName": "แก๊งเพื่อนร่วมรุ่น",
           "relationship": "เพื่อนสนิท",
           "message": "ขอให้รักกันนานๆ นะทั้งสอง ภาพพรีเวดสวยมาก งานวันนี้ขอให้เป็นวันที่เต็มไปด้วยรอยยิ้มและความทรงจำดีๆ",
           "type": "GENERAL",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.257Z"
+          "createdAt": "2026-08-07T04:54:47.257Z"
         }
       ],
       "memoryPosts": [
         {
-          "id": "5abe80ce-1bb7-4a7d-9e18-39eafdb80be3",
+          "id": "958b3915-a6f8-460b-aad4-7b5863669a73",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "title": "ขอบคุณที่ชวนมาร่วมยินดี",
           "content": "วันนี้ยิ้มไม่หุบเลย ได้เห็นคู่ที่คบกันมานานในที่สุดก็มาถึงวันสำคัญ ขอให้มีความสุขยาวนานแบบที่ทุกคนเห็นกันในวันนี้นะ",
@@ -3154,10 +3304,10 @@
           "mediaType": "IMAGE",
           "senderName": "เพื่อนร่วมรุ่น",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.259Z"
+          "createdAt": "2026-08-07T04:54:47.268Z"
         },
         {
-          "id": "bf12039d-e06b-4c02-9e94-c51a3c8d75c9",
+          "id": "c2644939-a8fa-402b-b31e-51d88fd10379",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "title": "ยินดีกับลูกสาวของเรา",
           "content": "ขอบคุณทุกคนที่มาร่วมเป็นสักขีพยาน วันนี้สวยและอบอุ่นมาก ขอให้ทั้งสองดูแลกันและเดินทางต่อไปด้วยกันอย่างมีความสุข",
@@ -3165,10 +3315,10 @@
           "mediaType": "IMAGE",
           "senderName": "ครอบครัวฝ่ายเจ้าสาว",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.259Z"
+          "createdAt": "2026-08-07T04:54:47.268Z"
         },
         {
-          "id": "18bb38bf-468f-4f1b-ac25-1dd26ec8edf3",
+          "id": "2a684801-9a9b-4432-b766-00c242057687",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "title": "โมเมนต์หลังเลิกงานเลี้ยง",
           "content": "หลังงานเลี้ยงเรายังนั่งคุยกันต่อ บอกเล่าเรื่องเก่า ๆ จนดึก ขอบคุณที่เปิดพื้นที่ให้เพื่อน ๆ ได้ร่วมแสดงความยินดีจริง ๆ",
@@ -3176,10 +3326,10 @@
           "mediaType": "NONE",
           "senderName": "ทีมงานเพื่อน",
           "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.259Z"
+          "createdAt": "2026-08-07T04:54:47.268Z"
         },
         {
-          "id": "53c2fbe5-87c1-42ed-a5cc-a615243d3e21",
+          "id": "04c0cea6-481a-45f2-9986-c0abbf1d14c4",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "title": "โมเมนต์ก่อนวันงาน",
           "content": "เมื่อวานไปช่วยเตรียมของชำร่วยด้วยกัน ทั้งคู่ตื่นเต้นมาก ขอให้วันนี้ราบรื่นและสนุกที่สุดนะคะ",
@@ -3187,10 +3337,10 @@
           "mediaType": "NONE",
           "senderName": "น้องแป้ง",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.259Z"
+          "createdAt": "2026-08-07T04:54:47.268Z"
         },
         {
-          "id": "d75cf2cb-ef47-4d58-b5c7-86cf816d212e",
+          "id": "07cef990-8560-4c7b-a23a-d25b3ecd5994",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "title": "แชร์ภาพจากงานเลี้ยง",
           "content": "ฝากภาพบรรยากาศตอนเช็คอินแขก บรรยากาศอบอุ่นมาก ขอให้คู่บ่าวสาวมีความสุขตลอดไปค่ะ",
@@ -3198,12 +3348,12 @@
           "mediaType": "IMAGE",
           "senderName": "คุณต้น",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.259Z"
+          "createdAt": "2026-08-07T04:54:47.268Z"
         }
       ],
       "familyMembers": [
         {
-          "id": "426d18a1-c005-4e1c-a365-fc15e19c185b",
+          "id": "6bc84ece-f384-4390-9b97-90a1a8ef1549",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "name": "คุณชัชวาล คูกิมิยะ",
           "nickname": "บิดาเจ้าบ่าว",
@@ -3219,10 +3369,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.262Z"
+          "createdAt": "2026-08-07T04:54:47.284Z"
         },
         {
-          "id": "56f716e3-3dc8-4452-ba0d-d53fc730fef0",
+          "id": "e4af6ca9-3a5c-4048-a62c-33554b4c0b90",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "name": "คุณนิภาพร คูกิมิยะ",
           "nickname": "มารดาเจ้าบ่าว",
@@ -3238,10 +3388,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.263Z"
+          "createdAt": "2026-08-07T04:54:47.289Z"
         },
         {
-          "id": "b4c1738d-f9a7-48c4-b51b-c73d41d26550",
+          "id": "a82b4e42-58c1-4543-ba42-9f25dfe4d655",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "name": "ณัฐพล คูกิมิยะ",
           "nickname": "พี่ชายเจ้าบ่าว",
@@ -3257,10 +3407,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.264Z"
+          "createdAt": "2026-08-07T04:54:47.293Z"
         },
         {
-          "id": "d6a32812-6427-4d8a-9671-8044a0911c21",
+          "id": "41d66069-98b0-45a0-be1e-3eb74c93f0a9",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "name": "อมลวรรณ สายสมรส",
           "nickname": "เจ้าสาว",
@@ -3276,10 +3426,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.265Z"
+          "createdAt": "2026-08-07T04:54:47.301Z"
         },
         {
-          "id": "b999ab26-a89e-436d-b617-b0f44ff28421",
+          "id": "899afc77-a27e-4da5-a7a9-9fda2bdcb6cf",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "name": "คุณวิชัย สายสมรส",
           "nickname": "พี่ชายเจ้าสาว",
@@ -3295,10 +3445,10 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.266Z"
+          "createdAt": "2026-08-07T04:54:47.308Z"
         },
         {
-          "id": "ea399f57-22ce-4c44-98a4-1fb946e0f725",
+          "id": "8357af97-89fa-4481-a87e-b27524f5454f",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "name": "น้องปิ๊ก สายสมรส",
           "nickname": "น้องสาวเจ้าสาว",
@@ -3314,13 +3464,13 @@
           "avatarRotate": 0,
           "spouseOfId": null,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.267Z"
+          "createdAt": "2026-08-07T04:54:47.314Z"
         }
       ],
       "ebooks": [],
       "donations": [
         {
-          "id": "2a9bad6c-738b-44c1-b39d-5864b7462263",
+          "id": "0bf78c91-56ae-47fe-8d09-cb835d0f1d30",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "donorName": "คุณวิไล สายสมรส",
           "amount": 3000,
@@ -3329,10 +3479,10 @@
           "hideAmount": false,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-07-27T08:41:47.260Z"
+          "createdAt": "2026-08-07T04:54:47.276Z"
         },
         {
-          "id": "dad0b32f-23ff-4e06-980b-6a6e4ddb7397",
+          "id": "e8e204d5-8dae-499b-b85a-54f62ed0ebc2",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "donorName": "พี่ตูน & เพื่อนร่วมงาน",
           "amount": 1500,
@@ -3341,10 +3491,10 @@
           "hideAmount": false,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-07-27T08:41:47.260Z"
+          "createdAt": "2026-08-07T04:54:47.276Z"
         },
         {
-          "id": "ec5f90d7-7071-4720-beb9-fa27a34a0c83",
+          "id": "ae6bedad-46c8-45b7-a1f1-495aa6cf5f72",
           "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
           "donorName": "ผู้ไม่ประสงค์ออกนาม",
           "amount": 500,
@@ -3353,7 +3503,7 @@
           "hideAmount": true,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-07-27T08:41:47.260Z"
+          "createdAt": "2026-08-07T04:54:47.276Z"
         }
       ]
     },
@@ -3489,40 +3639,41 @@
         },
         "visibility": "PUBLIC",
         "status": "ACTIVE",
-        "expiredAt": "2036-07-24T08:41:47.267Z",
+        "expiredAt": "2036-08-04T04:54:47.317Z",
         "donationPromptPay": "",
         "donationAccountName": "",
         "donationActive": false,
         "createdAt": "2026-07-25T07:45:14.134Z",
-        "updatedAt": "2026-07-27T08:41:47.270Z"
+        "updatedAt": "2026-08-07T04:54:47.325Z"
       },
       "menus": [
         {
-          "id": "322d1406-1ff8-4697-8b74-847769ba04fb",
+          "id": "3f6143b9-6f4e-467a-94ac-1cdc626937a6",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "title": "หน้าแรก",
           "pageType": "HOME",
           "isVisible": true,
           "sortOrder": 1,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.276Z"
+          "createdAt": "2026-08-07T04:54:47.358Z"
         },
         {
-          "id": "0a512974-611c-4f4c-b52d-acce1a821704",
+          "id": "bb61a4da-bb83-40d3-a481-2f4d5d8c3587",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "title": "คลังภาพแสนรัก",
           "pageType": "GALLERY",
           "isVisible": true,
           "sortOrder": 2,
           "parentId": null,
-          "createdAt": "2026-07-27T08:41:47.276Z"
+          "createdAt": "2026-08-07T04:54:47.358Z"
         }
       ],
       "medias": [
         {
-          "id": "30c53653-69ba-48ad-bfe5-7b201a9d246a",
+          "id": "0e111605-7aef-4f1e-9eea-02f1b052f4eb",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/couple-demo-pluemploy.mp4",
+          "thumbnailPath": null,
           "fileName": "Highlight ทริปเชียงใหม่",
           "fileSize": "2429837",
           "mimeType": "video/mp4",
@@ -3530,13 +3681,13 @@
           "album": "VIDEO",
           "isDeleted": false,
           "sortOrder": 1,
-          "createdAt": "2026-07-27T08:41:47.278Z",
-          "thumbnailPath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/couple-demo-pluemploy-thumb.jpg"
+          "createdAt": "2026-08-07T04:54:47.367Z"
         },
         {
-          "id": "6c092906-2f40-4f69-9b92-e97cf659cbad",
+          "id": "4dbb03ca-9fb6-43e4-b8d0-527c36ea7450",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971702290-gallery-1784971702194-6a7ed7c6-b5a9-4119-9b4c-b5d22879ffbb.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784971702194-6a7ed7c6-b5a9-4119-9b4c-b5d22879ffbb.jpeg",
           "fileSize": "146247",
           "mimeType": "image/jpeg",
@@ -3544,12 +3695,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.278Z"
+          "createdAt": "2026-08-07T04:54:47.367Z"
         },
         {
-          "id": "fb0cd246-995a-490a-a80e-be4037a9646d",
+          "id": "4b303b68-1894-424f-924a-9aac8f527ad2",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971710951-gallery-1784971710896-dddd8cfc-9135-415b-8b50-c9716f879f31.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784971710896-dddd8cfc-9135-415b-8b50-c9716f879f31.jpeg",
           "fileSize": "195376",
           "mimeType": "image/jpeg",
@@ -3557,12 +3709,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.278Z"
+          "createdAt": "2026-08-07T04:54:47.367Z"
         },
         {
-          "id": "591b0d1c-d7e1-4b79-a875-87564f8fefbd",
+          "id": "dd8f9cf1-e66a-4287-969f-b78770ed4a05",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969245414-gallery-1784969245203-CleanShot 2569-07-25 at 15.23.09@2x.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784969245203-CleanShot 2569-07-25 at 15.23.09@2x.jpg",
           "fileSize": "768287",
           "mimeType": "image/jpeg",
@@ -3570,12 +3723,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.278Z"
+          "createdAt": "2026-08-07T04:54:47.367Z"
         },
         {
-          "id": "a00e7803-b5f0-48c6-9b48-b84f537b52bd",
+          "id": "9ee90c24-0a40-4781-9dab-6e6e73d5c0ab",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969254875-gallery-1784969254813-CleanShot 2569-07-25 at 15.23.19@2x.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784969254813-CleanShot 2569-07-25 at 15.23.19@2x.jpg",
           "fileSize": "690914",
           "mimeType": "image/jpeg",
@@ -3583,12 +3737,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.278Z"
+          "createdAt": "2026-08-07T04:54:47.367Z"
         },
         {
-          "id": "b741319a-0856-43dd-84d5-dc5b18d2da80",
+          "id": "75d718ca-5d61-41b4-afc7-a7389df332ae",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969261567-gallery-1784969261514-CleanShot 2569-07-25 at 15.23.29@2x.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784969261514-CleanShot 2569-07-25 at 15.23.29@2x.jpg",
           "fileSize": "614266",
           "mimeType": "image/jpeg",
@@ -3596,12 +3751,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.278Z"
+          "createdAt": "2026-08-07T04:54:47.367Z"
         },
         {
-          "id": "54a6981f-0a2d-4eee-a7de-0292f97542bc",
+          "id": "d73d6ed7-7ae9-4339-8e49-db14d020d8a0",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969266780-gallery-1784969266742-CleanShot 2569-07-25 at 15.27.45@2x.jpg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784969266742-CleanShot 2569-07-25 at 15.27.45@2x.jpg",
           "fileSize": "1867277",
           "mimeType": "image/jpeg",
@@ -3609,12 +3765,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.278Z"
+          "createdAt": "2026-08-07T04:54:47.367Z"
         },
         {
-          "id": "07727f30-a8b7-4848-97ef-30bb94c832b9",
+          "id": "f87b4337-26ea-448d-9ea3-3549a2d1984c",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971721991-gallery-1784971721951-30ead0c5-6672-4994-acaa-ee67f1536ec5.jpeg",
+          "thumbnailPath": null,
           "fileName": "gallery-1784971721951-30ead0c5-6672-4994-acaa-ee67f1536ec5.jpeg",
           "fileSize": "165960",
           "mimeType": "image/jpeg",
@@ -3622,68 +3779,13 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-07-27T08:41:47.278Z"
+          "createdAt": "2026-08-07T04:54:47.367Z"
         }
       ],
       "condolences": [],
       "memoryPosts": [
         {
-          "id": "6b2026a6-1a24-409c-b64f-d0a2ae6e1a13",
-          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
-          "title": "วันแรกที่รู้สึกว่า “ใช่เลย”",
-          "content": "ยังจำได้ว่าวันนั้นฝนตกเล็กน้อย เรานั่งคุยกันจนร้านปิด พลอยบอกว่า “พรุ่งนี้มากินข้าวต่อไหม” แล้วผมก็รู้เลยว่าอยากเจออีก",
-          "mediaUrl": "/defaults/couple/cover/1.png",
-          "mediaType": "IMAGE",
-          "senderName": "ปลื้ม",
-          "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.280Z"
-        },
-        {
-          "id": "1b3854c1-b710-4b8a-8854-b0426fbc4be2",
-          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
-          "title": "ทริปแรกที่ไม่ต้องแพลนเยอะ",
-          "content": "ชอบที่ปลื้มไม่รีบ ไม่บังคับ แค่ขับรถไปเรื่อย ๆ แล้วหยุดถ่ายรูปทุกจุดที่สวย ทริปนี้ทำให้รู้ว่าเราเดินทางด้วยกันได้จริง",
-          "mediaUrl": "/defaults/couple/cover/2.png",
-          "mediaType": "IMAGE",
-          "senderName": "พลอย",
-          "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.280Z"
-        },
-        {
-          "id": "5a7c37cb-aa4e-4698-a011-b37f1e0176dd",
-          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
-          "title": "วันแรกในบ้านหลังเล็ก",
-          "content": "กล่องยังไม่แกะหมด แต่เรานั่งพื้นกินข้าวกล่องด้วยกันแล้วมีความสุขมาก บ้านหลังนี้เริ่มจากความตั้งใจของเราสองคน",
-          "mediaUrl": "/defaults/couple/cover/3.png",
-          "mediaType": "IMAGE",
-          "senderName": "ปลื้ม & พลอย",
-          "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.280Z"
-        },
-        {
-          "id": "f9516e6b-b428-4a2f-8591-8c73bf5013cd",
-          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
-          "title": "โน้ตถึงอนาคตของเรา",
-          "content": "ไม่รู้ว่าอีก 3 ปี 5 ปี เราจะอยู่ที่ไหน แต่ขอให้ยังมีเวลานั่งคุยกันแบบนี้ ยิ้มให้กันแบบนี้ และยังเลือกกันแบบนี้",
-          "mediaUrl": "",
-          "mediaType": "NONE",
-          "senderName": "พลอย",
-          "isApproved": true,
-          "createdAt": "2026-07-27T08:41:47.280Z"
-        },
-        {
-          "id": "9d5d6fee-b39b-4e9d-a87f-51344281303d",
-          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
-          "title": "ทริปแรกที่ไปด้วยกัน",
-          "content": "ยังจำได้ว่าทริปเชียงใหม่ครั้งแรก ปลื้มกับพลอยดูแลกันมาตลอดทาง ขอให้มีความสุขแบบนี้ยาวนาน",
-          "mediaUrl": "",
-          "mediaType": "NONE",
-          "senderName": "เพื่อนสนิท",
-          "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.280Z"
-        },
-        {
-          "id": "f4778f3a-307b-4371-b024-bb112e7ab196",
+          "id": "32226788-34eb-4017-a861-351600ea0b78",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "title": "",
           "content": "ฝากรูปวันเกิดพลอยปีที่แล้ว ยินดีที่มีพี่ปลื้มดูแลน้องสาวเสมอ",
@@ -3691,7 +3793,62 @@
           "mediaType": "NONE",
           "senderName": "น้องสาวพลอย",
           "isApproved": false,
-          "createdAt": "2026-07-27T08:41:47.280Z"
+          "createdAt": "2026-08-07T04:54:47.382Z"
+        },
+        {
+          "id": "088ec5bc-5cd1-4ab2-a57e-60acb53a39ee",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "วันแรกที่รู้สึกว่า “ใช่เลย”",
+          "content": "ยังจำได้ว่าวันนั้นฝนตกเล็กน้อย เรานั่งคุยกันจนร้านปิด พลอยบอกว่า “พรุ่งนี้มากินข้าวต่อไหม” แล้วผมก็รู้เลยว่าอยากเจออีก",
+          "mediaUrl": "/defaults/couple/cover/1.png",
+          "mediaType": "IMAGE",
+          "senderName": "ปลื้ม",
+          "isApproved": true,
+          "createdAt": "2026-08-07T04:54:47.382Z"
+        },
+        {
+          "id": "e597512a-b727-4e29-b301-73e7da5cd896",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "ทริปแรกที่ไม่ต้องแพลนเยอะ",
+          "content": "ชอบที่ปลื้มไม่รีบ ไม่บังคับ แค่ขับรถไปเรื่อย ๆ แล้วหยุดถ่ายรูปทุกจุดที่สวย ทริปนี้ทำให้รู้ว่าเราเดินทางด้วยกันได้จริง",
+          "mediaUrl": "/defaults/couple/cover/2.png",
+          "mediaType": "IMAGE",
+          "senderName": "พลอย",
+          "isApproved": true,
+          "createdAt": "2026-08-07T04:54:47.382Z"
+        },
+        {
+          "id": "88b3ddb9-79c9-49db-9d27-5936fc3b9357",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "วันแรกในบ้านหลังเล็ก",
+          "content": "กล่องยังไม่แกะหมด แต่เรานั่งพื้นกินข้าวกล่องด้วยกันแล้วมีความสุขมาก บ้านหลังนี้เริ่มจากความตั้งใจของเราสองคน",
+          "mediaUrl": "/defaults/couple/cover/3.png",
+          "mediaType": "IMAGE",
+          "senderName": "ปลื้ม & พลอย",
+          "isApproved": true,
+          "createdAt": "2026-08-07T04:54:47.382Z"
+        },
+        {
+          "id": "ba2c6ae0-4375-451b-a28f-81b8df11fa1e",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "โน้ตถึงอนาคตของเรา",
+          "content": "ไม่รู้ว่าอีก 3 ปี 5 ปี เราจะอยู่ที่ไหน แต่ขอให้ยังมีเวลานั่งคุยกันแบบนี้ ยิ้มให้กันแบบนี้ และยังเลือกกันแบบนี้",
+          "mediaUrl": "",
+          "mediaType": "NONE",
+          "senderName": "พลอย",
+          "isApproved": true,
+          "createdAt": "2026-08-07T04:54:47.382Z"
+        },
+        {
+          "id": "c9b9f81c-7ee9-4835-be82-2d16a996f188",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "ทริปแรกที่ไปด้วยกัน",
+          "content": "ยังจำได้ว่าทริปเชียงใหม่ครั้งแรก ปลื้มกับพลอยดูแลกันมาตลอดทาง ขอให้มีความสุขแบบนี้ยาวนาน",
+          "mediaUrl": "",
+          "mediaType": "NONE",
+          "senderName": "เพื่อนสนิท",
+          "isApproved": false,
+          "createdAt": "2026-08-07T04:54:47.382Z"
         }
       ],
       "familyMembers": [],
