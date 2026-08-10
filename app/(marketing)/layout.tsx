@@ -1,5 +1,6 @@
 import MarketingNav from '@/components/marketing/MarketingNav';
 import MarketingFooter from '@/components/marketing/MarketingFooter';
+import MarketingAccessibilityWidget from '@/components/marketing/MarketingAccessibilityWidget';
 
 export default function MarketingLayout({
   children,
@@ -14,6 +15,7 @@ export default function MarketingLayout({
       <MarketingNav />
       {children}
       <MarketingFooter />
+      <MarketingAccessibilityWidget />
     </div>
   );
 }
