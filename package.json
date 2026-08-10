@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "demos:export": "node scripts/export-demo-sites.mjs && node scripts/bundle-demo-media.mjs",
-    "demos:seed": "node scripts/seed-production-demos.mjs"
+    "demos:seed": "node scripts/seed-production-demos.mjs",
+    "demos:sync-video-thumbs": "node scripts/sync-demo-video-thumbs.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1072.0",
