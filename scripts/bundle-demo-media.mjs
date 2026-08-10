@@ -28,6 +28,21 @@ function collectUploadPaths(value, out = new Set()) {
   return out;
 }
 
+function collectDemoMediaPaths(value, out = new Set()) {
+  if (typeof value === 'string' && value.startsWith('/demo-media/')) {
+    out.add(value);
+    return out;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) collectDemoMediaPaths(item, out);
+    return out;
+  }
+  if (value && typeof value === 'object') {
+    for (const v of Object.values(value)) collectDemoMediaPaths(v, out);
+  }
+  return out;
+}
+
 function rewriteUploadPaths(value) {
   if (typeof value === 'string') {
     if (value.startsWith('/uploads/')) return `/demo-media${value.slice('/uploads'.length)}`;
@@ -55,8 +70,8 @@ function main() {
 
   for (const uploadPath of uploadPaths) {
     const rel = uploadPath.replace(/^\/uploads\//, '');
-    const src = path.join(UPLOADS_ROOT, rel);
     const dest = path.join(DEMO_MEDIA_ROOT, rel);
+    const src = path.join(UPLOADS_ROOT, rel);
 
     if (!fs.existsSync(src)) {
       console.warn(`Missing local file: ${uploadPath}`);
@@ -64,6 +79,22 @@ function main() {
       continue;
     }
 
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
+    copied += 1;
+  }
+
+  // Also backfill /demo-media paths that were rewritten earlier but never copied.
+  for (const demoPath of collectDemoMediaPaths(payload)) {
+    const rel = demoPath.replace(/^\/demo-media\//, '');
+    const dest = path.join(DEMO_MEDIA_ROOT, rel);
+    if (fs.existsSync(dest)) continue;
+    const src = path.join(UPLOADS_ROOT, rel);
+    if (!fs.existsSync(src)) {
+      console.warn(`Missing local file for demo path: ${demoPath}`);
+      missing += 1;
+      continue;
+    }
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(src, dest);
     copied += 1;
