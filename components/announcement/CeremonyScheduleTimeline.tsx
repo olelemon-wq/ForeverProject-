@@ -111,7 +111,7 @@ export default function CeremonyScheduleTimeline({
       <h3
         className={cn(
           'flex items-center gap-1.5 font-black uppercase tracking-wider',
-          compact ? 'text-[10px]' : 'text-xs',
+          compact ? 'text-xs' : 'text-xs',
         )}
         style={{ color: 'var(--ceremony-primary)' }}
       >
@@ -164,7 +164,7 @@ export default function CeremonyScheduleTimeline({
                   <p
                     className={cn(
                       'mt-0.5 font-medium leading-relaxed',
-                      compact ? 'text-[11px]' : 'text-sm',
+                      compact ? 'text-xs' : 'text-sm',
                     )}
                     style={{ color: 'var(--ceremony-muted)' }}
                   >

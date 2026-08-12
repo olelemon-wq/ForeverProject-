@@ -1,13 +1,22 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { randomUUID } from 'crypto';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
 import { getInitialFeatureMapForCategory } from '@/lib/categories';
 import { getSeedDefaultMedia } from '@/lib/defaultMedia';
 
+const CATEGORY_PLACEHOLDER_NAME: Record<string, string> = {
+  Memorial: 'เว็บไซต์รำลึกบุคคล',
+  'Family Legacy': 'เว็บไซต์เรื่องราวครอบครัว',
+  Couple: 'เว็บไซต์คู่รัก',
+  Wedding: 'เว็บไซต์งานแต่งงาน',
+  Friends: 'เว็บไซต์กลุ่มเพื่อน',
+  'Pet Memorial': 'เว็บไซต์สัตว์เลี้ยง',
+};
+
 export async function POST(request: Request) {
   try {
-    // 1. Authenticate user from JWT session cookie
     const cookieStore = await cookies();
     const session = cookieStore.get('session')?.value;
 
@@ -21,26 +30,17 @@ export async function POST(request: Request) {
     }
 
     const userPhone = decoded.phone;
+    const body = await request.json();
+    const { category, themeConfig } = body;
 
-    // 2. Parse request parameters
-    const { slug, name, category, themeConfig, deceasedName } = await request.json();
-
-    if (!slug || !name || !category || !deceasedName) {
-      return NextResponse.json({ error: 'กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน' }, { status: 400 });
+    if (!category) {
+      return NextResponse.json({ error: 'กรุณาเลือกหมวดความทรงจำ' }, { status: 400 });
     }
 
-    const cleanSlug = slug.trim().toLowerCase();
+    // Draft flow: category only → temporary slug + PENDING_PAYMENT
+    const cleanSlug = `draft-${randomUUID().replace(/-/g, '').slice(0, 12)}`;
+    const name = CATEGORY_PLACEHOLDER_NAME[category] || 'เว็บไซต์ใหม่';
 
-    // 3. Re-validate slug uniqueness to prevent race conditions
-    const existingTenant = await db.tenant.findUnique({
-      where: { slug: cleanSlug },
-    });
-
-    if (existingTenant) {
-      return NextResponse.json({ error: 'ชื่อลิงก์ URL นี้ถูกใช้งานไปแล้ว กรุณาป้อนชื่ออื่น' }, { status: 400 });
-    }
-
-    // 4. Retrieve or create Webmaster in database
     let webmaster = await db.webmaster.findUnique({
       where: { phone: userPhone },
     });
@@ -51,8 +51,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // 5. Calculate default values
-    const expiredAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // Default 1 year subscription duration
+    const expiredAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
     const seedMedia = getSeedDefaultMedia(category);
     const defaultThemeConfig = {
       primaryColor: '#0d9488',
@@ -61,18 +60,15 @@ export async function POST(request: Request) {
       heroStyle: 'Classic',
       avatarUrl: seedMedia.avatarUrl,
       coverUrl: seedMedia.coverUrl,
+      subjects: [{ name: '' }],
       ...(themeConfig || {}),
-      // Seed sensible default feature visibility based on selected category journey
       features: getInitialFeatureMapForCategory(category),
     };
 
-    // Keep avatar/cover if client omitted them
     if (!defaultThemeConfig.avatarUrl) defaultThemeConfig.avatarUrl = seedMedia.avatarUrl;
     if (!defaultThemeConfig.coverUrl) defaultThemeConfig.coverUrl = seedMedia.coverUrl;
 
-    // 6. DB Transaction to create Tenant, default Menu pages, Webmaster connection, and pending payment
     const result = await db.$transaction(async (tx) => {
-      // Create Tenant
       const tenant = await tx.tenant.create({
         data: {
           slug: cleanSlug,
@@ -80,13 +76,12 @@ export async function POST(request: Request) {
           category,
           ownerPhone: userPhone,
           themeConfig: defaultThemeConfig,
-          visibility: 'PUBLIC',
-          status: 'ACTIVE', // Initial status set to ACTIVE but subscription will be created on payment success
+          visibility: 'PRIVATE',
+          status: 'PENDING_PAYMENT',
           expiredAt,
         },
       });
 
-      // Create default pages structure (Home, Gallery, Condolence - BR008 & default pages requirement)
       await tx.menu.createMany({
         data: [
           { websiteId: tenant.id, title: 'หน้าแรก', pageType: 'HOME', sortOrder: 1, isVisible: true },
@@ -95,7 +90,6 @@ export async function POST(request: Request) {
         ],
       });
 
-      // Bind webmaster to website as MAIN Owner
       await tx.websiteWebmaster.create({
         data: {
           websiteId: tenant.id,
@@ -104,25 +98,23 @@ export async function POST(request: Request) {
         },
       });
 
-      // Create pending Payment log (F004)
       const paymentRef = `QR-${cleanSlug}-${Math.floor(10000 + Math.random() * 90000)}`;
       const payment = await tx.payment.create({
         data: {
           websiteId: tenant.id,
           refId: paymentRef,
           type: 'NEW_WEBSITE',
-          amount: 2000.0, // First year is 2000 baht (BR011)
+          amount: 2000.0,
           status: 'PENDING',
         },
       });
 
-      // Create initial audit log (BR036)
       await tx.auditLog.create({
         data: {
           websiteId: tenant.id,
           webmasterId: webmaster.id,
           action: 'PUBLISH',
-          details: `สร้างร่างเว็บไซต์สำเร็จและรอการชำระเงินสำหรับ /${cleanSlug}`,
+          details: `สร้างร่างเว็บไซต์หมวด ${category} รอชำระเงิน (slug ชั่วคราว ${cleanSlug})`,
         },
       });
 
@@ -134,6 +126,7 @@ export async function POST(request: Request) {
       message: 'ร่างเว็บไซต์ได้รับการบันทึกสำเร็จ กรุณาชำระเงินเพื่อเปิดใช้งาน',
       id: result.tenant.id,
       slug: result.tenant.slug,
+      status: result.tenant.status,
       payment: {
         id: result.payment.id,
         refId: result.payment.refId,

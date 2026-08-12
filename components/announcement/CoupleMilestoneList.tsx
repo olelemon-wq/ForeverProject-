@@ -29,7 +29,7 @@ export default function CoupleMilestoneList({
     <div className="space-y-5 text-left" style={milestoneThemeStyle}>
       {!hideTitle && (
       <h3
-        className={`${compact ? 'text-[10px]' : 'text-xs'} font-black uppercase tracking-wider flex items-center gap-1.5`}
+        className={`${compact ? 'text-xs' : 'text-xs'} font-black uppercase tracking-wider flex items-center gap-1.5`}
         style={{ color: 'var(--milestone-primary)' }}
       >
         <Calendar className="w-4 h-4" aria-hidden />
@@ -60,7 +60,7 @@ export default function CoupleMilestoneList({
 
               <div className="flex gap-3 sm:gap-4">
                 <div
-                  className={`relative z-10 mt-1 flex shrink-0 items-center justify-center rounded-full border-2 shadow-sm ${compact ? 'size-6 text-[9px]' : 'size-7 text-[10px]'}`}
+                  className={`relative z-10 mt-1 flex shrink-0 items-center justify-center rounded-full border-2 shadow-sm ${compact ? 'size-6 text-xs' : 'size-7 text-xs'}`}
                   style={{
                     color: 'var(--milestone-primary)',
                     borderColor: 'var(--milestone-border)',
@@ -87,7 +87,7 @@ export default function CoupleMilestoneList({
                           {dateDisplay.day}
                         </p>
                         <p
-                          className={`font-bold leading-snug ${compact ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-[11px]'} sm:mt-1 sm:text-center`}
+                          className={`font-bold leading-snug ${compact ? 'text-xs sm:text-xs' : 'text-xs sm:text-xs'} sm:mt-1 sm:text-center`}
                           style={{ color: 'var(--milestone-secondary)' }}
                         >
                           {dateDisplay.monthYear}
@@ -105,7 +105,7 @@ export default function CoupleMilestoneList({
                         </h4>
                         {isFirst && (
                           <span
-                            className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold"
                             style={{
                               color: 'var(--milestone-primary)',
                               backgroundColor: 'var(--milestone-soft)',
@@ -144,7 +144,7 @@ export default function CoupleMilestoneList({
 
                       {milestone.note && (
                         <p
-                          className={`border-l-2 pl-3 italic leading-relaxed ${compact ? 'text-[11px]' : 'text-xs'}`}
+                          className={`border-l-2 pl-3 italic leading-relaxed ${compact ? 'text-xs' : 'text-xs'}`}
                           style={{
                             color: 'var(--milestone-muted)',
                             borderColor: 'var(--milestone-border)',
@@ -159,7 +159,7 @@ export default function CoupleMilestoneList({
                           href={milestone.mapLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-bold transition active:scale-95 focus-visible:outline-none focus-visible:ring-4 ${compact ? 'mt-1' : 'mt-2'}`}
+                          className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition active:scale-95 focus-visible:outline-none focus-visible:ring-4 ${compact ? 'mt-1' : 'mt-2'}`}
                           style={{
                             color: 'var(--milestone-primary)',
                             borderColor: 'var(--milestone-border)',

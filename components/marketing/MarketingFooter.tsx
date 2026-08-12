@@ -21,7 +21,7 @@ export default function MarketingFooter() {
   return (
     <footer className="bg-[#FFFFFF] border-t border-[#E8E8ED] py-14 text-xs">
       <div className="max-w-[1280px] mx-auto px-6 text-left">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-12 border-b border-[#E8E8ED] pb-12">
+        <div className="grid grid-cols-3 gap-x-6 gap-y-8 mb-12 border-b border-[#E8E8ED] pb-12 md:gap-8">
           <div className="space-y-3">
             <h4 className="font-semibold text-[#1D1D1F]">ผลิตภัณฑ์</h4>
             <ul className="space-y-2">

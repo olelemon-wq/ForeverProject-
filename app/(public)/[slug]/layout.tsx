@@ -71,7 +71,11 @@ export default async function PublicMemorialLayout(props: {
   const { slug } = await props.params;
   const tenant = await getTenantData(slug);
 
-  if (!tenant || tenant.status === 'SUSPENDED') {
+  if (!tenant || tenant.status === 'SUSPENDED' || tenant.status === 'PENDING_PAYMENT') {
+    notFound();
+  }
+
+  if (tenant.slug.startsWith('draft-')) {
     notFound();
   }
 

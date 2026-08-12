@@ -10,6 +10,7 @@ import {
   Network,
   BookOpen,
   HandHeart,
+  CalendarDays,
   Check,
   Video,
   Lock,
@@ -36,6 +37,7 @@ const ICONS: Record<string, LucideIcon> = {
   BookOpen,
   HandHeart,
   Video,
+  CalendarDays,
 };
 
 export default function FeatureToggleList({
@@ -167,7 +169,7 @@ export default function FeatureToggleList({
                       <span className="flex items-center gap-2 text-sm font-bold text-stone-900">
                         <span>{displayLabel}</span>
                         {isMandatory && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-[#0071e3]/15 bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-[#0071e3]">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-[#0071e3]/15 bg-blue-50 px-2 py-0.5 text-xs font-bold text-[#0071e3]">
                             <Lock className="size-2.5" />
                             จำเป็น
                           </span>

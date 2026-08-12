@@ -34,6 +34,7 @@ model Tenant {
   memoryPosts   MemoryPost[]
   familyMembers FamilyMember[]
   ebooks        Ebook[]
+  activities    Activity[]
   donations     Donation[]
   memorialPosts MemorialPost[]
 }
@@ -242,6 +243,22 @@ model Ebook {
   totalPages Int
   pages      Json     // Array of strings representing pages or chapter summaries
   createdAt  DateTime @default(now())
+
+  website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+}
+
+model Activity {
+  id          String    @id @default(uuid())
+  websiteId   String
+  title       String
+  description String?
+  images      Json      @default("[]")
+  pdfUrl      String?
+  eventDate   DateTime?
+  isRecurring Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   website Tenant @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 }

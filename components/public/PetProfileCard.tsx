@@ -130,7 +130,7 @@ export default function PetProfileCard({
         }}
       >
         <span
-          className={`absolute right-4 top-4 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold ${
+          className={`absolute right-4 top-4 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
             s.isAlive
               ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
               : 'border border-amber-100 bg-amber-50 text-amber-700'
@@ -176,7 +176,7 @@ export default function PetProfileCard({
         {s.breed && <p className="mt-1 text-xs font-medium text-stone-500">{s.breed}</p>}
         {ageLabel && (
           <span
-            className="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
             style={{
               color: 'var(--theme-primary)',
               backgroundColor: 'color-mix(in srgb, var(--theme-primary) 10%, white)',
@@ -206,7 +206,7 @@ export default function PetProfileCard({
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <dt className="text-[11px] font-semibold text-stone-400">{detail.label}</dt>
+                  <dt className="text-xs font-semibold text-stone-400">{detail.label}</dt>
                   <dd className="mt-0.5 break-words text-sm font-bold leading-relaxed text-stone-700">
                     {detail.value}
                   </dd>

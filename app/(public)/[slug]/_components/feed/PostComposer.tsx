@@ -159,7 +159,7 @@ export default function PostComposer({
           <span>เขียนข้อความไว้อาลัยและแสดงความระลึกถึง</span>
         </h3>
         {isLoggedIn && (
-          <span className="text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200/50 px-2 py-0.5 rounded-full font-bold">
+          <span className="text-xs bg-emerald-50 text-emerald-800 border border-emerald-200/50 px-2 py-0.5 rounded-full font-bold">
             โหมดผู้ดูแลระบบ
           </span>
         )}
@@ -173,7 +173,7 @@ export default function PostComposer({
         {!isLoggedIn ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ชื่อผู้ส่ง</label>
+              <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">ชื่อผู้ส่ง</label>
               <input
                 type="text"
                 value={senderName}
@@ -199,7 +199,7 @@ export default function PostComposer({
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ประเภทโพสต์</label>
+              <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">ประเภทโพสต์</label>
               <select
                 value={type}
                 onChange={(e: any) => setType(e.target.value)}
@@ -233,7 +233,7 @@ export default function PostComposer({
 
         {/* Content Box */}
         <div className="space-y-1">
-          <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">ข้อความไว้อาลัย</label>
+          <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">ข้อความไว้อาลัย</label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -246,7 +246,7 @@ export default function PostComposer({
 
         {/* Media Upload */}
         <div className="space-y-1">
-          <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-1">
+          <label className="text-xs font-bold text-stone-500 uppercase tracking-wide block mb-1">
             แนบภาพถ่ายความทรงจำ (ถ้ามี)
           </label>
           <div className="flex items-center gap-3">
@@ -262,7 +262,7 @@ export default function PostComposer({
               />
             </label>
             {mediaFile && (
-              <span className="text-[11px] text-stone-500 truncate max-w-xs font-medium">
+              <span className="text-xs text-stone-500 truncate max-w-xs font-medium">
                 📎 {mediaFile.name} ({(mediaFile.size / (1024 * 1024)).toFixed(2)} MB)
               </span>
             )}
@@ -272,7 +272,7 @@ export default function PostComposer({
         {/* Spam Protection for Guests */}
         {!isLoggedIn && (
           <div className="space-y-2 p-4 bg-stone-50 border border-stone-200 rounded-2xl">
-            <label className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide block">
+            <label className="text-xs font-bold text-emerald-800 uppercase tracking-wide block">
               🛡️ การป้องกันสแปมบอท (กรุณาคำนวณผลลัพธ์)
             </label>
             <div className="flex items-center gap-3">

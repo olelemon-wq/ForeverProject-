@@ -3,7 +3,7 @@ import React from 'react';
 interface MarketingPageShellProps {
   eyebrow?: string;
   title: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   children: React.ReactNode;
 }
 

@@ -23,7 +23,7 @@ export default function EbookBookCover({ title, size = 'md' }: { title: string; 
             className="h-3.5 w-3.5 opacity-80"
             style={{ color: 'var(--theme-primary, #0d9488)' }}
           />
-          <p className="line-clamp-4 text-[7px] font-bold leading-[1.35] text-stone-600">
+          <p className="line-clamp-4 text-xs font-bold leading-[1.35] text-stone-600">
             {title}
           </p>
         </div>

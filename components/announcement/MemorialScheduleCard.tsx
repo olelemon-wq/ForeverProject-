@@ -256,7 +256,7 @@ export default function MemorialScheduleCard({
           <span
             className={cn(
               'block font-semibold uppercase tracking-[0.18em]',
-              compact ? 'text-[9px]' : 'text-[10px]',
+              compact ? 'text-xs' : 'text-xs',
               textMutedClass,
             )}
           >
@@ -314,7 +314,7 @@ export default function MemorialScheduleCard({
             <h3
               className={cn(
                 'flex items-center gap-1.5 font-black uppercase tracking-wider',
-                compact ? 'text-[10px]' : 'text-xs',
+                compact ? 'text-xs' : 'text-xs',
                 headingColorClass,
               )}
             >
@@ -337,7 +337,7 @@ export default function MemorialScheduleCard({
                 <p
                   className={cn(
                     'mt-1 leading-relaxed break-words',
-                    compact ? 'text-[10px]' : 'text-xs',
+                    compact ? 'text-xs' : 'text-xs',
                     textMutedClass,
                   )}
                 >
@@ -351,7 +351,7 @@ export default function MemorialScheduleCard({
                   rel="noopener noreferrer"
                   className={cn(
                     'inline-flex w-auto items-center justify-center gap-1.5 rounded-xl border bg-[color:var(--theme-primary)]/6 border-[color:var(--theme-primary)]/30 font-bold text-[color:var(--theme-primary)] transition hover:bg-[color:var(--theme-primary)]/10 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--theme-primary)]/25 print:hidden',
-                    compact ? 'px-3 py-2 text-[10px]' : 'px-4 py-2.5 text-xs',
+                    compact ? 'px-3 py-2 text-xs' : 'px-4 py-2.5 text-xs',
                   )}
                 >
                   <ExternalLink className="size-3.5" aria-hidden />
@@ -367,7 +367,7 @@ export default function MemorialScheduleCard({
             <h3
               className={cn(
                 'flex items-center gap-1.5 font-black uppercase tracking-wider',
-                compact ? 'text-[10px]' : 'text-xs',
+                compact ? 'text-xs' : 'text-xs',
                 headingColorClass,
               )}
             >
@@ -375,7 +375,7 @@ export default function MemorialScheduleCard({
               <span>{labels.guidelinesTitle}</span>
             </h3>
 
-            <div className={cn('space-y-3', compact ? 'text-[10px]' : 'text-xs')}>
+            <div className={cn('space-y-3', compact ? 'text-xs' : 'text-xs')}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {dressCode && (
                   <div className="flex flex-col gap-0.5">
@@ -414,7 +414,7 @@ export default function MemorialScheduleCard({
         )}
 
         <footer className={cn('border-t pt-4 text-center', footerBorderClass || 'border-stone-200/50')}>
-          <p className={cn('font-medium leading-relaxed', compact ? 'text-[9px]' : 'text-[10px]', textMutedClass)}>
+          <p className={cn('font-medium leading-relaxed', compact ? 'text-xs' : 'text-xs', textMutedClass)}>
             {labels.footerText}
           </p>
         </footer>

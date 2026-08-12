@@ -116,7 +116,7 @@ export default function CondolenceReportDialog({
         onClick={() => !submitted && setOpen(true)}
         disabled={submitted}
         className={cn(
-          'mt-2 inline-flex items-center gap-1 text-[11px] font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--theme-primary)]/25 rounded-md',
+          'mt-2 inline-flex items-center gap-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--theme-primary)]/25 rounded-md',
           submitted ? 'cursor-default text-stone-400' : 'text-stone-400 hover:text-stone-600',
         )}
       >

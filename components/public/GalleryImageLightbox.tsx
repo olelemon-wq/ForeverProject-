@@ -47,7 +47,7 @@ export default function GalleryImageLightbox({
           <div className="flex h-full min-h-0 flex-1 flex-col gap-2 sm:gap-3">
             <div className="flex shrink-0 items-center justify-between gap-3">
               {showNav ? (
-                <span className="text-[10px] font-medium text-white/60 tabular-nums sm:text-xs">
+                <span className="text-xs font-medium text-white/60 tabular-nums sm:text-xs">
                   {(activeIndex ?? 0) + 1} / {items.length}
                 </span>
               ) : (
@@ -121,7 +121,7 @@ export default function GalleryImageLightbox({
               )}
             </div>
 
-            <p className="shrink-0 truncate px-1 text-center text-[10px] text-white/70 sm:text-xs">
+            <p className="shrink-0 truncate px-1 text-center text-xs text-white/70 sm:text-xs">
               {item.fileName}
             </p>
           </div>

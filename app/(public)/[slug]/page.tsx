@@ -9,8 +9,10 @@ import { getEnabledFeatures } from '@/lib/features';
 import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
 import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
 import MemorialScheduleCard from '@/components/announcement/MemorialScheduleCard';
+import LifeStorySection from '@/components/public/LifeStorySection';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { getCategoryEbookMocks, toEbookSummaries } from '@/lib/ebookMocks';
+import { lifeStoryHasContent, normalizeLifeStory } from '@/lib/lifeStory';
 import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { getCategoryJourney } from '@/lib/categories';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
@@ -506,15 +508,15 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
                         <h4 className="flex items-center gap-1.5 text-xs font-extrabold text-stone-850">
                           <span>{c.senderName}</span>
                           {c.type === 'FAMILY' && (
-                            <span className="rounded-full border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-amber-700">ครอบครัว</span>
+                            <span className="rounded-full border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-amber-700">ครอบครัว</span>
                           )}
                         </h4>
                         {tenant.category !== 'Pet Memorial' && c.relationship && c.relationship !== '—' && (
-                          <p className="text-[9px] text-stone-400">ความสัมพันธ์: {c.relationship}</p>
+                          <p className="text-xs text-stone-400">ความสัมพันธ์: {c.relationship}</p>
                         )}
                       </div>
                     </div>
-                    <span className="font-mono text-[9px] text-stone-400">
+                    <span className="font-mono text-xs text-stone-400">
                       {new Date(c.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}
                     </span>
                   </div>
@@ -581,15 +583,23 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
         </section>
       )}
 
-      <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left`}>
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-2"
-            style={{ color: 'var(--theme-primary, #0d9488)' }}>
-          <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {biographyHeading}
-        </h2>
-        <p className="text-stone-600 leading-relaxed text-sm sm:text-base whitespace-pre-line">
-          {displayBiography}
-        </p>
-      </div>
+      {(() => {
+        const memorialLife = normalizeLifeStory(config?.lifeStory, config?.biography || '');
+        if (tenant.category === 'Memorial' && lifeStoryHasContent(memorialLife)) {
+          return <LifeStorySection data={memorialLife} />;
+        }
+        return (
+          <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left`}>
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2"
+                style={{ color: 'var(--theme-primary, #0d9488)' }}>
+              <BookOpen className="w-5 h-5 text-emerald-700" style={{ color: 'var(--theme-primary)' }} /> {biographyHeading}
+            </h2>
+            <p className="text-stone-600 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+              {displayBiography}
+            </p>
+          </div>
+        );
+      })()}
 
     </div>
   );

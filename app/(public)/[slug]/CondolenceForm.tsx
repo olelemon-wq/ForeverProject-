@@ -369,7 +369,7 @@ export default function CondolenceForm({
                   ))}
                 </div>
 
-                <span className="ml-auto hidden select-none text-[10px] text-stone-400 sm:inline">
+                <span className="ml-auto hidden select-none text-xs text-stone-400 sm:inline">
                   {toolbarHint}
                 </span>
               </div>

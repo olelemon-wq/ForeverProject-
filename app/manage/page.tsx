@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import FeatureToggleList from '@/components/FeatureToggleList';
-import ScrollableSubTabs from '@/components/ScrollableSubTabs';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
 import BackupPhoneSection from '@/components/BackupPhoneSection';
 import DefaultMediaPicker from '@/components/DefaultMediaPicker';
@@ -24,6 +23,23 @@ import {
   type CoupleMilestone,
 } from '@/lib/coupleMilestones';
 import CoupleMilestonesEditor from '@/components/manage/CoupleMilestonesEditor';
+import LifeStoryEditor from '@/components/manage/LifeStoryEditor';
+import ActivitiesEditor from '@/components/manage/ActivitiesEditor';
+import MemorialHero from '@/components/public/MemorialHero';
+import {
+  emptyLifeStory,
+  normalizeLifeStory,
+  LIFE_STORY_SECTIONS,
+  type LifeStoryData,
+  type LifeStorySectionId,
+} from '@/lib/lifeStory';
+import {
+  MEMORIAL_HERO_LAYOUTS,
+  normalizeHeroBgMode,
+  normalizeHeroLayout,
+  type HeroBgMode,
+  type HeroLayoutId,
+} from '@/lib/heroLayouts';
 import CircularImageCropModal, { type CircularImageTransform } from '@/components/manage/CircularImageCropModal';
 import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
 import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
@@ -45,8 +61,8 @@ import {
 import { 
   Flame, BookOpen, Camera, GitBranch, Settings, Plus, Minus, Trash2, Edit3, 
   CreditCard, Smartphone, Check, AlertCircle, ArrowLeft, ArrowRight, 
-  LogOut, Upload, User, Calendar, Heart, DollarSign, Download, RotateCw
-, X, Lock, Database, Search, Save, Palette, ChevronUp, ChevronDown, LayoutDashboard, AlertTriangle, MapPin, Clock, Phone, Info, Droplets, Image as ImageIcon, Video, Menu as MenuIcon, Copy, ExternalLink, Globe, Grid, History, FileText, PawPrint } from 'lucide-react';
+  LogOut, Upload, User, Calendar, CalendarDays, Heart, DollarSign, Download, RotateCw
+, X, Lock, Database, Search, Save, Palette, ChevronUp, ChevronDown, LayoutDashboard, AlertTriangle, MapPin, Clock, Phone, Info, Droplets, Image as ImageIcon, Video, Menu as MenuIcon, Copy, ExternalLink, Globe, Grid, History, FileText, PawPrint, Megaphone, BookMarked, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -499,6 +515,13 @@ const usesSingleMilestoneSchedule = (category: string) => category === 'Friends'
 
 const isCoupleCategory = (category: string) => category === 'Couple';
 
+const sidebarSubNavButtonClass = (active: boolean) =>
+  `h-auto w-full justify-start rounded-lg border-transparent py-2 pl-9 pr-3 text-left text-xs font-medium shadow-none transition cursor-pointer ${
+    active
+      ? 'bg-[#0071e3]/8 text-[#0071e3] ring-1 ring-[#0071e3]/15 hover:bg-[#0071e3]/10 hover:text-[#0071e3]'
+      : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
+  }`;
+
 const sidebarNavButtonClass = (active: boolean) =>
   `h-auto w-full justify-start gap-3 rounded-xl border-transparent px-3 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
     active
@@ -674,8 +697,17 @@ export default function WebmasterDashboard() {
   const [selectedAlbumFilter, setSelectedAlbumFilter] = useState('ALL');
   const [isCreatingAlbum, setIsCreatingAlbum] = useState(false);
   const [tempAlbumName, setTempAlbumName] = useState('');
-  const [activeTab, setActiveTab] = useState<'settings' | 'card' | 'gallery' | 'videos' | 'family' | 'ebooks' | 'condolences' | 'billing'>('settings');
-  const [activeSubTab, setActiveSubTab] = useState<'general' | 'media' | 'theme' | 'features' | 'billing'>('general');
+  const [activeTab, setActiveTab] = useState<'settings' | 'card' | 'gallery' | 'videos' | 'family' | 'ebooks' | 'activities' | 'condolences' | 'billing'>('settings');
+  const [activeSubTab, setActiveSubTab] = useState<'general' | 'life-story' | 'announcement' | 'media' | 'theme' | 'features' | 'billing'>('general');
+  const [sidebarGroupOpen, setSidebarGroupOpen] = useState({
+    lifeStory: true,
+    appearance: true,
+    system: false,
+  });
+  const [lifeStorySection, setLifeStorySection] = useState<LifeStorySectionId>('biography');
+  const [lifeStory, setLifeStory] = useState<LifeStoryData>(emptyLifeStory());
+  const [heroLayout, setHeroLayout] = useState<HeroLayoutId>('center-classic');
+  const [heroBgMode, setHeroBgMode] = useState<HeroBgMode>('image');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [youtubeSaving, setYoutubeSaving] = useState(false);
@@ -770,6 +802,7 @@ export default function WebmasterDashboard() {
     videos: true,
     announcement: true,
     ebooks: true,
+    activities: false,
     condolence: true,
     donation: true,
     memory: true,
@@ -788,6 +821,7 @@ export default function WebmasterDashboard() {
   const [ebookPagesText, setEbookPagesText] = useState('');
   const [ebookFile, setEbookFile] = useState<File | null>(null);
   const [ebookFormOpen, setEbookFormOpen] = useState(false);
+  const [activitiesCount, setActivitiesCount] = useState(0);
 
   // Renewal states (Phase 2 Expiration Banner alignment)
   const [renewModalOpen, setRenewModalOpen] = useState(false);
@@ -1285,6 +1319,8 @@ export default function WebmasterDashboard() {
             fontFamily,
             defaultFontSize,
             heroStyle: 'Classic',
+            heroLayout,
+            heroBgMode,
             avatarUrl: deceasedAvatarUrl,
             avatarScale: deceasedAvatarScale,
             avatarX: deceasedAvatarX,
@@ -1296,7 +1332,9 @@ export default function WebmasterDashboard() {
             coverY: deceasedCoverY,
             coverRotate: deceasedCoverRotate,
             imageCoordSpace: 'relative',
-            biography,
+            biography:
+              activeSite.category === 'Memorial' ? lifeStory.biography : biography,
+            lifeStory: activeSite.category === 'Memorial' ? lifeStory : undefined,
             subjects: serializeManageSubjects(subjects, activeSite.category),
             albums: updatedAlbums,
             mediaAlbums: updatedMediaAlbums,
@@ -1534,6 +1572,9 @@ export default function WebmasterDashboard() {
       const loadedFont = config.fontFamily || 'Inter';
       setFontFamily(scriptFonts.includes(loadedFont) ? 'LINE Seed Sans TH' : loadedFont);
       setBiography(config.biography || '');
+      setLifeStory(normalizeLifeStory(config.lifeStory, config.biography || ''));
+      setHeroLayout(normalizeHeroLayout(config.heroLayout));
+      setHeroBgMode(normalizeHeroBgMode(config.heroBgMode, normalizeHeroLayout(config.heroLayout)));
       setSubjects(normalizeManageSubjects(config.subjects || [], site.category));
       setAlbums(config.albums || []);
       setMediaAlbums(config.mediaAlbums || {});
@@ -1595,6 +1636,7 @@ export default function WebmasterDashboard() {
           videos: visible.has('videos') && config.features.videos !== false,
           announcement: visible.has('announcement') && config.features.announcement !== false,
           ebooks: visible.has('ebooks') && config.features.ebooks !== false,
+          activities: visible.has('activities') && config.features.activities === true,
           condolence: visible.has('condolence') && config.features.condolence !== false,
           donation: visible.has('donation') && config.features.donation !== false,
           memory: visible.has('memory') && config.features.memory !== false,
@@ -1607,6 +1649,9 @@ export default function WebmasterDashboard() {
       setSecondaryColor('#f59e0b');
       setFontFamily('Inter');
       setBiography('');
+      setLifeStory(emptyLifeStory());
+      setHeroLayout('center-classic');
+      setHeroBgMode('image');
       setSubjects([]);
       setAlbums([]);
       setMediaAlbums({});
@@ -1665,6 +1710,7 @@ export default function WebmasterDashboard() {
     media?: ProfileMediaOverrides;
     theme?: ThemeOverrides;
     subjects?: ManageSubject[];
+    hero?: { layout?: HeroLayoutId; bgMode?: HeroBgMode };
   }): Promise<boolean> => {
     if (!activeSite) return false;
 
@@ -1675,6 +1721,8 @@ export default function WebmasterDashboard() {
     const media = options?.media;
     const theme = options?.theme;
     const subjectsToSave = options?.subjects ?? subjects;
+    const layoutToSave = options?.hero?.layout ?? heroLayout;
+    const bgModeToSave = options?.hero?.bgMode ?? heroBgMode;
 
     try {
       const res = await fetch('/api/tenant/update-config', {
@@ -1694,6 +1742,8 @@ export default function WebmasterDashboard() {
             fontFamily: theme?.fontFamily ?? fontFamily,
             defaultFontSize: theme?.defaultFontSize ?? defaultFontSize,
             heroStyle: 'Classic',
+            heroLayout: layoutToSave,
+            heroBgMode: bgModeToSave,
             avatarUrl: media?.avatarUrl ?? deceasedAvatarUrl,
             avatarScale: media?.avatarScale ?? deceasedAvatarScale,
             avatarX: media?.avatarX ?? deceasedAvatarX,
@@ -1705,7 +1755,9 @@ export default function WebmasterDashboard() {
             coverY: media?.coverY ?? deceasedCoverY,
             coverRotate: media?.coverRotate ?? deceasedCoverRotate,
             imageCoordSpace: 'relative',
-            biography,
+            biography:
+              activeSite.category === 'Memorial' ? lifeStory.biography : biography,
+            lifeStory: activeSite.category === 'Memorial' ? lifeStory : undefined,
             subjects: serializeManageSubjects(subjectsToSave, activeSite.category),
             albums,
             mediaAlbums,
@@ -2479,6 +2531,31 @@ export default function WebmasterDashboard() {
     setIsMobileMenuOpen(false);
   };
 
+  const openSettingsSubTab = (
+    sub: 'general' | 'life-story' | 'announcement' | 'media' | 'theme' | 'features' | 'billing',
+  ) => {
+    setActiveTab('settings');
+    setActiveSubTab(sub);
+    if (sub === 'life-story') {
+      setSidebarGroupOpen((prev) => ({ ...prev, lifeStory: true }));
+    }
+    if (sub === 'media' || sub === 'theme') {
+      setSidebarGroupOpen((prev) => ({ ...prev, appearance: true }));
+    }
+    if (sub === 'features' || sub === 'billing') {
+      setSidebarGroupOpen((prev) => ({ ...prev, system: true }));
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  const openLifeStorySection = (section: LifeStorySectionId) => {
+    setActiveTab('settings');
+    setActiveSubTab('life-story');
+    setLifeStorySection(section);
+    setSidebarGroupOpen((prev) => ({ ...prev, lifeStory: true }));
+    setIsMobileMenuOpen(false);
+  };
+
   const handleSaveYoutubeLink = async () => {
     if (!activeSite || !youtubeUrl) return;
     setYoutubeSaving(true);
@@ -2747,108 +2824,173 @@ export default function WebmasterDashboard() {
               )}
             </div>
           </div>
-          <nav className="space-y-1">
-            {features.gallery && (
-              <Button variant="ghost" 
-                type="button"
-                onClick={() => handleTabClick('gallery')}
-                className={sidebarNavButtonClass(activeTab === 'gallery')}
-              >
-                <span className={sidebarIconWrapClass(activeTab === 'gallery')}>
-                  <Camera className="size-4" />
-                </span>
-                <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'gallery').label}</span>
-                <span className={sidebarCountBadgeClass(activeTab === 'gallery')}>{photoMedias.length}</span>
+          <nav className="space-y-3">
+            <div className="space-y-1">
+              <p className="px-3 pb-1 text-xs font-bold uppercase tracking-widest text-stone-400">เนื้อหา</p>
+              <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('general')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'general')}>
+                <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'general')}><Globe className="size-4" /></span>
+                <span className="flex-1 min-w-0 truncate">ข้อมูลทั่วไป</span>
               </Button>
-            )}
-            {features.videos && (
-              <Button variant="ghost" 
-                type="button"
-                onClick={() => handleTabClick('videos')}
-                className={sidebarNavButtonClass(activeTab === 'videos')}
-              >
-                <span className={sidebarIconWrapClass(activeTab === 'videos')}>
-                  <Video className="size-4" />
-                </span>
-                <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'videos').label}</span>
-                <span className={sidebarCountBadgeClass(activeTab === 'videos')}>{videoMedias.length}</span>
-              </Button>
-            )}
-            {features.family && (
-              <Button variant="ghost" 
-                type="button"
-                onClick={() => handleTabClick('family')}
-                className={sidebarNavButtonClass(activeTab === 'family')}
-              >
-                <span className={sidebarIconWrapClass(activeTab === 'family')}>
-                  <GitBranch className="size-4" />
-                </span>
-                <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'family').label}</span>
-                <span className={sidebarCountBadgeClass(activeTab === 'family')}>{familyMembers.length}</span>
-              </Button>
-            )}
-            {features.ebooks && getVisibleKeys(selectedSite.category).includes('ebooks') && (
-              <Button variant="ghost" 
-                type="button"
-                onClick={() => handleTabClick('ebooks')}
-                className={sidebarNavButtonClass(activeTab === 'ebooks')}
-              >
-                <span className={sidebarIconWrapClass(activeTab === 'ebooks')}>
-                  <BookOpen className="size-4" />
-                </span>
-                <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'ebooks').label}</span>
-                <span className={sidebarCountBadgeClass(activeTab === 'ebooks')}>{ebooks.length}</span>
-              </Button>
-            )}
-            {(features.condolence || features.memory) && (
-              <Button variant="ghost" 
-                type="button"
-                onClick={() => handleTabClick('condolences')}
-                className={`${sidebarNavButtonClass(activeTab === 'condolences')} justify-between`}
-              >
-                <div className="flex min-w-0 flex-1 items-center gap-3">
-                  <span className={sidebarIconWrapClass(activeTab === 'condolences')}>
-                    <Flame className="size-4" />
-                  </span>
-                  <span className="min-w-0 truncate">
-                    {features.condolence && features.memory
-                      ? 'กลั่นกรองเนื้อหา'
-                      : features.memory
-                      ? `กลั่นกรอง${getFeatureLabel(selectedSite.category, 'memory').label}`
-                      : selectedSite.category === 'Friends'
-                        ? 'กลั่นกรองข้อความถึงกัน'
-                        : selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
-                          ? 'กลั่นกรองคำอวยพร'
-                          : 'กลั่นกรองคำไว้อาลัย'}
-                  </span>
+              {selectedSite.category === 'Memorial' && (
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSidebarGroupOpen((prev) => ({ ...prev, lifeStory: !prev.lifeStory }));
+                      if (activeSubTab !== 'life-story') {
+                        openLifeStorySection(lifeStorySection);
+                      }
+                    }}
+                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition cursor-pointer ${
+                      activeTab === 'settings' && activeSubTab === 'life-story'
+                        ? 'bg-[#0071e3]/8 text-[#0071e3] ring-1 ring-[#0071e3]/15'
+                        : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
+                    }`}
+                  >
+                    <span className="flex min-w-0 items-center gap-3">
+                      <span
+                        className={`flex size-8 shrink-0 items-center justify-center rounded-lg transition ${
+                          activeTab === 'settings' && activeSubTab === 'life-story'
+                            ? 'bg-[#0071e3] text-white shadow-sm shadow-[#0071e3]/20'
+                            : 'bg-stone-100 text-stone-500'
+                        }`}
+                      >
+                        <BookMarked className="size-4" />
+                      </span>
+                      <span className="truncate">เรื่องราวชีวิต</span>
+                    </span>
+                    <ChevronDown
+                      className={`size-3.5 shrink-0 transition ${sidebarGroupOpen.lifeStory ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                  {sidebarGroupOpen.lifeStory && (
+                    <div className="space-y-0.5">
+                      {LIFE_STORY_SECTIONS.map((item) => (
+                        <Button
+                          key={item.id}
+                          variant="ghost"
+                          type="button"
+                          onClick={() => openLifeStorySection(item.id)}
+                          className={sidebarSubNavButtonClass(
+                            activeTab === 'settings' &&
+                              activeSubTab === 'life-story' &&
+                              lifeStorySection === item.id,
+                          )}
+                        >
+                          {item.label}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {(condolences.length + reportedCondolences.length + pendingPosts.length) > 0 && (
-                  <span className="flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[9px] font-black text-white">
-                    {condolences.length + reportedCondolences.length + pendingPosts.length}
-                  </span>
-                )}
-              </Button>
-            )}
+              )}
+              {features.announcement && (
+                <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('announcement')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'announcement')}>
+                  <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'announcement')}><Megaphone className="size-4" /></span>
+                  <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'announcement').label}</span>
+                </Button>
+              )}
+              {features.gallery && (
+                <Button variant="ghost" type="button" onClick={() => handleTabClick('gallery')} className={sidebarNavButtonClass(activeTab === 'gallery')}>
+                  <span className={sidebarIconWrapClass(activeTab === 'gallery')}><Camera className="size-4" /></span>
+                  <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'gallery').label}</span>
+                  <span className={sidebarCountBadgeClass(activeTab === 'gallery')}>{photoMedias.length}</span>
+                </Button>
+              )}
+              {features.videos && (
+                <Button variant="ghost" type="button" onClick={() => handleTabClick('videos')} className={sidebarNavButtonClass(activeTab === 'videos')}>
+                  <span className={sidebarIconWrapClass(activeTab === 'videos')}><Video className="size-4" /></span>
+                  <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'videos').label}</span>
+                  <span className={sidebarCountBadgeClass(activeTab === 'videos')}>{videoMedias.length}</span>
+                </Button>
+              )}
+              {features.family && (
+                <Button variant="ghost" type="button" onClick={() => handleTabClick('family')} className={sidebarNavButtonClass(activeTab === 'family')}>
+                  <span className={sidebarIconWrapClass(activeTab === 'family')}><GitBranch className="size-4" /></span>
+                  <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'family').label}</span>
+                  <span className={sidebarCountBadgeClass(activeTab === 'family')}>{familyMembers.length}</span>
+                </Button>
+              )}
+              {features.ebooks && getVisibleKeys(selectedSite.category).includes('ebooks') && (
+                <Button variant="ghost" type="button" onClick={() => handleTabClick('ebooks')} className={sidebarNavButtonClass(activeTab === 'ebooks')}>
+                  <span className={sidebarIconWrapClass(activeTab === 'ebooks')}><BookOpen className="size-4" /></span>
+                  <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'ebooks').label}</span>
+                  <span className={sidebarCountBadgeClass(activeTab === 'ebooks')}>{ebooks.length}</span>
+                </Button>
+              )}
+              {features.activities && getVisibleKeys(selectedSite.category).includes('activities') && (
+                <Button variant="ghost" type="button" onClick={() => handleTabClick('activities')} className={sidebarNavButtonClass(activeTab === 'activities')}>
+                  <span className={sidebarIconWrapClass(activeTab === 'activities')}><CalendarDays className="size-4" /></span>
+                  <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'activities').label}</span>
+                  <span className={sidebarCountBadgeClass(activeTab === 'activities')}>{activitiesCount}</span>
+                </Button>
+              )}
+              {(features.condolence || features.memory) && (
+                <Button variant="ghost" type="button" onClick={() => handleTabClick('condolences')} className={`${sidebarNavButtonClass(activeTab === 'condolences')} justify-between`}>
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <span className={sidebarIconWrapClass(activeTab === 'condolences')}><Flame className="size-4" /></span>
+                    <span className="min-w-0 truncate">
+                      {features.condolence && features.memory
+                        ? 'กลั่นกรองเนื้อหา'
+                        : features.memory
+                          ? `กลั่นกรอง${getFeatureLabel(selectedSite.category, 'memory').label}`
+                          : selectedSite.category === 'Friends'
+                            ? 'กลั่นกรองข้อความถึงกัน'
+                            : selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                              ? 'กลั่นกรองคำอวยพร'
+                              : 'กลั่นกรองคำไว้อาลัย'}
+                    </span>
+                  </div>
+                  {(condolences.length + reportedCondolences.length + pendingPosts.length) > 0 && (
+                    <span className="flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full bg-rose-500 px-1.5 text-xs font-black text-white">
+                      {condolences.length + reportedCondolences.length + pendingPosts.length}
+                    </span>
+                  )}
+                </Button>
+              )}
+            </div>
 
-            <div className="pt-5 mt-3 border-t border-stone-200/70">
-              <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-stone-400">การตั้งค่า</p>
-              <Button variant="ghost" 
-                type="button"
-                onClick={() => handleTabClick('settings')}
-                className={sidebarNavButtonClass(activeTab === 'settings')}
-              >
-                <span className={sidebarIconWrapClass(activeTab === 'settings')}>
-                  <Settings className="size-4" />
-                </span>
-                <span className="flex-1 min-w-0 truncate">ตั้งค่าเว็บไซต์</span>
-              </Button>
-              <Link
-                href="/manage/create"
-                className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-600 transition hover:bg-stone-100 hover:text-stone-900"
-              >
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-stone-500">
-                  <Plus className="size-4" />
-                </span>
+            <div className="space-y-1 border-t border-stone-200/70 pt-3">
+              <button type="button" onClick={() => setSidebarGroupOpen((prev) => ({ ...prev, appearance: !prev.appearance }))} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold uppercase tracking-widest text-stone-400 transition hover:bg-stone-100 hover:text-stone-600">
+                <span>รูปลักษณ์</span>
+                <ChevronDown className={`size-3.5 transition ${sidebarGroupOpen.appearance ? 'rotate-180' : ''}`} />
+              </button>
+              {sidebarGroupOpen.appearance && (
+                <div className="space-y-1">
+                  <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('media')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'media')}>
+                    <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'media')}><ImageIcon className="size-4" /></span>
+                    <span className="flex-1 min-w-0 truncate">รูปโปรไฟล์ & หน้าปก</span>
+                  </Button>
+                  <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('theme')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'theme')}>
+                    <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'theme')}><Palette className="size-4" /></span>
+                    <span className="flex-1 min-w-0 truncate">ธีม & สี & ฟอนต์</span>
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-1 border-t border-stone-200/70 pt-3">
+              <button type="button" onClick={() => setSidebarGroupOpen((prev) => ({ ...prev, system: !prev.system }))} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold uppercase tracking-widest text-stone-400 transition hover:bg-stone-100 hover:text-stone-600">
+                <span>ระบบ</span>
+                <ChevronDown className={`size-3.5 transition ${sidebarGroupOpen.system ? 'rotate-180' : ''}`} />
+              </button>
+              {sidebarGroupOpen.system && (
+                <div className="space-y-1">
+                  <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('features')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'features')}>
+                    <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'features')}><Grid className="size-4" /></span>
+                    <span className="flex-1 min-w-0 truncate">ฟีเจอร์ที่เปิดใช้งาน</span>
+                  </Button>
+                  <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('billing')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'billing')}>
+                    <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'billing')}><CreditCard className="size-4" /></span>
+                    <span className="flex-1 min-w-0 truncate">พื้นที่จัดเก็บ & การชำระเงิน</span>
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-stone-200/70 pt-3">
+              <Link href="/manage/create" className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-600 transition hover:bg-stone-100 hover:text-stone-900">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-stone-500"><Plus className="size-4" /></span>
                 <span>สร้างเว็บไซต์เพิ่ม</span>
               </Link>
             </div>
@@ -3074,16 +3216,6 @@ export default function WebmasterDashboard() {
               </SelectContent>
             </Select>
 
-            {/* Quick settings button */}
-            <Button variant="ghost"
-              type="button"
-              onClick={() => handleTabClick('settings')}
-              className="px-3 py-1.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl text-xs text-stone-700 font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-xs"
-            >
-              <Settings className="w-3.5 h-3.5 text-stone-500" />
-              <span>ตั้งค่า</span>
-            </Button>
-
             {/* Live website link */}
             <a
               href={`/${selectedSite.slug}`}
@@ -3100,26 +3232,25 @@ export default function WebmasterDashboard() {
           <div className="w-full">
             {/* Settings Customizer */}
             <form onSubmit={handleSaveConfig} className="w-full p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
-              
-              <ScrollableSubTabs
-                className="mb-6"
-                value={activeSubTab}
-                onChange={(id) => setActiveSubTab(id as typeof activeSubTab)}
-                tabs={[
-                  { id: 'general', label: 'ข้อมูลทั่วไป & ประกาศ', icon: Globe },
-                  { id: 'media', label: 'รูปโปรไฟล์ & หน้าปก', icon: ImageIcon },
-                  { id: 'theme', label: 'ธีม & สี & ฟอนต์', icon: Palette },
-                  { id: 'features', label: 'ฟีเจอร์ที่เปิดใช้งาน', icon: Grid },
-                  { id: 'billing', label: 'พื้นที่จัดเก็บ & การชำระเงิน', icon: CreditCard },
-                ]}
-              />
 
               {/* 1. ข้อมูลทั่วไป & ประกาศ Tab */}
-              {activeSubTab === 'general' && (
+              {(activeSubTab === 'general' || activeSubTab === 'announcement' || activeSubTab === 'life-story') && (
                 <div className="space-y-6 animate-fade-in text-left">
+                  {activeSubTab === 'life-story' && selectedSite.category === 'Memorial' ? (
+                    <LifeStoryEditor
+                      section={lifeStorySection}
+                      value={lifeStory}
+                      onChange={(next) => {
+                        setLifeStory(next);
+                        setBiography(next.biography);
+                      }}
+                    />
+                  ) : null}
+                  {activeSubTab === 'general' ? (
+                  <>
                   <div className="mb-1 flex items-center gap-1.5">
                     <Globe className="size-4 text-emerald-700" />
-                    <h3 className="text-sm font-bold text-stone-900">ข้อมูลทั่วไป & ประกาศ</h3>
+                    <h3 className="text-sm font-bold text-stone-900">ข้อมูลทั่วไป</h3>
                   </div>
                   <div className="space-y-1">
                     <label className="text-sm font-bold text-stone-600 tracking-wide">
@@ -3142,6 +3273,8 @@ export default function WebmasterDashboard() {
                   </div>
 
                   <div className="space-y-2">
+                    {selectedSite.category !== 'Memorial' ? (
+                    <>
                     <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">
                       {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                         ? 'เรื่องราวความรัก (ประวัติคู่รักโดยย่อ)'
@@ -3172,6 +3305,12 @@ export default function WebmasterDashboard() {
                       }
                       className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                     />
+                    </>
+                    ) : (
+                      <p className="rounded-xl border border-stone-200 bg-stone-50/70 px-4 py-3 text-xs text-stone-500">
+                        ชีวประวัติฉบับเต็มอยู่ที่เมนู <span className="font-semibold text-stone-700">เรื่องราวชีวิต</span> ด้านซ้าย
+                      </p>
+                    )}
                   </div>
 
                   {/* Subjects editor (pets / memorial people / couple, etc.) */}
@@ -3571,8 +3710,10 @@ export default function WebmasterDashboard() {
                     );
                   })()}
 
+                  </>
+                  ) : null}
                   {/* Announcement settings cards */}
-                  {features.announcement && (
+                  {activeSubTab === 'announcement' && features.announcement ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start border-t border-stone-150 pt-6">
                       {/* Left: Inputs */}
                       <div className="space-y-6 text-left bg-stone-50/20 p-5 rounded-2xl border border-stone-200">
@@ -4313,9 +4454,10 @@ export default function WebmasterDashboard() {
                         )}
                       </div>
                     </div>
-                  )}
+                  ) : null}
 
                   {/* Donation Settings Section */}
+                  {activeSubTab === 'general' ? (
                   <div className="border-t border-stone-150 pt-6 space-y-4">
                     <div className="flex justify-between items-center gap-3">
                       <div className="min-w-0 space-y-0.5">
@@ -4371,6 +4513,7 @@ export default function WebmasterDashboard() {
                       </div>
                     )}
                   </div>
+                  ) : null}
                 </div>
               )}
 
@@ -4793,6 +4936,120 @@ export default function WebmasterDashboard() {
                           <span>ปรับรูปหน้าปก</span>
                         </Button>
                       )}
+                    </div>
+                  )}
+
+                  {siteCategory === 'Memorial' && (
+                    <div className="mx-auto w-full max-w-2xl space-y-4 rounded-3xl border border-stone-200/80 bg-white p-4 shadow-sm sm:p-5">
+                      <div className="space-y-1">
+                        <p className="text-xs font-bold uppercase tracking-widest text-stone-400">หัวข้อ Memorial</p>
+                        <h4 className="text-base font-bold text-stone-900">รูปแบบหัวข้อหน้าแรก</h4>
+                        <p className="text-xs leading-relaxed text-stone-500">
+                          เลือกเลย์เอาต์ — กดแล้วบันทึกไปหน้าเว็บจริงทันที
+                        </p>
+                      </div>
+
+                      <div
+                        className="overflow-hidden rounded-2xl border border-stone-200"
+                        style={getSiteThemeStyle({
+                          primaryColor,
+                          secondaryColor,
+                          fontFamily,
+                        })}
+                      >
+                        <MemorialHero
+                          compact
+                          name={siteName || 'ชื่อเว็บไซต์'}
+                          coverUrl={deceasedCoverUrl || null}
+                          avatarUrl={deceasedAvatarUrl || null}
+                          coverTransform={{
+                            x: deceasedCoverX,
+                            y: deceasedCoverY,
+                            scale: deceasedCoverScale,
+                            rotate: deceasedCoverRotate,
+                          }}
+                          avatarTransform={{
+                            x: deceasedAvatarX,
+                            y: deceasedAvatarY,
+                            scale: deceasedAvatarScale,
+                            rotate: deceasedAvatarRotate,
+                          }}
+                          layout={heroLayout}
+                          bgMode={heroBgMode}
+                          className="border-0"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        {MEMORIAL_HERO_LAYOUTS.map((opt) => {
+                          const selected = heroLayout === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => {
+                                const nextBg =
+                                  opt.id === 'bottom-band' ||
+                                  opt.id === 'bottom-band-right' ||
+                                  opt.id === 'framed-on-cover'
+                                    ? ('image' as const)
+                                    : heroBgMode;
+                                setHeroLayout(opt.id);
+                                setHeroBgMode(nextBg);
+                                void persistSiteConfig({
+                                  successMessage: `ใช้เลย์เอาต์「${opt.label}」แล้ว`,
+                                  hero: { layout: opt.id, bgMode: nextBg },
+                                });
+                              }}
+                              className={cn(
+                                'rounded-xl border px-3 py-2.5 text-left transition',
+                                selected
+                                  ? 'border-[#0071e3] bg-[#0071e3]/5 ring-2 ring-[#0071e3]/15'
+                                  : 'border-stone-200 bg-stone-50/60 hover:border-stone-300 hover:bg-white',
+                              )}
+                            >
+                              <p className="text-xs font-bold text-stone-900">{opt.label}</p>
+                              <p className="mt-0.5 text-xs leading-snug text-stone-500">{opt.description}</p>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="space-y-2 border-t border-stone-100 pt-3">
+                        <p className="text-xs font-bold uppercase tracking-wide text-stone-500">พื้นหลังหัวข้อ</p>
+                        <div className="flex flex-wrap gap-2">
+                          {(
+                            [
+                              { id: 'image' as const, label: 'รูปปกอย่างเดียว' },
+                              { id: 'soft-wash' as const, label: 'โทนนุ่ม' },
+                              { id: 'image-and-wash' as const, label: 'รูปปก + โทนนุ่ม' },
+                            ] as const
+                          ).map((mode) => {
+                            const selected = heroBgMode === mode.id;
+                            return (
+                              <button
+                                key={mode.id}
+                                type="button"
+                                onClick={() => {
+                                  setHeroBgMode(mode.id);
+                                  void persistSiteConfig({
+                                    successMessage: `ตั้งพื้นหลังเป็น「${mode.label}」แล้ว`,
+                                    hero: { bgMode: mode.id },
+                                  });
+                                }}
+                                className={cn(
+                                  'rounded-full border px-3 py-1.5 text-xs font-semibold transition',
+                                  selected
+                                    ? 'border-[#0071e3] bg-[#0071e3] text-white'
+                                    : 'border-stone-200 bg-white text-stone-600 hover:border-stone-300',
+                                )}
+                              >
+                                {mode.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -5992,6 +6249,13 @@ export default function WebmasterDashboard() {
             </div>
           )}
         </section>
+        )}
+        {activeTab === 'activities' && features.activities && getVisibleKeys(selectedSite.category).includes('activities') && (
+          <ActivitiesEditor
+            websiteId={selectedSite.id}
+            category={selectedSite.category}
+            onCountChange={setActivitiesCount}
+          />
         )}
         {activeTab === 'condolences' && (
           <ModerationPanel

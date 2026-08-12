@@ -9,6 +9,7 @@ import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import { resolveDefaultMediaSrc } from '@/lib/defaultMedia';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 import PublicOverflowNav from '@/components/public/PublicOverflowNav';
+import MemorialHero from '@/components/public/MemorialHero';
 
 interface Menu {
   id: string;
@@ -120,6 +121,17 @@ export default function PublicLayoutClient({
     >
 
       {/* Header */}
+      {tenant.category === 'Memorial' ? (
+        <MemorialHero
+          name={tenant.name}
+          coverUrl={coverUrl || null}
+          avatarUrl={config.avatarUrl || null}
+          coverTransform={{ x: coverX, y: coverY, scale: coverScale, rotate: coverRotate }}
+          avatarTransform={{ x: avatarX, y: avatarY, scale: avatarScale, rotate: avatarRotate }}
+          layout={config.heroLayout}
+          bgMode={config.heroBgMode}
+        />
+      ) : (
       <header className={`relative py-16 text-center border-b border-stone-200/60 overflow-hidden transition-all duration-500 ${
         coverUrl ? 'bg-stone-955 text-white py-20 sm:py-24' : 'bg-white'
       }`}>
@@ -168,6 +180,7 @@ export default function PublicLayoutClient({
           </h1>
         </div>
       </header>
+      )}
 
       {/* Dynamic Navigation Menu */}
       <nav className="border-b border-stone-200/60 bg-white/85 backdrop-blur-sm sticky top-0 z-40 shadow-xs">
@@ -288,14 +301,14 @@ export default function PublicLayoutClient({
                 onClick={() => changeZoom(Math.min(2, zoomLevel + 1))}
                 disabled={zoomLevel >= 2}
                 className={`flex-1 py-1.5 rounded-lg text-center text-xs font-bold transition flex items-center justify-center cursor-pointer disabled:opacity-30 ${
-                  zoomLevel > 0 ? 'bg-emerald-700 text-white shadow-xs' : 'text-stone-600 hover:bg-stone-100'
+                  zoomLevel > 0 ? 'bg-emerald-800 text-white shadow-xs' : 'text-emerald-900 hover:bg-emerald-50'
                 }`}
               >
                 A+
               </button>
             </div>
 
-            <p className="text-[10px] text-stone-400 font-semibold leading-normal">
+            <p className="text-xs font-semibold leading-normal text-stone-600">
               {config.defaultFontSize === 'LARGE'
                 ? 'เจ้าภาพตั้งค่าเริ่มต้นแบบใหญ่พิเศษ (สามารถปรับลด A- หรือเพิ่ม A+ ได้อีก)'
                 : config.defaultFontSize === 'MEDIUM'

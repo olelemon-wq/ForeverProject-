@@ -194,7 +194,7 @@ export default function DonationClientForm({
       <div className="grid gap-8 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)] lg:gap-10 lg:items-start">
         <aside className="lg:sticky lg:top-6">
           <div className="mx-auto max-w-xs space-y-4 rounded-2xl border border-stone-200/70 bg-white/80 p-5 shadow-sm backdrop-blur-[2px]">
-            <p className="text-center text-[11px] font-bold tracking-[0.14em] text-stone-400">
+            <p className="text-center text-xs font-bold tracking-[0.14em] text-stone-400">
               พร้อมเพย์
             </p>
 
@@ -216,11 +216,11 @@ export default function DonationClientForm({
 
             <div className="space-y-3 text-center">
               <div>
-                <p className="text-[11px] font-semibold text-stone-400">ชื่อบัญชีรับเงิน</p>
+                <p className="text-xs font-semibold text-stone-400">ชื่อบัญชีรับเงิน</p>
                 <p className="mt-0.5 text-sm font-bold text-stone-900">{donationAccountName}</p>
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-stone-400">หมายเลขพร้อมเพย์</p>
+                <p className="text-xs font-semibold text-stone-400">หมายเลขพร้อมเพย์</p>
                 <p className="mt-0.5 text-sm font-bold tabular-nums text-stone-800">
                   {donationPromptPay}
                 </p>
@@ -238,7 +238,7 @@ export default function DonationClientForm({
               )}
             </div>
 
-            <p className="text-center text-[11px] leading-relaxed text-stone-400">
+            <p className="text-center text-xs leading-relaxed text-stone-400">
               สแกน QR แล้วโอนเงิน จากนั้นกรอกแบบฟอร์มด้านล่างเพื่อแนบสลิปยืนยัน
             </p>
           </div>
@@ -388,7 +388,7 @@ export default function DonationClientForm({
                           {don.isAnonymous ? 'ผู้ไม่ประสงค์ออกนาม' : don.donorName}
                         </span>
                         <span
-                          className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold"
+                          className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-bold"
                           style={{
                             backgroundColor:
                               'color-mix(in srgb, var(--theme-primary, #0d9488) 10%, white)',
@@ -406,7 +406,7 @@ export default function DonationClientForm({
                           &ldquo;{don.message}&rdquo;
                         </p>
                       )}
-                      <p className="text-[11px] font-medium text-stone-400">
+                      <p className="text-xs font-medium text-stone-400">
                         {new Date(don.createdAt).toLocaleDateString('th-TH', {
                           year: 'numeric',
                           month: 'short',

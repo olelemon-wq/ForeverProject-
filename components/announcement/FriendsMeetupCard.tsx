@@ -244,7 +244,7 @@ export default function FriendsMeetupCard({
         )}
 
         <footer className="border-t border-[#A8D1D1]/35 pt-4 text-center">
-          <p className={cn('text-[10px] font-medium leading-relaxed', textMutedClass)}>
+          <p className={cn('text-xs font-medium leading-relaxed', textMutedClass)}>
             {footerText}
           </p>
         </footer>

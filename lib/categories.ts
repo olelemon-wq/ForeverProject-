@@ -34,7 +34,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
   'Memorial': {
     label: 'Memorial (รำลึกบุคคลทั่วไป)',
     tagline: 'เว็บไซต์อนุสรณ์และคำรำลึกถึงผู้ล่วงลับ',
-    optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'donation'],
+    optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'activities', 'donation'],
     defaultOn: ['condolence', 'memory'],
     featureLabels: {
       announcement: { label: 'การ์ดกำหนดการพิธี', description: 'การ์ดประกาศกำหนดการพิธีการและแชร์แจ้งข่าว' },
@@ -45,6 +45,10 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
       feed: { label: 'ฟีดสมุดไว้อาลัย', description: 'ฟีดคอมเมนต์ส่งคำรำลึกและแสดงความระลึกถึง' },
       family: { label: 'ผังครอบครัว', description: 'แผนผังเครือญาติสืบสานสายสัมพันธ์สายเลือด' },
       ebooks: { label: 'หนังสือที่ระลึก', description: 'หนังสืออนุสรณ์อิเล็กทรอนิกส์ (E-Book) อ่านออนไลน์' },
+      activities: {
+        label: 'กิจกรรมรำลึก',
+        description: 'งานทำบุญ งานประจำปี หรือกิจกรรมพิเศษที่จัดเพื่ออุทิศ',
+      },
       donation: { label: 'ร่วมทำบุญอุทิศกุศล', description: 'ร่วมทำบุญกุศลและส่งความช่วยเหลือผ่าน PromptPay' },
     },
     home: {
@@ -55,9 +59,9 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     },
   },
   'Family Legacy': {
-    label: 'Family Legacy (มรดกวงศ์ตระกูล)',
-    tagline: 'ประวัติครอบครัวและบันทึกประวัติศาสตร์ตระกูล',
-    optional: ['announcement', 'memory', 'feed', 'family', 'ebooks'],
+    label: 'Family Legacy (เรื่องราวครอบครัว)',
+    tagline: 'ประวัติครอบครัวและบันทึกเรื่องราวครอบครัว',
+    optional: ['announcement', 'memory', 'feed', 'family', 'ebooks', 'activities'],
     defaultOn: ['memory', 'family', 'ebooks'],
     featureLabels: {
       announcement: { label: 'การ์ดพิธีรำลึกตระกูล', description: 'การ์ดประกาศวันพิธีการรำลึกบรรพบุรุษประจำปี' },
@@ -68,6 +72,10 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
       feed: { label: 'ฟีดกตัญญูรำลึก', description: 'ฟีดแชร์ความรัก ความกตัญญู และแสดงความระลึกถึง' },
       family: { label: 'ผังวงศ์ตระกูล', description: 'แผนผังต้นไม้เครือญาติเชื่อมความสัมพันธ์ในวงศ์ตระกูล' },
       ebooks: { label: 'หนังสือประวัติตระกูล', description: 'หนังสือประวัติศาสตร์วงศ์ตระกูลและหนังสือออนไลน์' },
+      activities: {
+        label: 'กิจกรรมตระกูล',
+        description: 'งานรวมตระกูล พิธีรำลึก หรือกิจกรรมสืบสานประจำปี',
+      },
       donation: { label: 'สมทบกองทุนตระกูล', description: 'ร่วมสมทบทุนเพื่อกิจกรรมเครือญาติหรือทำบุญสาธารณะ' },
     },
     home: {
@@ -121,7 +129,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
   'Friends': {
     label: 'Friends (กลุ่มรุ่น)',
     tagline: 'พื้นที่เก็บความทรงจำร่วม ทริป และเรื่องราวของกลุ่มที่เติบโตไปด้วยกัน',
-    optional: ['announcement', 'condolence', 'memory', 'feed', 'ebooks', 'donation'],
+    optional: ['announcement', 'condolence', 'memory', 'feed', 'ebooks', 'activities', 'donation'],
     defaultOn: ['memory', 'condolence'],
     featureLabels: {
       announcement: { label: 'บอร์ดนัดหมายกลุ่ม', description: 'การ์ดนัดแนะ กำหนดการรวมตัว หรือทริปร่วมกัน' },
@@ -132,6 +140,10 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
       feed: { label: 'ฟีดอัปเดตของกลุ่ม', description: 'ฟีดอัปเดตเรื่องราวในกลุ่ม คอมเมนต์ และส่งความรู้สึกถึงกัน' },
       family: { label: 'ทำเนียบสมาชิก', description: 'แนะนำสมาชิกในกลุ่มและแผนผังความสัมพันธ์ในกลุ่ม' },
       ebooks: { label: 'หนังสือรุ่นออนไลน์', description: 'หนังสือรุ่นออนไลน์บันทึกความทรงจำร่วมกัน (E-Yearbook)' },
+      activities: {
+        label: 'งานรวมตัว & ทริป',
+        description: 'นัดหมายรวมรุ่น ทริปประจำปี หรืองานพบปะของกลุ่ม',
+      },
       donation: { label: 'กองทุนรวมตัว', description: 'ร่วมสมทบทุนส่วนกลางสำหรับจัดทริปหรืองานรวมตัว' },
     },
     home: {

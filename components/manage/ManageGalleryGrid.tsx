@@ -105,7 +105,7 @@ export default function ManageGalleryGrid({
                     onAlbumChange(m.id, value);
                   }}
                 >
-                  <SelectTrigger className="h-6 w-full cursor-pointer rounded-md border-0 bg-white/95 px-1.5 text-[9px] font-semibold text-stone-800 shadow-none focus-visible:ring-1 focus-visible:ring-white/80 sm:text-[10px]">
+                  <SelectTrigger className="h-6 w-full cursor-pointer rounded-md border-0 bg-white/95 px-1.5 text-xs font-semibold text-stone-800 shadow-none focus-visible:ring-1 focus-visible:ring-white/80 sm:text-xs">
                     <SelectValue placeholder="อัลบั้ม" />
                   </SelectTrigger>
                   <SelectContent position="popper">

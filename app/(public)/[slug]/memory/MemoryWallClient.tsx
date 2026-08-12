@@ -230,7 +230,7 @@ function MemoryPostCard({
               <span className="text-sm font-bold text-stone-900">{p.senderName}</span>
               <time
                 dateTime={p.createdAt}
-                className="ml-auto rounded-full bg-stone-100 px-2.5 py-0.5 text-[11px] font-semibold text-stone-400"
+                className="ml-auto rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-semibold text-stone-400"
               >
                 {new Date(p.createdAt).toLocaleDateString('th-TH', {
                   day: 'numeric',
@@ -283,7 +283,7 @@ function MemoryPostCard({
             className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.02] sm:aspect-square"
           />
           <span className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/20">
-            <span className="flex items-center gap-1 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-bold text-white opacity-0 transition group-hover:opacity-100">
+            <span className="flex items-center gap-1 rounded-full bg-black/55 px-2.5 py-1 text-xs font-bold text-white opacity-0 transition group-hover:opacity-100">
               <Expand className="h-3.5 w-3.5" aria-hidden />
               ขยาย
             </span>
@@ -738,7 +738,7 @@ export default function MemoryWallClient({
                     </button>
                   ))}
                 </div>
-                <span className="ml-auto hidden text-[11px] text-stone-400 sm:inline">
+                <span className="ml-auto hidden text-xs text-stone-400 sm:inline">
                   {mLabels.emojiLabel}
                 </span>
               </div>

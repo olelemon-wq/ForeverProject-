@@ -155,17 +155,6 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   if (announcement.mode === 'custom' && announcement.customCardUrl) {
     return (
       <div className="space-y-8 animate-fade-in print:p-0 print:m-0 print:bg-white print:shadow-none print-outer-container">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
-          <div>
-            <h4 className="text-sm font-bold text-stone-800 flex items-center gap-1.5">
-              <Calendar className="w-4 h-4" style={{ color: 'var(--theme-primary)' }} />
-              <span>การ์ดกำหนดการ</span>
-            </h4>
-            <p className="text-[10px] text-stone-500">คุณสามารถพิมพ์ เซฟเป็น PDF หรือคัดลอกลิงก์เพื่อส่งต่อทาง LINE/Facebook ได้ทันทีค่ะ</p>
-          </div>
-          <AnnouncementControls slug={slug} />
-        </div>
-
         <section
           id="announcement-card"
           className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white print-card-section`}
@@ -177,6 +166,17 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
             className="w-full h-auto object-contain block"
           />
         </section>
+
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
+          <div>
+            <h4 className="text-sm font-bold text-stone-800 flex items-center gap-1.5">
+              <Calendar className="w-4 h-4" style={{ color: 'var(--theme-primary)' }} />
+              <span>การ์ดกำหนดการ</span>
+            </h4>
+            <p className="text-xs text-stone-500">คุณสามารถพิมพ์ เซฟเป็น PDF หรือคัดลอกลิงก์เพื่อส่งต่อทาง LINE/Facebook ได้ทันทีค่ะ</p>
+          </div>
+          <AnnouncementControls slug={slug} />
+        </div>
       </div>
     );
   }
@@ -252,25 +252,6 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
       `,
         }}
       />
-
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white border border-stone-200/85 p-4 rounded-2xl shadow-xs print:hidden">
-        <div className="text-left space-y-0.5">
-          <h4 className="text-xs font-bold text-stone-850 flex items-center gap-1.5">
-            <Share2 className="w-3.5 h-3.5 text-emerald-700" />
-            <span>
-              {tenant.category === 'Couple'
-                ? 'การ์ดบันทึกวันสำคัญออนไลน์'
-                : tenant.category === 'Wedding'
-                  ? 'การ์ดเชิญ & กำหนดการออนไลน์'
-                  : 'การ์ดกำหนดการดิจิทัลออนไลน์'}
-            </span>
-          </h4>
-          <p className="text-[10px] text-stone-500">
-            คุณสามารถพิมพ์ เซฟเป็น PDF หรือคัดลอกลิงก์เพื่อส่งต่อทาง LINE/Facebook ได้ทันทีค่ะ
-          </p>
-        </div>
-        <AnnouncementControls slug={slug} />
-      </div>
 
       {isCouple ? (
         <CoupleJourneyCard
@@ -350,6 +331,25 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           sectionClassName="print-card-section print:shadow-none print:my-0 print:mx-auto print:max-w-3xl"
         />
       )}
+
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white border border-stone-200/85 p-4 rounded-2xl shadow-xs print:hidden">
+        <div className="text-left space-y-0.5">
+          <h4 className="text-xs font-bold text-stone-850 flex items-center gap-1.5">
+            <Share2 className="w-3.5 h-3.5 text-emerald-700" />
+            <span>
+              {tenant.category === 'Couple'
+                ? 'การ์ดบันทึกวันสำคัญออนไลน์'
+                : tenant.category === 'Wedding'
+                  ? 'การ์ดเชิญ & กำหนดการออนไลน์'
+                  : 'การ์ดกำหนดการดิจิทัลออนไลน์'}
+            </span>
+          </h4>
+          <p className="text-xs text-stone-500">
+            คุณสามารถพิมพ์ เซฟเป็น PDF หรือคัดลอกลิงก์เพื่อส่งต่อทาง LINE/Facebook ได้ทันทีค่ะ
+          </p>
+        </div>
+        <AnnouncementControls slug={slug} />
+      </div>
     </div>
   );
 }

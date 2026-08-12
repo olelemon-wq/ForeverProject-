@@ -63,7 +63,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'bts-family',
     category: 'Family Legacy',
-    categoryLabel: 'มรดกวงศ์ตระกูล',
+    categoryLabel: 'เรื่องราวครอบครัว',
     title: 'Jitjaidee-Family',
     description: 'Jitjaidee family legacy — genealogy, history books, gallery, and memory board.',
     coverUrl:

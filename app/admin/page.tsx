@@ -73,7 +73,7 @@ export default function AdminDashboard() {
           <span className="text-lg font-bold tracking-wider bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 bg-clip-text text-transparent">
             FOREVER ADMIN PLATFORM
           </span>
-          <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-slate-800 text-slate-400 border border-slate-700">
+          <span className="px-2 py-0.5 text-xs font-bold rounded-md bg-slate-800 text-slate-400 border border-slate-700">
             SYSTEM CONTROL
           </span>
         </div>
@@ -91,30 +91,30 @@ export default function AdminDashboard() {
         {/* Top summary cards widgets */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/40">
-            <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">รายได้วันนี้</span>
+            <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">รายได้วันนี้</span>
             <p className="text-2xl font-black text-white mt-1">{stats.revenueToday}</p>
-            <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 mt-2">
+            <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1 mt-2">
               <span>↑</span> +12% เทียบกับเมื่อวาน
             </span>
           </div>
           <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/40">
-            <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">รายได้เดือนนี้</span>
+            <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">รายได้เดือนนี้</span>
             <p className="text-2xl font-black text-white mt-1">{stats.revenueMonth}</p>
-            <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 mt-2">
+            <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1 mt-2">
               <span>↑</span> +8% เทียบกับเป้าหมาย
             </span>
           </div>
           <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/40">
-            <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">เว็บไซต์ทั้งหมด (Active)</span>
+            <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">เว็บไซต์ทั้งหมด (Active)</span>
             <p className="text-2xl font-black text-white mt-1">{stats.activeWebsites}</p>
-            <span className="text-[10px] text-slate-500 font-semibold mt-2 block">
+            <span className="text-xs text-slate-500 font-semibold mt-2 block">
               เป้าหมายปีนี้: 1,000 เว็บ (สเปก BR043)
             </span>
           </div>
           <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/40">
-            <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">รายการชำระรอตรวจสอบ</span>
+            <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">รายการชำระรอตรวจสอบ</span>
             <p className="text-2xl font-black text-amber-500 mt-1">{stats.pendingCallbackVerify}</p>
-            <span className="text-[10px] text-slate-500 font-semibold mt-2 block">
+            <span className="text-xs text-slate-500 font-semibold mt-2 block">
               ต้องการการตรวจสอบจากแอดมินด่วน
             </span>
           </div>
@@ -151,14 +151,14 @@ export default function AdminDashboard() {
                       <td className="py-4 font-mono text-slate-400">/{tx.slug}</td>
                       <td className="py-4 text-white font-semibold">{tx.amount} บาท</td>
                       <td className="py-4">
-                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${
+                        <span className={`px-2.5 py-0.5 rounded text-xs font-bold ${
                           tx.status === 'SUCCESS' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
                         }`}>
                           {tx.status}
                         </span>
                       </td>
                       <td className="py-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                        <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
                           tx.callbackVerify === 'VERIFIED' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400'
                         }`}>
                           {tx.callbackVerify}
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
             {/* Audit log snapshot widget */}
             <section className="p-6 rounded-3xl border border-slate-800 bg-slate-950/40 space-y-4">
               <h3 className="text-base font-bold text-white">🛡️ ประวัติกิจกรรมระบบ (Audit Log)</h3>
-              <div className="space-y-3 text-[11px]">
+              <div className="space-y-3 text-xs">
                 <div className="flex justify-between items-start gap-2 border-b border-slate-850 pb-2">
                   <span className="text-slate-400">โอนสิทธิ์การดูแล /somying-love</span>
                   <span className="text-slate-500 font-mono">15 นาทีที่แล้ว</span>
@@ -235,7 +235,7 @@ export default function AdminDashboard() {
                   <span className="text-slate-500 font-mono">1 ชั่วโมงที่แล้ว</span>
                 </div>
               </div>
-              <button className="w-full py-2.5 rounded-xl bg-slate-850 hover:bg-slate-800 text-[11px] font-bold text-slate-300 border border-slate-800 transition">
+              <button className="w-full py-2.5 rounded-xl bg-slate-850 hover:bg-slate-800 text-xs font-bold text-slate-300 border border-slate-800 transition">
                 ดูบันทึกเหตุการณ์ทั้งหมด (2 ปี)
               </button>
             </section>

@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Check, ArrowRight, HelpCircle } from 'lucide-react';
+import { CircleCheck, HelpCircle } from 'lucide-react';
 
 export default function PricingPage() {
   const plans = [
@@ -65,7 +65,7 @@ export default function PricingPage() {
         </span>
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-stone-900 mt-4 leading-tight">
           แพ็กเกจราคาและบริการ <br />
-          <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent">
+          <span className="text-emerald-700">
             ที่เรียบง่ายและโปร่งใส
           </span>
         </h1>
@@ -87,7 +87,7 @@ export default function PricingPage() {
             }`}
           >
             {plan.featured && (
-              <span className="absolute top-0 right-1/2 translate-x-1/2 -translate-y-1/2 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white bg-emerald-600 shadow-sm">
+              <span className="absolute top-0 right-1/2 translate-x-1/2 -translate-y-1/2 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest text-white bg-emerald-600 shadow-sm">
                 ยอดนิยม & แนะนำ
               </span>
             )}
@@ -106,11 +106,11 @@ export default function PricingPage() {
 
               {/* Features List */}
               <div className="border-t border-stone-100 pt-6">
-                <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-wide mb-4">บริการที่ครอบคลุม:</h4>
+                <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-4">บริการที่ครอบคลุม:</h4>
                 <ul className="space-y-3.5">
                   {plan.features.map((feat, fidx) => (
                     <li key={fidx} className="flex items-start gap-2.5 text-xs text-stone-750">
-                      <Check className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                      <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" strokeWidth={2} />
                       <span className="leading-normal">{feat}</span>
                     </li>
                   ))}

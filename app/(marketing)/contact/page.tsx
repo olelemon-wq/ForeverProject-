@@ -7,7 +7,13 @@ export default function ContactPage() {
     <MarketingPageShell
       eyebrow="Contact"
       title="ติดต่อเรา"
-      subtitle="ทีมงาน FOREVER พร้อมช่วยเหลือเรื่องการใช้งาน การชำระเงิน และการตั้งค่าเว็บไซต์ของคุณ"
+      subtitle={
+        <>
+          ทีมงาน FOREVER พร้อมช่วยเหลือเรื่องการใช้งาน การชำระเงิน
+          <br />
+          และการตั้งค่าเว็บไซต์ของคุณ
+        </>
+      }
     >
       <MarketingSection title="ช่องทางติดต่อ">
         <div className="flex items-start gap-3">

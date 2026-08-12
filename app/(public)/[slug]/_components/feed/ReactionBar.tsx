@@ -187,7 +187,7 @@ export default function ReactionBar({
                         className="transition-transform duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:scale-140 hover:-translate-y-2 hover:rotate-6"
                       />
                     </button>
-                    <span className="absolute bottom-[115%] left-1/2 -translate-x-1/2 bg-stone-900/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-md opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition duration-150 shadow-sm whitespace-nowrap z-40">
+                    <span className="absolute bottom-[115%] left-1/2 -translate-x-1/2 bg-stone-900/90 text-white text-xs font-bold px-2 py-0.5 rounded-md opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition duration-150 shadow-sm whitespace-nowrap z-40">
                       {cfg.label}
                     </span>
                   </div>
@@ -231,7 +231,7 @@ export default function ReactionBar({
           {/* Share Dropdown Menu */}
           {showShareMenu && (
             <div 
-              className="absolute bottom-[125%] left-0 z-30 bg-white border border-stone-200/90 rounded-2xl shadow-[0_15px_30px_-5px_rgba(0,0,0,0.12),0_8px_16px_-8px_rgba(0,0,0,0.08)] p-2 min-w-[170px] flex flex-col gap-0.5 text-[11px] font-bold text-stone-700 animate-scale-up"
+              className="absolute bottom-[125%] left-0 z-30 bg-white border border-stone-200/90 rounded-2xl shadow-[0_15px_30px_-5px_rgba(0,0,0,0.12),0_8px_16px_-8px_rgba(0,0,0,0.08)] p-2 min-w-[170px] flex flex-col gap-0.5 text-xs font-bold text-stone-700 animate-scale-up"
               onMouseEnter={handleShareMouseEnter}
               onMouseLeave={handleShareMouseLeave}
             >
@@ -243,7 +243,7 @@ export default function ReactionBar({
                 onClick={() => setShowShareMenu(false)}
                 className="flex items-center gap-2 px-3 py-2 hover:bg-emerald-50 hover:text-emerald-800 rounded-xl text-left cursor-pointer transition"
               >
-                <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-[9px] select-none shadow-2xs">L</span>
+                <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-xs select-none shadow-2xs">L</span>
                 <span>แชร์ไปยัง LINE</span>
               </a>
 
@@ -255,7 +255,7 @@ export default function ReactionBar({
                 onClick={() => setShowShareMenu(false)}
                 className="flex items-center gap-2 px-3 py-2 hover:bg-blue-50 hover:text-blue-800 rounded-xl text-left cursor-pointer transition"
               >
-                <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-[9px] select-none shadow-2xs">F</span>
+                <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs select-none shadow-2xs">F</span>
                 <span>แชร์ไปยัง Facebook</span>
               </a>
 
@@ -270,7 +270,7 @@ export default function ReactionBar({
                 }}
                 className="flex items-center gap-2 px-3 py-2 hover:bg-stone-50 rounded-xl text-left cursor-pointer w-full text-stone-700 font-bold transition"
               >
-                <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center font-black text-[9px] select-none shadow-2xs">🔗</span>
+                <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center font-black text-xs select-none shadow-2xs">🔗</span>
                 <span>คัดลอกลิงก์</span>
               </button>
 
@@ -285,7 +285,7 @@ export default function ReactionBar({
                 }}
                 className="flex items-center gap-2 px-3 py-2 hover:bg-stone-50 rounded-xl text-left cursor-pointer w-full text-stone-700 font-bold transition"
               >
-                <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center font-black text-[9px] select-none shadow-2xs">📱</span>
+                <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center font-black text-xs select-none shadow-2xs">📱</span>
                 <span>ตัวเลือกอื่นๆ</span>
               </button>
             </div>
@@ -299,7 +299,7 @@ export default function ReactionBar({
             <Share2 size={18} />
             
             {shareSuccess && (
-              <span className="absolute -top-9 left-1/2 -translate-x-1/2 bg-stone-900/90 text-white text-[9px] font-bold px-2 py-1 rounded-lg animate-fade-in shadow-md whitespace-nowrap z-50">
+              <span className="absolute -top-9 left-1/2 -translate-x-1/2 bg-stone-900/90 text-white text-xs font-bold px-2 py-1 rounded-lg animate-fade-in shadow-md whitespace-nowrap z-50">
                 คัดลอกลิงก์แล้ว
               </span>
             )}

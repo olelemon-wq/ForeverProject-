@@ -107,7 +107,7 @@ export default function GalleryClient({ mediaList, slug, themeConfig }: GalleryC
                 loading="lazy"
               />
               <div className="pointer-events-none absolute inset-0 flex items-end justify-end bg-stone-900/0 p-2 transition group-hover:bg-stone-900/25 sm:p-3">
-                <span className="flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 text-[9px] font-bold text-white opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
+                <span className="flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 text-xs font-bold text-white opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
                   <ZoomIn className="h-3 w-3" />
                   ขยาย
                 </span>

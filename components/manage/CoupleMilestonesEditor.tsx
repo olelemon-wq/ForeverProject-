@@ -33,7 +33,7 @@ export default function CoupleMilestonesEditor({
   return (
     <div className="space-y-3">
       <p className="font-bold text-stone-700">รายการวันสำคัญ</p>
-      <p className="text-[11px] text-stone-500 leading-relaxed">
+      <p className="text-xs text-stone-500 leading-relaxed">
         เพิ่มวันพบกันครั้งแรก ครบรอบ ทริป หรือช่วงเวลาที่อยากบันทึก — เรียงตามลำดับที่ต้องการแสดงบนการ์ด
       </p>
 
@@ -56,7 +56,7 @@ export default function CoupleMilestonesEditor({
           </div>
 
           <div className="space-y-1">
-            <label className="text-stone-600 font-semibold text-[11px]">ชื่อเหตุการณ์</label>
+            <label className="text-stone-600 font-semibold text-xs">ชื่อเหตุการณ์</label>
             <Input
               type="text"
               value={milestone.title}
@@ -68,7 +68,7 @@ export default function CoupleMilestonesEditor({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="space-y-1">
-              <label className="text-stone-600 font-semibold text-[11px]">วันที่</label>
+              <label className="text-stone-600 font-semibold text-xs">วันที่</label>
               <div className="flex gap-1.5 items-center">
                 <Input
                   type="text"
@@ -88,7 +88,7 @@ export default function CoupleMilestonesEditor({
               </div>
             </div>
             <div className="space-y-1">
-              <label className="text-stone-600 font-semibold text-[11px]">เวลา (ไม่บังคับ)</label>
+              <label className="text-stone-600 font-semibold text-xs">เวลา (ไม่บังคับ)</label>
               <Input
                 type="text"
                 value={milestone.time || ''}
@@ -100,7 +100,7 @@ export default function CoupleMilestonesEditor({
           </div>
 
           <div className="space-y-1">
-            <label className="text-stone-600 font-semibold text-[11px]">สถานที่ (ไม่บังคับ)</label>
+            <label className="text-stone-600 font-semibold text-xs">สถานที่ (ไม่บังคับ)</label>
             <Input
               type="text"
               value={milestone.place || ''}
@@ -111,7 +111,7 @@ export default function CoupleMilestonesEditor({
           </div>
 
           <div className="space-y-1">
-            <label className="text-stone-600 font-semibold text-[11px]">โน้ตเพิ่มเติม (ไม่บังคับ)</label>
+            <label className="text-stone-600 font-semibold text-xs">โน้ตเพิ่มเติม (ไม่บังคับ)</label>
             <Input
               type="text"
               value={milestone.note || ''}
@@ -122,7 +122,7 @@ export default function CoupleMilestonesEditor({
           </div>
 
           <div className="space-y-1">
-            <label className="text-stone-600 font-semibold text-[11px]">ลิงก์ Google Maps (ไม่บังคับ)</label>
+            <label className="text-stone-600 font-semibold text-xs">ลิงก์ Google Maps (ไม่บังคับ)</label>
             <Input
               type="text"
               value={milestone.mapLink || ''}

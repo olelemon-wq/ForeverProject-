@@ -733,7 +733,7 @@ function EditorWorkspace() {
                     <Eye className="w-3.5 h-3.5 text-emerald-700" />
                     <span>แสดงประกาศบนหน้าเว็บ</span>
                   </h4>
-                  <p className="text-[10px] text-stone-500 leading-normal">เปิดให้แขกเข้าชมกำหนดการออนไลน์ได้</p>
+                  <p className="text-xs text-stone-500 leading-normal">เปิดให้แขกเข้าชมกำหนดการออนไลน์ได้</p>
                 </div>
                 <Checkbox 
                   checked={formData.announcementActive}
@@ -750,7 +750,7 @@ function EditorWorkspace() {
                 </h4>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">ข้อความเกริ่นนำแจ้งข่าว</label>
+                  <label className="text-xs font-bold text-stone-600 block">ข้อความเกริ่นนำแจ้งข่าว</label>
                   <Textarea 
                     value={formData.announcementText} 
                     onChange={(e) => handleFieldChange('announcementText', e.target.value)} 
@@ -761,7 +761,7 @@ function EditorWorkspace() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">
+                  <label className="text-xs font-bold text-stone-600 block">
                     {siteCategory === 'Couple' || siteCategory === 'Wedding'
                       ? 'ชื่อคู่รัก / ชื่อเว็บไซต์'
                       : siteCategory === 'Pet Memorial'
@@ -786,7 +786,7 @@ function EditorWorkspace() {
                 {/* Dynamic Subject List Editor (BR003 / Phase 2 consult: Alive/Deceased toggle) */}
                 <div className="space-y-3 pt-2.5 border-t border-stone-100">
                   <div className="flex justify-between items-center select-none">
-                    <span className="text-[10px] font-bold text-stone-600">
+                    <span className="text-xs font-bold text-stone-600">
                       {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'รายชื่อคู่รัก' :
                        siteCategory === 'Pet Memorial' ? 'รายชื่อสัตว์เลี้ยง' :
                        siteCategory === 'Family Legacy' ? 'รายชื่อผู้ดูแล/บรรพบุรุษ' :
@@ -809,7 +809,7 @@ function EditorWorkspace() {
                           });
                           handleFieldChange('subjects', nextSubjects);
                         }}
-                        className="text-[9px] font-bold text-emerald-700 hover:text-emerald-800 transition flex items-center gap-1 cursor-pointer border-0 bg-transparent"
+                        className="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition flex items-center gap-1 cursor-pointer border-0 bg-transparent"
                       >
                         <Plus className="w-3 h-3" />
                         <span>เพิ่มรายชื่อ</span>
@@ -845,7 +845,7 @@ function EditorWorkspace() {
 
                         {/* Name Input */}
                         <div className="space-y-1 pr-6">
-                          <label className="text-[9px] font-bold text-stone-500 block">ชื่อ</label>
+                          <label className="text-xs font-bold text-stone-500 block">ชื่อ</label>
                           <Input
                             type="text"
                             value={sub.name || ''}
@@ -878,7 +878,7 @@ function EditorWorkspace() {
                               }}
                               className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
                             />
-                            <span className="text-[10px] font-bold text-emerald-800">
+                            <span className="text-xs font-bold text-emerald-800">
                               {siteCategory === 'Pet Memorial' ? 'อยู่ด้วยกัน (ยังมีชีวิต)' : 'ท่านยังมีชีวิตอยู่'}
                             </span>
                           </label>
@@ -887,7 +887,7 @@ function EditorWorkspace() {
                         {/* Dates grid */}
                         <div className={`grid gap-3.5 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
                           <div className="space-y-1">
-                            <span className="text-[9px] text-stone-500 font-semibold block">วันเกิด</span>
+                            <span className="text-xs text-stone-500 font-semibold block">วันเกิด</span>
                             {sub.birthYearOnly ? (
                               <ThaiDatePicker
                                 variant="input"
@@ -921,7 +921,7 @@ function EditorWorkspace() {
                                   readOnly
                                   value={sub.birthDate ? new Date(sub.birthDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
                                   placeholder="เลือกวันเกิด"
-                                  className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none min-w-0"
+                                  className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none min-w-0"
                                 />
                                 <ThaiDatePicker
                                   value={toPickerYmd(sub.birthDate)}
@@ -953,14 +953,14 @@ function EditorWorkspace() {
                                   }}
                                   className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-2.5 h-2.5 cursor-pointer"
                               />
-                              <span className="text-[8px] text-stone-400 font-semibold">ระบุเฉพาะปี พ.ศ.</span>
+                              <span className="text-xs text-stone-400 font-semibold">ระบุเฉพาะปี พ.ศ.</span>
                             </label>
                           </div>
 
                           {/* Death Date */}
                           {!sub.isAlive && (
                             <div className="space-y-1">
-                              <span className="text-[9px] text-stone-550 font-semibold block">วันเสียชีวิต</span>
+                              <span className="text-xs text-stone-550 font-semibold block">วันเสียชีวิต</span>
                               {sub.deathYearOnly ? (
                                 <ThaiDatePicker
                                   variant="input"
@@ -994,7 +994,7 @@ function EditorWorkspace() {
                                     readOnly
                                     value={sub.deathDate ? new Date(sub.deathDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
                                     placeholder="เลือกวันเสียชีวิต"
-                                    className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] focus:outline-none min-w-0"
+                                    className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none min-w-0"
                                   />
                                   <ThaiDatePicker
                                     value={toPickerYmd(sub.deathDate)}
@@ -1026,7 +1026,7 @@ function EditorWorkspace() {
                                   }}
                                   className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-2.5 h-2.5 cursor-pointer"
                                 />
-                                <span className="text-[8px] text-stone-400 font-semibold">ระบุเฉพาะปี พ.ศ.</span>
+                                <span className="text-xs text-stone-400 font-semibold">ระบุเฉพาะปี พ.ศ.</span>
                               </label>
                             </div>
                           )}
@@ -1038,7 +1038,7 @@ function EditorWorkspace() {
 
                 <div className="grid grid-cols-2 gap-3.5">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-600 block">
+                    <label className="text-xs font-bold text-stone-600 block">
                       {siteCategory === 'Wedding' ? 'สถานที่จัดงาน' : siteCategory === 'Couple' ? 'สถานที่หรือเหตุการณ์' : 'ชื่อวัด'}
                     </label>
                     <Input 
@@ -1054,7 +1054,7 @@ function EditorWorkspace() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-600 block">
+                    <label className="text-xs font-bold text-stone-600 block">
                       {labels.pavilionLabel}
                     </label>
                     <Input 
@@ -1069,7 +1069,7 @@ function EditorWorkspace() {
 
                 <div className="space-y-3">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-600 block">สไตล์การ์ดประกาศ</label>
+                    <label className="text-xs font-bold text-stone-600 block">สไตล์การ์ดประกาศ</label>
                     <Select
                               value={formData.announcementStyle}
                               onValueChange={(value) => handleFieldChange('announcementStyle', value)}
@@ -1085,7 +1085,7 @@ function EditorWorkspace() {
                             </Select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-600 block">แผนที่ Google Maps</label>
+                    <label className="text-xs font-bold text-stone-600 block">แผนที่ Google Maps</label>
                     <Input 
                       type="text" 
                       value={formData.announcementMapLink} 
@@ -1106,7 +1106,7 @@ function EditorWorkspace() {
 
                  {/* 1. Water Bathing / Meetup */}
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
-                  <span className="text-[10px] font-bold text-stone-700 flex items-center gap-1 select-none">
+                  <span className="text-xs font-bold text-stone-700 flex items-center gap-1 select-none">
                     <Droplets className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                     <span>{labels.item1.replace(/^\d+\.\s*/, '')}</span>
                   </span>
@@ -1117,7 +1117,7 @@ function EditorWorkspace() {
                         value={formData.announcementWaterDate} 
                         onChange={(e) => handleFieldChange('announcementWaterDate', e.target.value)} 
                         placeholder={labels.item1Placeholder}
-                        className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 min-w-0"
+                        className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500 min-w-0"
                       />
                       <ThaiDatePicker 
                         buttonClassName="p-1 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer"
@@ -1146,7 +1146,7 @@ function EditorWorkspace() {
                           }
                               }}
                             >
-                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"}>
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500 cursor-pointer"}>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent position="popper">
@@ -1163,7 +1163,7 @@ function EditorWorkspace() {
                           value={formData.announcementWaterTime} 
                           onChange={(e) => handleFieldChange('announcementWaterTime', e.target.value)} 
                           placeholder="ระบุเวลา เช่น 16:15 น."
-                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500"
+                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500"
                         />
                       )}
                     </div>
@@ -1174,7 +1174,7 @@ function EditorWorkspace() {
                 <>
                 {/* 2. Abhidhamma */}
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
-                  <span className="text-[10px] font-bold text-stone-700 flex items-center gap-1 select-none">
+                  <span className="text-xs font-bold text-stone-700 flex items-center gap-1 select-none">
                     <Flame className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                     <span>{labels.item2.replace(/^\d+\.\s*/, '')}</span>
                   </span>
@@ -1185,7 +1185,7 @@ function EditorWorkspace() {
                         value={formData.announcementAbhidhammaDateRange} 
                         onChange={(e) => handleFieldChange('announcementAbhidhammaDateRange', e.target.value)} 
                         placeholder={labels.item2Placeholder}
-                        className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 min-w-0"
+                        className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500 min-w-0"
                       />
                       <ThaiDatePicker 
                         mode="range"
@@ -1220,7 +1220,7 @@ function EditorWorkspace() {
                           }
                               }}
                             >
-                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"}>
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500 cursor-pointer"}>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent position="popper">
@@ -1237,7 +1237,7 @@ function EditorWorkspace() {
                           value={formData.announcementAbhidhammaTime} 
                           onChange={(e) => handleFieldChange('announcementAbhidhammaTime', e.target.value)} 
                           placeholder={labels.item2TimePlaceholder}
-                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-555"
+                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-555"
                         />
                       )}
                     </div>
@@ -1246,7 +1246,7 @@ function EditorWorkspace() {
 
                 {/* 3. Cremation */}
                 <div className="p-2.5 bg-stone-50/50 rounded-xl border border-stone-150 space-y-1.5">
-                  <span className="text-[10px] font-bold text-stone-700 flex items-center gap-1 select-none">
+                  <span className="text-xs font-bold text-stone-700 flex items-center gap-1 select-none">
                     <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span>{labels.item3.replace(/^\d+\.\s*/, '')}</span>
                   </span>
@@ -1257,7 +1257,7 @@ function EditorWorkspace() {
                         value={formData.announcementCremationDate} 
                         onChange={(e) => handleFieldChange('announcementCremationDate', e.target.value)} 
                         placeholder={labels.item3Placeholder}
-                        className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 min-w-0"
+                        className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500 min-w-0"
                       />
                       <ThaiDatePicker 
                         buttonClassName="p-1 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer"
@@ -1286,7 +1286,7 @@ function EditorWorkspace() {
                           }
                               }}
                             >
-                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500 cursor-pointer"}>
+                              <SelectTrigger className={"w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500 cursor-pointer"}>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent position="popper">
@@ -1303,7 +1303,7 @@ function EditorWorkspace() {
                           value={formData.announcementCremationTime} 
                           onChange={(e) => handleFieldChange('announcementCremationTime', e.target.value)} 
                           placeholder="ระบุเวลา เช่น 16:15 น."
-                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-[11px] focus:outline-none focus:border-emerald-500"
+                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:border-emerald-500"
                         />
                       )}
                     </div>
@@ -1325,7 +1325,7 @@ function EditorWorkspace() {
                 </h4>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">
+                  <label className="text-xs font-bold text-stone-600 block">
                     {usesSingleMilestoneSchedule(siteCategory) ? 'โน้ต / รายละเอียด' : 'การแต่งกายเข้าร่วมงาน'}
                   </label>
                   <Input 
@@ -1345,7 +1345,7 @@ function EditorWorkspace() {
 
                 {!usesSingleMilestoneSchedule(siteCategory) && (
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">
+                  <label className="text-xs font-bold text-stone-600 block">
                     {siteCategory === 'Wedding' ? 'นโยบายการรับซอง/ของขวัญ' : 'นโยบายพวงหรีด'}
                   </label>
                   <Select
@@ -1377,7 +1377,7 @@ function EditorWorkspace() {
                 )}
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-stone-600 block">
+                  <label className="text-xs font-bold text-stone-600 block">
                     {usesSingleMilestoneSchedule(siteCategory) ? 'เบอร์ติดต่อประสานงาน' : 'เบอร์ติดต่อประสานงานเจ้าภาพ'}
                   </label>
                   <Input 
@@ -1398,7 +1398,7 @@ function EditorWorkspace() {
                 <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">เลเยอร์อักษรบนการ์ด ({elements.length})</span>
                 <Button variant="ghost" type="button"
                   onClick={handleAddText}
-                  className="h-auto py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-lg border border-emerald-200/55 transition flex items-center gap-1 select-none cursor-pointer"
+                  className="h-auto py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg border border-emerald-200/55 transition flex items-center gap-1 select-none cursor-pointer"
                 >
                   <Plus className="w-3 h-3" />
                   <span>เพิ่มข้อความอิสระ</span>
@@ -1444,7 +1444,7 @@ function EditorWorkspace() {
                 })}
               </div>
 
-              <div className="p-3 bg-stone-50 border border-stone-200 rounded-xl space-y-1 text-[10px] text-stone-500 leading-normal">
+              <div className="p-3 bg-stone-50 border border-stone-200 rounded-xl space-y-1 text-xs text-stone-500 leading-normal">
                 <p className="font-bold text-stone-600 flex items-center gap-1">
                   <Info className="w-3 h-3" />
                   <span>วิธีจัดระเบียบเลเยอร์:</span>
@@ -1463,7 +1463,7 @@ function EditorWorkspace() {
         <div className="max-w-2xl w-full flex flex-col items-center">
           
           <div className="mb-4 text-center">
-            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest bg-white px-3.5 py-1.5 rounded-full border border-stone-200 inline-flex items-center gap-1.5 select-none shadow-2xs">
+            <span className="text-xs font-bold text-stone-400 uppercase tracking-widest bg-white px-3.5 py-1.5 rounded-full border border-stone-200 inline-flex items-center gap-1.5 select-none shadow-2xs">
               <Settings className="w-3.5 h-3.5 animate-spin-slow text-emerald-650" />
               <span>ดับเบิ้ลคลิก (Double-Click) บนข้อความเพื่อพิมพ์แก้ไขบนการ์ดได้โดยตรง</span>
             </span>
@@ -1560,7 +1560,7 @@ function EditorWorkspace() {
                       width: measureTextWidth(selectedElement.text, fontSize, selectedElement.fontFamily, selectedElement.fontStyle) + 10
                     });
                   }}
-                  className="w-12 px-1.5 py-1 border border-stone-200 rounded-lg text-center font-mono text-[11px] focus:outline-none focus:border-emerald-500"
+                  className="w-12 px-1.5 py-1 border border-stone-200 rounded-lg text-center font-mono text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
             </div>
@@ -1740,7 +1740,7 @@ function EditorWorkspace() {
                   <Palette className="w-3.5 h-3.5 text-emerald-600" />
                   <span>ภาพพื้นหลังการ์ด (Background)</span>
                 </h4>
-                <p className="text-[10px] text-stone-500 leading-normal mb-2">เลือกโทนสีพื้น หรือรูปแบบภาพเทมเพลตสำเร็จรูปด้านล่างเพื่อเปลี่ยนพื้นหลังการ์ดค่ะ</p>
+                <p className="text-xs text-stone-500 leading-normal mb-2">เลือกโทนสีพื้น หรือรูปแบบภาพเทมเพลตสำเร็จรูปด้านล่างเพื่อเปลี่ยนพื้นหลังการ์ดค่ะ</p>
               </div>
 
               {/* Grid of Templates & Colors */}
@@ -1752,10 +1752,10 @@ function EditorWorkspace() {
                     background === '#ffffff' ? 'border-emerald-500 bg-emerald-50/15 font-bold text-emerald-800' : 'border-stone-200 text-stone-600 bg-white'
                   }`}
                 >
-                  <div className="w-full h-14 rounded-lg bg-white border border-stone-250 shadow-2xs mb-1.5 flex items-center justify-center text-[10px] text-stone-400">
+                  <div className="w-full h-14 rounded-lg bg-white border border-stone-250 shadow-2xs mb-1.5 flex items-center justify-center text-xs text-stone-400">
                     White
                   </div>
-                  <span className="text-[10px] block">ขาวสุภาพ</span>
+                  <span className="text-xs block">ขาวสุภาพ</span>
                 </Button>
 
                 {/* 2. Charcoal Slate Color */}
@@ -1769,7 +1769,7 @@ function EditorWorkspace() {
                     style={{ backgroundImage: 'url(/Template-cards/charcoal_gold.png)' }} 
                     className="w-full h-14 rounded-lg bg-cover bg-center border border-stone-250 shadow-2xs mb-1.5"
                   />
-                  <span className="text-[10px] block font-bold text-stone-700">เทาสุภาพ (ทอง)</span>
+                  <span className="text-xs block font-bold text-stone-700">เทาสุภาพ (ทอง)</span>
                 </Button>
 
                 {/* 3. Warm Cream Color */}
@@ -1779,10 +1779,10 @@ function EditorWorkspace() {
                     background === '#FAF6EE' ? 'border-emerald-500 bg-emerald-50/15 font-bold text-emerald-800' : 'border-stone-200 text-stone-600 bg-white'
                   }`}
                 >
-                  <div className="w-full h-14 rounded-lg bg-[#FAF6EE] border border-[#EADFC9] shadow-2xs mb-1.5 flex items-center justify-center text-[10px] text-[#8C7B5D]">
+                  <div className="w-full h-14 rounded-lg bg-[#FAF6EE] border border-[#EADFC9] shadow-2xs mb-1.5 flex items-center justify-center text-xs text-[#8C7B5D]">
                     Cream
                   </div>
-                  <span className="text-[10px] block">ครีมทอง</span>
+                  <span className="text-xs block">ครีมทอง</span>
                 </Button>
 
                 {/* 10 Image Templates */}
@@ -1801,14 +1801,14 @@ function EditorWorkspace() {
                         style={{ backgroundImage: `url(${path})` }} 
                         className="w-full h-14 rounded-lg bg-cover bg-center border border-stone-250 shadow-2xs mb-1.5"
                       />
-                      <span className="text-[10px] block">สไตล์ {num}</span>
+                      <span className="text-xs block">สไตล์ {num}</span>
                     </Button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="p-3.5 bg-stone-50 border border-stone-200 rounded-xl space-y-1.5 text-[10px] text-stone-500 leading-normal select-none">
+            <div className="p-3.5 bg-stone-50 border border-stone-200 rounded-xl space-y-1.5 text-xs text-stone-500 leading-normal select-none">
               <p className="font-bold text-stone-600 flex items-center gap-1">
                 <Info className="w-3.5 h-3.5 text-stone-400" />
                 <span>คำแนะนำสำหรับการออกแบบ:</span>
@@ -1839,28 +1839,28 @@ function EditorWorkspaceContainer() {
           <div>
             <h1 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
               <span>Template Editor</span>
-              <span className="text-[9px] font-black text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider">Phase 2</span>
+              <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider">Phase 2</span>
             </h1>
-            <p className="text-[10px] text-stone-500">แก้ไขข้อความบนการ์ด ย่อขยายขนาด และจัดวางกำหนดการความทรงจำอย่างอิสระ</p>
+            <p className="text-xs text-stone-500">แก้ไขข้อความบนการ์ด ย่อขยายขนาด และจัดวางกำหนดการความทรงจำอย่างอิสระ</p>
           </div>
         </div>
 
         {/* Action button in header */}
         <div className="flex items-center gap-3">
           {saveStatus.type === 'loading' && (
-            <span className="text-[10px] text-stone-500 flex items-center gap-1.5 bg-stone-100 px-3 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
+            <span className="text-xs text-stone-500 flex items-center gap-1.5 bg-stone-100 px-3 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
               <RefreshCw className="w-3 h-3 animate-spin text-stone-500" />
               <span>{saveStatus.message}</span>
             </span>
           )}
           {saveStatus.type === 'success' && (
-            <span className="text-[10px] text-emerald-850 font-bold flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-250 shadow-2xs animate-bounce">
+            <span className="text-xs text-emerald-850 font-bold flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-250 shadow-2xs animate-bounce">
               <Sparkles className="w-3 h-3 text-emerald-700 animate-pulse" />
               <span>{saveStatus.message}</span>
             </span>
           )}
           {saveStatus.type === 'error' && (
-            <span className="text-[10px] text-rose-850 font-bold flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-250 shadow-2xs">
+            <span className="text-xs text-rose-850 font-bold flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-250 shadow-2xs">
               <Info className="w-3.5 h-3.5 text-rose-700" />
               <span>{saveStatus.message}</span>
             </span>

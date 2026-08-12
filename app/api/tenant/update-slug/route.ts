@@ -81,10 +81,42 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'ชื่อลิงก์นี้ถูกผู้อื่นใช้งานไปแล้ว กรุณาป้อนชื่อใหม่อีกครั้ง' }, { status: 400 });
     }
 
-    // 6. Update slug
+    // 6. Update slug (and replace placeholder name if still default)
+    const current = await db.tenant.findUnique({ where: { id: websiteId } });
+    if (!current) {
+      return NextResponse.json({ error: 'ไม่พบเว็บไซต์' }, { status: 404 });
+    }
+    if (current.status === 'PENDING_PAYMENT') {
+      return NextResponse.json({ error: 'กรุณาชำระเงินก่อนตั้งชื่อลิงก์ URL' }, { status: 403 });
+    }
+
+    const placeholderNames = [
+      'เว็บไซต์ใหม่',
+      'เว็บไซต์รำลึกบุคคล',
+      'เว็บไซต์เรื่องราวครอบครัว',
+      'เว็บไซต์คู่รัก',
+      'เว็บไซต์งานแต่งงาน',
+      'เว็บไซต์กลุ่มเพื่อน',
+      'เว็บไซต์สัตว์เลี้ยง',
+    ];
+    const shouldRefreshName = placeholderNames.includes(current.name);
+
     const updated = await db.tenant.update({
       where: { id: websiteId },
-      data: { slug: cleanSlug },
+      data: {
+        slug: cleanSlug,
+        ...(shouldRefreshName ? { name: cleanSlug } : {}),
+        visibility: 'PUBLIC',
+      },
+    });
+
+    await db.auditLog.create({
+      data: {
+        websiteId,
+        webmasterId: webmaster.id,
+        action: 'UPDATE',
+        details: `ตั้งชื่อลิงก์ URL เป็น /${cleanSlug}`,
+      },
     });
 
     return NextResponse.json({

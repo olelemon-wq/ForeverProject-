@@ -85,7 +85,7 @@ export default function MarketingAccessibilityWidget() {
             </button>
           </div>
 
-          <p className="text-[10px] text-[#86868B] font-semibold leading-normal">
+          <p className="text-xs text-[#86868B] font-semibold leading-normal">
             ขนาดปกติของหน้าเว็บ (สามารถปรับเพิ่ม A+ ได้สูงสุด 2 ระดับ)
           </p>
         </div>

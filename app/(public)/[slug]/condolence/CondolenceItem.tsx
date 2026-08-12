@@ -74,12 +74,12 @@ export default function CondolenceItem({
         {showRelationship && (() => {
           const badge = getRelationshipBadge(condolence.relationship);
           return (
-            <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold ${badge.className}`}>
+            <span className={`rounded-full border px-2 py-0.5 text-xs font-bold ${badge.className}`}>
               {badge.label}
             </span>
           );
         })()}
-        <span className="ml-auto text-[10px] tabular-nums text-stone-400">
+        <span className="ml-auto text-xs tabular-nums text-stone-400">
           {new Date(condolence.createdAt).toLocaleDateString('th-TH', {
             day: 'numeric',
             month: 'short',

@@ -147,7 +147,7 @@ export default function CoupleJourneyCard({
           >
             <div className="flex items-center gap-2">
               <span
-                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold"
+                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold"
                 style={{
                   color: 'var(--milestone-primary)',
                   backgroundColor: 'var(--milestone-soft)',
@@ -282,7 +282,7 @@ export default function CoupleJourneyCard({
         )}
 
         <footer className="border-t border-[#EDD5C8]/40 pt-4 text-center">
-          <p className={cn('text-[10px] font-medium leading-relaxed', textMutedClass)}>
+          <p className={cn('text-xs font-medium leading-relaxed', textMutedClass)}>
             {footerText}
           </p>
         </footer>

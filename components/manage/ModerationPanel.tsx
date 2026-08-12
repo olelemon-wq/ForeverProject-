@@ -80,7 +80,7 @@ function SectionHeading({
       {count > 0 && (
         <span
           className={cn(
-            'inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-[10px] font-bold tabular-nums text-white',
+            'inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums text-white',
             tone === 'alert' ? 'bg-rose-500' : 'bg-amber-500',
           )}
         >
@@ -114,7 +114,7 @@ function AuthorMeta({
     <div className="flex min-w-0 items-start gap-2">
       <div
         className={cn(
-          'flex size-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold',
+          'flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold',
           tone === 'alert'
             ? 'border border-rose-100 bg-white text-rose-600'
             : 'bg-[#0071e3]/10 text-[#0071e3]',
@@ -124,7 +124,7 @@ function AuthorMeta({
       </div>
       <div className="min-w-0">
         <p className="truncate text-sm font-bold text-stone-900">{name}</p>
-        <p className="truncate text-[11px] text-stone-500">
+        <p className="truncate text-xs text-stone-500">
           {[relationship, createdAt ? formatModerationDate(createdAt) : null].filter(Boolean).join(' · ')}
         </p>
       </div>
@@ -169,7 +169,7 @@ function ApproveDeleteActions({
         type="button"
         size="sm"
         onClick={onApprove}
-        className="h-8 rounded-lg bg-emerald-600 px-2.5 text-[11px] font-bold text-white hover:bg-emerald-700 sm:px-3 sm:text-xs"
+        className="h-8 rounded-lg bg-emerald-600 px-2.5 text-xs font-bold text-white hover:bg-emerald-700 sm:px-3 sm:text-xs"
         aria-label="อนุมัติเผยแพร่"
       >
         <Check className="size-3.5 sm:mr-1" />
@@ -203,7 +203,7 @@ function ReportActions({
         type="button"
         size="sm"
         onClick={onDelete}
-        className="h-8 rounded-lg bg-rose-600 px-2.5 text-[11px] font-bold text-white hover:bg-rose-700 sm:px-3 sm:text-xs"
+        className="h-8 rounded-lg bg-rose-600 px-2.5 text-xs font-bold text-white hover:bg-rose-700 sm:px-3 sm:text-xs"
         aria-label="ลบข้อความ"
       >
         <Trash2 className="size-3.5 sm:mr-1" />
@@ -260,7 +260,7 @@ export default function ModerationPanel({
             ตรวจสอบข้อความก่อนเผยแพร่ หรือจัดการรายการที่ถูกแจ้ง
           </p>
         </div>
-        <div className="flex flex-wrap gap-1.5 text-[11px] font-semibold text-stone-600">
+        <div className="flex flex-wrap gap-1.5 text-xs font-semibold text-stone-600">
           {showCondolence && (
             <>
               <span className="rounded-full bg-stone-100 px-2 py-0.5 tabular-nums">รอ {condolences.length}</span>
@@ -351,7 +351,7 @@ export default function ModerationPanel({
                     {item.reports.map((report) => (
                       <p
                         key={report.id}
-                        className="rounded-lg bg-rose-50/80 px-2.5 py-1.5 text-[11px] leading-snug text-rose-950/80"
+                        className="rounded-lg bg-rose-50/80 px-2.5 py-1.5 text-xs leading-snug text-rose-950/80"
                       >
                         <span className="font-semibold text-rose-950">{report.reasonLabel}</span>
                         {report.details ? ` — ${report.details}` : ''}
@@ -381,12 +381,12 @@ export default function ModerationPanel({
                       <div className="min-w-0 space-y-1">
                         <AuthorMeta name={post.senderName} relationship={null} createdAt={post.createdAt} />
                         {post.title && (
-                          <span className="inline-block rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-semibold text-stone-600">
+                          <span className="inline-block rounded-full bg-stone-100 px-2 py-0.5 text-xs font-semibold text-stone-600">
                             {post.title}
                           </span>
                         )}
                         {post.mediaUrl && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0071e3]">
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-[#0071e3]">
                             <ImageIcon className="size-3" />
                             แนบรูปภาพ
                           </span>

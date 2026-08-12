@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CreditCard, AlertCircle, CheckCircle2, QrCode, RotateCw } from 'lucide-react';
+import { CreditCard, AlertCircle, CheckCircle2, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { buildPromptPayQrImageUrl } from '@/lib/promptpayPayload';
 
 function PaymentPageInner() {
   const router = useRouter();
@@ -36,6 +37,10 @@ function PaymentPageInner() {
         }
 
         if (matched.status === 'ACTIVE') {
+          if (typeof matched.slug === 'string' && matched.slug.startsWith('draft-')) {
+            router.push(`/manage/create?step=url&site=${siteId}`);
+            return;
+          }
           router.push(matched.slug ? `/manage?site=${matched.slug}` : '/manage');
           return;
         }
@@ -81,8 +86,13 @@ function PaymentPageInner() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
+      // After pay: set permanent URL next (theme/data live in /manage)
+      const needsUrl =
+        typeof siteDetails?.slug === 'string' && siteDetails.slug.startsWith('draft-');
       router.push(
-        `/manage/setup-features?site=${siteId}&category=${encodeURIComponent(siteDetails?.category || '')}`
+        needsUrl
+          ? `/manage/create?step=url&site=${siteId}`
+          : `/manage?site=${encodeURIComponent(siteDetails?.slug || '')}`
       );
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการจำลองการชำระเงิน');
@@ -103,7 +113,7 @@ function PaymentPageInner() {
     <main className="min-h-screen bg-stone-50 text-stone-850 flex items-center justify-center p-4">
       <div className="w-full max-w-md p-8 rounded-3xl border border-stone-200 bg-white shadow-xl space-y-8 animate-fade-in text-center">
         <header className="space-y-2">
-          <span className="text-[10px] uppercase font-black text-blue-850 tracking-widest bg-blue-50 px-3.5 py-1 rounded-full border border-blue-100 inline-flex items-center gap-1">
+          <span className="text-xs uppercase font-black text-blue-850 tracking-widest bg-blue-50 px-3.5 py-1 rounded-full border border-blue-100 inline-flex items-center gap-1">
             <CreditCard className="w-3 h-3 text-blue-600" /> THAI PROMPTPAY
           </span>
           <h1 className="text-2xl font-black text-stone-900 pt-2">ชำระค่าบริการสร้างเว็บไซต์</h1>
@@ -129,30 +139,42 @@ function PaymentPageInner() {
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-stone-500 font-medium">ชื่อชั่วคราว:</span>
-                <span className="text-stone-800 font-mono text-[11px] truncate max-w-[200px]">{siteDetails.name}</span>
+                <span className="text-stone-800 font-mono text-xs truncate max-w-[200px]">{siteDetails.name}</span>
               </div>
               <div className="border-t border-stone-200/60 my-2 pt-2 flex justify-between items-baseline">
                 <span className="text-xs text-stone-500 font-bold">ยอดที่ต้องชำระ:</span>
-                <span className="text-2xl font-black text-[#0071e3]">฿2,000 <span className="text-[10px] font-normal text-stone-400">/ ปี</span></span>
+                <span className="text-2xl font-black text-[#0071e3]">฿2,000 <span className="text-xs font-normal text-stone-400">/ ปี</span></span>
               </div>
               <div className="flex justify-between items-center pt-1 border-t border-stone-200/40">
-                <span className="text-[10px] text-stone-400 font-bold uppercase">รหัสอ้างอิง:</span>
-                <span className="text-[11px] text-stone-600 font-mono">{paymentRef || 'Generating...'}</span>
+                <span className="text-xs text-stone-400 font-bold uppercase">รหัสอ้างอิง:</span>
+                <span className="text-xs text-stone-600 font-mono">{paymentRef || 'Generating...'}</span>
               </div>
             </div>
 
             {/* PromptPay QR Section */}
-            <div className="flex flex-col items-center justify-center p-6 border border-stone-200 rounded-3xl bg-[#FAF8F5] relative shadow-inner">
-              {/* Dynamic QR Code Mock representation */}
-              <div className="w-48 h-48 bg-white border-4 border-stone-900 rounded-2xl flex items-center justify-center p-2 relative shadow-md">
-                <QrCode className="w-full h-full text-stone-900 stroke-[1.2]" />
-                <div className="absolute inset-0 flex items-center justify-center bg-white/5 opacity-0 hover:opacity-100 transition-opacity">
-                  <span className="px-2.5 py-1 bg-stone-900 text-white rounded-lg text-[9px] font-black tracking-widest uppercase">PROMPTPAY</span>
-                </div>
+            <div className="relative flex flex-col items-center justify-center rounded-3xl border border-stone-200 bg-[#FAF8F5] p-6 shadow-inner">
+              <div className="relative w-48 overflow-hidden rounded-2xl border border-stone-200 bg-white p-3 shadow-md">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={
+                    buildPromptPayQrImageUrl('0812345678', 2000) ||
+                    'https://api.qrserver.com/v1/create-qr-code/?size=240x240&ecc=M&data=FOREVER-MOCK-PROMPTPAY'
+                  }
+                  alt="PromptPay QR จำลอง"
+                  width={192}
+                  height={192}
+                  className="aspect-square w-full object-contain"
+                />
+                <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-stone-900/85 px-2.5 py-0.5 text-xs font-medium tracking-wide text-white">
+                  จำลอง
+                </span>
               </div>
-              <span className="mt-4 px-3 py-1 bg-amber-50 border border-amber-200 text-[10px] text-amber-800 font-black rounded-full uppercase tracking-wider animate-pulse flex items-center gap-1 select-none">
-                ● รอการชำระเงิน (PENDING)
+              <span className="mt-4 flex select-none items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-800">
+                รอการชำระเงิน (PENDING)
               </span>
+              <p className="mt-2 text-xs text-stone-500">
+                QR นี้ใช้สำหรับทดสอบเท่านั้น — สแกนแล้วไม่ตัดเงินจริง
+              </p>
             </div>
 
             {/* Action simulation trigger */}
@@ -175,8 +197,8 @@ function PaymentPageInner() {
                   </>
                 )}
               </Button>
-              <p className="text-[10px] text-stone-400">
-                * หลังชำระเงินสำเร็จ ระบบจะพาไปเลือกฟีเจอร์เริ่มต้น แล้วเข้าหน้าจัดการเว็บไซต์
+              <p className="text-xs text-stone-400">
+                * หลังชำระเงินสำเร็จ ระบบจะพาไปตั้งชื่อลิงก์ URL แล้วเข้าหน้าจัดการเว็บไซต์
               </p>
             </div>
           </div>

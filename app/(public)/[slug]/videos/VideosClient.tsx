@@ -239,7 +239,7 @@ function VideoCard({ media, onClick }: { media: GalleryMedia; onClick: () => voi
         {/* Platform badge */}
         <div className="absolute top-2.5 left-2.5">
           <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-lg ${colors.bg} ${colors.text}`}
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold shadow-lg ${colors.bg} ${colors.text}`}
           >
             <PlatformIcon platform={platform} className="w-3 h-3" />
             {PLATFORM_LABELS[platform]}
@@ -249,7 +249,7 @@ function VideoCard({ media, onClick }: { media: GalleryMedia; onClick: () => voi
 
       {/* Footer */}
       <div className="px-4 py-3 border-t border-stone-100">
-        <h4 className="text-[11px] font-bold text-stone-800 truncate" title={media.fileName}>
+        <h4 className="text-xs font-bold text-stone-800 truncate" title={media.fileName}>
           {media.fileName}
         </h4>
       </div>
@@ -326,7 +326,7 @@ export default function VideosClient({ mediaList, slug }: VideosClientProps) {
                   href={activeMedia.filePath}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-white text-[11px] font-semibold hover:bg-white/25 transition shrink-0"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-white text-xs font-semibold hover:bg-white/25 transition shrink-0"
                 >
                   <ExternalLink className="w-3 h-3" />
                   เปิดบน {PLATFORM_LABELS[activePlatform]}

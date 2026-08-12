@@ -29,14 +29,14 @@ function CardContent({
         <h3 className="line-clamp-2 text-sm font-bold leading-snug text-stone-900 transition-colors group-hover:text-[color:var(--theme-primary,#0d9488)]">
           {title}
         </h3>
-        <p className="text-[11px] leading-relaxed text-stone-500">ผู้จัดทำ · {author}</p>
+        <p className="text-xs leading-relaxed text-stone-500">ผู้จัดทำ · {author}</p>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
-          <span className="inline-flex items-center gap-1 rounded-full border border-stone-200/90 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-stone-600">
+          <span className="inline-flex items-center gap-1 rounded-full border border-stone-200/90 bg-white px-2.5 py-0.5 text-xs font-semibold text-stone-600">
             <FileText className="h-3 w-3 opacity-70" />
             {totalPages} หน้า
           </span>
           <span
-            className="inline-flex items-center gap-0.5 text-[10px] font-bold sm:opacity-80 sm:transition sm:group-hover:opacity-100"
+            className="inline-flex items-center gap-0.5 text-xs font-bold sm:opacity-80 sm:transition sm:group-hover:opacity-100"
             style={{ color: 'var(--theme-primary, #0d9488)' }}
           >
             เปิดอ่าน

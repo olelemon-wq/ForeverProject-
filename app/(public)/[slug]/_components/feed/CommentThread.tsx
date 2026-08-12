@@ -97,7 +97,7 @@ export default function CommentThread({
             const letter = dispName.charAt(0);
             return (
               <div key={comment.id} className="flex gap-2.5 items-start text-xs text-left bg-stone-50 border border-stone-250/30 p-3 rounded-2xl">
-                <div className="w-7 h-7 rounded-full bg-stone-200 border border-stone-300/40 flex items-center justify-center font-bold text-stone-500 text-[10px] select-none flex-shrink-0">
+                <div className="w-7 h-7 rounded-full bg-stone-200 border border-stone-300/40 flex items-center justify-center font-bold text-stone-500 text-xs select-none flex-shrink-0">
                   {comment.authorAvatar && !comment.isAnonymous ? (
                     <img src={comment.authorAvatar} alt={dispName} className="w-full h-full object-cover rounded-full" />
                   ) : (
@@ -107,7 +107,7 @@ export default function CommentThread({
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center justify-between gap-2 flex-wrap">
                     <span className="font-bold text-stone-900">{dispName}</span>
-                    <span className="text-[9px] text-stone-400 font-mono">
+                    <span className="text-xs text-stone-400 font-mono">
                       {formatRelativeTime(comment.createdAt)}
                     </span>
                   </div>
@@ -122,7 +122,7 @@ export default function CommentThread({
       )}
 
       {/* 2. Error message */}
-      {error && <div className="text-[10px] text-red-650 font-bold text-left px-1">⚠️ {error}</div>}
+      {error && <div className="text-xs text-red-650 font-bold text-left px-1">⚠️ {error}</div>}
 
       {/* 3. Input form */}
       <form onSubmit={handleSubmit} className="space-y-2 text-left">
@@ -137,7 +137,7 @@ export default function CommentThread({
               disabled={isAnonymous || localLoading}
               className="flex-1 px-3 py-1.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-850 text-xs focus:bg-white focus:outline-none"
             />
-            <label className="flex items-center gap-1.5 cursor-pointer text-[11px] text-stone-500 font-semibold select-none">
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs text-stone-500 font-semibold select-none">
               <input
                 type="checkbox"
                 checked={isAnonymous}
@@ -150,10 +150,10 @@ export default function CommentThread({
           </div>
         ) : (
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-250/25 px-2 py-0.5 rounded-full font-bold">
+            <span className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-250/25 px-2 py-0.5 rounded-full font-bold">
               ตอบในฐานะ: {isAnonymous ? 'ผู้ไว้อาลัย' : 'ผู้ดูแลระบบ'}
             </span>
-            <label className="flex items-center gap-1.5 cursor-pointer text-[10px] text-stone-500 font-semibold select-none">
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs text-stone-500 font-semibold select-none">
               <input
                 type="checkbox"
                 checked={isAnonymous}

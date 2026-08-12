@@ -96,7 +96,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
       <header className="mb-4 flex select-none items-start justify-between gap-3 border-b border-stone-200 pb-3">
         <div className="min-w-0 text-left">
           <h3 className="line-clamp-2 text-sm font-bold text-stone-900 sm:text-base">{activeBook.title}</h3>
-          <p className="mt-0.5 text-[11px] text-stone-500">ผู้จัดทำ · {activeBook.author}</p>
+          <p className="mt-0.5 text-xs text-stone-500">ผู้จัดทำ · {activeBook.author}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <button
@@ -130,7 +130,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
                 key={size}
                 type="button"
                 onClick={() => setFontSize(size)}
-                className={`cursor-pointer rounded-full px-3 py-0.5 text-[10px] font-bold transition active:scale-95 ${
+                className={`cursor-pointer rounded-full px-3 py-0.5 text-xs font-bold transition active:scale-95 ${
                   fontSize === size
                     ? 'bg-[color:var(--theme-primary,#0d9488)] text-white shadow-xs'
                     : 'text-stone-700 hover:bg-stone-50'
@@ -157,7 +157,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
                 key={key}
                 type="button"
                 onClick={() => setTheme(key)}
-                className={`cursor-pointer rounded-full px-3 py-0.5 text-[10px] font-bold transition active:scale-95 ${
+                className={`cursor-pointer rounded-full px-3 py-0.5 text-xs font-bold transition active:scale-95 ${
                   theme === key
                     ? key === 'sepia'
                       ? 'border border-[#e4d7b5]/65 bg-[#f4eedb] text-[#4f3824] shadow-xs'
@@ -185,7 +185,7 @@ export default function EbookReaderClient({ booklets }: { booklets: Booklet[] })
           </p>
         </div>
 
-        <p className={`text-center text-[10px] font-bold tabular-nums ${currentTheme.footerText}`}>
+        <p className={`text-center text-xs font-bold tabular-nums ${currentTheme.footerText}`}>
           หน้า {currentPage} / {activeBook.totalPages}
         </p>
       </div>

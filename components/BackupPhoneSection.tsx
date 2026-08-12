@@ -163,14 +163,14 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
   return (
     <div className="space-y-4">
       {error && (
-        <div className="p-3.5 rounded-xl bg-red-50 border border-red-150 text-[11px] text-red-700 font-medium flex items-center gap-1.5 animate-fade-in text-left">
+        <div className="p-3.5 rounded-xl bg-red-50 border border-red-150 text-xs text-red-700 font-medium flex items-center gap-1.5 animate-fade-in text-left">
           <AlertCircle className="w-3.5 h-3.5 text-red-650 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {success && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-150 text-[11px] text-emerald-800 font-medium flex items-center gap-1.5 animate-fade-in text-left">
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-150 text-xs text-emerald-800 font-medium flex items-center gap-1.5 animate-fade-in text-left">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
           <span>{success}</span>
         </div>
@@ -187,11 +187,11 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
                   {formatPhoneNumber(p.phone)}
                 </p>
                 {p.isPrimary ? (
-                  <Badge className="h-auto shrink-0 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-[12px] font-black text-emerald-800 hover:bg-emerald-50">
+                  <Badge className="h-auto shrink-0 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-black text-emerald-800 hover:bg-emerald-50">
                     ● เบอร์หลัก
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="h-auto shrink-0 rounded-full border-stone-200 bg-stone-100 px-2.5 py-0.5 text-[9px] font-black text-stone-600 hover:bg-stone-100">
+                  <Badge variant="outline" className="h-auto shrink-0 rounded-full border-stone-200 bg-stone-100 px-2.5 py-0.5 text-xs font-black text-stone-600 hover:bg-stone-100">
                     ● เบอร์สำรอง
                   </Badge>
                 )}
@@ -205,7 +205,7 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
                   variant="ghost"
                   type="button"
                   onClick={() => handleSetPrimary(p.id)}
-                  className="cursor-pointer rounded-lg border border-stone-250 bg-white px-2 py-1 text-[10px] font-bold text-stone-700 transition hover:bg-stone-50 hover:text-stone-950 active:scale-95"
+                  className="cursor-pointer rounded-lg border border-stone-250 bg-white px-2 py-1 text-xs font-bold text-stone-700 transition hover:bg-stone-50 hover:text-stone-950 active:scale-95"
                 >
                   ตั้งเป็นเบอร์หลัก
                 </Button>
@@ -239,12 +239,12 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
       {isAdding && (
         <div className="animate-fade-in space-y-4 rounded-2xl border border-stone-200 bg-stone-50/60 p-4 text-left">
           <div className="flex items-center justify-between border-b border-stone-200/50 pb-2">
-            <span className="text-[10px] font-black uppercase text-stone-500">ผูกเบอร์โทรศัพท์สำรอง</span>
+            <span className="text-xs font-black uppercase text-stone-500">ผูกเบอร์โทรศัพท์สำรอง</span>
             <Button
               variant="ghost"
               type="button"
               onClick={() => { setIsAdding(false); setSimulatedOtp(''); }}
-              className="cursor-pointer border-0 bg-transparent text-[10px] font-bold text-stone-400 hover:text-stone-850"
+              className="cursor-pointer border-0 bg-transparent text-xs font-bold text-stone-400 hover:text-stone-850"
             >
               ยกเลิก
             </Button>
@@ -253,7 +253,7 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
           {step === 1 ? (
             <form onSubmit={handleRequestOtp} className="space-y-3">
               <div className="space-y-1">
-                <label className="text-[9px] font-bold text-stone-500">เบอร์โทรศัพท์มือถือสำรอง</label>
+                <label className="text-xs font-bold text-stone-500">เบอร์โทรศัพท์มือถือสำรอง</label>
                 <Input
                   type="tel"
                   maxLength={10}
@@ -278,7 +278,7 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
           ) : (
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <div className="space-y-1">
-                <label className="block text-center text-[9px] font-bold text-stone-500">
+                <label className="block text-center text-xs font-bold text-stone-500">
                   ป้อนรหัส OTP 6 หลักที่ส่งไปยัง {formatPhoneNumber(newPhone)}
                 </label>
                 <Input
@@ -295,7 +295,7 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
 
               {simulatedOtp && (
                 <div className="space-y-0.5 rounded-xl border border-blue-100 bg-blue-50 p-3 text-center">
-                  <p className="text-[9px] font-bold text-blue-900">จำลองรหัส OTP สำรอง</p>
+                  <p className="text-xs font-bold text-blue-900">จำลองรหัส OTP สำรอง</p>
                   <p className="font-mono text-xs font-bold text-stone-750">{simulatedOtp}</p>
                 </div>
               )}

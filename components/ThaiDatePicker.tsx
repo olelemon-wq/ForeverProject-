@@ -180,11 +180,11 @@ function ScrollDatePanel({
       <div className="mb-1.5 flex gap-1 px-1">
         {!yearOnly && (
           <>
-            <div className="flex-1 text-center text-[10px] font-semibold text-stone-400">วัน</div>
-            <div className="flex-1 text-center text-[10px] font-semibold text-stone-400">เดือน</div>
+            <div className="flex-1 text-center text-xs font-semibold text-stone-400">วัน</div>
+            <div className="flex-1 text-center text-xs font-semibold text-stone-400">เดือน</div>
           </>
         )}
-        <div className="flex-1 text-center text-[10px] font-semibold text-stone-400">พ.ศ.</div>
+        <div className="flex-1 text-center text-xs font-semibold text-stone-400">พ.ศ.</div>
       </div>
       <div className="relative flex gap-1 rounded-xl bg-[#F5F5F7] px-1 py-1">
         <div className="pointer-events-none absolute inset-x-2 top-1/2 h-10 -translate-y-1/2 rounded-lg bg-white shadow-sm ring-1 ring-stone-200/70" />
@@ -283,7 +283,7 @@ function RangeCalendarPanel({
         >
           <ChevronLeft className="size-4" />
         </button>
-        <div className="text-[12px] font-bold text-stone-800">
+        <div className="text-xs font-bold text-stone-800">
           {THAI_MONTHS[currentMonth]} {currentYear + 543}
         </div>
         <button
@@ -303,7 +303,7 @@ function RangeCalendarPanel({
         {THAI_WEEKDAYS.map((d, idx) => (
           <div
             key={d}
-            className={`text-[10px] font-bold ${idx === 0 ? 'text-red-500' : idx === 6 ? 'text-blue-500' : 'text-stone-500'}`}
+            className={`text-xs font-bold ${idx === 0 ? 'text-red-500' : idx === 6 ? 'text-blue-500' : 'text-stone-500'}`}
           >
             {d}
           </div>
@@ -337,7 +337,7 @@ function RangeCalendarPanel({
                   onClose();
                 }
               }}
-              className={`flex size-7 items-center justify-center text-[10px] font-medium transition ${
+              className={`flex size-7 items-center justify-center text-xs font-medium transition ${
                 !cell.isCurrentMonth
                   ? 'text-stone-300'
                   : selected

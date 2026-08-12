@@ -17,7 +17,15 @@ export type FeatureKey =
   | 'gallery'
   | 'videos'
   | 'ebooks'
+  | 'activities'
   | 'donation';
+
+/** Categories that may enable the activities feature. */
+export const ACTIVITY_ELIGIBLE_CATEGORIES = [
+  'Memorial',
+  'Family Legacy',
+  'Friends',
+] as const;
 
 export interface FeatureDef {
   key: FeatureKey;
@@ -104,6 +112,14 @@ export const FEATURE_CATALOG: FeatureDef[] = [
     defaultOn: false,
   },
   {
+    key: 'activities',
+    label: 'กิจกรรม',
+    description: 'กิจกรรมรำลึก งานประจำปี หรืองานพิเศษที่จัดเป็นครั้งคราว',
+    pathSegment: 'activities',
+    icon: 'CalendarDays',
+    defaultOn: false,
+  },
+  {
     key: 'donation',
     label: 'ร่วมทำบุญ',
     description: 'รับบริจาคผ่าน PromptPay (ตั้งค่าบัญชีเพิ่มภายหลัง)',
@@ -187,6 +203,9 @@ export function getEnabledFeatures(
   };
 
   const isPet = tenant?.category === 'Pet Memorial';
+  const activitiesEligible = ACTIVITY_ELIGIBLE_CATEGORIES.includes(
+    tenant?.category as (typeof ACTIVITY_ELIGIBLE_CATEGORIES)[number],
+  );
 
   return applyPhaseFeatureConstraints({
     // Pet sites intentionally have no ceremony/announcement card
@@ -202,6 +221,7 @@ export function getEnabledFeatures(
       tenant?.category === 'Pet Memorial' || tenant?.category === 'Wedding'
         ? false
         : read('ebooks', true),
+    activities: activitiesEligible ? read('activities', false) : false,
     donation: read('donation', !!tenant?.donationActive),
   });
 }

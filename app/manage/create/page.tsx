@@ -3,215 +3,99 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { AlertCircle, Smartphone, Info, Check, Flame, GitBranch, Heart, Sparkles, Users, PawPrint, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import ThaiDatePicker from '@/components/ThaiDatePicker';
-import { getSeedDefaultMedia } from '@/lib/defaultMedia';
+import {
+  AlertCircle,
+  Check,
+  Flame,
+  GitBranch,
+  Heart,
+  Sparkles,
+  Users,
+  PawPrint,
+  ArrowLeft,
+  QrCode,
+  RotateCw,
+  type LucideIcon,
+} from 'lucide-react';
+import { MARKETING_CATEGORIES } from '@/lib/marketingCategories';
+import { buildPromptPayQrImageUrl } from '@/lib/promptpayPayload';
 
-const MONTHS_THAI = [
-  'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-  'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-];
+const CATEGORY_OPTIONS: {
+  key: string;
+  thaiLabel: string;
+  subLabel: string;
+  desc: string;
+  icon: LucideIcon;
+  image: string;
+}[] = [
+  {
+    key: 'Memorial',
+    thaiLabel: 'Memorial',
+    subLabel: 'รำลึกบุคคลทั่วไป',
+    desc: 'พื้นที่ส่งต่อความรักและความระลึกถึงผู้ล่วงลับ รวบรวมคำไว้อาลัยและภาพความอบอุ่น',
+    icon: Flame,
+    image: '',
+  },
+  {
+    key: 'Family Legacy',
+    thaiLabel: 'Family Legacy',
+    subLabel: 'เรื่องราวครอบครัว',
+    desc: 'หอเกียรติยศบันทึกประวัติศาสตร์ บันทึกความเป็นมา และผังเครือญาติสืบต่อวงศ์ตระกูล',
+    icon: GitBranch,
+    image: '',
+  },
+  {
+    key: 'Couple',
+    thaiLabel: 'Couple',
+    subLabel: 'ความรักคู่รัก',
+    desc: 'บันทึกการเดินทางของความรัก ไทม์ไลน์ภาพถ่ายและวิดีโอแห่งความประทับใจคู่ชีวิต',
+    icon: Heart,
+    image: '',
+  },
+  {
+    key: 'Wedding',
+    thaiLabel: 'Wedding',
+    subLabel: 'ความทรงจำแต่งงาน',
+    desc: 'กำหนดการงานมงคลสมรส สมุดลงนามแสดงความยินดีดิจิทัล และฟีดภาพวันสำคัญ',
+    icon: Sparkles,
+    image: '',
+  },
+  {
+    key: 'Friends',
+    thaiLabel: 'Friends',
+    subLabel: 'กลุ่มรุ่น',
+    desc: 'พื้นที่รวบรวมเรื่องราวความผูกพัน มิตรภาพที่ไม่มีวันจางหาย และความทรงจำร่วมกับแก๊ง',
+    icon: Users,
+    image: '',
+  },
+  {
+    key: 'Pet Memorial',
+    thaiLabel: 'Pet',
+    subLabel: 'พื้นที่ของน้อง',
+    desc: 'เก็บภาพและเรื่องราวของน้อง ทั้งวันที่อยู่ด้วยกันและในความทรงจำ',
+    icon: PawPrint,
+    image: '',
+  },
+].map((opt) => ({
+  ...opt,
+  image:
+    MARKETING_CATEGORIES.find((c) => c.createCategory === opt.key)?.image ||
+    'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80',
+}));
 
-interface Subject {
-  name: string;
-  avatarUrl?: string;
-  birthDate: Date | null;
-  deathDate: Date | null;
-  birthYearOnly: boolean;
-  deathYearOnly: boolean;
-  birthYear: number | null;
-  deathYear: number | null;
-  isAlive?: boolean;
-  role?: string;
-  note?: string;
-  breed?: string;
-  personality?: string;
-  favorite?: string;
-  dislike?: string;
+type WizardStep = 1 | 2 | 3;
+
+function formatPhoneDisplay(phone: string) {
+  if (phone.length !== 10) return phone;
+  return `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6)}`;
 }
-
-function dateToYmd(d: Date | null): string {
-  if (!d || isNaN(d.getTime())) return '';
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-function ymdToDate(s: string): Date | null {
-  if (!s) return null;
-  const d = new Date(`${s}T00:00:00`);
-  return isNaN(d.getTime()) ? null : d;
-}
-
-const CATEGORY_INPUT_DEFAULTS: Record<string, {
-  nameLabel: string;
-  namePlaceholder: string;
-  subjectLabel: string;
-  subjectPlaceholder: string;
-  dateLabel: string;
-  dateStartTitle: string;
-  dateStartPlaceholder: string;
-  dateEndTitle: string;
-  dateEndPlaceholder: string;
-  lifespanPrefix: string;
-  hideDates?: boolean;
-  roleLabel?: string;
-  rolePlaceholder?: string;
-  noteLabel?: string;
-  notePlaceholder?: string;
-  breedLabel?: string;
-  breedPlaceholder?: string;
-  personalityLabel?: string;
-  personalityPlaceholder?: string;
-  favoriteLabel?: string;
-  favoritePlaceholder?: string;
-  dislikeLabel?: string;
-  dislikePlaceholder?: string;
-  aliveLabel?: string;
-}> = {
-  'Memorial': {
-    nameLabel: 'ชื่อเว็บไซต์ (เช่น รำลึกรักแด่คุณพ่อสมศักดิ์)',
-    namePlaceholder: 'เช่น ความทรงจำแด่คุณยายมาลี',
-    subjectLabel: 'ชื่อ-นามสกุล ผู้ล่วงลับ',
-    subjectPlaceholder: 'เช่น คุณยาย มาลี อบอุ่นยิ่ง',
-    dateLabel: 'ช่วงชีวิตวันเกิด – วันเสียชีวิต (Lifespan)',
-    dateStartTitle: 'วันเกิด',
-    dateStartPlaceholder: 'เลือกวันเกิด',
-    dateEndTitle: 'วันเสียชีวิต',
-    dateEndPlaceholder: 'เลือกวันเสียชีวิต',
-    lifespanPrefix: 'ช่วงชีวิต',
-  },
-  'Family Legacy': {
-    nameLabel: 'ชื่อเว็บไซต์ (เช่น มรดกวงศ์ตระกูลรักดี)',
-    namePlaceholder: 'เช่น ประวัติศาสตร์ตระกูล ศรีสวัสดิ์',
-    subjectLabel: 'ชื่อผู้สร้างประวัติศาสตร์ตระกูล / ต้นตระกูล',
-    subjectPlaceholder: 'เช่น คุณปู่บุญส่ง รักดี',
-    dateLabel: 'ปีชาตะ – ปีมรณะ ของต้นตระกูล',
-    dateStartTitle: 'ปีชาตะ (วันเกิด)',
-    dateStartPlaceholder: 'เลือกวันเกิด (ปีชาตะ)',
-    dateEndTitle: 'ปีมรณะ (วันเสียชีวิต)',
-    dateEndPlaceholder: 'เลือกวันเสียชีวิต (ปีมรณะ)',
-    lifespanPrefix: 'ช่วงอายุต้นตระกูล',
-  },
-  'Couple': {
-    nameLabel: 'ชื่อเว็บไซต์ (เช่น เส้นทางรัก สมศรี & สมชาย)',
-    namePlaceholder: 'เช่น ความทรงจำคู่รัก สมหวัง & วันเพ็ญ',
-    subjectLabel: 'ชื่อคู่รัก / คู่ชีวิต',
-    subjectPlaceholder: 'เช่น สมศรี & สมชาย',
-    dateLabel: 'วันแรกที่พบกัน – วันครบรอบแต่งงาน',
-    dateStartTitle: 'วันแรกที่พบกัน',
-    dateStartPlaceholder: 'เลือกวันแรกที่พบกัน',
-    dateEndTitle: 'วันครบรอบแต่งงาน',
-    dateEndPlaceholder: 'เลือกวันครบรอบแต่งงาน',
-    lifespanPrefix: 'ช่วงเวลาแห่งรัก',
-  },
-  'Wedding': {
-    nameLabel: 'ชื่อเว็บไซต์ (เช่น งานมงคลสมรส ณัฐพล & เบญจมาศ)',
-    namePlaceholder: 'เช่น ความทรงจำงานแต่ง วิทยา & ปิยะธิดา',
-    subjectLabel: 'ชื่อคู่บ่าวสาว',
-    subjectPlaceholder: 'เช่น ณัฐพล & เบญจมาศ',
-    dateLabel: 'วันเริ่มต้นคบหา – วันแต่งงาน',
-    dateStartTitle: 'วันเริ่มต้นคบหา',
-    dateStartPlaceholder: 'เลือกวันเริ่มต้นคบหา',
-    dateEndTitle: 'วันมงคลสมรส',
-    dateEndPlaceholder: 'เลือกวันมงคลสมรส',
-    lifespanPrefix: 'ช่วงความสัมพันธ์',
-  },
-  'Friends': {
-    nameLabel: 'ชื่อเว็บไซต์ / ชื่อกลุ่ม',
-    namePlaceholder: 'เช่น CN the Gang / รุ่น 55',
-    subjectLabel: 'ชื่อ / ชื่อเล่น',
-    subjectPlaceholder: 'เช่น ตูน, แจ๊ส, บิ๊ก',
-    dateLabel: '',
-    dateStartTitle: '',
-    dateStartPlaceholder: '',
-    dateEndTitle: '',
-    dateEndPlaceholder: '',
-    lifespanPrefix: '',
-    hideDates: true,
-    roleLabel: 'บทบาทในกลุ่ม (ไม่บังคับ)',
-    rolePlaceholder: 'เช่น กัปตัน, เลขา, สมาชิก',
-    noteLabel: 'โน้ตสั้น (ไม่บังคับ)',
-    notePlaceholder: 'เช่น คนจัดทริป, ม.ศ.3 รุ่น 55',
-  },
-  'Pet Memorial': {
-    nameLabel: 'ชื่อเว็บไซต์ (เช่น พื้นที่ของเจ้าปุยฝ้าย)',
-    namePlaceholder: 'เช่น บ้านของตูบสี่ขา',
-    subjectLabel: 'ชื่อ / ชื่อเล่น',
-    subjectPlaceholder: 'เช่น เจ้าปุยฝ้าย, ตูบ',
-    dateLabel: 'วันเกิด / วันที่รับมา – วันที่จากไป',
-    dateStartTitle: 'วันเกิด / วันที่รับมา',
-    dateStartPlaceholder: 'เลือกวันเกิดหรือวันที่รับมา',
-    dateEndTitle: 'วันที่จากไป',
-    dateEndPlaceholder: 'เลือกวันที่จากไป',
-    lifespanPrefix: 'ช่วงเวลาของน้อง',
-    aliveLabel: 'อยู่ด้วยกัน (ยังมีชีวิต)',
-    breedLabel: 'สายพันธุ์ / ชนิด',
-    breedPlaceholder: 'เช่น แมวเปอร์เซีย, สุนัขคอร์กี้',
-    personalityLabel: 'บุคลิก',
-    personalityPlaceholder: 'เช่น ซน กินเก่ง ชอบกอด',
-    favoriteLabel: 'ของโปรด',
-    favoritePlaceholder: 'เช่น ขนมปลา, ลูกบอล, นอนตัก',
-    dislikeLabel: 'สิ่งที่ไม่ชอบ (ไม่บังคับ)',
-    dislikePlaceholder: 'เช่น อาบน้ำ, เสียงดัง',
-  },
-};
-
-const CATEGORY_OPTIONS = [
-  { 
-    key: 'Memorial', 
-    thaiLabel: 'Memorial', 
-    subLabel: 'รำลึกบุคคลทั่วไป', 
-    desc: 'พื้นที่ส่งต่อความรักและความระลึกถึงผู้ล่วงลับ รวบรวมคำไว้อาลัยและภาพความอบอุ่น', 
-    icon: Flame, 
-  },
-  { 
-    key: 'Family Legacy', 
-    thaiLabel: 'Family Legacy', 
-    subLabel: 'มรดกวงศ์ตระกูล', 
-    desc: 'หอเกียรติยศบันทึกประวัติศาสตร์ บันทึกความเป็นมา และผังเครือญาติสืบต่อวงศ์ตระกูล', 
-    icon: GitBranch, 
-  },
-  { 
-    key: 'Couple', 
-    thaiLabel: 'Couple', 
-    subLabel: 'ความรักคู่รัก', 
-    desc: 'บันทึกการเดินทางของความรัก ไทม์ไลน์ภาพถ่ายและวิดีโอแห่งความประทับใจคู่ชีวิต', 
-    icon: Heart, 
-  },
-  { 
-    key: 'Wedding', 
-    thaiLabel: 'Wedding', 
-    subLabel: 'ความทรงจำแต่งงาน', 
-    desc: 'กำหนดการงานมงคลสมรส สมุดลงนามแสดงความยินดีดิจิทัล และฟีดภาพวันสำคัญ', 
-    icon: Sparkles, 
-  },
-  { 
-    key: 'Friends', 
-    thaiLabel: 'Friends', 
-    subLabel: 'กลุ่มรุ่น', 
-    desc: 'พื้นที่รวบรวมเรื่องราวความผูกพัน มิตรภาพที่ไม่มีวันจางหาย และความทรงจำร่วมกับแก๊ง', 
-    icon: Users, 
-  },
-  { 
-    key: 'Pet Memorial', 
-    thaiLabel: 'Pet', 
-    subLabel: 'พื้นที่ของน้อง', 
-    desc: 'เก็บภาพและเรื่องราวของน้อง ทั้งวันที่อยู่ด้วยกันและในความทรงจำ', 
-    icon: PawPrint, 
-  },
-];
 
 export default function WebsiteCreationWizardPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-600">
-          <p className="text-sm font-semibold tracking-wider animate-pulse">กำลังโหลด...</p>
+        <div className="flex min-h-screen items-center justify-center bg-[#F5F5F7] text-[#6E6E73]">
+          <p className="animate-pulse text-sm font-medium tracking-wide">กำลังโหลด...</p>
         </div>
       }
     >
@@ -223,146 +107,42 @@ export default function WebsiteCreationWizardPage() {
 function WebsiteCreationWizard() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [userPhone, setUserPhone] = useState('');
-  
-  // Login states (if not authenticated)
-  const [loginPhone, setLoginPhone] = useState('');
-  const [loginOtp, setLoginOtp] = useState('');
-  const [loginStep, setLoginStep] = useState(1);
-  const [simulatedOtp, setSimulatedOtp] = useState('');
+  const [wizardStep, setWizardStep] = useState<WizardStep>(1);
+  const [category, setCategory] = useState('Memorial');
 
-  // Wizard state: 1 = URL, 2 = Info, 3 = Theme, 4 = Payment
-  const [wizardStep, setWizardStep] = useState(1);
-  
-  // Form states
   const [slug, setSlug] = useState('');
   const [slugValid, setSlugValid] = useState<boolean | null>(null);
   const [slugChecking, setSlugChecking] = useState(false);
-  
-  const [name, setName] = useState('');
-  const [deceasedName, setDeceasedName] = useState('');
 
-  const [category, setCategory] = useState('Memorial');
-  const defaults = CATEGORY_INPUT_DEFAULTS[category] || CATEGORY_INPUT_DEFAULTS['Memorial'];
-  const [lifespan, setLifespan] = useState('');
-  const [subjects, setSubjects] = useState<Subject[]>([
-    {
-      name: '',
-      avatarUrl: '',
-      birthDate: null,
-      deathDate: null,
-      birthYearOnly: false,
-      deathYearOnly: false,
-      birthYear: null,
-      deathYear: null,
-      isAlive: true,
-      role: '',
-      note: '',
-      breed: '',
-      personality: '',
-      favorite: '',
-      dislike: '',
-    }
-  ]);
-
-  // Synchronize subjects to deceasedName and lifespan
-  useEffect(() => {
-    // 1. Sync names to deceasedName (joined with &)
-    const names = subjects.map(s => s.name).filter(Boolean);
-    if (names.length > 1) {
-      setDeceasedName(names.join(' & '));
-    } else if (names.length === 1) {
-      setDeceasedName(names[0]);
-    } else {
-      setDeceasedName('');
-    }
-
-    // Friends: no lifespan dates
-    if (category === 'Friends') {
-      setLifespan(names.length > 0 ? names.join(', ') : '');
-      return;
-    }
-
-    // 2. Format a combined lifespan string for display
-    const formatThaiDate = (date: Date, isYearOnly: boolean) => {
-      const yearThai = date.getFullYear() + 543;
-      if (isYearOnly) {
-        return `พ.ศ. ${yearThai}`;
-      }
-      const day = date.getDate();
-      const monthName = MONTHS_THAI[date.getMonth()];
-      return `${day} ${monthName} ${yearThai}`;
-    };
-
-    if (category === 'Couple' || category === 'Wedding') {
-      const first = subjects[0];
-      if (first && first.birthDate) {
-        if (first.deathDate) {
-          setLifespan(`${formatThaiDate(first.birthDate, first.birthYearOnly)} – ${formatThaiDate(first.deathDate, first.deathYearOnly)}`);
-        } else {
-          setLifespan(`${formatThaiDate(first.birthDate, first.birthYearOnly)} – (ยังไม่ระบุ)`);
-        }
-      } else {
-        setLifespan('');
-      }
-    } else {
-      const formattedLifespans = subjects.map(s => {
-        if (!s.name) return null;
-        let range = '';
-        if (s.isAlive && s.birthDate) {
-          range = `เกิด ${formatThaiDate(s.birthDate, s.birthYearOnly)} (ปัจจุบัน)`;
-        } else if (s.birthDate && s.deathDate) {
-          range = `${formatThaiDate(s.birthDate, s.birthYearOnly)} – ${formatThaiDate(s.deathDate, s.deathYearOnly)}`;
-        } else if (s.birthDate) {
-          range = `${formatThaiDate(s.birthDate, s.birthYearOnly)} – (ยังไม่ระบุ)`;
-        } else {
-          return null;
-        }
-        return `${s.name}: ${range}`;
-      }).filter(Boolean);
-
-      if (formattedLifespans.length > 0) {
-        setLifespan(formattedLifespans.join(' | '));
-      } else {
-        // Backwards compatibility for preview chip when no name is typed yet but dates are selected
-        const first = subjects[0];
-        if (first && first.birthDate) {
-          if (first.isAlive) {
-            setLifespan(`เกิด ${formatThaiDate(first.birthDate, first.birthYearOnly)} (ปัจจุบัน)`);
-          } else if (first.deathDate) {
-            setLifespan(`${formatThaiDate(first.birthDate, first.birthYearOnly)} – ${formatThaiDate(first.deathDate, first.deathYearOnly)}`);
-          } else {
-            setLifespan(`${formatThaiDate(first.birthDate, first.birthYearOnly)} – (ยังไม่ระบุ)`);
-          }
-        } else {
-          setLifespan('');
-        }
-      }
-    }
-  }, [subjects, category]);
-  
-  const [selectedTheme, setSelectedTheme] = useState('Peaceful Mint');
-  const [primaryColor, setPrimaryColor] = useState('#0d9488');
-  
-  // Loading & error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  // Payment states
+
   const [paymentRef, setPaymentRef] = useState('');
   const [paymentAmount, setPaymentAmount] = useState(2000);
   const [createdTenantId, setCreatedTenantId] = useState('');
 
-  // Pre-select category from marketing / login deep link (?category=Couple)
+  // Resume from query: ?step=url&site=...
   useEffect(() => {
+    const step = searchParams.get('step');
+    const site = searchParams.get('site');
     const cat = searchParams.get('category');
+
     if (cat && CATEGORY_OPTIONS.some((c) => c.key === cat)) {
       setCategory(cat);
     }
+
+    if (step === 'url' && site) {
+      setCreatedTenantId(site);
+      setWizardStep(3);
+    } else if (step === 'payment' && site) {
+      setCreatedTenantId(site);
+      setWizardStep(2);
+    }
   }, [searchParams]);
 
-  // Check auth session on load
   useEffect(() => {
     async function checkAuth() {
       try {
@@ -370,18 +150,73 @@ function WebsiteCreationWizard() {
         const data = await res.json();
         if (data.authenticated) {
           setIsAuthenticated(true);
-          setUserPhone(data.phone);
+          setUserPhone(data.phone || '');
         } else {
           setIsAuthenticated(false);
         }
-      } catch (err) {
+      } catch {
         setIsAuthenticated(false);
       }
     }
     checkAuth();
   }, []);
 
-  // Real-time Slug validation trigger
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      const cat = searchParams.get('category');
+      const next = cat
+        ? `/manage/create?category=${encodeURIComponent(cat)}`
+        : '/manage/create';
+      router.replace(`/login?next=${encodeURIComponent(next)}`);
+    }
+  }, [isAuthenticated, router, searchParams]);
+
+  // Load payment ref when resuming payment / URL step with site id
+  useEffect(() => {
+    if (!createdTenantId || wizardStep !== 2 || paymentRef) return;
+
+    async function loadPayment() {
+      try {
+        const invoiceRes = await fetch(
+          `/api/payment/invoice?websiteId=${createdTenantId}&json=true`
+        );
+        const invoiceData = await invoiceRes.json();
+        if (invoiceRes.ok && invoiceData.payment) {
+          setPaymentRef(invoiceData.payment.refId);
+          setPaymentAmount(invoiceData.payment.amount || 2000);
+        }
+      } catch {
+        /* ignore — simulate button still needs ref */
+      }
+    }
+    loadPayment();
+  }, [createdTenantId, wizardStep, paymentRef]);
+
+  const createDraftAndPay = async (selectedCategory: string) => {
+    setError('');
+    setIsLoading(true);
+    setCategory(selectedCategory);
+    try {
+      const res = await fetch('/api/tenant/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: selectedCategory }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setCreatedTenantId(data.id);
+      setPaymentRef(data.payment.refId);
+      setPaymentAmount(data.payment.amount);
+      setWizardStep(2);
+      router.replace(`/manage/create?step=payment&site=${data.id}`);
+    } catch (err: any) {
+      setError(err.message || 'สร้างร่างเว็บไซต์ไม่สำเร็จ');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const checkSlug = async () => {
     if (slug.length < 3) {
       setError('ชื่อลิงก์ URL ต้องไม่ต่ำกว่า 3 ตัวอักษร');
@@ -397,9 +232,7 @@ function WebsiteCreationWizard() {
         body: JSON.stringify({ slug }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error);
-      }
+      if (!res.ok) throw new Error(data.error);
       setSlugValid(true);
     } catch (err: any) {
       setError(err.message);
@@ -409,194 +242,10 @@ function WebsiteCreationWizard() {
     }
   };
 
-  // Inline login flow
-  const handleRequestOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-    try {
-      const res = await fetch('/api/auth/otp/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: loginPhone }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setLoginStep(2);
-      setSimulatedOtp(data.simulatedOtp || '');
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-    try {
-      const res = await fetch('/api/auth/otp/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: loginPhone, otpCode: loginOtp }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setIsAuthenticated(true);
-      setUserPhone(data.webmaster.phone);
-      setError('');
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Wizard transitions
-  const handleNextToInfo = () => {
-    if (!slugValid) {
-      setError('กรุณาเลือกและตรวจสอบชื่อลิงก์ URL ให้ผ่านก่อน');
-      return;
-    }
-    setError('');
-    setWizardStep(3);
-  };
-
-  const handleNextToTheme = () => {
-    const hasEmptySubject = subjects.some(s => !s.name.trim());
-    if (!name.trim()) {
-      setError('กรุณากรอกชื่อเว็บไซต์ให้เรียบร้อย');
-      return;
-    }
-    if (hasEmptySubject) {
-      const errorMsg = category === 'Couple' || category === 'Wedding'
-        ? 'กรุณากรอกชื่อคู่รักให้ครบทั้ง 2 ท่าน'
-        : category === 'Pet Memorial'
-        ? 'กรุณากรอกชื่อสัตว์เลี้ยงให้ครบถ้วน'
-        : 'กรุณากรอกชื่อผู้ล่วงลับให้ครบถ้วน';
-      setError(errorMsg);
-      return;
-    }
-    setError('');
-    setWizardStep(4);
-  };
-
-  const handleNextToPayment = async () => {
-    setError('');
-    setIsLoading(true);
-    try {
-      // Call create endpoint to save the tenant in pending payment state
-      const themeColors: Record<string, string> = {
-        'Peaceful Mint': '#7ea18b',
-        'Sweet Peach': '#e09f9f',
-        'Warm Caramel': '#c29a7c',
-        'Classic Olive': '#96a288',
-        'Ocean Breeze': '#8ba8bd',
-        'Lilac Dream': '#a49cb5',
-      };
-      
-      const themeSecondaryColors: Record<string, string> = {
-        'Peaceful Mint': '#d4be95',
-        'Sweet Peach': '#e6c1a8',
-        'Warm Caramel': '#dcc6a8',
-        'Classic Olive': '#cfc5b0',
-        'Ocean Breeze': '#ded2af',
-        'Lilac Dream': '#c8bfcb',
-      };
-      
-      const seedMedia = getSeedDefaultMedia(category);
-      const res = await fetch('/api/tenant/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slug,
-          name,
-          category,
-          deceasedName,
-          themeConfig: {
-            primaryColor: themeColors[selectedTheme] || '#0d9488',
-            secondaryColor: themeSecondaryColors[selectedTheme] || '#f59e0b',
-            fontFamily: 'Inter',
-            heroStyle: 'Classic',
-            avatarUrl: seedMedia.avatarUrl,
-            coverUrl: seedMedia.coverUrl,
-            subjects: subjects.map((s) =>
-              category === 'Friends'
-                ? {
-                    name: s.name,
-                    role: s.role || '',
-                    note: s.note || '',
-                    isAlive: true,
-                    birthDate: null,
-                    deathDate: null,
-                    birthYearOnly: false,
-                    deathYearOnly: false,
-                  }
-                : category === 'Pet Memorial'
-                ? {
-                    name: s.name,
-                    avatarUrl: s.avatarUrl || '',
-                    breed: s.breed || '',
-                    personality: s.personality || '',
-                    favorite: s.favorite || '',
-                    dislike: s.dislike || '',
-                    isAlive: !!s.isAlive,
-                    birthDate: s.birthDate ? s.birthDate.toISOString() : null,
-                    deathDate: s.isAlive ? null : (s.deathDate ? s.deathDate.toISOString() : null),
-                    birthYearOnly: s.birthYearOnly,
-                    deathYearOnly: s.isAlive ? false : s.deathYearOnly,
-                    birthYear: s.birthYear,
-                    deathYear: s.isAlive ? null : s.deathYear,
-                  }
-                : {
-                    name: s.name,
-                    birthDate: s.birthDate ? s.birthDate.toISOString() : null,
-                    deathDate: s.deathDate ? s.deathDate.toISOString() : null,
-                    birthYearOnly: s.birthYearOnly,
-                    deathYearOnly: s.deathYearOnly,
-                    isAlive: s.isAlive,
-                  }
-            ),
-            deceasedBirthDate:
-              category === 'Friends'
-                ? null
-                : subjects[0]?.birthDate
-                  ? subjects[0].birthDate.toISOString()
-                  : null,
-            deceasedDeathDate:
-              category === 'Friends'
-                ? null
-                : subjects[0]?.deathDate
-                  ? subjects[0].deathDate.toISOString()
-                  : null,
-            birthYearOnly: category === 'Friends' ? false : subjects[0]?.birthYearOnly || false,
-            deathYearOnly: category === 'Friends' ? false : subjects[0]?.deathYearOnly || false,
-            lifespan,
-          },
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-
-      setCreatedTenantId(data.id);
-      setPaymentRef(data.payment.refId);
-      setPaymentAmount(data.payment.amount);
-      setWizardStep(5);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Simulate payment callback verification (matches F004 webhook workflow)
   const handleSimulatePaymentSuccess = async () => {
     setIsLoading(true);
     setError('');
     try {
-      // Simulate bank callback hitting /api/payment/callback
       const res = await fetch('/api/payment/callback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -604,819 +253,318 @@ function WebsiteCreationWizard() {
           refId: paymentRef,
           status: 'SUCCESS',
           amount: paymentAmount,
-          signature: 'MOCK_SIGNATURE_OK_2026', // signature matched mock
+          signature: 'MOCK_SIGNATURE_OK_2026',
         }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      // Payment verified -> let the owner pick which features to enable before
-      // landing on the dashboard (mandatory onboarding step).
-      router.push(`/manage/setup-features?site=${createdTenantId}&category=${encodeURIComponent(category)}`);
+      setWizardStep(3);
+      router.replace(`/manage/create?step=url&site=${createdTenantId}`);
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการตรวจสอบยอดเงิน');
+    } finally {
       setIsLoading(false);
     }
   };
 
-  if (isAuthenticated === null) {
+  const handleConfirmSlug = async () => {
+    if (!slugValid || !createdTenantId) {
+      setError('กรุณาตรวจสอบชื่อลิงก์ URL ให้ผ่านก่อน');
+      return;
+    }
+    setIsLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/tenant/update-slug', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ websiteId: createdTenantId, slug }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      router.push(`/manage?site=${encodeURIComponent(slug.trim().toLowerCase())}`);
+    } catch (err: any) {
+      setError(err.message || 'ตั้งชื่อลิงก์ไม่สำเร็จ');
+      setIsLoading(false);
+    }
+  };
+
+  if (isAuthenticated === null || isAuthenticated === false) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-600">
-        <p className="text-sm font-semibold tracking-wider animate-pulse">กำลังดาวน์โหลดระบบรักษาความปลอดภัย...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#F5F5F7] text-[#6E6E73]">
+        <RotateCw className="mr-2 size-5 animate-spin text-[#0071e3]" />
+        <p className="text-sm font-medium">กำลังเตรียมระบบ...</p>
       </div>
     );
   }
 
-  // RENDER LOGIN SCREEN (IF USER NOT AUTHENTICATED)
-  if (!isAuthenticated) {
-    return (
-      <main className="min-h-screen bg-stone-50 text-stone-850 flex items-center justify-center p-4">
-        <div className="w-full max-w-md p-8 rounded-3xl border border-stone-200 bg-white shadow-xl space-y-8 animate-fade-in">
-          <header className="text-center space-y-2">
-            <span className="text-[10px] uppercase font-black text-emerald-800 tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
-              WIZARD SIGN-IN
-            </span>
-            <h1 className="text-xl font-black text-stone-900 pt-2">ยืนยันตัวตนก่อนสร้างเว็บไซต์</h1>
-            <p className="text-stone-500 text-xs">กรุณากรอกเบอร์มือถือของคุณเพื่อเข้าสู่กระบวนการสร้างเว็บไซต์แบบรวดเร็ว</p>
-          </header>
-
-          {error && (
-            <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium flex items-center justify-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {loginStep === 1 ? (
-            <form onSubmit={handleRequestOtp} className="space-y-6">
-              <Input 
-                type="tel" 
-                value={loginPhone} 
-                onChange={(e) => setLoginPhone(e.target.value)} 
-                placeholder="ป้อนเบอร์โทรศัพท์ 10 หลัก (เช่น 0812345678)"
-                className="w-full px-5 py-3.5 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 text-sm focus:bg-white focus:outline-none"
-              />
-              <Button variant="ghost" type="submit" disabled={isLoading} className="h-auto w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
-                {isLoading ? 'กำลังประมวลผล...' : 'ขอรหัส OTP'}
-              </Button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-6">
-              <Input 
-                type="text" 
-                maxLength={6} 
-                value={loginOtp} 
-                onChange={(e) => setLoginOtp(e.target.value)} 
-                placeholder="ใส่รหัส OTP 6 หลัก"
-                className="w-full px-5 py-3.5 bg-stone-50 border border-stone-200 rounded-2xl text-stone-900 text-center tracking-[0.4em] text-lg focus:bg-white focus:outline-none"
-              />
-              {simulatedOtp && (
-                <div className="p-3 bg-emerald-50 border border-emerald-250 rounded-xl text-center text-xs text-emerald-800 font-semibold">
-                  รหัสทดสอบ: <span className="font-bold underline">{simulatedOtp}</span>
-                </div>
-              )}
-              <Button variant="ghost" type="submit" disabled={isLoading} className="h-auto w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition active:scale-95 shadow-sm">
-                {isLoading ? 'กำลังตรวจสอบ...' : 'ยืนยันรหัส OTP'}
-              </Button>
-            </form>
-          )}
-        </div>
-      </main>
-    );
-  }
-
-  // RENDER WIZARD FLOW (IF AUTHENTICATED)
-  const themes = [
-    { name: 'Peaceful Mint', primary: '#7ea18b', hover: '#668571', secondary: '#d4be95', light: '#f4f6f3', desc: 'โทนเขียวเสจหม่นและเบจทรายพรีเมียม (ไว้อาลัยอย่างสงบ)' },
-    { name: 'Sweet Peach', primary: '#e09f9f', hover: '#c48282', secondary: '#e6c1a8', light: '#fff7f5', desc: 'โทนชมพูพีชพาสเทลและส้มแอปริคอตนวล (งานแต่งงาน / คู่รัก)' },
-    { name: 'Warm Caramel', primary: '#c29a7c', hover: '#a67f62', secondary: '#dcc6a8', light: '#fbf8f5', desc: 'โทนน้ำตาลคาราเมลและเหลืองนมอุ่น (สัตว์เลี้ยง / บันทึกการเดินทาง)' },
-    { name: 'Classic Olive', primary: '#96a288', hover: '#7a866d', secondary: '#cfc5b0', light: '#f7f8f5', desc: 'โทนเขียวมะกอกหม่นและแชมเปญคลาสสิก (สายใยตระกูล / ครอบครัว)' },
-    { name: 'Ocean Breeze', primary: '#8ba8bd', hover: '#708d9e', secondary: '#ded2af', light: '#f5f7f9', desc: 'โทนฟ้าพาสเทลและเหลืองเลมอนครีมสดใส (มิตรภาพ / ย้อนวันวาน)' },
-    { name: 'Lilac Dream', primary: '#a49cb5', hover: '#89819a', secondary: '#c8bfcb', light: '#f7f6f8', desc: 'โทนม่วงไลแล็กหม่นและเทาลาเวนเดอร์ (หรูหรา / ทางการทั่วไป)' }
+  const steps = [
+    { n: 1 as const, label: 'เลือกหมวดหมู่' },
+    { n: 2 as const, label: 'ชำระเงิน' },
+    { n: 3 as const, label: 'ชื่อลิงก์ URL' },
   ];
 
   return (
-    <main className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] py-8 md:py-12 px-4 flex flex-col items-center">
-      <div className="w-full max-w-3xl mb-6 md:mb-8">
+    <main className="flex min-h-screen flex-col items-center bg-[#F5F5F7] px-4 py-8 text-[#1D1D1F] md:py-12">
+      <div className="mb-6 w-full max-w-3xl md:mb-8">
         <Link
           href="/manage"
-          className="inline-flex items-center gap-1.5 text-[14px] font-medium text-[#86868B] hover:text-[#1D1D1F] transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[#86868B] transition-colors hover:text-[#1D1D1F]"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="size-4" />
           กลับไปแผงควบคุม
         </Link>
       </div>
 
-      {/* Steps indicator — lighter, Home-aligned */}
-      <div className="w-full max-w-3xl flex items-center justify-between text-[11px] md:text-[12px] text-[#86868B] mb-8 md:mb-10 select-none">
-        {[
-          { n: 1, label: 'เลือกหมวดหมู่' },
-          { n: 2, label: 'ชื่อลิงก์ URL' },
-          { n: 3, label: 'กรอกข้อมูล' },
-          { n: 4, label: 'เลือกธีม' },
-          { n: 5, label: 'ชำระเงิน' },
-        ].map((step, idx, arr) => (
+      <div className="mb-8 flex w-full max-w-3xl select-none items-center justify-between text-xs text-[#86868B] md:mb-10 md:text-sm">
+        {steps.map((step, idx) => (
           <React.Fragment key={step.n}>
-            <div className={`flex flex-col items-center gap-1.5 ${wizardStep >= step.n ? 'text-[#0071e3] font-semibold' : ''}`}>
+            <div
+              className={`flex flex-col items-center gap-1.5 ${
+                wizardStep >= step.n ? 'font-semibold text-[#0071e3]' : ''
+              }`}
+            >
               <span
-                className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[12px] md:text-[13px] transition ${
+                className={`flex size-7 items-center justify-center rounded-full text-xs transition md:size-8 md:text-sm ${
                   wizardStep >= step.n
                     ? 'bg-[#0071e3] text-white'
                     : 'bg-white text-[#86868B] shadow-[0_1px_3px_rgba(0,0,0,0.06)]'
                 }`}
               >
-                {wizardStep > step.n ? <Check className="w-3.5 h-3.5" strokeWidth={2.5} /> : step.n}
+                {wizardStep > step.n ? (
+                  <Check className="size-3.5" strokeWidth={2.5} />
+                ) : (
+                  step.n
+                )}
               </span>
-              <span className="hidden sm:block text-center leading-tight">{step.label}</span>
+              <span className="max-w-16 text-center text-xs leading-tight sm:max-w-none sm:text-sm">
+                {step.label}
+              </span>
             </div>
-            {idx < arr.length - 1 && (
-              <div className={`flex-1 h-px mx-1.5 md:mx-2 transition ${wizardStep > step.n ? 'bg-[#0071e3]/50' : 'bg-[#d2d2d7]'}`} />
+            {idx < steps.length - 1 && (
+              <div
+                className={`mx-1.5 h-px flex-1 transition md:mx-2 ${
+                  wizardStep > step.n ? 'bg-[#0071e3]/50' : 'bg-[#d2d2d7]'
+                }`}
+              />
             )}
           </React.Fragment>
         ))}
       </div>
 
-      <div className="w-full max-w-3xl p-6 md:p-8 rounded-[22px] md:rounded-[28px] bg-[#FFFFFF] shadow-[0_4px_24px_rgba(0,0,0,0.08)] space-y-6 overflow-visible">
+      <div className="w-full max-w-3xl space-y-6 overflow-visible rounded-[22px] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.08)] md:rounded-[28px] md:p-8">
         {error && (
-          <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-[13px] text-red-700 font-medium flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+          <div className="flex items-center gap-2 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-700">
+            <AlertCircle className="size-4 shrink-0 text-red-600" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* STEP 1: CATEGORY SELECTION */}
+        {/* STEP 1: Category — click advances */}
         {wizardStep === 1 && (
-          <div className="space-y-6 animate-fade-in">
-            <header className="space-y-2 text-left sm:text-center">
-              <p className="text-[13px] font-medium text-[#86868B]">
-                {userPhone ? `เข้าสู่ระบบด้วย ${userPhone}` : 'สร้างเว็บเพิ่ม'}
+          <div className="animate-fade-in space-y-6">
+            <header className="space-y-2 text-center">
+              <p className="text-sm font-medium text-[#86868B]">
+                {userPhone
+                  ? `เข้าสู่ระบบด้วย ${formatPhoneDisplay(userPhone)}`
+                  : 'สร้างเว็บเพิ่ม'}
               </p>
-              <h2 className="text-[28px] md:text-[32px] font-semibold tracking-tight text-[#1D1D1F] leading-tight">
+              <h2 className="text-2xl font-semibold leading-tight tracking-tight text-[#1D1D1F] sm:text-3xl">
                 สร้างเว็บไซต์ใหม่
               </h2>
-              <p className="text-[15px] md:text-[17px] text-[#86868B] font-medium leading-relaxed max-w-xl mx-auto">
-                เลือกหมวดความทรงจำสำหรับเว็บถัดไป ระบบจะจัดฟีเจอร์ให้เหมาะกับหมวดที่เลือก
+              <p className="mx-auto max-w-xl text-sm font-medium leading-relaxed text-[#86868B] sm:text-base md:text-lg">
+                กดเลือกหมวดด้านล่าง — ระบบจะพาไปชำระเงินทันที
               </p>
             </header>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               {CATEGORY_OPTIONS.map((opt) => {
                 const Icon = opt.icon;
-                const isSelected = category === opt.key;
+                const busy = isLoading && category === opt.key;
                 return (
                   <button
                     key={opt.key}
                     type="button"
-                    onClick={() => {
-                      setCategory(opt.key);
-                      setError('');
-                      if (opt.key === 'Couple' || opt.key === 'Wedding') {
-                        setSubjects([
-                          {
-                            name: '',
-                            birthDate: null,
-                            deathDate: null,
-                            birthYearOnly: false,
-                            deathYearOnly: false,
-                            birthYear: null,
-                            deathYear: null,
-                          },
-                          {
-                            name: '',
-                            birthDate: null,
-                            deathDate: null,
-                            birthYearOnly: false,
-                            deathYearOnly: false,
-                            birthYear: null,
-                            deathYear: null,
-                          }
-                        ]);
-                      } else {
-                        setSubjects([
-                          {
-                            name: '',
-                            birthDate: null,
-                            deathDate: null,
-                            birthYearOnly: false,
-                            deathYearOnly: false,
-                            birthYear: null,
-                            deathYear: null,
-                          }
-                        ]);
-                      }
-                    }}
-                    className={`group relative flex h-auto w-full min-w-0 cursor-pointer select-none flex-col items-stretch gap-3 rounded-[18px] border p-5 text-left transition-all duration-200 md:rounded-[22px] md:p-6 ${
-                      isSelected
-                        ? 'border-[#0071e3] bg-white shadow-[0_4px_20px_rgba(0,113,227,0.12)]'
-                        : 'border-transparent bg-[#F5F5F7] hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]'
-                    }`}
+                    disabled={isLoading}
+                    onClick={() => createDraftAndPay(opt.key)}
+                    className="group rounded-2xl border border-[#E8E8ED] bg-white p-3.5 text-left transition hover:border-[#0071e3]/40 hover:bg-[#F5F5F7] hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)] disabled:cursor-wait disabled:opacity-70 sm:p-4"
                   >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <span
-                        className={`flex size-10 shrink-0 items-center justify-center rounded-full transition-colors ${
-                          isSelected
-                            ? 'bg-[#0071e3] text-white'
-                            : 'bg-white text-[#1D1D1F] shadow-[0_1px_3px_rgba(0,0,0,0.06)]'
-                        }`}
-                      >
-                        <Icon className="size-5" strokeWidth={1.75} />
-                      </span>
-                      <div className="min-w-0">
-                        <span className="block text-[12px] font-semibold tracking-wide text-[#86868B]">
-                          {opt.thaiLabel}
-                        </span>
-                        <span className="block text-[15px] font-semibold tracking-tight text-[#1D1D1F] md:text-[17px]">
+                    {/* Mobile: image left + text right */}
+                    <div className="flex items-start gap-3.5 sm:hidden">
+                      <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-[#F5F5F7] ring-1 ring-[#E8E8ED]">
+                        <img
+                          src={opt.image}
+                          alt=""
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                          loading="lazy"
+                        />
+                        {busy && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-white/70">
+                            <RotateCw className="size-5 animate-spin text-[#0071e3]" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1 pt-0.5">
+                        <p className="text-sm font-semibold leading-snug text-[#1D1D1F]">
                           {opt.subLabel}
-                        </span>
+                        </p>
+                        <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-[#6E6E73]">
+                          {opt.desc}
+                        </p>
                       </div>
                     </div>
 
-                    <p className="whitespace-normal text-[13px] leading-relaxed text-[#86868B] md:text-[14px]">
-                      {opt.desc}
-                    </p>
+                    {/* Desktop: icon + text, then image below */}
+                    <div className="hidden sm:block">
+                      <div className="mb-3 flex items-start gap-3">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#F5F5F7] text-[#6E6E73] transition group-hover:bg-[#0071e3]/10 group-hover:text-[#0071e3]">
+                          {busy ? (
+                            <RotateCw className="size-5 animate-spin text-[#0071e3]" />
+                          ) : (
+                            <Icon className="size-5" strokeWidth={1.75} />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-medium uppercase tracking-wide text-[#86868B]">
+                            {opt.thaiLabel}
+                          </p>
+                          <p className="mt-0.5 text-base font-semibold text-[#1D1D1F]">
+                            {opt.subLabel}
+                          </p>
+                          <p className="mt-1.5 text-sm leading-relaxed text-[#6E6E73]">
+                            {opt.desc}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="overflow-hidden rounded-xl bg-[#F5F5F7] ring-1 ring-[#E8E8ED]">
+                        <img
+                          src={opt.image}
+                          alt=""
+                          className="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] md:h-32"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
                   </button>
                 );
               })}
             </div>
-
-            <div className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-3 pt-4 border-t border-[#d2d2d7]/40">
-              <p className="text-[13px] text-[#86868B]">
-                เว็บใหม่จะมีขั้นชำระเงิน ฿2,000 / ปี
-              </p>
-              <button
-                type="button"
-                onClick={() => setWizardStep(2)}
-                className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-8 py-2.5 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98]"
-              >
-                ถัดไป: ตั้งชื่อลิงก์ URL
-              </button>
-            </div>
           </div>
         )}
 
-        {/* STEP 2: URL SETUP */}
+        {/* STEP 2: Payment */}
         {wizardStep === 2 && (
-          <div className="space-y-6 animate-fade-in">
-            <header className="space-y-1">
-              <h2 className="text-xl font-black text-stone-900">ตั้งชื่อลิงก์สำหรับเว็บไซต์ความทรงจำ</h2>
-              <p className="text-xs text-stone-500">ใช้เป็น URL Path เพื่อให้คนทั่วไปสามารถพิมพ์เพื่อเข้าชมได้ทันที</p>
-              <p className="text-[11px] text-stone-400">ใช้ตัวพิมพ์เล็ก a-z, ตัวเลข และขีด (-) เท่านั้น</p>
+          <div className="animate-fade-in mx-auto max-w-md space-y-6 text-center">
+            <header className="space-y-2">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-[#F5F5F7] ring-1 ring-[#E8E8ED]">
+                <QrCode className="size-6 text-[#0071e3]" strokeWidth={1.75} />
+              </div>
+              <h2 className="text-2xl font-semibold tracking-tight">ชำระค่าบริการ</h2>
+              <p className="text-sm leading-relaxed text-[#6E6E73]">
+                สแกน PromptPay เพื่อเปิดใช้งานเว็บไซต์ 1 ปี
+                <br />
+                พื้นที่จัดเก็บ 1 GB · ฿{paymentAmount.toLocaleString('th-TH')}
+              </p>
             </header>
 
-            <div className="space-y-4">
-              <div className="flex items-stretch overflow-hidden rounded-2xl border border-[#d2d2d7] bg-[#F5F5F7] transition focus-within:border-[#0071e3]/50 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0071e3]/20">
-                <span className="flex shrink-0 items-center border-r border-[#d2d2d7] px-4 font-mono text-sm text-[#86868B] select-none">
-                  forever.co.th/
+            <div className="rounded-2xl border border-[#E8E8ED] bg-[#FBFBFD] p-6">
+              <div className="relative mx-auto w-48 overflow-hidden rounded-xl border border-[#E8E8ED] bg-white p-3 shadow-sm">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={
+                    buildPromptPayQrImageUrl(
+                      userPhone || '0812345678',
+                      paymentAmount
+                    ) ||
+                    'https://api.qrserver.com/v1/create-qr-code/?size=240x240&ecc=M&data=FOREVER-MOCK-PROMPTPAY'
+                  }
+                  alt="PromptPay QR จำลอง"
+                  width={192}
+                  height={192}
+                  className="aspect-square w-full object-contain"
+                />
+                <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-[#1D1D1F]/85 px-2.5 py-0.5 text-xs font-medium tracking-wide text-white">
+                  จำลอง
                 </span>
+              </div>
+              <p className="mt-3 text-xs text-[#86868B]">
+                QR นี้ใช้สำหรับทดสอบเท่านั้น — สแกนแล้วไม่ตัดเงินจริง
+              </p>
+              <p className="mt-2 font-mono text-xs text-[#6E6E73]">
+                รหัสอ้างอิง: {paymentRef || 'กำลังโหลด...'}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              disabled={isLoading || !paymentRef}
+              onClick={handleSimulatePaymentSuccess}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0071e3] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(0,113,227,0.28)] transition hover:bg-[#0077ED] disabled:opacity-60"
+            >
+              {isLoading && <RotateCw className="size-4 animate-spin" />}
+              {isLoading ? 'กำลังตรวจเช็กยอดเงิน...' : 'จำลองการชำระเงินสำเร็จ'}
+            </button>
+          </div>
+        )}
+
+        {/* STEP 3: URL */}
+        {wizardStep === 3 && (
+          <div className="animate-fade-in mx-auto max-w-lg space-y-6">
+            <header className="space-y-2 text-center">
+              <h2 className="text-2xl font-semibold tracking-tight">ตั้งชื่อลิงก์ URL</h2>
+              <p className="text-sm leading-relaxed text-[#6E6E73]">
+                เลือกชื่อที่ไม่ซ้ำ — จะเป็นที่อยู่ถาวรของเว็บไซต์คุณ
+              </p>
+            </header>
+
+            <div className="space-y-3">
+              <label htmlFor="slug" className="block text-sm font-medium text-[#6E6E73]">
+                forever.co.th/
+              </label>
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <input
+                  id="slug"
                   type="text"
                   value={slug}
                   onChange={(e) => {
                     setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''));
                     setSlugValid(null);
                   }}
-                  placeholder={
-                    category === 'Memorial' ? 'somsak-memorial' :
-                    category === 'Family Legacy' ? 'somsak-family' :
-                    category === 'Couple' ? 'somsak-and-ying' :
-                    category === 'Wedding' ? 'wedding-somsak-ying' :
-                    category === 'Friends' ? 'chula-law-35' :
-                    category === 'Pet Memorial' ? 'lucky-cat' :
-                    'somsak-family'
-                  }
-                  className="min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 font-mono text-sm text-[#1D1D1F] outline-none placeholder:text-[#AEAEB2]"
+                  placeholder="เช่น somsak-family"
+                  className="w-full rounded-2xl border border-[#E8E8ED] bg-[#FBFBFD] px-4 py-3.5 font-mono text-base text-[#1D1D1F] placeholder:text-[#86868B] transition focus:border-[#0071e3] focus:bg-white focus:outline-none focus:ring-[3px] focus:ring-[#0071e3]/15"
                 />
-              </div>
-
-              <button
-                type="button"
-                onClick={checkSlug}
-                disabled={slugChecking}
-                className="inline-flex h-auto cursor-pointer items-center rounded-xl border border-[#d2d2d7] bg-white px-5 py-2.5 text-xs font-bold text-[#1D1D1F] shadow-sm transition hover:bg-[#F5F5F7] active:scale-95 disabled:pointer-events-none disabled:opacity-50"
-              >
-                {slugChecking ? 'กำลังตรวจสอบ...' : 'ตรวจสอบสิทธิ์ว่าง'}
-              </button>
-
-              {slugValid === true && (
-                <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-800">
-                  <Check className="size-4 shrink-0 text-emerald-600" />
-                  <span>ชื่อลิงก์ &quot;forever.co.th/{slug}&quot; พร้อมใช้งาน</span>
-                </div>
-              )}
-              {slugValid === false && (
-                <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-semibold text-rose-700">
-                  ชื่อลิงก์นี้ถูกใช้แล้ว หรือไม่สามารถใช้ได้ กรุณาลองชื่ออื่น
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-between gap-3 border-t border-[#d2d2d7]/40 pt-4">
-              <button
-                type="button"
-                onClick={() => setWizardStep(1)}
-                className="rounded-full border border-[#d2d2d7] px-6 py-2.5 text-[13px] font-semibold text-[#86868B] transition hover:bg-[#F5F5F7] hover:text-[#1D1D1F]"
-              >
-                ย้อนกลับ
-              </button>
-              <button
-                type="button"
-                onClick={handleNextToInfo}
-                className="inline-flex h-auto items-center justify-center rounded-full bg-[#0071e3] px-8 py-2.5 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98]"
-              >
-                ถัดไป: กรอกข้อมูลเว็บ
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: INFO SETUP */}
-        {wizardStep === 3 && (
-          <div className="space-y-6 animate-fade-in overflow-visible">
-            <header className="space-y-1">
-              <h2 className="text-xl font-black text-stone-900">รายละเอียดเว็บไซต์ความทรงจำ</h2>
-              <p className="text-xs text-stone-500">กรอกรายละเอียดเพื่อสร้างโครงสร้างหน้ารำลึกเริ่มต้น</p>
-            </header>
-
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-sm font-bold text-stone-600 tracking-wide flex items-center gap-1">
-                  <span>{defaults.nameLabel}</span>
-                  <span className="text-rose-500 font-bold">*</span>
-                </label>
-                <Input 
-                  type="text" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                  placeholder={defaults.namePlaceholder}
-                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 text-sm sm:text-base focus:bg-white focus:outline-none"
-                />
-              </div>
-
-              {subjects.map((sub, index) => (
-                <div key={index} className="p-5 rounded-2xl border border-stone-250 bg-stone-50/20 space-y-4 relative animate-fade-in shadow-xs">
-                  {subjects.length > 1 && category !== 'Couple' && category !== 'Wedding' && (
-                    <Button variant="ghost"
-                      type="button"
-                      onClick={() => {
-                        const newSubs = [...subjects];
-                        newSubs.splice(index, 1);
-                        setSubjects(newSubs);
-                      }}
-                      className="absolute top-4 right-4 text-xs font-bold text-red-650 hover:text-red-700 active:scale-95 transition cursor-pointer"
-                    >
-                      ลบออก
-                    </Button>
-                  )}
-                  <h4 className="text-[10px] font-black text-stone-400 uppercase tracking-wider">
-                    {category === 'Pet Memorial' ? `โปรไฟล์น้องตัวที่ ${index + 1}` :
-                     category === 'Couple' || category === 'Wedding' ? `ข้อมูลคู่รักคนที่ ${index + 1}` :
-                     category === 'Friends' ? `ข้อมูลสมาชิกคนที่ ${index + 1}` :
-                     `ข้อมูลผู้ล่วงลับท่านที่ ${index + 1}`}
-                  </h4>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-bold text-stone-600 tracking-wide flex items-center gap-1">
-                      <span>{defaults.subjectLabel}</span>
-                      <span className="text-rose-500 font-bold">*</span>
-                    </label>
-                    <Input 
-                      type="text" 
-                      value={sub.name} 
-                      onChange={(e) => {
-                        const newSubs = [...subjects];
-                        newSubs[index].name = e.target.value;
-                        setSubjects(newSubs);
-                      }} 
-                      placeholder={defaults.subjectPlaceholder}
-                      className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500 transition"
-                    />
-                  </div>
-
-                  {category === 'Friends' && (
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      <div className="space-y-1">
-                        <label className="text-sm font-bold tracking-wide text-stone-600">
-                          {defaults.roleLabel}
-                        </label>
-                        <Input
-                          type="text"
-                          value={sub.role || ''}
-                          onChange={(e) => {
-                            const newSubs = [...subjects];
-                            newSubs[index].role = e.target.value;
-                            setSubjects(newSubs);
-                          }}
-                          placeholder={defaults.rolePlaceholder}
-                          className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-sm font-bold tracking-wide text-stone-600">
-                          {defaults.noteLabel}
-                        </label>
-                        <Input
-                          type="text"
-                          value={sub.note || ''}
-                          onChange={(e) => {
-                            const newSubs = [...subjects];
-                            newSubs[index].note = e.target.value;
-                            setSubjects(newSubs);
-                          }}
-                          placeholder={defaults.notePlaceholder}
-                          className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {category === 'Pet Memorial' && (
-                    <div className="space-y-3">
-                      <div className="space-y-1">
-                        <label className="text-sm font-bold tracking-wide text-stone-600">
-                          {defaults.breedLabel}
-                        </label>
-                        <Input
-                          type="text"
-                          value={sub.breed || ''}
-                          onChange={(e) => {
-                            const newSubs = [...subjects];
-                            newSubs[index].breed = e.target.value;
-                            setSubjects(newSubs);
-                          }}
-                          placeholder={defaults.breedPlaceholder}
-                          className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
-                        />
-                      </div>
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <div className="space-y-1">
-                          <label className="text-sm font-bold tracking-wide text-stone-600">
-                            {defaults.personalityLabel}
-                          </label>
-                          <Input
-                            type="text"
-                            value={sub.personality || ''}
-                            onChange={(e) => {
-                              const newSubs = [...subjects];
-                              newSubs[index].personality = e.target.value;
-                              setSubjects(newSubs);
-                            }}
-                            placeholder={defaults.personalityPlaceholder}
-                            className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-sm font-bold tracking-wide text-stone-600">
-                            {defaults.favoriteLabel}
-                          </label>
-                          <Input
-                            type="text"
-                            value={sub.favorite || ''}
-                            onChange={(e) => {
-                              const newSubs = [...subjects];
-                              newSubs[index].favorite = e.target.value;
-                              setSubjects(newSubs);
-                            }}
-                            placeholder={defaults.favoritePlaceholder}
-                            className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-sm font-bold tracking-wide text-stone-600">
-                          {defaults.dislikeLabel}
-                        </label>
-                        <Input
-                          type="text"
-                          value={sub.dislike || ''}
-                          onChange={(e) => {
-                            const newSubs = [...subjects];
-                            newSubs[index].dislike = e.target.value;
-                            setSubjects(newSubs);
-                          }}
-                          placeholder={defaults.dislikePlaceholder}
-                          className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-sm focus:outline-none focus:border-emerald-500 transition"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {!defaults.hideDates && !(index > 0 && (category === 'Couple' || category === 'Wedding')) && (
-                    <div className="space-y-2.5">
-                      {/* Still Alive checkbox for Pet Memorial and Family Legacy */}
-                      {(category === 'Pet Memorial' || category === 'Family Legacy') && (
-                        <label className="flex items-center gap-1.5 cursor-pointer select-none pb-0.5">
-                          <Checkbox 
-                            checked={sub.isAlive || false}
-                            onCheckedChange={(checked) => {
-                                const isChecked = !!checked;
-                              const newSubs = [...subjects];
-                              newSubs[index].isAlive = isChecked;
-                              if (isChecked) {
-                                newSubs[index].deathDate = null;
-                                newSubs[index].deathYear = null;
-                                newSubs[index].deathYearOnly = false;
-                              }
-                              setSubjects(newSubs);
-                            }}
-                            className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5 cursor-pointer"
-                          />
-                          <span className="text-xs font-bold text-emerald-800">
-                            {category === 'Pet Memorial'
-                              ? (defaults.aliveLabel || 'อยู่ด้วยกัน (ยังมีชีวิต)')
-                              : 'ท่านยังมีชีวิตอยู่'}
-                          </span>
-                        </label>
-                      )}
-
-                      <label className="text-sm font-bold text-stone-600 tracking-wide">{defaults.dateLabel}</label>
-                      
-                      <div className={`grid gap-4 ${sub.isAlive ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
-                        <div className="space-y-1">
-                          <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateStartTitle}</span>
-                          <ThaiDatePicker
-                            variant="input"
-                            yearOnly={sub.birthYearOnly}
-                            value={
-                              sub.birthYearOnly
-                                ? sub.birthYear != null
-                                  ? `${sub.birthYear}-01-01`
-                                  : ''
-                                : dateToYmd(sub.birthDate)
-                            }
-                            onChange={(ymd) => {
-                              const newSubs = [...subjects];
-                              if (sub.birthYearOnly) {
-                                if (!ymd) {
-                                  newSubs[index].birthYear = null;
-                                  newSubs[index].birthDate = null;
-                                } else {
-                                  const year = parseInt(ymd.slice(0, 4), 10);
-                                  newSubs[index].birthYear = year;
-                                  newSubs[index].birthDate = new Date(year, 0, 1);
-                                }
-                              } else {
-                                newSubs[index].birthDate = ymdToDate(ymd);
-                              }
-                              setSubjects(newSubs);
-                            }}
-                            placeholder={sub.birthYearOnly ? 'เลือกปี พ.ศ.' : defaults.dateStartPlaceholder}
-                            align="left"
-                          />
-                          <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
-                            <Checkbox 
-                              checked={sub.birthYearOnly}
-                              onCheckedChange={(checked) => {
-                                const isChecked = !!checked;
-                                const newSubs = [...subjects];
-                                newSubs[index].birthYearOnly = isChecked;
-                                if (isChecked) {
-                                  const initialYear = sub.birthDate ? sub.birthDate.getFullYear() : new Date().getFullYear();
-                                  newSubs[index].birthYear = initialYear;
-                                  newSubs[index].birthDate = new Date(initialYear, 0, 1);
-                                } else {
-                                  newSubs[index].birthYear = null;
-                                  newSubs[index].birthDate = null;
-                                }
-                                setSubjects(newSubs);
-                              }}
-                              className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
-                            />
-                            <span className="text-[9px] text-stone-500 font-semibold">
-                              {category === 'Couple' ? 'ระบุเฉพาะปีที่พบกัน' :
-                               category === 'Friends' ? 'ระบุเฉพาะปีที่ก่อตั้ง' :
-                               category === 'Wedding' ? 'ระบุเฉพาะปี' :
-                               'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีเกิด)'}
-                            </span>
-                          </label>
-                        </div>
-
-                        {/* Death Date column (only if not alive) */}
-                        {!sub.isAlive && (
-                          <div className="space-y-1">
-                            <span className="text-[9px] text-stone-500 font-semibold block">{defaults.dateEndTitle}</span>
-                            <ThaiDatePicker
-                              variant="input"
-                              yearOnly={sub.deathYearOnly}
-                              value={
-                                sub.deathYearOnly
-                                  ? sub.deathYear != null
-                                    ? `${sub.deathYear}-01-01`
-                                    : ''
-                                  : dateToYmd(sub.deathDate)
-                              }
-                              onChange={(ymd) => {
-                                const newSubs = [...subjects];
-                                if (sub.deathYearOnly) {
-                                  if (!ymd) {
-                                    newSubs[index].deathYear = null;
-                                    newSubs[index].deathDate = null;
-                                  } else {
-                                    const year = parseInt(ymd.slice(0, 4), 10);
-                                    newSubs[index].deathYear = year;
-                                    newSubs[index].deathDate = new Date(year, 0, 1);
-                                  }
-                                } else {
-                                  newSubs[index].deathDate = ymdToDate(ymd);
-                                }
-                                setSubjects(newSubs);
-                              }}
-                              placeholder={sub.deathYearOnly ? 'เลือกปี พ.ศ.' : defaults.dateEndPlaceholder}
-                              align="right"
-                            />
-                            <label className="flex items-center gap-1.5 mt-1 cursor-pointer select-none">
-                              <Checkbox 
-                                checked={sub.deathYearOnly}
-                                onCheckedChange={(checked) => {
-                                const isChecked = !!checked;
-                                  const newSubs = [...subjects];
-                                  newSubs[index].deathYearOnly = isChecked;
-                                  if (isChecked) {
-                                    const initialYear = sub.deathDate ? sub.deathDate.getFullYear() : new Date().getFullYear();
-                                    newSubs[index].deathYear = initialYear;
-                                    newSubs[index].deathDate = new Date(initialYear, 0, 1);
-                                  } else {
-                                    newSubs[index].deathYear = null;
-                                    newSubs[index].deathDate = null;
-                                  }
-                                  setSubjects(newSubs);
-                                }}
-                                className="rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3 cursor-pointer"
-                              />
-                              <span className="text-[9px] text-stone-500 font-semibold">
-                                {category === 'Couple' ? 'ระบุเฉพาะปีมงคลสมรส' :
-                                 category === 'Friends' ? 'ระบุเฉพาะปีล่าสุด' :
-                                 category === 'Wedding' ? 'ระบุเฉพาะปี' :
-                                 category === 'Pet Memorial' ? 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่จากไป)' :
-                                 'ไม่ระบุวัน-เดือน (ระบุเฉพาะปีที่เสียชีวิต)'}
-                              </span>
-                            </label>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              {category !== 'Couple' && category !== 'Wedding' && (
-                <Button variant="ghost"
+                <button
                   type="button"
-                  onClick={() => {
-                    setSubjects([
-                      ...subjects,
-                      {
-                        name: '',
-                        avatarUrl: '',
-                        birthDate: null,
-                        deathDate: null,
-                        birthYearOnly: false,
-                        deathYearOnly: false,
-                        birthYear: null,
-                        deathYear: null,
-                        isAlive: category === 'Pet Memorial',
-                        role: '',
-                        note: '',
-                        breed: '',
-                        personality: '',
-                        favorite: '',
-                        dislike: '',
-                      }
-                    ]);
-                  }}
-                  className="w-full py-3 border-2 border-dashed border-stone-300 hover:border-emerald-500 hover:text-emerald-700 text-stone-500 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer bg-stone-50/20 active:scale-99 hover:bg-emerald-50/10"
+                  onClick={checkSlug}
+                  disabled={slugChecking || slug.length < 3}
+                  className="shrink-0 rounded-full border border-[#E8E8ED] bg-white px-5 py-3 text-sm font-medium text-[#1D1D1F] transition hover:bg-[#F5F5F7] disabled:opacity-50"
                 >
-                  {category === 'Pet Memorial' ? '+ เพิ่มน้องอีกตัว' :
-                   category === 'Family Legacy' ? '+ เพิ่มรายชื่อสมาชิกตระกูลอีกท่าน' :
-                   category === 'Memorial' ? '+ เพิ่มรายชื่อผู้ล่วงลับอีกท่าน' :
-                   category === 'Friends' ? '+ เพิ่มสมาชิก' :
-                   '+ เพิ่มรายชื่อผู้ร่วมแสดงผล'}
-                </Button>
-              )}
-
-              {lifespan && category !== 'Friends' && (
-                <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
-                    สรุปกำหนดข้อมูลช่วงเวลา ({defaults.lifespanPrefix})
-                  </span>
-                  <p className="text-[10px] text-emerald-700 font-semibold leading-relaxed whitespace-pre-line">
-                    {lifespan}
-                  </p>
-                </div>
-              )}
-
-            </div>
-
-            <div className="flex justify-between pt-4 border-t border-stone-100">
-              <Button variant="ghost" type="button" onClick={() => setWizardStep(2)} className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold">ย้อนกลับ</Button>
-              <button
-                type="button"
-                onClick={handleNextToTheme}
-                className="inline-flex h-auto items-center justify-center rounded-full bg-[#0071e3] px-8 py-2.5 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98]"
-              >
-                ถัดไป: เลือกธีมการจัดแสดง
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 4: THEME SETUP */}
-        {wizardStep === 4 && (
-          <div className="space-y-6 animate-fade-in">
-            <header className="space-y-1">
-              <h2 className="text-xl font-black text-stone-900">เลือกธีมความทรงจำพาสเทลสำเร็จรูป (6 ตัวเลือก)</h2>
-              <p className="text-xs text-stone-500">เลือกแนวโทนสีและอารมณ์ของหน้าเว็บความทรงจำของคุณ</p>
-            </header>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto pr-2">
-              {themes.map(t => {
-                const isActive = selectedTheme === t.name;
-                return (
-                  <div 
-                    key={t.name}
-                    onClick={() => setSelectedTheme(t.name)}
-                    className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between gap-4 transition select-none hover:shadow-md ${
-                      isActive ? 'border-sky-500 bg-sky-50/10 shadow-xs ring-2 ring-sky-500/10' : 'border-stone-200 hover:border-stone-300 bg-stone-50/20'
-                    }`}
-                  >
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center">
-                        <p className="text-sm font-bold text-stone-900">{t.name}</p>
-                        {isActive && (
-                          <span className="w-4 h-4 bg-sky-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
-                            ✓
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-[10px] text-stone-500 leading-normal">{t.desc}</p>
-                    </div>
-                    
-                    {/* Color dots row */}
-                    <div className="flex gap-1 items-center">
-                      <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.primary }} />
-                      <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.hover }} />
-                      <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.secondary }} />
-                      <span className="w-3.5 h-3.5 rounded-full border border-stone-200/50 block shrink-0" style={{ backgroundColor: t.light }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-between pt-4 border-t border-stone-100">
-              <Button variant="ghost" type="button" onClick={() => setWizardStep(3)} className="px-6 py-3 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs transition font-semibold">ย้อนกลับ</Button>
-              <button
-                type="button"
-                onClick={handleNextToPayment}
-                disabled={isLoading}
-                className="inline-flex h-auto items-center justify-center rounded-full bg-[#0071e3] px-8 py-2.5 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
-              >
-                {isLoading ? 'กำลังสร้างร่างเว็บไซต์...' : 'ถัดไป: ขั้นตอนชำระเงิน'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 5: PAYMENT (PROMPTPAY QR) */}
-        {wizardStep === 5 && (
-          <div className="space-y-8 text-center animate-fade-in">
-            <header className="space-y-1">
-              <h2 className="text-xl font-black text-stone-900">ชำระเงินเพื่อเปิดบริการอัตโนมัติ</h2>
-              <p className="text-xs text-stone-500">สแกนจ่ายเงิน 2,000 บาท (ค่าบริการรายปีแรกเริ่มต้น + พื้นที่ 1 GB)</p>
-            </header>
-
-            <div className="max-w-xs mx-auto p-6 rounded-2xl bg-white text-stone-900 border border-stone-200 shadow-md space-y-4">
-              <div className="text-center font-bold text-sm tracking-wide border-b border-stone-100 pb-3">PROMPTPAY QR</div>
-              {/* Simulated QR Code Area */}
-              <div className="w-48 h-48 bg-stone-50 border border-stone-150 rounded-lg mx-auto flex flex-col items-center justify-center gap-2 p-2 shadow-inner">
-                <Smartphone className="w-8 h-8 text-stone-600" />
-                <span className="text-[10px] font-black text-stone-850">MOCK DYNAMIC QR</span>
-                <span className="text-[9px] font-mono text-stone-500 break-all px-2 select-all">{paymentRef}</span>
+                  {slugChecking ? 'กำลังตรวจ...' : 'ตรวจสอบ'}
+                </button>
               </div>
-              <div className="text-center font-black text-lg border-t border-stone-100 pt-3 text-emerald-800">2,000.00 THB</div>
+              {slugValid === true && (
+                <p className="flex items-center gap-1.5 text-sm font-medium text-emerald-700">
+                  <Check className="size-4" />
+                  ชื่อลิงก์นี้ใช้ได้
+                </p>
+              )}
             </div>
 
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 max-w-sm mx-auto leading-normal font-semibold flex items-start gap-2.5 text-left">
-              <Info className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
-              <span>สแกน QR Code แล้วระบบจะเปิดใช้งานให้คุณโดยอัตโนมัติเมื่อได้รับการกดยืนยัน Webhook callback จากธนาคาร</span>
-            </div>
+            <button
+              type="button"
+              disabled={isLoading || slugValid !== true}
+              onClick={handleConfirmSlug}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0071e3] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(0,113,227,0.28)] transition hover:bg-[#0077ED] disabled:opacity-60"
+            >
+              {isLoading && <RotateCw className="size-4 animate-spin" />}
+              {isLoading ? 'กำลังบันทึก...' : 'เข้าสู่หน้าจัดการ'}
+            </button>
 
-            <div className="pt-4 border-t border-stone-100 max-w-xs mx-auto space-y-3">
-              <button
-                type="button"
-                onClick={handleSimulatePaymentSuccess}
-                disabled={isLoading}
-                className="inline-flex h-auto w-full items-center justify-center rounded-full bg-[#0071e3] py-3 text-[15px] font-medium text-[#FFFFFF] transition-colors hover:bg-[#0071e3]/90 hover:text-[#FFFFFF] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
-              >
-                {isLoading ? 'กำลังตรวจเช็กยอดเงิน...' : 'จำลองการชำระเงินสำเร็จ (Callback Simulator)'}
-              </button>
-              <Button variant="ghost" type="button" 
-                onClick={() => setWizardStep(4)}
-                className="w-full py-2.5 rounded-xl border border-stone-300 text-stone-550 hover:bg-stone-50 text-xs font-semibold transition"
-              >
-                ย้อนกลับไปแก้ไข
-              </Button>
-            </div>
+            <p className="text-center text-sm text-[#86868B]">
+              ปรับธีม สี และข้อมูลเนื้อหาได้ในหน้าจัดการหลังจากนี้
+            </p>
           </div>
         )}
       </div>

@@ -86,17 +86,17 @@ export default function FeedItem({
               
               {/* Special type badges */}
               {isAnnouncement && (
-                <span className="text-[9px] font-black bg-amber-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
+                <span className="text-xs font-black bg-amber-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
                   ประกาศสำคัญ
                 </span>
               )}
               {isMerit && (
-                <span className="text-[9px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
+                <span className="text-xs font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
                   ร่วมทำบุญ
                 </span>
               )}
             </div>
-            <p className="text-[10px] text-stone-400 font-semibold font-mono">
+            <p className="text-xs text-stone-400 font-semibold font-mono">
               {formatRelativeTime(post.createdAt)}
             </p>
           </div>
@@ -128,7 +128,7 @@ export default function FeedItem({
           <div className="mx-6 my-4 p-4 bg-emerald-50/45 border border-emerald-250/20 rounded-2xl flex items-center justify-between gap-4 flex-wrap text-left">
             <div className="space-y-0.5 flex-1 min-w-[200px]">
               <h5 className="text-xs font-bold text-emerald-800">ขอเชิญร่วมทำบุญอุทิศกุศล</h5>
-              <p className="text-[11px] text-stone-500 leading-normal">
+              <p className="text-xs text-stone-500 leading-normal">
                 ท่านสามารถร่วมสมทบทุนทำบุญตามความประสงค์ เพื่ออุทิศเป็นกุศลผลบุญแด่ผู้วายชนม์
               </p>
             </div>

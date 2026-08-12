@@ -155,12 +155,12 @@ function CustomFamilyNode({ data }: { data: any }) {
           const lastName = parts.slice(1).join(' ');
           
           const firstNameClass = firstName.length > 12 
-            ? 'text-[9.5px] sm:text-[10px] font-bold text-stone-900 block w-full whitespace-normal break-words leading-tight transition group-hover:text-stone-955'
-            : 'text-[11px] sm:text-xs font-bold text-stone-900 block w-full whitespace-normal break-words leading-tight transition group-hover:text-stone-955';
+            ? 'text-[9.5px] sm:text-xs font-bold text-stone-900 block w-full whitespace-normal break-words leading-tight transition group-hover:text-stone-955'
+            : 'text-xs sm:text-xs font-bold text-stone-900 block w-full whitespace-normal break-words leading-tight transition group-hover:text-stone-955';
             
           const lastNameClass = lastName.length > 14
-            ? 'block text-[9px] sm:text-[9.5px] font-medium text-stone-500 mt-0.5 w-full whitespace-normal break-words leading-tight'
-            : 'block text-[10px] sm:text-[11px] font-medium text-stone-500 mt-0.5 w-full whitespace-normal break-words leading-tight';
+            ? 'block text-xs sm:text-[9.5px] font-medium text-stone-500 mt-0.5 w-full whitespace-normal break-words leading-tight'
+            : 'block text-xs sm:text-xs font-medium text-stone-500 mt-0.5 w-full whitespace-normal break-words leading-tight';
 
           const nicknameText = nickname ? `(${nickname})` : '';
           const ageText = lifespanText ? lifespanText : '';
@@ -176,7 +176,7 @@ function CustomFamilyNode({ data }: { data: any }) {
               
               {/* Nickname & Age */}
               {bottomText && (
-                <span className="text-[9px] text-stone-400 mt-1.5 font-semibold block leading-none">
+                <span className="text-xs text-stone-400 mt-1.5 font-semibold block leading-none">
                   {bottomText}
                 </span>
               )}
@@ -729,7 +729,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
             <button
               type="button"
               onClick={exitFullscreen}
-              className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-2 text-[11px] font-semibold text-stone-700 transition hover:bg-stone-50 sm:px-4 sm:text-xs"
+              className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-2 text-xs font-semibold text-stone-700 transition hover:bg-stone-50 sm:px-4 sm:text-xs"
             >
               <Minimize2 className="size-3.5 shrink-0" />
               <span>ปิดเต็มจอ</span>
@@ -744,7 +744,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
 
             <Link
               href={`/${tenant.slug}`}
-              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-stone-300 px-3 py-2 text-[11px] font-semibold text-stone-600 transition hover:bg-stone-100 hover:text-stone-900 sm:px-4 sm:text-xs"
+              className="inline-flex shrink-0 items-center gap-1 rounded-full border border-stone-300 px-3 py-2 text-xs font-semibold text-stone-600 transition hover:bg-stone-100 hover:text-stone-900 sm:px-4 sm:text-xs"
             >
               <ArrowLeft className="size-3.5" />
               <span className="hidden sm:inline">ย้อนกลับหน้าแรก</span>
@@ -757,8 +757,8 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
             {renderTreeControls('top-3 right-3 sm:top-4 sm:right-4')}
           </div>
 
-          <p className="shrink-0 border-t border-stone-200 bg-white py-2 text-[10px] text-stone-400 sm:text-[11px]">
-            กด <kbd className="rounded border border-stone-200 bg-stone-50 px-1.5 py-0.5 font-mono text-[10px] text-stone-500">Esc</kbd> เพื่อออกจากโหมดเต็มจอ
+          <p className="shrink-0 border-t border-stone-200 bg-white py-2 text-xs text-stone-400 sm:text-xs">
+            กด <kbd className="rounded border border-stone-200 bg-stone-50 px-1.5 py-0.5 font-mono text-xs text-stone-500">Esc</kbd> เพื่อออกจากโหมดเต็มจอ
           </p>
         </div>
       ) : (
