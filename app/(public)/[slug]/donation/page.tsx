@@ -19,12 +19,25 @@ export default async function PublicDonationPage(props: { params: Promise<{ slug
     notFound();
   }
 
+  const accountFallback =
+    tenant.category === 'Couple'
+      ? 'เป้าหมายของเรา'
+      : tenant.category === 'Wedding'
+        ? 'ของขวัญวันแต่งงาน'
+        : tenant.category === 'Friends'
+          ? 'กองทุนรวมตัว'
+          : tenant.category === 'Pet Memorial'
+            ? 'กองทุนช่วยเหลือสัตว์'
+            : tenant.category === 'Family Legacy'
+              ? 'กองทุนครอบครัว'
+              : 'ครอบครัวผู้ล่วงลับ';
+
   return (
     <div className="animate-fade-in">
       <DonationClientForm 
         websiteId={tenant.id}
         donationPromptPay={tenant.donationPromptPay}
-        donationAccountName={tenant.donationAccountName || 'ครอบครัวผู้ล่วงลับ'}
+        donationAccountName={tenant.donationAccountName || accountFallback}
         category={tenant.category}
       />
     </div>

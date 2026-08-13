@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   CalendarDays,
   Edit3,
   FileText,
   Plus,
-  Repeat2,
   Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,7 +15,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
 import { getFeatureLabel } from '@/lib/categories';
 import { formatActivityDate, type ActivityRecord } from '@/lib/activities';
+import { compressActivityImages } from '@/lib/compressActivityImage';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
+import ActivityImagesCarousel from '@/components/public/ActivityImagesCarousel';
+import { cn } from '@/lib/utils';
 
 async function uploadFile(
   websiteId: string,
@@ -75,6 +77,16 @@ export default function ActivitiesEditor({
   const [pdfUrl, setPdfUrl] = useState('');
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const imagePreviewUrls = useMemo(
+    () => imageFiles.map((file) => URL.createObjectURL(file)),
+    [imageFiles],
+  );
+
+  useEffect(() => {
+    return () => {
+      imagePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [imagePreviewUrls]);
 
   const resetForm = () => {
     setActivityId('');
@@ -122,6 +134,19 @@ export default function ActivitiesEditor({
     setFormOpen(true);
   };
 
+  const removeSavedImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removePendingImage = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removePdf = () => {
+    setPdfUrl('');
+    setPdfFile(null);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaveLoading(true);
@@ -130,7 +155,8 @@ export default function ActivitiesEditor({
 
     try {
       let nextImages = [...images];
-      for (const file of imageFiles) {
+      const compressedFiles = await compressActivityImages(imageFiles);
+      for (const file of compressedFiles) {
         nextImages.push(await uploadFile(websiteId, file));
       }
 
@@ -270,18 +296,24 @@ export default function ActivitiesEditor({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
               <label className="text-sm font-bold text-stone-600">วันที่จัด (ไม่บังคับ)</label>
-              <ThaiDatePicker value={eventDate} onChange={setEventDate} />
-            </div>
-            <label className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-3 text-sm text-stone-700">
-              <Checkbox
-                checked={isRecurring}
-                onCheckedChange={(checked) => setIsRecurring(checked === true)}
+              <ThaiDatePicker
+                value={eventDate}
+                onChange={setEventDate}
+                variant="input"
+                align="left"
+                placeholder="เลือกวันที่จัดงาน"
               />
-              <span className="flex items-center gap-1.5">
-                <Repeat2 className="size-4 text-stone-500" />
-                จัดเป็นประจำทุกปี
-              </span>
-            </label>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-bold text-stone-600">จัดเป็นประจำทุกปี</label>
+              <label className="flex h-[42px] cursor-pointer items-center gap-2 rounded-xl border border-stone-200 bg-white px-4 text-sm text-stone-700">
+                <Checkbox
+                  checked={isRecurring}
+                  onCheckedChange={(checked) => setIsRecurring(checked === true)}
+                />
+                <span>จัดทุกปี</span>
+              </label>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -296,8 +328,10 @@ export default function ActivitiesEditor({
                 }
                 className="text-sm"
               />
-              {images.length > 0 ? (
-                <p className="text-xs text-stone-500">มีรูปเดิม {images.length} รูป</p>
+              {imageFiles.length > 0 ? (
+                <p className="text-xs text-stone-500">
+                  เลือกไว้ {imageFiles.length} ไฟล์ — ระบบจะย่อขนาดอัตโนมัติก่อนอัปโหลด
+                </p>
               ) : null}
             </div>
             <div className="space-y-1">
@@ -308,11 +342,54 @@ export default function ActivitiesEditor({
                 onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
                 className="text-sm"
               />
-              {pdfUrl ? (
-                <p className="truncate text-xs text-stone-500">มีไฟล์ PDF เดิมอยู่แล้ว</p>
+              {pdfUrl || pdfFile ? (
+                <div className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2">
+                  <FileText className="size-4 shrink-0 text-emerald-700" />
+                  <span className="min-w-0 flex-1 truncate text-xs text-stone-600">
+                    {pdfFile ? pdfFile.name : 'ไฟล์ PDF ที่บันทึกแล้ว'}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={removePdf}
+                    className="h-7 shrink-0 px-2 text-xs text-rose-600 hover:bg-rose-50"
+                  >
+                    <Trash2 className="size-3.5" />
+                    ลบ
+                  </Button>
+                </div>
               ) : null}
             </div>
           </div>
+
+          {(images.length > 0 || imageFiles.length > 0) && (
+            <div className="space-y-2">
+              <p className="text-xs font-bold text-stone-500">
+                รูปในกิจกรรม — กดลบเพื่อเอาออก แล้วบันทึกเพื่อยืนยัน
+              </p>
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                {images.map((src, index) => (
+                  <ActivityFormImageThumb
+                    key={`saved-${src}-${index}`}
+                    src={resolveMediaSrc(src)}
+                    alt={`${title || 'กิจกรรม'} รูป ${index + 1}`}
+                    badge="บันทึกแล้ว"
+                    onRemove={() => removeSavedImage(index)}
+                  />
+                ))}
+                {imageFiles.map((file, index) => (
+                  <ActivityFormImageThumb
+                    key={`pending-${file.name}-${file.lastModified}-${index}`}
+                    src={imagePreviewUrls[index]}
+                    alt={file.name}
+                    badge="ใหม่"
+                    onRemove={() => removePendingImage(index)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-2">
             <Button type="submit" disabled={saveLoading} className="rounded-xl">
@@ -384,12 +461,14 @@ export default function ActivitiesEditor({
                     </Button>
                   </div>
                 </div>
-                {activity.images[0] ? (
-                  <img
-                    src={resolveMediaSrc(activity.images[0])}
-                    alt={activity.title}
-                    className="mt-3 h-28 w-full rounded-xl object-cover"
-                  />
+                {activity.images.length > 0 ? (
+                  <div className="mt-3">
+                    <ActivityImagesCarousel
+                      images={activity.images}
+                      title={activity.title}
+                      compact
+                    />
+                  </div>
                 ) : null}
               </div>
             );
@@ -397,5 +476,46 @@ export default function ActivitiesEditor({
         </div>
       )}
     </section>
+  );
+}
+
+function ActivityFormImageThumb({
+  src,
+  alt,
+  badge,
+  onRemove,
+}: {
+  src: string;
+  alt: string;
+  badge: string;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="group relative aspect-[3/4] overflow-hidden rounded-lg border border-stone-200 bg-stone-100">
+      <img
+        src={src}
+        alt={alt}
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+        loading="lazy"
+      />
+      <span
+        className={cn(
+          'absolute left-1 top-1 rounded-md px-1.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm',
+          badge === 'ใหม่' ? 'bg-emerald-600/90' : 'bg-stone-700/80',
+        )}
+      >
+        {badge}
+      </span>
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={onRemove}
+        className="absolute right-1 top-1 size-7 rounded-md border-0 bg-red-600/90 p-0 text-white opacity-100 hover:bg-red-700 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
+        title="ลบรูป"
+        aria-label="ลบรูป"
+      >
+        <Trash2 className="size-3.5" />
+      </Button>
+    </div>
   );
 }

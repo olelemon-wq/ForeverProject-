@@ -177,18 +177,24 @@ function CoverLayer({
   coverUrl,
   coverTransform,
   dimClass = 'bg-black/40',
+  soft = false,
 }: {
   coverUrl: string;
   coverTransform?: MemorialHeroProps['coverTransform'];
   dimClass?: string;
+  /** Soft-wash: keep cover visible but blurred / muted */
+  soft?: boolean;
 }) {
   return (
-    <div className="pointer-events-none absolute inset-0">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={resolveMediaSrc(coverUrl)}
         alt=""
-        className="h-full w-full object-cover"
+        className={cn(
+          'h-full w-full object-cover',
+          soft && 'scale-105 blur-[6px] opacity-80',
+        )}
         style={imageTransformStyle({
           x: coverTransform?.x || 0,
           y: coverTransform?.y || 0,
@@ -196,7 +202,22 @@ function CoverLayer({
           rotate: coverTransform?.rotate || 0,
         })}
       />
-      <div className={cn('absolute inset-0', dimClass)} />
+      <div
+        className={cn('absolute inset-0', !soft && dimClass)}
+        style={
+          soft
+            ? {
+                background: `
+                  linear-gradient(165deg,
+                    color-mix(in srgb, var(--theme-primary) 8%, rgba(245,245,247,0.35)),
+                    color-mix(in srgb, var(--theme-primary) 5%, rgba(250,248,245,0.55)) 45%,
+                    color-mix(in srgb, var(--theme-primary) 6%, rgba(245,245,247,0.72)) 100%
+                  )
+                `,
+              }
+            : undefined
+        }
+      />
     </div>
   );
 }
@@ -209,6 +230,8 @@ function BottomBandHero({
   coverTransform,
   avatarTransform,
   showWash,
+  softCover,
+  showGradientWash,
   compact,
   className,
   avatarSide,
@@ -220,6 +243,8 @@ function BottomBandHero({
   coverTransform?: MemorialHeroProps['coverTransform'];
   avatarTransform?: MemorialHeroProps['avatarTransform'];
   showWash?: boolean;
+  softCover?: boolean;
+  showGradientWash?: boolean;
   compact?: boolean;
   className?: string;
   avatarSide: 'left' | 'right';
@@ -234,7 +259,7 @@ function BottomBandHero({
       className={cn(
         'relative overflow-hidden border-b border-stone-200/60 transition-all duration-500',
         compact ? 'rounded-2xl border' : '',
-        hasCover ? 'bg-stone-900' : 'bg-stone-100',
+        hasCover && !softCover ? 'bg-stone-900' : 'bg-stone-100',
         className
       )}
     >
@@ -243,12 +268,15 @@ function BottomBandHero({
           <CoverLayer
             coverUrl={coverUrl!}
             coverTransform={coverTransform}
+            soft={softCover}
             dimClass="bg-gradient-to-t from-black/35 via-black/10 to-black/5"
           />
-        ) : (
+        ) : showWash ? (
           <SoftWashBackground />
+        ) : (
+          <div className="h-full w-full bg-stone-100" />
         )}
-        {showWash && hasCover ? <SoftWashBackground onDark /> : null}
+        {showGradientWash ? <SoftWashBackground onDark={hasCover && !softCover} /> : null}
       </div>
 
       <div className="relative z-10 border-t border-stone-200/70 bg-[#F5F5F7]">
@@ -292,10 +320,15 @@ export default function MemorialHero({
 }: MemorialHeroProps) {
   const layout = normalizeHeroLayout(layoutProp);
   const bgMode = normalizeHeroBgMode(bgModeProp, layout);
-  const showImage =
-    !!coverUrl && (bgMode === 'image' || bgMode === 'image-and-wash');
+  const hasCover = !!coverUrl;
+  const softCover = hasCover && bgMode === 'soft-wash';
+  const showSharpCover = hasCover && (bgMode === 'image' || bgMode === 'image-and-wash');
+  const showSoftCoverLayer = softCover;
+  const showGradientWash =
+    (bgMode === 'soft-wash' && !hasCover) ||
+    (bgMode === 'image-and-wash' && hasCover);
   const showWash = bgMode === 'soft-wash' || bgMode === 'image-and-wash';
-  const onDark = showImage;
+  const onDark = showSharpCover;
 
   const avatarSize = compact
     ? 'h-20 w-20 sm:h-24 sm:w-24'
@@ -311,6 +344,8 @@ export default function MemorialHero({
         coverTransform={coverTransform}
         avatarTransform={avatarTransform}
         showWash={showWash}
+        softCover={softCover}
+        showGradientWash={showGradientWash}
         compact={compact}
         className={className}
         avatarSide={layout === 'bottom-band-right' ? 'right' : 'left'}
@@ -327,15 +362,23 @@ export default function MemorialHero({
           className
         )}
       >
-        {showImage ? (
+        {showSoftCoverLayer ? (
+          <CoverLayer
+            coverUrl={coverUrl!}
+            coverTransform={coverTransform}
+            soft
+            dimClass="bg-[#FAF8F5]/85"
+          />
+        ) : null}
+        {showSharpCover ? (
           <CoverLayer
             coverUrl={coverUrl!}
             coverTransform={coverTransform}
             dimClass="bg-[#FAF8F5]/85"
           />
         ) : null}
-        {showWash ? <SoftWashBackground onDark={showImage} /> : null}
-        {!showImage && !showWash ? (
+        {showGradientWash ? <SoftWashBackground onDark={onDark} /> : null}
+        {!hasCover && !showWash ? (
           <div
             className="pointer-events-none absolute top-1/2 left-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.08] blur-[100px]"
             style={{ backgroundColor: 'var(--theme-primary)' }}
@@ -365,26 +408,34 @@ export default function MemorialHero({
   }
 
   if (layout === 'framed-on-cover') {
-    const hasCover = !!coverUrl;
     return (
       <header
         className={cn(
           'relative overflow-hidden border-b border-stone-200/60 transition-all duration-500',
           compact ? 'min-h-[240px] rounded-2xl border py-10' : 'min-h-[320px] py-16 sm:min-h-[380px] sm:py-20',
-          hasCover ? 'bg-stone-900' : 'bg-stone-100',
+          hasCover && !softCover ? 'bg-stone-900' : 'bg-stone-100',
           className
         )}
       >
-        {hasCover ? (
+        {showSoftCoverLayer ? (
+          <CoverLayer
+            coverUrl={coverUrl!}
+            coverTransform={coverTransform}
+            soft
+            dimClass="bg-black/45"
+          />
+        ) : showSharpCover ? (
           <CoverLayer
             coverUrl={coverUrl!}
             coverTransform={coverTransform}
             dimClass="bg-black/45"
           />
-        ) : (
+        ) : showWash ? (
           <SoftWashBackground />
+        ) : (
+          <div className="absolute inset-0 bg-stone-100" />
         )}
-        {showWash ? <SoftWashBackground onDark={hasCover} /> : null}
+        {showGradientWash ? <SoftWashBackground onDark={onDark} /> : null}
 
         <div
           className={cn(
@@ -398,14 +449,14 @@ export default function MemorialHero({
             compact={compact}
           />
           <div
-            className={cn('h-px w-12 sm:w-16', hasCover ? 'bg-white/80' : '')}
-            style={hasCover ? undefined : { backgroundColor: 'var(--theme-primary)' }}
+            className={cn('h-px w-12 sm:w-16', onDark ? 'bg-white/80' : '')}
+            style={onDark ? undefined : { backgroundColor: 'var(--theme-primary)' }}
             aria-hidden
           />
           <TitleBlock
             name={name}
             tagline={tagline}
-            onDark={hasCover}
+            onDark={onDark}
             compact={compact}
           />
         </div>
@@ -416,20 +467,26 @@ export default function MemorialHero({
   const shellClass = cn(
     'relative overflow-hidden border-b border-stone-200/60 transition-all duration-500',
     compact ? 'rounded-2xl border' : '',
-    showImage ? 'bg-stone-900 text-white' : showWash ? 'bg-[#F5F5F7]' : 'bg-white',
+    onDark ? 'bg-stone-900 text-white' : showWash || softCover ? 'bg-[#F5F5F7]' : 'bg-white',
     compact ? 'min-h-[220px] py-8' : 'min-h-[280px] py-16 sm:min-h-[320px] sm:py-20',
     className
   );
 
   return (
     <header className={shellClass}>
-      {showImage ? (
+      {showSoftCoverLayer ? (
+        <CoverLayer
+          coverUrl={coverUrl!}
+          coverTransform={coverTransform}
+          soft
+        />
+      ) : null}
+      {showSharpCover ? (
         <CoverLayer coverUrl={coverUrl!} coverTransform={coverTransform} />
       ) : null}
 
-      {showWash ? <SoftWashBackground onDark={onDark} /> : null}
-
-      {!showImage && !showWash ? (
+      {showGradientWash ? <SoftWashBackground onDark={onDark} /> : null}
+      {!hasCover && !showWash ? (
         <div
           className="pointer-events-none absolute top-1/2 left-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[100px]"
           style={{ backgroundColor: 'var(--theme-primary)' }}

@@ -16,8 +16,8 @@ export interface HeroLayoutOption {
   description: string;
 }
 
-/** Memorial-only hero layouts. */
-export const MEMORIAL_HERO_LAYOUTS: HeroLayoutOption[] = [
+/** Hero layout options for all site categories. */
+export const HERO_LAYOUTS: HeroLayoutOption[] = [
   {
     id: 'center-classic',
     label: 'ตรงกลางคลาสสิก',
@@ -60,6 +60,9 @@ export const MEMORIAL_HERO_LAYOUTS: HeroLayoutOption[] = [
   },
 ];
 
+/** @deprecated Use HERO_LAYOUTS */
+export const MEMORIAL_HERO_LAYOUTS = HERO_LAYOUTS;
+
 const LEGACY_LAYOUT_MAP: Record<string, HeroLayoutId> = {
   'text-pattern': 'bottom-band',
   'card-overlay': 'framed-portrait',
@@ -72,7 +75,7 @@ const LEGACY_BG_MAP: Record<string, HeroBgMode> = {
 
 export function normalizeHeroLayout(value: unknown): HeroLayoutId {
   const id = typeof value === 'string' ? value : '';
-  if (MEMORIAL_HERO_LAYOUTS.some((l) => l.id === id)) return id as HeroLayoutId;
+  if (HERO_LAYOUTS.some((l) => l.id === id)) return id as HeroLayoutId;
   if (id in LEGACY_LAYOUT_MAP) return LEGACY_LAYOUT_MAP[id];
   return 'center-classic';
 }

@@ -63,7 +63,7 @@ export default async function PublicMemoryWallPage(props: { params: Promise<{ sl
         }
       >
         {(() => {
-          const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'memory');
+          const { label: fLabel, pageDescription: fDesc } = getFeatureLabel(tenant.category, 'memory');
           return (
             <>
               <header className="mx-auto mb-8 max-w-xl space-y-3 text-center">

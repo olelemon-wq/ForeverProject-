@@ -63,7 +63,7 @@ export default async function PublicGalleryPage(props: { params: Promise<{ slug:
   return (
     <div className="animate-fade-in">
       {(() => {
-        const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'gallery');
+        const { label: fLabel, pageDescription: fDesc } = getFeatureLabel(tenant.category, 'gallery');
         return (
           <div className={`${FEATURE_CARD_CLASS} relative space-y-6 overflow-hidden rounded-3xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] sm:space-y-8 sm:p-8 md:p-12`}>
             {/* Page Header with CategoryOrnament and Wing lines */}

@@ -36,6 +36,7 @@ async function main() {
         familyMembers: true,
         ebooks: true,
         donations: true,
+        activities: true,
       },
     });
 
@@ -53,6 +54,7 @@ async function main() {
       familyMembers,
       ebooks,
       donations,
+      activities,
       ...tenantFields
     } = tenant;
 
@@ -66,6 +68,7 @@ async function main() {
       familyMembers,
       ebooks,
       donations,
+      activities,
     });
 
     console.log(`Exported ${slug}`);

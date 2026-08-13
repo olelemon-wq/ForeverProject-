@@ -5,6 +5,7 @@ import { CalendarDays, ChevronDown, FileText, Repeat2 } from 'lucide-react';
 import { formatActivityDate, type ActivityRecord } from '@/lib/activities';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 import { cn } from '@/lib/utils';
+import ActivityImagesCarousel from '@/components/public/ActivityImagesCarousel';
 
 export default function ActivitiesClient({
   activities,
@@ -78,16 +79,7 @@ export default function ActivitiesClient({
                 ) : null}
 
                 {activity.images.length > 0 ? (
-                  <div className="space-y-2">
-                    {activity.images.map((src, index) => (
-                      <img
-                        key={`${activity.id}-${index}`}
-                        src={resolveMediaSrc(src)}
-                        alt={`${activity.title} หน้า ${index + 1}`}
-                        className="block h-auto w-full rounded-xl border border-stone-200 bg-white"
-                      />
-                    ))}
-                  </div>
+                  <ActivityImagesCarousel images={activity.images} title={activity.title} />
                 ) : null}
 
                 {activity.pdfUrl ? (

@@ -34,7 +34,7 @@ export default async function PublicActivitiesPage(props: {
     orderBy: [{ sortOrder: 'asc' }, { eventDate: 'desc' }, { createdAt: 'desc' }],
   });
   const activities = rows.map(normalizeActivityRow);
-  const { label, description } = getFeatureLabel(tenant.category, 'activities');
+  const { label, pageDescription: description } = getFeatureLabel(tenant.category, 'activities');
 
   return (
     <div className="animate-fade-in text-center">

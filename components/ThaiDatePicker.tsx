@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ThaiDatePickerProps {
@@ -371,26 +372,60 @@ export default function ThaiDatePicker({
   yearOnly = false,
 }: ThaiDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [positionAbove, setPositionAbove] = useState(false);
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const updatePanelPosition = useCallback(() => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const panelWidth = Math.min(window.innerWidth - 32, 320);
+    const panelHeight = mode === 'range' ? 320 : 280;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const above = spaceBelow < panelHeight + 16 && spaceAbove > spaceBelow;
+
+    const left =
+      align === 'right'
+        ? Math.max(16, Math.min(rect.right - panelWidth, window.innerWidth - panelWidth - 16))
+        : Math.max(16, Math.min(rect.left, window.innerWidth - panelWidth - 16));
+
+    setPanelStyle({
+      position: 'fixed',
+      left,
+      width: panelWidth,
+      zIndex: 9999,
+      ...(above
+        ? { bottom: window.innerHeight - rect.top + 8 }
+        : { top: rect.bottom + 8 }),
+    });
+  }, [align, mode]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+      const target = event.target as Node;
+      if (
+        containerRef.current?.contains(target) ||
+        panelRef.current?.contains(target)
+      ) {
+        return;
       }
+      setIsOpen(false);
     }
     if (isOpen) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
   useEffect(() => {
-    if (!isOpen || !containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const spaceAbove = rect.top;
-    setPositionAbove(spaceBelow < 280 && spaceAbove > spaceBelow);
-  }, [isOpen]);
+    if (!isOpen) return;
+    updatePanelPosition();
+    window.addEventListener('resize', updatePanelPosition);
+    window.addEventListener('scroll', updatePanelPosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePanelPosition);
+      window.removeEventListener('scroll', updatePanelPosition, true);
+    };
+  }, [isOpen, updatePanelPosition]);
 
   const display =
     mode === 'range'
@@ -425,35 +460,34 @@ export default function ThaiDatePicker({
         </button>
       )}
 
-      {isOpen && (
-        <div
-          className={`absolute z-50 ${align === 'right' ? 'right-0' : 'left-0'} ${
-            positionAbove ? 'bottom-full mb-2' : 'top-full mt-2'
-          }`}
-        >
-          {mode === 'range' ? (
-            <RangeCalendarPanel
-              rangeStart={rangeStart}
-              rangeEnd={rangeEnd}
-              onChangeRange={onChangeRange}
-              onClose={() => setIsOpen(false)}
-            />
-          ) : (
-            <ScrollDatePanel
-              value={value}
-              yearOnly={yearOnly}
-              onConfirm={(ymd) => {
-                onChange?.(ymd);
-                setIsOpen(false);
-              }}
-              onClear={() => {
-                onChange?.('');
-                setIsOpen(false);
-              }}
-            />
-          )}
-        </div>
-      )}
+      {isOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div ref={panelRef} style={panelStyle}>
+            {mode === 'range' ? (
+              <RangeCalendarPanel
+                rangeStart={rangeStart}
+                rangeEnd={rangeEnd}
+                onChangeRange={onChangeRange}
+                onClose={() => setIsOpen(false)}
+              />
+            ) : (
+              <ScrollDatePanel
+                value={value}
+                yearOnly={yearOnly}
+                onConfirm={(ymd) => {
+                  onChange?.(ymd);
+                  setIsOpen(false);
+                }}
+                onClear={() => {
+                  onChange?.('');
+                  setIsOpen(false);
+                }}
+              />
+            )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

@@ -75,7 +75,7 @@ export default function CoupleMilestoneList({
                   className={`group min-w-0 flex-1 rounded-2xl border shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md ${compact ? 'p-3' : 'p-4 sm:p-5'} ${innerCardBg}`}
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-                    {dateDisplay && (
+                    {dateDisplay?.mode === 'exact' && (
                       <div
                         className={`flex shrink-0 items-center gap-3 sm:w-[4.5rem] sm:flex-col sm:items-center sm:justify-start sm:gap-0 sm:border-r sm:pr-4 ${compact ? 'sm:w-14' : ''}`}
                         style={{ borderColor: 'var(--milestone-border)' }}
@@ -116,6 +116,15 @@ export default function CoupleMilestoneList({
                           </span>
                         )}
                       </div>
+
+                      {dateDisplay?.mode === 'fuzzy' && (
+                        <p
+                          className="text-xs font-semibold"
+                          style={{ color: 'var(--milestone-secondary)' }}
+                        >
+                          {dateDisplay.label}
+                        </p>
+                      )}
 
                       {(timeLabel || milestone.place) && (
                         <div

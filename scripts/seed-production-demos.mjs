@@ -32,6 +32,7 @@ async function ensureWebmaster(phone) {
 
 async function clearTenantChildren(websiteId) {
   await db.donation.deleteMany({ where: { websiteId } });
+  await db.activity.deleteMany({ where: { websiteId } });
   await db.ebook.deleteMany({ where: { websiteId } });
   await db.familyMember.deleteMany({ where: { websiteId } });
   await db.memoryPost.deleteMany({ where: { websiteId } });
@@ -41,7 +42,7 @@ async function clearTenantChildren(websiteId) {
 }
 
 async function seedSite(site, webmasterId, ownerPhone) {
-  const { slug, tenant, menus, medias, condolences, memoryPosts, familyMembers, ebooks, donations } =
+  const { slug, tenant, menus, medias, condolences, memoryPosts, familyMembers, ebooks, donations, activities } =
     site;
 
   const themeConfig = {
@@ -117,6 +118,16 @@ async function seedSite(site, webmasterId, ownerPhone) {
   if (donations?.length) {
     await db.donation.createMany({
       data: donations.map((d) => ({ ...stripMeta(d), websiteId })),
+    });
+  }
+
+  if (activities?.length) {
+    await db.activity.createMany({
+      data: activities.map((a) => ({
+        ...stripMeta(a),
+        websiteId,
+        eventDate: a.eventDate ? new Date(a.eventDate) : null,
+      })),
     });
   }
 

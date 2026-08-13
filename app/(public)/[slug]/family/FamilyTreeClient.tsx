@@ -765,7 +765,7 @@ function FamilyTreeCanvas({ tenant, members }: FamilyTreeClientProps) {
         <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden`}>
           {/* Page Header with CategoryOrnament and Wing lines */}
           {(() => {
-            const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category || 'Memorial', 'family');
+            const { label: fLabel, pageDescription: fDesc } = getFeatureLabel(tenant.category || 'Memorial', 'family');
             return (
               <div className="flex flex-col items-center text-center space-y-3">
                 <h2 className="text-2xl font-black text-stone-900" style={{ color: 'var(--theme-primary, #0d9488)' }}>

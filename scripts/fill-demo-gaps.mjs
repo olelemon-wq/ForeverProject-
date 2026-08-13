@@ -38,15 +38,49 @@ async function main() {
     console.log('✓ friendforever: videos enabled + YouTube link');
   }
 
-  // --- kittiemeaw: sample pet donations ---
+  // --- kittiemeaw: sample pet donations + life story ---
   const pet = await db.tenant.findUnique({ where: { slug: 'kittiemeaw' } });
   if (pet) {
+    const petConfig = { ...(pet.themeConfig && typeof pet.themeConfig === 'object' ? pet.themeConfig : {}) };
+    const petBio =
+      petConfig.biography ||
+      'น้องคิตตี้เป็นหมาพันธุ์ชิวาว่าที่ร่าเริงและแสนรู้ นำความสุขและรอยยิ้มมาให้ครอบครัวเราตลอดเวลาที่อยู่ด้วยกัน';
+    petConfig.biography = petBio;
+    petConfig.lifeStory = {
+      biography: petBio,
+      honors: '',
+      teachings: '',
+      legacy:
+        'ชอบนอนตากแดดตรงหน้าต่างทุกเช้า / วิ่งมาต้อนรับทุกครั้งที่กลับบ้าน / ชอบกินไก่ย่างและขนมสุนัขรสเนย / นอนตักเวลาดูทีวีทุกคืน',
+      timeline: [
+        {
+          id: 'kitty-tl-1',
+          year: '2563',
+          title: 'วันแรกที่รับน้องมาเลี้ยง',
+          description: 'น้องตัวจิ๋ววิ่งมากอดขา ตั้งแต่นั้นมาบ้านก็ไม่เคยเงียบอีกเลย',
+        },
+        {
+          id: 'kitty-tl-2',
+          year: '2565',
+          title: 'ทริปแรกไปทะเล',
+          description: 'น้องชอบวิ่งเล่นบนชายหาดมาก แต่กลับมาบ้านแล้วนอนหลับยาวสามวัน',
+        },
+        {
+          id: 'kitty-tl-3',
+          year: '2568',
+          title: 'วันสุดท้ายที่อยู่ด้วยกัน',
+          description: 'เราจะจำรอยยิ้มและความรักของน้องไว้ตลอดไป',
+        },
+      ],
+    };
+
     await db.tenant.update({
       where: { id: pet.id },
       data: {
         donationActive: true,
         donationPromptPay: pet.donationPromptPay || '081-683-0368',
         donationAccountName: 'กองทุนช่วยเหลือสัตว์จร (Demo)',
+        themeConfig: petConfig,
       },
     });
     const donationCount = await db.donation.count({ where: { websiteId: pet.id } });
@@ -83,7 +117,57 @@ async function main() {
         });
       }
     }
-    console.log('✓ kittiemeaw: donation samples');
+    const familyCount = await db.familyMember.count({ where: { websiteId: pet.id } });
+    if (familyCount === 0) {
+      const mediaBase = `/demo-media/${pet.id}`;
+      const uploadBase = `/uploads/${pet.id}`;
+      const petSiblings = [
+        {
+          name: 'แชปแมวหัวแปะ',
+          nickname: 'แมววัว',
+          relationship: 'SIBLING',
+          birthYear: '2562',
+          deathYear: null,
+          isDeceased: false,
+          avatarUrl: `${uploadBase}/1786108786322-pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg`,
+        },
+        {
+          name: 'ม็อกกี้',
+          nickname: 'จอมซน',
+          relationship: 'SIBLING',
+          birthYear: '2560',
+          deathYear: null,
+          isDeceased: false,
+          avatarUrl: `${mediaBase}/1785398636282-gallery-1785398636262-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg`,
+        },
+        {
+          name: 'น้องอุ่นใจ',
+          nickname: 'ขนฟู',
+          relationship: 'SIBLING',
+          birthYear: '2563',
+          deathYear: null,
+          isDeceased: false,
+          avatarUrl: `${mediaBase}/1785398636358-gallery-1785398636345-1ca184df-4cf0-47f4-b9d2-34e78b9d674c.jpeg`,
+        },
+        {
+          name: 'ปุยฝ้าย',
+          nickname: 'พี่ใหญ่',
+          relationship: 'SIBLING',
+          birthYear: '2558',
+          deathYear: '2566',
+          isDeceased: true,
+          avatarUrl: `${mediaBase}/1785398636232-gallery-1785398636217-d1a27035-77a0-4531-9f31-36dc77574e81.jpeg`,
+        },
+      ];
+      for (const m of petSiblings) {
+        await db.familyMember.create({
+          data: { websiteId: pet.id, ...m },
+        });
+      }
+      console.log(`✓ kittiemeaw: ${petSiblings.length} พี่น้องสี่ขา`);
+    }
+
+    console.log('✓ kittiemeaw: donation samples + life story');
   }
 
   // --- Pending moderation (skip kukimiyafamily — already has) ---

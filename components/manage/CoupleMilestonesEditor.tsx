@@ -32,9 +32,10 @@ export default function CoupleMilestonesEditor({
 
   return (
     <div className="space-y-3">
-      <p className="font-bold text-stone-700">รายการวันสำคัญ</p>
+      <p className="font-bold text-stone-700">รายการช่วงเวลาสำคัญ</p>
       <p className="text-xs text-stone-500 leading-relaxed">
-        เพิ่มวันพบกันครั้งแรก ครบรอบ ทริป หรือช่วงเวลาที่อยากบันทึก — เรียงตามลำดับที่ต้องการแสดงบนการ์ด
+        เล่าโมเมนต์ที่อยากจำก่อน — ชื่อเหตุการณ์สำคัญที่สุด วันที่ใส่เมื่อจำได้
+        ไม่ต้องเป๊ะทั้งวันเดือนปีก็ได้
       </p>
 
       {milestones.map((milestone, index) => (
@@ -43,13 +44,13 @@ export default function CoupleMilestonesEditor({
           className="space-y-3 rounded-2xl border border-stone-200/80 bg-stone-100/40 p-4"
         >
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-bold text-stone-700">วันสำคัญที่ {index + 1}</p>
+            <p className="text-xs font-bold text-stone-700">ช่วงเวลาที่ {index + 1}</p>
             <Button
               type="button"
               variant="ghost"
               onClick={() => removeMilestone(index)}
-              className="h-8 w-8 p-0 text-stone-400 hover:text-rose-600 hover:bg-rose-50"
-              aria-label={`ลบวันสำคัญที่ ${index + 1}`}
+              className="h-8 w-8 p-0 text-rose-700 hover:bg-rose-50"
+              aria-label={`ลบช่วงเวลาที่ ${index + 1}`}
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -61,20 +62,33 @@ export default function CoupleMilestonesEditor({
               type="text"
               value={milestone.title}
               onChange={(e) => updateMilestone(index, { title: e.target.value })}
-              placeholder="เช่น วันแรกที่พบกัน / ครบรอบ 3 ปี / ทริปญี่ปุ่น"
+              placeholder="เช่น วันแรกที่เจอกัน / ทริปที่ไม่ลืม / ครบรอบ 3 ปี"
+              className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-stone-600 font-semibold text-xs">โน้ตเพิ่มเติม (ไม่บังคับ)</label>
+            <Input
+              type="text"
+              value={milestone.note || ''}
+              onChange={(e) => updateMilestone(index, { note: e.target.value })}
+              placeholder="เช่น คุยกันจนลืมดูนาฬิกา / ฝนตกแต่ยังยิ้มได้อยู่"
               className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="space-y-1">
-              <label className="text-stone-600 font-semibold text-xs">วันที่</label>
+              <label className="text-stone-600 font-semibold text-xs">
+                วันที่ (ไม่บังคับ)
+              </label>
               <div className="flex gap-1.5 items-center">
                 <Input
                   type="text"
                   value={milestone.date}
                   onChange={(e) => updateMilestone(index, { date: e.target.value })}
-                  placeholder="เช่น วันอาทิตย์ที่ 14 ก.พ. 68"
+                  placeholder="เช่น ประมาณปี 66 / ม.ค. 66 / 14 ก.พ. 68"
                   className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 min-w-0"
                 />
                 <ThaiDatePicker
@@ -86,6 +100,9 @@ export default function CoupleMilestonesEditor({
                   }}
                 />
               </div>
+              <p className="text-xs leading-relaxed text-stone-500">
+                จำปีหรือเดือนก็พอ ไม่ต้องเป๊ะ — เว้นว่างได้ถ้าไม่แน่ใจ
+              </p>
             </div>
             <div className="space-y-1">
               <label className="text-stone-600 font-semibold text-xs">เวลา (ไม่บังคับ)</label>
@@ -93,7 +110,7 @@ export default function CoupleMilestonesEditor({
                 type="text"
                 value={milestone.time || ''}
                 onChange={(e) => updateMilestone(index, { time: e.target.value })}
-                placeholder="เช่น 18:00 น."
+                placeholder="เช่น ช่วงเย็น / 18:00 น."
                 className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500"
               />
             </div>
@@ -106,17 +123,6 @@ export default function CoupleMilestonesEditor({
               value={milestone.place || ''}
               onChange={(e) => updateMilestone(index, { place: e.target.value })}
               placeholder="เช่น ร้านอาหาร / ทริปท่องเที่ยว / บ้าน"
-              className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-stone-600 font-semibold text-xs">โน้ตเพิ่มเติม (ไม่บังคับ)</label>
-            <Input
-              type="text"
-              value={milestone.note || ''}
-              onChange={(e) => updateMilestone(index, { note: e.target.value })}
-              placeholder="เช่น วันที่เราไปดูพระอาทิตย์ตกด้วยกัน"
               className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500"
             />
           </div>
@@ -141,7 +147,7 @@ export default function CoupleMilestonesEditor({
         className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-stone-300 bg-white py-2.5 text-xs font-bold text-stone-600 hover:border-[#0071e3]/30 hover:bg-[#0071e3]/5 hover:text-[#0071e3]"
       >
         <Plus className="w-4 h-4" />
-        <span>เพิ่มวันสำคัญ</span>
+        <span>เพิ่มช่วงเวลาสำคัญ</span>
       </Button>
     </div>
   );

@@ -1,7 +1,9 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
 import {
-  LIFE_STORY_SECTIONS,
+  getLifeStoryFieldValue,
+  getLifeStoryMenuTitle,
+  getLifeStorySections,
   lifeStoryHasContent,
   type LifeStoryData,
 } from '@/lib/lifeStory';
@@ -9,16 +11,20 @@ import { cn } from '@/lib/utils';
 
 export default function LifeStorySection({
   data,
+  category,
   className,
 }: {
   data: LifeStoryData;
+  category: string;
   className?: string;
 }) {
-  if (!lifeStoryHasContent(data)) return null;
+  if (!lifeStoryHasContent(data, category)) return null;
 
-  const textSections = LIFE_STORY_SECTIONS.filter(
-    (s) => s.id !== 'timeline' && data[s.id].trim(),
+  const sections = getLifeStorySections(category);
+  const textSections = sections.filter(
+    (s) => s.id !== 'timeline' && getLifeStoryFieldValue(data, s.id).trim(),
   );
+  const timelineSection = sections.find((s) => s.id === 'timeline');
   const timeline = data.timeline.filter(
     (t) => t.title.trim() || t.year.trim() || t.description.trim(),
   );
@@ -39,36 +45,26 @@ export default function LifeStorySection({
           className="text-xl font-bold"
           style={{ color: 'var(--theme-primary, #0d9488)' }}
         >
-          เรื่องราวชีวิต
+          {getLifeStoryMenuTitle(category)}
         </h2>
       </div>
 
       <div className="space-y-8">
-        {textSections.map((section) => {
-          const body =
-            section.id === 'biography'
-              ? data.biography
-              : section.id === 'honors'
-                ? data.honors
-                : section.id === 'legacy'
-                  ? data.legacy
-                  : data.teachings;
-          return (
-            <div key={section.id} className="space-y-2 text-left">
-              <h3 className="text-sm font-bold tracking-wide text-stone-800">
-                {section.label}
-              </h3>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-stone-600">
-                {body}
-              </p>
-            </div>
-          );
-        })}
+        {textSections.map((section) => (
+          <div key={section.id} className="space-y-2 text-left">
+            <h3 className="text-sm font-bold tracking-wide text-stone-800">
+              {section.label}
+            </h3>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed text-stone-600">
+              {getLifeStoryFieldValue(data, section.id)}
+            </p>
+          </div>
+        ))}
 
         {timeline.length > 0 ? (
           <div className="space-y-4 text-left">
             <h3 className="text-sm font-bold tracking-wide text-stone-800">
-              เส้นทางชีวิต
+              {timelineSection?.label ?? 'เส้นทางชีวิต'}
             </h3>
             <ol className="relative space-y-5 border-l border-stone-200 pl-5">
               {timeline.map((item) => (

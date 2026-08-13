@@ -25,6 +25,9 @@ export const ACTIVITY_ELIGIBLE_CATEGORIES = [
   'Memorial',
   'Family Legacy',
   'Friends',
+  'Couple',
+  'Wedding',
+  'Pet Memorial',
 ] as const;
 
 export interface FeatureDef {
@@ -202,23 +205,20 @@ export function getEnabledFeatures(
     return typeof v === 'boolean' ? v : fallback;
   };
 
-  const isPet = tenant?.category === 'Pet Memorial';
   const activitiesEligible = ACTIVITY_ELIGIBLE_CATEGORIES.includes(
     tenant?.category as (typeof ACTIVITY_ELIGIBLE_CATEGORIES)[number],
   );
 
   return applyPhaseFeatureConstraints({
-    // Pet sites intentionally have no ceremony/announcement card
-    announcement: isPet ? false : (read('announcement', false) || !!cfg.announcement?.active),
+    announcement: read('announcement', false) || !!cfg.announcement?.active,
     condolence: read('condolence', true),
     memory: read('memory', true),
     feed: read('feed', true),
     family: read('family', true),
     gallery: read('gallery', true),
     videos: read('videos', true),
-    // Pet Memorial and Wedding intentionally have no ebooks feature
     ebooks:
-      tenant?.category === 'Pet Memorial' || tenant?.category === 'Wedding'
+      tenant?.category === 'Pet Memorial'
         ? false
         : read('ebooks', true),
     activities: activitiesEligible ? read('activities', false) : false,

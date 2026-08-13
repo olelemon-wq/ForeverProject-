@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/auth/jwt';
 import { isDemoSiteSlug } from '@/lib/demoSites';
+import { normalizeFeatureOrder } from '@/lib/features';
 
 export async function POST(request: Request) {
   try {
@@ -66,10 +67,24 @@ export async function POST(request: Request) {
     }
 
     // 4. Update fields
-    const themeConfigPayload =
-      themeConfig && tenant && isDemoSiteSlug(tenant.slug)
-        ? { ...themeConfig, isDemo: true, demoCustomized: true }
+    const normalizedThemeConfig =
+      themeConfig && typeof themeConfig === 'object'
+        ? {
+            ...themeConfig,
+            ...(Array.isArray((themeConfig as { featureOrder?: unknown }).featureOrder)
+              ? {
+                  featureOrder: normalizeFeatureOrder(
+                    (themeConfig as { featureOrder?: unknown }).featureOrder,
+                  ),
+                }
+              : {}),
+          }
         : themeConfig;
+
+    const themeConfigPayload =
+      normalizedThemeConfig && tenant && isDemoSiteSlug(tenant.slug)
+        ? { ...normalizedThemeConfig, isDemo: true, demoCustomized: true }
+        : normalizedThemeConfig;
 
     const updatedTenant = await db.tenant.update({
       where: { id: websiteId },

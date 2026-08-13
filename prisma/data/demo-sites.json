@@ -10,12 +10,12 @@
         "ownerPhone": "0816830368",
         "themeConfig": {
           "albums": [],
-          "coverX": 0,
-          "coverY": 0,
+          "coverX": -0.05000000000000004,
+          "coverY": 0.05000000000000004,
           "isDemo": true,
           "avatarX": -0.2098214285714286,
           "avatarY": 0.225,
-          "coverUrl": "/defaults/memorial/cover/2.png",
+          "coverUrl": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786514248437-deceased-cover-1786514248240-1782185559506-gallery-1782185559196-album-289.jpg",
           "features": {
             "feed": false,
             "ebooks": false,
@@ -24,6 +24,7 @@
             "videos": true,
             "gallery": true,
             "donation": false,
+            "activities": true,
             "condolence": true,
             "announcement": true
           },
@@ -33,6 +34,8 @@
               "note": "",
               "role": "",
               "breed": "",
+              "avatarX": 0,
+              "avatarY": 0,
               "dislike": "",
               "isAlive": false,
               "favorite": "",
@@ -41,30 +44,41 @@
               "birthYear": null,
               "deathDate": "2024-11-14T17:00:00.000Z",
               "deathYear": null,
+              "avatarScale": 1,
               "personality": "",
+              "avatarRotate": 0,
               "birthYearOnly": false,
               "deathYearOnly": false
             }
           ],
           "avatarUrl": "/demo-media/71c8328d-857d-440e-a77d-8de0a06b3232/1782120661075-deceased-avatar-1782120661030-album-288.jpg",
-          "biography": "แด่พ่อผู้ล่วงลับ แม้กายดับสูญ แต่เรื่องราวของพ่อ ความดีที่พ่อทำไว้ พระคุณที่พ่อมีต่อลูกๆ ทุกสิ่งจะสถิตอยู่ในใจ ของพวกเราตลอดไป",
+          "biography": "พ่อบุญเครือ เขมาภิรัตน์ เป็นบุตรของนายปินฉ่อน เขมาภิรัตน์ และ นางบุญช่วย เขมาภิรัตน์ เกิดเมื่อวัน 8 กันยายน พ.ศ. 2484 มีพี่น้องร่วมบิดามารดา รวม 8 คน พ่อสมรสกับแม่ธิดา เขมาภิรัตน์ มีบุตรธิดารวม 4 คน ได้แก่\n\nนายคนธีร์ เขมาภิรัตน์ หรือ หนึ่ง\nนายฉัตรมงคล เขมาภิรัตน์ หรือ คิง\nนายบัลลังก์ เขมาภิรัตน์ หรือ แจ็ก\nนางสุดจินดา เศรษฐกูลวิชัย หรือ แหม่ม\n\nในวัยเด็กพ่อเป็นเด็กยากจน ที่เกเร อาศัยอยู่ที่ตรอกจันทร์ กรุงเทพฯ เรียนหนังสือที่โรงเรียนวัดสุทธิวราราม จนจบ ม.8 เริ่มต้นชีวิตการทำงาน เป็นพนักงานไทยออยล์รุ่นที่ 1 สมรสกับแม่ธิดา ที่เจอกันตั้งแต่เรียนหนังสือ และได้ย้ายถิ่นฐานมาสร้างครอบครัวร่วมกันที่ศรีราชา ตั้งแต่ปี พ.ศ. 2507 ได้กลายเป็นคนศรีราชานับแต่นั้นมา เป็นระยะเวลาร่วม 60 ปี\n\nหลังจากที่ทำงานกับไทยออยล์ได้ 15 ปี พ่อได้ลาออกจากงาน เพื่อมาทำกิจการรับเหมาก่อสร้างเล็กๆ ต่อยอดสร้างตัวจนจดเป็นบริษัทขนาดใหญ่ ดำเนินธุรกิจต่อเนื่องจนสามารถนำบริษัทเข้าจดทะเบียนในตลาดหลักทรัพย์ ในชื่อ บริษัท ศรีราชาคอนสตรัคชั่น จำกัด มหาชน เมื่อปี พ.ศ. 2555\n\nอุปนิสัยในการทำงานนั้น พ่อเป็นคนใฝ่รู้ ชอบอ่านหนังสือหาข้อมูล เพื่อใช้เป็นแนวทางในการทำธุรกิจ พ่อบอกเสมอว่า เราต้องรู้ทุกเรื่อง จะได้ไม่โดนหลอก ถึงพ่อจะมีนิสัยนักพนันที่ติดตัวมาตั้งแต่วัยเด็ก แต่เมื่อถึงการทำงานแล้ว พ่อมีความระมัดระวัง รอบคอบมาก เพราะพ่อรักครอบครัวของพ่อมาก ไม่ต้องการให้ครอบครัวต้องเสี่ยงหรือเดือดร้อนเลย ทุกๆวันคิดแต่จะสร้างฐานะให้มั่นคง เพื่อไม่ให้แม่และลูกหลานไม่ต้องลำบาก\n\nพ่อมีคุณย่าเป็นแบบอย่างของความมัธยัสถ์ รู้ค่าของเงิน ไม่ชอบเป็นหนี้ ไม่ชอบโอ้อวดหรือใช้ของแพง ไม่ใช้เงินเพื่อความสุขส่วนตัวเลย เงินที่พ่อหาได้ เมื่อเข้ากระเป๋าแล้ว ไม่มีใครสามารถเอาออกมาได้ เงินทุกบาทพ่อเก็บไว้ให้แม่และลูกๆเท่านั้น\n\nพ่อภูมิใจในความเป็นคนศรีราชา ภูมิใจในบริษัทที่สร้างมามาก การทำธุรกิจของพ่อ แม้เกี่ยวข้องกับผู้คนหลากหลาย รวมถึงพนักงานกว่า 3 พันคน แต่พ่อรักลูกน้อง รักพนักงาน ไม่เคยเอาเปรียบใคร ปรารถนาให้ทุกคนร่ำรวย ได้ดีกันตามความสามารถ ช่วยเหลือและให้โอกาสกับผู้คนมากมาย เถ้าแก่บุญเครือคนนี้ เป็นร่มโพธิ์ร่มไทร ให้กับคนรอบตัวอย่างแท้จริง\n\nเรื่องราวของชีวิตพ่อทั้งเรื่องส่วนตัว เรื่องงาน รวมถึงคำสอนและข้อคิด พ่อได้บันทึกไว้ใน มหาวิทยาลัยชีวิต ของ บุญเครือ เขมาภิรัตน์ เป็นส่วนหนึ่งของหนังสือที่ท่านถือกันอยู่ ซึ่งลูกๆทราบดีว่าพ่ออยากให้ทุกคนได้ลองอ่านดูครับ\n\nช่วงปีสุดท้าย พ่อล้มครั้งหนึ่ง ส่งผลต่อสุขภาพพ่อมาก ทำให้ต้องมีการผ่าตัดซ้ำเพื่อรักษาอาการต่างๆ จนกระทั่งเมื่อวันที่ 8 ตุลาคมที่ผ่านมา พ่อเข้ารับการผ่าตัดอีกครั้ง และเกิดเรื่องไม่คาดคิดหลังพักรักษาตัวที่โรงพยาบาล ทำให้พ่อต้องเข้า ICU เป็นระยะเวลา 30 วัน พ่อเป็นนักสู้ตัวจริง แม้หัวใจจะหยุดเต้นไปถึง 6 ครั้ง แต่ก็สู้จนฟื้นขึ้นมาได้ จนกระทั่งเช้าวันที่ 15 พฤศจิกายน พ่อหัวใจหยุดเต้นครั้งที่ 7 ครั้งนี้ทำให้พ่อที่ยิ่งใหญ่ของเรา นักสู้แห่งศรีราชา ได้จากโลกนี้ และครอบครัวที่รักของเขาไปอย่างสงบ\n\nพ่อครับ บัดนี้ถึงเวลาพักผ่อนของพ่อแล้ว ขอพ่อจงหลับอย่างสงบเถิด แม้กายจะดับสูญ แต่เรื่องราวของพ่อ ความดีของพ่อ คำสอนของพ่อ จะอยู่ในความทรงจำ ในหัวใจ ของทุกคนในครอบครัว พระคุณอันแสนยิ่งใหญ่ จะคงอยู่กับลูกหลานของพ่อ ตลอดไป",
           "heroStyle": "Classic",
-          "coverScale": 1,
+          "lifeStory": {
+            "honors": "",
+            "legacy": "",
+            "timeline": [],
+            "biography": "พ่อบุญเครือ เขมาภิรัตน์ เป็นบุตรของนายปินฉ่อน เขมาภิรัตน์ และ นางบุญช่วย เขมาภิรัตน์ เกิดเมื่อวัน 8 กันยายน พ.ศ. 2484 มีพี่น้องร่วมบิดามารดา รวม 8 คน พ่อสมรสกับแม่ธิดา เขมาภิรัตน์ มีบุตรธิดารวม 4 คน ได้แก่\n\nนายคนธีร์ เขมาภิรัตน์ หรือ หนึ่ง\nนายฉัตรมงคล เขมาภิรัตน์ หรือ คิง\nนายบัลลังก์ เขมาภิรัตน์ หรือ แจ็ก\nนางสุดจินดา เศรษฐกูลวิชัย หรือ แหม่ม\n\nในวัยเด็กพ่อเป็นเด็กยากจน ที่เกเร อาศัยอยู่ที่ตรอกจันทร์ กรุงเทพฯ เรียนหนังสือที่โรงเรียนวัดสุทธิวราราม จนจบ ม.8 เริ่มต้นชีวิตการทำงาน เป็นพนักงานไทยออยล์รุ่นที่ 1 สมรสกับแม่ธิดา ที่เจอกันตั้งแต่เรียนหนังสือ และได้ย้ายถิ่นฐานมาสร้างครอบครัวร่วมกันที่ศรีราชา ตั้งแต่ปี พ.ศ. 2507 ได้กลายเป็นคนศรีราชานับแต่นั้นมา เป็นระยะเวลาร่วม 60 ปี\n\nหลังจากที่ทำงานกับไทยออยล์ได้ 15 ปี พ่อได้ลาออกจากงาน เพื่อมาทำกิจการรับเหมาก่อสร้างเล็กๆ ต่อยอดสร้างตัวจนจดเป็นบริษัทขนาดใหญ่ ดำเนินธุรกิจต่อเนื่องจนสามารถนำบริษัทเข้าจดทะเบียนในตลาดหลักทรัพย์ ในชื่อ บริษัท ศรีราชาคอนสตรัคชั่น จำกัด มหาชน เมื่อปี พ.ศ. 2555\n\nอุปนิสัยในการทำงานนั้น พ่อเป็นคนใฝ่รู้ ชอบอ่านหนังสือหาข้อมูล เพื่อใช้เป็นแนวทางในการทำธุรกิจ พ่อบอกเสมอว่า เราต้องรู้ทุกเรื่อง จะได้ไม่โดนหลอก ถึงพ่อจะมีนิสัยนักพนันที่ติดตัวมาตั้งแต่วัยเด็ก แต่เมื่อถึงการทำงานแล้ว พ่อมีความระมัดระวัง รอบคอบมาก เพราะพ่อรักครอบครัวของพ่อมาก ไม่ต้องการให้ครอบครัวต้องเสี่ยงหรือเดือดร้อนเลย ทุกๆวันคิดแต่จะสร้างฐานะให้มั่นคง เพื่อไม่ให้แม่และลูกหลานไม่ต้องลำบาก\n\nพ่อมีคุณย่าเป็นแบบอย่างของความมัธยัสถ์ รู้ค่าของเงิน ไม่ชอบเป็นหนี้ ไม่ชอบโอ้อวดหรือใช้ของแพง ไม่ใช้เงินเพื่อความสุขส่วนตัวเลย เงินที่พ่อหาได้ เมื่อเข้ากระเป๋าแล้ว ไม่มีใครสามารถเอาออกมาได้ เงินทุกบาทพ่อเก็บไว้ให้แม่และลูกๆเท่านั้น\n\nพ่อภูมิใจในความเป็นคนศรีราชา ภูมิใจในบริษัทที่สร้างมามาก การทำธุรกิจของพ่อ แม้เกี่ยวข้องกับผู้คนหลากหลาย รวมถึงพนักงานกว่า 3 พันคน แต่พ่อรักลูกน้อง รักพนักงาน ไม่เคยเอาเปรียบใคร ปรารถนาให้ทุกคนร่ำรวย ได้ดีกันตามความสามารถ ช่วยเหลือและให้โอกาสกับผู้คนมากมาย เถ้าแก่บุญเครือคนนี้ เป็นร่มโพธิ์ร่มไทร ให้กับคนรอบตัวอย่างแท้จริง\n\nเรื่องราวของชีวิตพ่อทั้งเรื่องส่วนตัว เรื่องงาน รวมถึงคำสอนและข้อคิด พ่อได้บันทึกไว้ใน มหาวิทยาลัยชีวิต ของ บุญเครือ เขมาภิรัตน์ เป็นส่วนหนึ่งของหนังสือที่ท่านถือกันอยู่ ซึ่งลูกๆทราบดีว่าพ่ออยากให้ทุกคนได้ลองอ่านดูครับ\n\nช่วงปีสุดท้าย พ่อล้มครั้งหนึ่ง ส่งผลต่อสุขภาพพ่อมาก ทำให้ต้องมีการผ่าตัดซ้ำเพื่อรักษาอาการต่างๆ จนกระทั่งเมื่อวันที่ 8 ตุลาคมที่ผ่านมา พ่อเข้ารับการผ่าตัดอีกครั้ง และเกิดเรื่องไม่คาดคิดหลังพักรักษาตัวที่โรงพยาบาล ทำให้พ่อต้องเข้า ICU เป็นระยะเวลา 30 วัน พ่อเป็นนักสู้ตัวจริง แม้หัวใจจะหยุดเต้นไปถึง 6 ครั้ง แต่ก็สู้จนฟื้นขึ้นมาได้ จนกระทั่งเช้าวันที่ 15 พฤศจิกายน พ่อหัวใจหยุดเต้นครั้งที่ 7 ครั้งนี้ทำให้พ่อที่ยิ่งใหญ่ของเรา นักสู้แห่งศรีราชา ได้จากโลกนี้ และครอบครัวที่รักของเขาไปอย่างสงบ\n\nพ่อครับ บัดนี้ถึงเวลาพักผ่อนของพ่อแล้ว ขอพ่อจงหลับอย่างสงบเถิด แม้กายจะดับสูญ แต่เรื่องราวของพ่อ ความดีของพ่อ คำสอนของพ่อ จะอยู่ในความทรงจำ ในหัวใจ ของทุกคนในครอบครัว พระคุณอันแสนยิ่งใหญ่ จะคงอยู่กับลูกหลานของพ่อ ตลอดไป",
+            "teachings": ""
+          },
+          "coverScale": 1.1,
           "fontFamily": "Inter",
+          "heroBgMode": "image",
+          "heroLayout": "bottom-band-right",
           "avatarScale": 1.45,
           "coverRotate": 0,
           "mediaAlbums": {},
           "announcement": {
-            "mode": "custom",
+            "mode": "template",
             "text": "กำหนดการพิธีรดน้ำ สวดอภิธรรม และฌาปนกิจศพ คุณพ่อบุญเครือ เขมาภิรัตน์",
-            "style": "CHARCOAL_SLATE",
+            "style": "WARM_CREAM",
             "active": true,
             "mapLink": "https://maps.app.goo.gl/z3upohubQT154DT77",
             "pavilion": "ศาลา 1",
             "dressCode": "ชุดสุภาพโทนดำ หรือ ขาว ",
             "waterDate": "วันที่  15 พ.ย. 67",
             "waterTime": "16:00 น.",
-            "fontFamily": "Charmonman",
+            "fontFamily": "Thasadith",
             "templeName": "วัดศรีมหาราชา (วัดใน)",
             "contactPhone": "คุณฉัตรมงคล 081-2345678",
             "wreathPolicy": "NORMAL",
@@ -75,8 +89,20 @@
             "abhidhammaDateRange": "16-22 พ.ย. 67"
           },
           "avatarRotate": 0,
-          "primaryColor": "#c29a7c",
-          "secondaryColor": "#f59e0b",
+          "featureOrder": [
+            "announcement",
+            "gallery",
+            "videos",
+            "activities",
+            "condolence",
+            "memory",
+            "family",
+            "ebooks",
+            "donation"
+          ],
+          "primaryColor": "#8ba8bd",
+          "demoCustomized": true,
+          "secondaryColor": "#ded2af",
           "defaultFontSize": "NORMAL",
           "imageCoordSpace": "relative"
         },
@@ -87,7 +113,7 @@
         "donationAccountName": "",
         "donationActive": false,
         "createdAt": "2026-07-13T07:42:42.662Z",
-        "updatedAt": "2026-08-07T04:54:45.764Z"
+        "updatedAt": "2026-08-12T12:45:52.600Z"
       },
       "menus": [
         {
@@ -709,6 +735,160 @@
           "isDeleted": false,
           "sortOrder": 7,
           "createdAt": "2026-08-07T04:54:45.931Z"
+        },
+        {
+          "id": "c34dc195-9d43-43f9-a2ad-9a70e6d8a598",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786514248437-deceased-cover-1786514248240-1782185559506-gallery-1782185559196-album-289.jpg",
+          "thumbnailPath": null,
+          "fileName": "deceased-cover-1786514248240-1782185559506-gallery-1782185559196-album-289.jpg",
+          "fileSize": "232591",
+          "mimeType": "image/jpeg",
+          "fileHash": "hash-nkhqu3",
+          "album": "PROFILE",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T05:57:28.439Z"
+        },
+        {
+          "id": "76d8dbc9-01ce-4ae8-963f-7c941d0acb10",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536449918-activity-1786536449710-CleanShot 2569-08-12 at 19.05.13@2x.png",
+          "thumbnailPath": null,
+          "fileName": "activity-1786536449710-CleanShot 2569-08-12 at 19.05.13@2x.png",
+          "fileSize": "849578",
+          "mimeType": "image/png",
+          "fileHash": "hash-b46jtw",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:07:29.919Z"
+        },
+        {
+          "id": "1b5fc1ce-3022-43e6-b6b6-c53880967c5a",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536449988-activity-1786536449975-CleanShot 2569-08-12 at 19.05.26@2x.png",
+          "thumbnailPath": null,
+          "fileName": "activity-1786536449975-CleanShot 2569-08-12 at 19.05.26@2x.png",
+          "fileSize": "1520551",
+          "mimeType": "image/png",
+          "fileHash": "hash-4z48od",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:07:29.989Z"
+        },
+        {
+          "id": "3d6f6089-47d9-4434-bf0b-c2236300badc",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450020-activity-1786536450004-CleanShot 2569-08-12 at 19.05.39@2x.png",
+          "thumbnailPath": null,
+          "fileName": "activity-1786536450004-CleanShot 2569-08-12 at 19.05.39@2x.png",
+          "fileSize": "1406634",
+          "mimeType": "image/png",
+          "fileHash": "hash-zbeoua",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:07:30.021Z"
+        },
+        {
+          "id": "df5eebc0-4f22-4c59-8da0-7f58672aa172",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450051-activity-1786536450036-CleanShot 2569-08-12 at 19.05.53@2x.png",
+          "thumbnailPath": null,
+          "fileName": "activity-1786536450036-CleanShot 2569-08-12 at 19.05.53@2x.png",
+          "fileSize": "929337",
+          "mimeType": "image/png",
+          "fileHash": "hash-cwrdnn",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:07:30.051Z"
+        },
+        {
+          "id": "05b06249-5986-4b76-b438-88d8c3e9f9e4",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450078-activity-1786536450065-CleanShot 2569-08-12 at 19.06.14@2x.png",
+          "thumbnailPath": null,
+          "fileName": "activity-1786536450065-CleanShot 2569-08-12 at 19.06.14@2x.png",
+          "fileSize": "1212544",
+          "mimeType": "image/png",
+          "fileHash": "hash-yp76c",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:07:30.079Z"
+        },
+        {
+          "id": "bef97601-c0ed-4c31-9fac-98ddc5edfc99",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450105-activity-1786536450094-CleanShot 2569-08-12 at 19.06.25@2x.png",
+          "thumbnailPath": null,
+          "fileName": "activity-1786536450094-CleanShot 2569-08-12 at 19.06.25@2x.png",
+          "fileSize": "1455249",
+          "mimeType": "image/png",
+          "fileHash": "hash-lvb6y8",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:07:30.106Z"
+        },
+        {
+          "id": "a4d5800c-f1b2-461c-994b-34f5b4dd4f9c",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450134-activity-1786536450121-CleanShot 2569-08-12 at 19.06.36@2x.png",
+          "thumbnailPath": null,
+          "fileName": "activity-1786536450121-CleanShot 2569-08-12 at 19.06.36@2x.png",
+          "fileSize": "1135439",
+          "mimeType": "image/png",
+          "fileHash": "hash-h4zxk",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:07:30.135Z"
+        },
+        {
+          "id": "00f40c15-176c-4eaa-bc1c-5db625996bd5",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450166-activity-1786536450150-CleanShot 2569-08-12 at 19.06.45@2x.png",
+          "thumbnailPath": null,
+          "fileName": "activity-1786536450150-CleanShot 2569-08-12 at 19.06.45@2x.png",
+          "fileSize": "1183872",
+          "mimeType": "image/png",
+          "fileHash": "hash-xbemtr",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:07:30.167Z"
+        },
+        {
+          "id": "47ca48f8-135f-41db-8146-3a4c004e75d1",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786538104339-activity-1786538104262-CleanShot 2569-08-12 at 19.34.01@2x.jpg",
+          "thumbnailPath": null,
+          "fileName": "activity-1786538104262-CleanShot 2569-08-12 at 19.34.01@2x.jpg",
+          "fileSize": "84736",
+          "mimeType": "image/jpeg",
+          "fileHash": "hash-6e5ngg",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:35:04.340Z"
+        },
+        {
+          "id": "ec18453d-6332-4794-bd04-87253c2f686c",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "filePath": "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786538104400-activity-1786538104382-CleanShot 2569-08-12 at 19.34.23@2x.jpg",
+          "thumbnailPath": null,
+          "fileName": "activity-1786538104382-CleanShot 2569-08-12 at 19.34.23@2x.jpg",
+          "fileSize": "67492",
+          "mimeType": "image/jpeg",
+          "fileHash": "hash-x3kvb9",
+          "album": "ACTIVITIES",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:35:04.401Z"
         }
       ],
       "condolences": [
@@ -1086,7 +1266,31 @@
         }
       ],
       "ebooks": [],
-      "donations": []
+      "donations": [],
+      "activities": [
+        {
+          "id": "b9a769e9-15cc-4d18-acbc-b600c98bb086",
+          "websiteId": "71482e01-77df-48a6-a950-880be5467ccf",
+          "title": "งานแข่งขันหมากรุก \"บุญเครือรำลึก\" ประจำปี 2569",
+          "description": "ที่มาของการจัดงานการแข่งขัน\nงานแข่งขันหมากรุก \"บุญเครือ รำลึก\" เกิดขึ้นจากความผูกพันของ คุณบุญเครือ เขมาภิรัตน์\nผู้ซึ่งเป็นที่รู้จักกันดีในวงการหมากรุกท้องถิ่น\nท่านเป็นผู้ที่ชื่นชอบและติดตามการแข่งขันอย่างจริงจังมาโดยตลอด\nและมักจะร่วมกิจกรรมกับนักหมากรุกในชุมชนอยู่เสมอ\nความรักในกีฬาหมากรุกของท่านจึงกลายเป็นแรงบันดาลใจสำคัญ\nให้ครอบครัวและคนใกล้ชิดต้องการสานต่อสิ่งที่ท่านรัก\nเพื่อเป็นการรำลึกถึงคุณบุญเครือ เขมาภิรัตน์ งานนี้จึงถูกจัดขึ้น\nด้วยเป้าหมายที่จะเชิญชวนนักหมากรุกทุกระดับ\nมาร่วมแสดงฝีมือ พบปะแลกเปลี่ยน และร่วมสร้างบรรยากาศที่อบอุ่นแบบที่ท่านเคยชื่นชอบ\n\nสถานที่การจัดงานแข่งขัน\nการแข่งขันประจำปีนี้มีกำหนดจัดขึ้น ณ โรงเรียนเทศบาลศรีมหาราชา อำเภอ\nศรีราชา ในวันเสาร์ - อาทิตย์สุดท้ายของเดือนกุมภาพันธ์ ปี 2026\n\nรูปแบบการแข่งขัน\n1. แข่งขันแบบเดี่ยว\n2. รับสมัครจำนวนผู้เล่น 64 คน\n3. แบ่งสาย 16 สาย สายละ 4 คน\n4. ระบบแข่งสาย -> คัดคะแนน -> รอบชิง\n5. รอบนัดชิงชนะเลิศ 16 คน\n6. Playoff แข่ง 1 รอบ ชนะเข้ารอบต่อไป\n\nการตัดสิน ชนะ\n- คู่แข่งยอมแพ้\n- คู่แข่งหมดเวลา\n- คู่แข่งถูกปรับแพ้จากการผิดกติกา\n\nผู้เล่นสามารถขอเสมอได้ในกรณี\n- ตำแหน่งซ้ำ 3 ครั้ง\n- เดินวนไม่คืบหน้าหลายตา\n- ฝ่ายตรงข้ามไม่มีหมากจนได้หากอีกฝ่ายไม่ตกลงให้เล่นต่อจนกรรมการตัดสิน",
+          "images": [
+            "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536449918-activity-1786536449710-CleanShot 2569-08-12 at 19.05.13@2x.png",
+            "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536449988-activity-1786536449975-CleanShot 2569-08-12 at 19.05.26@2x.png",
+            "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450020-activity-1786536450004-CleanShot 2569-08-12 at 19.05.39@2x.png",
+            "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450051-activity-1786536450036-CleanShot 2569-08-12 at 19.05.53@2x.png",
+            "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450078-activity-1786536450065-CleanShot 2569-08-12 at 19.06.14@2x.png",
+            "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450105-activity-1786536450094-CleanShot 2569-08-12 at 19.06.25@2x.png",
+            "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450134-activity-1786536450121-CleanShot 2569-08-12 at 19.06.36@2x.png",
+            "/uploads/71482e01-77df-48a6-a950-880be5467ccf/1786536450166-activity-1786536450150-CleanShot 2569-08-12 at 19.06.45@2x.png"
+          ],
+          "pdfUrl": null,
+          "eventDate": null,
+          "isRecurring": true,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T12:04:22.398Z",
+          "updatedAt": "2026-08-12T12:43:27.459Z"
+        }
+      ]
     },
     {
       "slug": "bts-family",
@@ -1096,9 +1300,7 @@
         "category": "Family Legacy",
         "ownerPhone": "0816830368",
         "themeConfig": {
-          "albums": [
-            "รวมใจตระกูลจิตใจดี"
-          ],
+          "albums": [],
           "coverX": 0,
           "coverY": 0,
           "isDemo": true,
@@ -1112,9 +1314,10 @@
             "memory": true,
             "videos": true,
             "gallery": true,
-            "donation": false,
-            "condolence": false,
-            "announcement": false
+            "donation": true,
+            "activities": true,
+            "condolence": true,
+            "announcement": true
           },
           "subjects": [
             {
@@ -1122,6 +1325,8 @@
               "note": "",
               "role": "ผู้ก่อตั้งตระกูลจิตใจดี",
               "breed": "",
+              "avatarX": 0,
+              "avatarY": 0,
               "dislike": "",
               "isAlive": true,
               "favorite": "",
@@ -1130,7 +1335,9 @@
               "birthYear": null,
               "deathDate": null,
               "deathYear": null,
+              "avatarScale": 1,
               "personality": "",
+              "avatarRotate": 0,
               "birthYearOnly": false,
               "deathYearOnly": false
             }
@@ -1138,8 +1345,36 @@
           "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401245880-deceased-avatar-1785401245825-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpg",
           "biography": "ตระกูลจิตใจดี เป็นครอบครัวที่เติบโตมาด้วยความอบอุ่น ความขยัน และจิตใจดีต่อกัน เริ่มจากคุณปู่สมชาย ผู้ก่อตั้งรากฐานของบ้านหลังนี้ ลูกหลานทั้งเจ็ดคนเติบโตมาพร้อมกัน เรียนรู้ว่าความสุขของครอบครัวอยู่ที่การดูแลกัน หน้าเว็บนี้จัดทำขึ้นเพื่อบันทึกความทรงจำ ประวัติวงศ์ และมรดกทางใจที่ส่งต่อจากรุ่นสู่รุ่น",
           "heroStyle": "Classic",
+          "lifeStory": {
+            "honors": "",
+            "legacy": "",
+            "timeline": [
+              {
+                "id": "bts-tl-1",
+                "year": "2483",
+                "title": "คุณปู่สมชาย ก่อตั้งบ้านหลังแรก",
+                "description": "เริ่มจากร้านขายของชำเล็ก ๆ ที่สุพรรณบุรี แล้วค่อย ๆ ขยายครอบครัว"
+              },
+              {
+                "id": "bts-tl-2",
+                "year": "2520",
+                "title": "งานรวมญาติครั้งแรก",
+                "description": "ลูกหลานรุ่นแรกรวมตัวกันทุกปีสิงหา จนต่อเนื่องมาจนถึงทุกวันนี้"
+              },
+              {
+                "id": "bts-tl-3",
+                "year": "2567",
+                "title": "เปิดหน้าเว็บครอบครัวจิตใจดี",
+                "description": "บันทึกเรื่องราว รูปภาพ และกิจกรรมเพื่อให้รุ่นหลังได้รู้จักรากเหง้า"
+              }
+            ],
+            "biography": "ตระกูลจิตใจดี เป็นครอบครัวที่เติบโตมาด้วยความอบอุ่น ความขยัน และจิตใจดีต่อกัน เริ่มจากคุณปู่สมชาย ผู้ก่อตั้งรากฐานของบ้านหลังนี้ ลูกหลานทั้งเจ็ดคนเติบโตมาพร้อมกัน เรียนรู้ว่าความสุขของครอบครัวอยู่ที่การดูแลกัน หน้าเว็บนี้จัดทำขึ้นเพื่อบันทึกความทรงจำ ประวัติวงศ์ และมรดกทางใจที่ส่งต่อจากรุ่นสู่รุ่น",
+            "teachings": "“ตระกูลเราอยู่ด้วยกันเมื่อยังมีชีวิต และอยู่ด้วยกันในความทรงจำ” — ความซื่อสัตย์ ความขยัน และการดูแลกันเป็นคุณค่าที่ส่งต่อมาทุกรุ่น ลูกหลานทุกคนถูกสอนให้จำรากเหง้า ภูมิใจในครอบครัว และช่วยเหลือกันเมื่อใครต้องการ"
+          },
           "coverScale": 1,
           "fontFamily": "LINE Seed Sans TH",
+          "heroBgMode": "image",
+          "heroLayout": "center-classic",
           "avatarScale": 1.05,
           "coverRotate": 0,
           "mediaAlbums": {
@@ -1156,38 +1391,50 @@
           },
           "announcement": {
             "mode": "template",
-            "text": "",
+            "text": "เชิญร่วมพบปะและสืบสานสายใยครอบครัว",
             "style": "ELEGANT_WHITE",
-            "active": false,
-            "mapLink": "",
-            "pavilion": "",
-            "dressCode": "",
-            "waterDate": "",
-            "waterTime": "",
+            "active": true,
+            "mapLink": "https://maps.app.goo.gl/example-family-home",
+            "pavilion": "ลานกิจกรรมหน้าบ้าน / ศาลาเก่า",
+            "dressCode": "ชุดลำลองสบาย ๆ โทนอบอุ่น — นำของว่างหรือของฝากเล็ก ๆ มาร่วมแบ่งปันได้",
+            "waterDate": "26 ธ.ค. 2569",
+            "waterTime": "09:00 น.",
             "fontFamily": "LINE Seed Sans TH",
-            "templeName": "",
-            "contactPhone": "",
+            "templeName": "บ้านเกิดครอบครัวจิตใจดี อ.เมือง จ.สุพรรณบุรี",
+            "contactPhone": "คุณวิชัย 081-683-0368",
             "wreathPolicy": "NORMAL",
-            "cremationDate": "",
-            "cremationTime": "",
+            "cremationDate": "26 ธ.ค. 2569",
+            "cremationTime": "18:00 น.",
             "customCardUrl": "",
-            "abhidhammaTime": "",
-            "abhidhammaDateRange": ""
+            "abhidhammaTime": "12:00 น.",
+            "abhidhammaDateRange": "26 ธ.ค. 2569"
           },
           "avatarRotate": 0,
-          "primaryColor": "#8ba8bd",
-          "secondaryColor": "#ded2af",
+          "featureOrder": [
+            "announcement",
+            "gallery",
+            "videos",
+            "activities",
+            "memory",
+            "family",
+            "ebooks",
+            "condolence",
+            "donation"
+          ],
+          "primaryColor": "#7ea18b",
+          "demoCustomized": true,
+          "secondaryColor": "#d4be95",
           "defaultFontSize": "NORMAL",
           "imageCoordSpace": "relative"
         },
         "visibility": "PUBLIC",
         "status": "ACTIVE",
         "expiredAt": "2036-08-04T04:54:46.306Z",
-        "donationPromptPay": "",
-        "donationAccountName": "",
-        "donationActive": false,
+        "donationPromptPay": "0816830368",
+        "donationAccountName": "กองทุนครอบครัวจิตใจดี (Demo)",
+        "donationActive": true,
         "createdAt": "2026-07-15T04:31:02.105Z",
-        "updatedAt": "2026-08-07T04:54:46.315Z"
+        "updatedAt": "2026-08-12T15:14:18.972Z"
       },
       "menus": [
         {
@@ -1234,6 +1481,20 @@
           "album": "GALLERY",
           "isDeleted": false,
           "sortOrder": 0,
+          "createdAt": "2026-08-07T04:54:46.542Z"
+        },
+        {
+          "id": "72fd7659-6063-4f95-a28d-bf6f19f6d1fe",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/family-demo-bts.mp4",
+          "thumbnailPath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/family-demo-bts-thumb.jpg",
+          "fileName": "คลิปประวัติศาสตร์ตระกูลจิตใจดี",
+          "fileSize": "2621131",
+          "mimeType": "video/mp4",
+          "fileHash": "hash-family-demo-bts",
+          "album": "VIDEO",
+          "isDeleted": false,
+          "sortOrder": 1,
           "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
@@ -1377,20 +1638,6 @@
           "createdAt": "2026-08-07T04:54:46.542Z"
         },
         {
-          "id": "72fd7659-6063-4f95-a28d-bf6f19f6d1fe",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/family-demo-bts.mp4",
-          "thumbnailPath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/family-demo-bts-thumb.jpg",
-          "fileName": "คลิปประวัติศาสตร์ตระกูลจิตใจดี",
-          "fileSize": "2621131",
-          "mimeType": "video/mp4",
-          "fileHash": "hash-family-demo-bts",
-          "album": "VIDEO",
-          "isDeleted": false,
-          "sortOrder": 1,
-          "createdAt": "2026-08-07T04:54:46.542Z"
-        },
-        {
           "id": "33ee1f9d-9eaf-4150-a96a-bed49a35c2ac",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "filePath": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1784090429015-deceased-avatar-1784090428920-mmqnltegh5P24iVOT1x-o.jpg",
@@ -1529,9 +1776,64 @@
           "isDeleted": false,
           "sortOrder": 0,
           "createdAt": "2026-08-07T04:54:46.542Z"
+        },
+        {
+          "id": "c8f42bc9-53a2-4b29-93e7-a37041e76c6e",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "filePath": "https://www.youtube.com/watch?v=LXb3EKWsInQ",
+          "thumbnailPath": null,
+          "fileName": "บันทึกความทรงจำครอบครัว (YouTube)",
+          "fileSize": "0",
+          "mimeType": "video/youtube",
+          "fileHash": "youtube-bts-family-demo",
+          "album": "VIDEO",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T13:20:18.442Z"
         }
       ],
-      "condolences": [],
+      "condolences": [
+        {
+          "id": "3311ed7d-2019-484e-8297-d732294bd843",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "senderName": "หลานสาวพิมพ์ใจ",
+          "relationship": "หลานสาว",
+          "message": "คุณปู่คะ ขอบคุณที่สอนให้เรารู้จักความขยันและความเมตตา ทุกครั้งที่กลับบ้านยังรู้สึกอบอุ่นเหมือนเดิม ขอให้สุขภาพแข็งแรง รอวันรวมญาติปีนี้นะคะ",
+          "type": "FAMILY",
+          "isApproved": true,
+          "createdAt": "2026-02-01T03:00:00.000Z"
+        },
+        {
+          "id": "457eff2b-7981-472b-9f22-6b5b986f1201",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "senderName": "พี่วิชัย จิตใจดี",
+          "relationship": "ลูกชาย",
+          "message": "ขอบคุณพ่อที่ส่งต่อคุณค่าดี ๆ ให้พวกเรา หน้าเว็บนี้เป็นเหมือนบ้านดิจิทัลของครอบครัว ที่ลูกหลานเปิดอ่านได้ทุกเมื่อ",
+          "type": "FAMILY",
+          "isApproved": true,
+          "createdAt": "2026-02-05T07:30:00.000Z"
+        },
+        {
+          "id": "fadc1a3f-94c4-44fd-8302-0fab915c7712",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "senderName": "ญาติที่อยู่เชียงใหม่",
+          "relationship": "ญาติ",
+          "message": "คิดถึงทุกคนในครอบครัวจิตใจดีค่ะ ปีที่แล้วได้กลับมางานรวมญาติ บรรยากาศอบอุ่นมาก อยากให้จัดอีกเร็ว ๆ นี้",
+          "type": "GENERAL",
+          "isApproved": true,
+          "createdAt": "2026-02-10T02:15:00.000Z"
+        },
+        {
+          "id": "7ca4236c-8408-43f6-bd9b-1d9c8aaf97c9",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "senderName": "น้องนภา จิตใจดี",
+          "relationship": "ลูกสาว",
+          "message": "ฝากข้อความถึงคุณปู่และทุกคนในครอบครัว — ขอให้เรายังคงดูแลกันแบบนี้ไปเรื่อย ๆ ไม่ว่าจะอยู่ที่ไหน บ้านของเราคือที่นี่",
+          "type": "FAMILY",
+          "isApproved": true,
+          "createdAt": "2026-02-12T11:00:00.000Z"
+        }
+      ],
       "memoryPosts": [
         {
           "id": "aa3badd3-b19f-4966-bc09-e08ecec2689b",
@@ -1543,6 +1845,28 @@
           "senderName": "น้องชาย",
           "isApproved": true,
           "createdAt": "2026-08-07T04:54:46.570Z"
+        },
+        {
+          "id": "15a06833-fcb3-4bb5-ae75-9129c724837c",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "title": "คำสอนจากคุณปู่",
+          "content": "คุณปู่เคยบอกว่า \"ตระกูลเราอยู่ด้วยกันเมื่อยังมีชีวิต และอยู่ด้วยกันในความทรงจำ\" ขอจดจำไว้เสมอ",
+          "mediaUrl": "",
+          "mediaType": "NONE",
+          "senderName": "ลูกหลานรุ่นใหม่",
+          "isApproved": false,
+          "createdAt": "2026-08-12T14:33:15.240Z"
+        },
+        {
+          "id": "a2ecec5a-9ccf-443e-8014-26589441956f",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "title": "",
+          "content": "ฝากเรื่องเล่าวันงานรวมตระกูลปีที่แล้ว บรรยากาศอบอุ่นมาก อยากให้จัดอีกเร็ว ๆ นี้",
+          "mediaUrl": "",
+          "mediaType": "NONE",
+          "senderName": "ญาติต่างจังหวัด",
+          "isApproved": false,
+          "createdAt": "2026-08-12T14:33:15.240Z"
         },
         {
           "id": "7a21ca84-594f-410b-a325-baf55aa29144",
@@ -1601,63 +1925,6 @@
         }
       ],
       "familyMembers": [
-        {
-          "id": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นาย สมชาย จิตใจดี",
-          "nickname": "คุณปู่ชาย",
-          "relationship": "PARENT_1",
-          "birthYear": "2483",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401245880-deceased-avatar-1785401245825-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": null,
-          "createdAt": "2026-08-07T04:54:46.674Z"
-        },
-        {
-          "id": "06e7b4c6-a694-4c98-bf70-81e11ba29d31",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นาย วิชัย จิตใจดี",
-          "nickname": "พี่วิช",
-          "relationship": "CHILD",
-          "birthYear": "2535",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220845-gallery-1785401220828-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
-          "createdAt": "2026-08-07T04:54:46.610Z"
-        },
-        {
-          "id": "20f131d0-a3f2-4847-a056-0a2f4a18b410",
-          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
-          "name": "นาย สุรชัย จิตใจดี",
-          "nickname": "พี่ชัย",
-          "relationship": "CHILD",
-          "birthYear": "2536",
-          "deathYear": null,
-          "isDeceased": false,
-          "hideAge": false,
-          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401221173-gallery-1785401221128-89ff900d-6578-48b3-94f0-adadf74f44fe.jpeg",
-          "avatarScale": 1,
-          "avatarX": 0,
-          "avatarY": 0,
-          "avatarRotate": 0,
-          "spouseOfId": null,
-          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
-          "createdAt": "2026-08-07T04:54:46.618Z"
-        },
         {
           "id": "049837f7-9c54-4126-a65b-240708419b8b",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
@@ -1752,11 +2019,68 @@
           "spouseOfId": null,
           "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
           "createdAt": "2026-08-07T04:54:46.667Z"
+        },
+        {
+          "id": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นาย สมชาย จิตใจดี",
+          "nickname": "คุณปู่ชาย",
+          "relationship": "PARENT_1",
+          "birthYear": "2483",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401245880-deceased-avatar-1785401245825-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-07T04:54:46.674Z"
+        },
+        {
+          "id": "06e7b4c6-a694-4c98-bf70-81e11ba29d31",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นาย วิชัย จิตใจดี",
+          "nickname": "พี่วิช",
+          "relationship": "CHILD",
+          "birthYear": "2535",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220845-gallery-1785401220828-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.610Z"
+        },
+        {
+          "id": "20f131d0-a3f2-4847-a056-0a2f4a18b410",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "name": "นาย สุรชัย จิตใจดี",
+          "nickname": "พี่ชัย",
+          "relationship": "CHILD",
+          "birthYear": "2536",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401221173-gallery-1785401221128-89ff900d-6578-48b3-94f0-adadf74f44fe.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "bc5734de-735c-4fc6-b9e2-f9d2bcab93e0",
+          "createdAt": "2026-08-07T04:54:46.618Z"
         }
       ],
       "ebooks": [
         {
-          "id": "710140ee-1d0a-4787-932c-1f2e4443aedd",
+          "id": "d17bd19c-8483-49a7-accc-251cfc324b70",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "บันทึกประวัติตระกูลจิตใจดี",
           "author": "คณะผู้จัดทำตระกูล",
@@ -1768,10 +2092,10 @@
             "หน้า 3: มรดกทางใจ\n\n\"ตระกูลเราอยู่ด้วยกันเมื่อยังมีชีวิต และอยู่ด้วยกันในความทรงจำ\" — คำสอนนี้ถูกส่งต่อจากคุณปู่สู่ลูกหลานทุกรุ่น ไม่ว่าจะเป็นวันรวมญาติ การเดินทาง หรือช่วงเวลาสำคัญ ทุกคนในตระกูลจะกลับมารวมตัวกันเสมอ",
             "บทส่งท้าย\n\nขอขอบคุณลูกหลานและญาติทุกท่านที่ร่วมกันบันทึกเรื่องราว ภาพความทรงจำ และคำสอนที่มีค่า ขอให้มรดกทางใจของตระกูลจิตใจดีคงอยู่ในใจทุกคนตลอดไป\n\nด้วยความเคารพและรัก\nคณะผู้จัดทำ"
           ],
-          "createdAt": "2026-08-07T04:54:46.587Z"
+          "createdAt": "2026-08-12T14:58:09.475Z"
         },
         {
-          "id": "5323a184-e0f1-4f68-a9d4-1e2d971b534c",
+          "id": "5d3b1e04-639c-46d2-aaff-df7e2e078876",
           "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
           "title": "คำสอนและเรื่องเล่าจากคุณปู่ชาย",
           "author": "ลูกหลานรุ่นใหม่",
@@ -1782,10 +2106,100 @@
             "หน้า 2: เรื่องเล่าที่ยังจำได้\n\nทุกปีเราจะรวมญาติกัน แล้วเล่าเรื่องเก่า ๆ ของคุณปู่ชาย ว่าเคยช่วยเหลือเพื่อนบ้านและสร้างความอบอุ่นให้ชุมชน ลูกหลานฟังกันทุกปีและไม่เคยเบื่อ",
             "หน้า 3: คำสัญญาของลูกหลาน\n\n\"เราสัญญาว่าจะดูแลกัน จะรักษามรดกทางใจของตระกูล และจะกลับมารวมตัวกันเสมอ ไม่ว่าจะอยู่ที่ไหน ตระกูลจิตใจดีคือบ้านของเราเสมอ\""
           ],
-          "createdAt": "2026-08-07T04:54:46.587Z"
+          "createdAt": "2026-08-12T14:58:09.475Z"
         }
       ],
-      "donations": []
+      "donations": [
+        {
+          "id": "9417d720-68c3-4d86-84d7-9e14c82d43c4",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "donorName": "ลูกหลานรุ่นใหม่",
+          "amount": 2000,
+          "message": "สมทบกองทุนงานรวมญาติประจำปี 2569 ขอให้ทุกคนได้กลับมาเจอกันอีกครั้ง",
+          "isAnonymous": false,
+          "hideAmount": false,
+          "slipUrl": null,
+          "isVerified": true,
+          "createdAt": "2026-02-08T04:00:00.000Z"
+        },
+        {
+          "id": "176aaf6d-7945-40e4-9b03-498535d68727",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "donorName": "ผู้ไม่ประสงค์ออกนาม",
+          "amount": 500,
+          "message": "ร่วมทำบุญวันเกิดคุณปู่ และสมทบกิจกรรมครอบครัว",
+          "isAnonymous": true,
+          "hideAmount": true,
+          "slipUrl": null,
+          "isVerified": true,
+          "createdAt": "2026-02-09T09:00:00.000Z"
+        },
+        {
+          "id": "56b0c4ab-1f65-41f3-92a1-3ebe2cb54cda",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "donorName": "พี่มณี & ครอบครัว",
+          "amount": 1500,
+          "message": "ส่งต่อความรักและกำลังใจให้งานรวมญาติปีนี้สำเร็จลุล่วง",
+          "isAnonymous": false,
+          "hideAmount": false,
+          "slipUrl": null,
+          "isVerified": true,
+          "createdAt": "2026-02-11T03:30:00.000Z"
+        }
+      ],
+      "activities": [
+        {
+          "id": "4478d0d7-a40c-40e6-ba0d-3a8f282a5809",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "title": "ทำบุญวันเกิดคุณปู่สมชาย",
+          "description": "พิธีทำบุญตักบาตรและร่วมถวายอาหารเช้า เนื่องในวันเกิดคุณปู่ ลูกหลานและญาติที่อยู่ใกล้เคียงจะมาร่วมกัน หลังพิธีมีการรวมตัวถ่ายรูปและรับประทานอาหารกลางวัน",
+          "images": [
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220845-gallery-1785401220828-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220893-gallery-1785401220876-fa2cb0a5-f36d-426c-af7e-131ae4bf8aa9.jpg",
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220942-gallery-1785401220924-3628ac2a-0411-45e5-bd1e-dd3e2146e9ce.jpeg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-01-14T17:00:00.000Z",
+          "isRecurring": true,
+          "sortOrder": 1,
+          "createdAt": "2026-08-12T14:58:09.481Z",
+          "updatedAt": "2026-08-12T14:58:09.481Z"
+        },
+        {
+          "id": "32fc2219-e509-4cf0-ac7a-730e54bcc18e",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "title": "กิจกรรมสอนทำอาหารครอบครัว",
+          "description": "คุณย่าสอนลูกหลานทำเมนูโบราณของครอบครัว — แกงส้มปลาและขนมไทย บันทึกสูตรและภาพไว้ให้รุ่นหลังได้เรียนรู้ต่อ",
+          "images": [
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220694-gallery-1785401220641-0b198e66-3d04-403a-9c6f-9ca6770334de.jpeg",
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220744-gallery-1785401220728-5367b0b2-7235-4e80-b5d2-2a7668b87409.jpg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-04-12T17:00:00.000Z",
+          "isRecurring": false,
+          "sortOrder": 2,
+          "createdAt": "2026-08-12T14:58:09.481Z",
+          "updatedAt": "2026-08-12T14:58:09.481Z"
+        },
+        {
+          "id": "b20a1dbf-f0d6-440c-996e-39fc964a5d41",
+          "websiteId": "4041f2c5-d9e2-4367-8877-a88214b3a76e",
+          "title": "งานรวมญาติประจำปี 2569",
+          "description": "งานรวมญาติครอบครัวจิตใจดีประจำปี — รวมตัวที่บ้านเกิด แลกเปลี่ยนข่าวคราว เล่าเรื่องราว และถ่ายรูปครอบครัวร่วมกัน ลูกหลานทุกคนช่วยกันจัดกิจกรรมและอาหาร",
+          "images": [
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220694-gallery-1785401220641-0b198e66-3d04-403a-9c6f-9ca6770334de.jpeg",
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220798-gallery-1785401220778-298bf361-e8b9-40bd-bdb3-0d60c92498cd.jpeg",
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220845-gallery-1785401220828-7f401b80-8dd9-405d-b816-b0824fbbf8b7.jpeg",
+            "/demo-media/4041f2c5-d9e2-4367-8877-a88214b3a76e/1785401220893-gallery-1785401220876-fa2cb0a5-f36d-426c-af7e-131ae4bf8aa9.jpg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-12-25T17:00:00.000Z",
+          "isRecurring": true,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T14:58:09.481Z",
+          "updatedAt": "2026-08-12T14:58:09.481Z"
+        }
+      ]
     },
     {
       "slug": "friendforever",
@@ -1795,21 +2209,25 @@
         "category": "Friends",
         "ownerPhone": "0816830368",
         "themeConfig": {
-          "albums": [],
+          "albums": [
+            "ภาพความทรงจำ CN the Gang",
+            "คลิปของกลุ่ม"
+          ],
           "coverX": 0,
           "coverY": 0,
           "isDemo": true,
-          "avatarX": 0,
-          "avatarY": 0,
-          "coverUrl": "/defaults/friends/cover/2.png",
+          "avatarX": 0.02604166666666667,
+          "avatarY": 0.01041666666666667,
+          "coverUrl": "/defaults/friends/cover/2.jpg",
           "features": {
             "feed": false,
-            "ebooks": false,
-            "family": false,
+            "ebooks": true,
+            "family": true,
             "memory": true,
             "videos": true,
             "gallery": true,
-            "donation": false,
+            "donation": true,
+            "activities": true,
             "condolence": true,
             "announcement": true
           },
@@ -1818,83 +2236,59 @@
               "name": "ป้าแจ๊ส",
               "note": "สายจัดตาราง สายประชุม สายเก็บเรื่อง",
               "role": "หัวหน้ากลุ่ม",
-              "isAlive": true,
-              "birthDate": null,
-              "birthYear": null,
-              "deathDate": null,
-              "deathYear": null,
-              "birthYearOnly": false,
-              "deathYearOnly": false
+              "isAlive": true
             },
             {
               "name": "พี่ต้อม",
               "note": "ดูแลแผนเดินทางและที่พัก",
               "role": "สายทริป",
-              "isAlive": true,
-              "birthDate": null,
-              "birthYear": null,
-              "deathDate": null,
-              "deathYear": null,
-              "birthYearOnly": false,
-              "deathYearOnly": false
+              "isAlive": true
             },
             {
               "name": "น้องมิ้นท์",
               "note": "ถ่ายรูป เก็บอัลบั้ม ทำไฮไลต์",
               "role": "สายภาพ",
-              "isAlive": true,
-              "birthDate": null,
-              "birthYear": null,
-              "deathDate": null,
-              "deathYear": null,
-              "birthYearOnly": false,
-              "deathYearOnly": false
+              "isAlive": true
             },
             {
               "name": "แอนนา",
               "note": "ทำการ์ดชวน ป้ายทริป โปสเตอร์รุ่น",
               "role": "สายดีไซน์",
-              "isAlive": true,
-              "birthDate": null,
-              "birthYear": null,
-              "deathDate": null,
-              "deathYear": null,
-              "birthYearOnly": false,
-              "deathYearOnly": false
+              "isAlive": true
             },
             {
               "name": "โอ๋",
               "note": "รีวิวร้าน จัดเมนู หาของอร่อย",
               "role": "สายกิน",
-              "isAlive": true,
-              "birthDate": null,
-              "birthYear": null,
-              "deathDate": null,
-              "deathYear": null,
-              "birthYearOnly": false,
-              "deathYearOnly": false
+              "isAlive": true
             },
             {
               "name": "เบนซ์",
               "note": "ถ่ายวิดีโอ ตัดต่อ ทำสไลด์งานรุ่น",
               "role": "สายเทค",
-              "isAlive": true,
-              "birthDate": null,
-              "birthYear": null,
-              "deathDate": null,
-              "deathYear": null,
-              "birthYearOnly": false,
-              "deathYearOnly": false
+              "isAlive": true
             }
           ],
-          "avatarUrl": "/defaults/friends/avatar/3.png",
+          "avatarUrl": "/uploads/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1786545413859-deceased-avatar-1786545413754-5f87b724-6dba-4f3c-9a29-2c26b33fcf43.jpeg",
           "biography": "CN the Gang คือกลุ่มเพื่อนที่รู้จักกันตั้งแต่สมัยมหาลัย ผ่านวันสอบ วันทำงาน วันเลิกงานดึก และทริปสุดมันส์มาด้วยกัน\n\nเว็บนี้เก็บเรื่องราว ภาพความทรงจำ และข้อความฝากถึงกันของพวกเรา — ไว้ให้ทุกคนกลับมาอ่านเมื่อไหร่ก็ได้ว่า “เรายังมีกัน”",
           "heroStyle": "Classic",
           "coverScale": 1,
           "fontFamily": "Inter",
-          "avatarScale": 1,
+          "heroBgMode": "image",
+          "heroLayout": "framed-on-cover",
+          "avatarScale": 1.25,
           "coverRotate": 0,
-          "mediaAlbums": {},
+          "mediaAlbums": {
+            "326f043f-7fc8-4f5e-acdc-bf471501286f": "ภาพความทรงจำ CN the Gang",
+            "42e7168b-073c-4087-87c4-ae9d262193bc": "ภาพความทรงจำ CN the Gang",
+            "5811acc0-d38f-479f-a83e-66015edc4aa1": "ภาพความทรงจำ CN the Gang",
+            "6302ebd8-58e7-4e7a-a8b5-4451ad3b2bd7": "คลิปของกลุ่ม",
+            "6be45a03-c112-419e-a1e9-e826da15f435": "ภาพความทรงจำ CN the Gang",
+            "cf54dba6-0564-4acd-a82f-c6eb10a3c166": "ภาพความทรงจำ CN the Gang",
+            "d2c8446b-68c4-426a-91c7-53901b7e8c9d": "ภาพความทรงจำ CN the Gang",
+            "e914987d-5846-4982-84df-f75977dc7a71": "ภาพความทรงจำ CN the Gang",
+            "f9f163c3-706f-4237-9f37-38a434a09d89": "ภาพความทรงจำ CN the Gang"
+          },
           "announcement": {
             "mode": "template",
             "text": "เชิญชวนเพื่อน ๆ ในกลุ่มมาร่วมพบปะ สร้างความทรงจำ และอัปเดตเรื่องราวล่าสุด",
@@ -1905,7 +2299,7 @@
             "dressCode": "แต่งตัวสบาย ๆ ธีมสีพาสเทลของกลุ่มก็ได้",
             "waterDate": "วันเสาร์ที่ 15 ส.ค. 69",
             "waterTime": "14:00 น.",
-            "fontFamily": "LINE Seed Sans TH",
+            "fontFamily": "Inter",
             "templeName": "The Local Table, Ari",
             "contactPhone": "089-876-5543",
             "wreathPolicy": "",
@@ -1916,7 +2310,19 @@
             "abhidhammaDateRange": ""
           },
           "avatarRotate": 0,
+          "featureOrder": [
+            "announcement",
+            "gallery",
+            "videos",
+            "condolence",
+            "memory",
+            "activities",
+            "family",
+            "ebooks",
+            "donation"
+          ],
           "primaryColor": "#8ba8bd",
+          "demoCustomized": true,
           "secondaryColor": "#ded2af",
           "defaultFontSize": "NORMAL",
           "imageCoordSpace": "relative"
@@ -1926,9 +2332,9 @@
         "expiredAt": "2036-08-04T04:54:46.791Z",
         "donationPromptPay": "089-87655432",
         "donationAccountName": "คุณศิรินภา เหรัญญิกตลอดมาและตลอดไป",
-        "donationActive": false,
+        "donationActive": true,
         "createdAt": "2026-07-15T08:37:51.045Z",
-        "updatedAt": "2026-08-07T04:54:46.810Z"
+        "updatedAt": "2026-08-12T15:29:09.322Z"
       },
       "menus": [
         {
@@ -1963,6 +2369,34 @@
         }
       ],
       "medias": [
+        {
+          "id": "f0661b95-aa6a-4bc8-b7d2-fe1545b0fcd2",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "filePath": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+          "thumbnailPath": null,
+          "fileName": "ทริปท่องเที่ยว CN the Gang (YouTube)",
+          "fileSize": "0",
+          "mimeType": "video/youtube",
+          "fileHash": "youtube-friendforever-demo",
+          "album": "VIDEO",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T14:42:10.809Z"
+        },
+        {
+          "id": "6302ebd8-58e7-4e7a-a8b5-4451ad3b2bd7",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "filePath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/friends-demo-cn-gang.mp4",
+          "thumbnailPath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/friends-demo-cn-gang-thumb.jpg",
+          "fileName": "ทริปท่องเที่ยว CN the Gang",
+          "fileSize": "2440356",
+          "mimeType": "video/mp4",
+          "fileHash": "hash-friends-demo-cn-gang",
+          "album": "VIDEO",
+          "isDeleted": false,
+          "sortOrder": 1,
+          "createdAt": "2026-08-07T04:54:46.909Z"
+        },
         {
           "id": "5811acc0-d38f-479f-a83e-66015edc4aa1",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
@@ -2076,18 +2510,18 @@
           "createdAt": "2026-08-07T04:54:46.909Z"
         },
         {
-          "id": "6302ebd8-58e7-4e7a-a8b5-4451ad3b2bd7",
+          "id": "8c7c9b9f-e04a-4e09-87d2-7832aeb029a8",
           "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
-          "filePath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/friends-demo-cn-gang.mp4",
-          "thumbnailPath": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/friends-demo-cn-gang-thumb.jpg",
-          "fileName": "ทริปท่องเที่ยว CN the Gang",
-          "fileSize": "2440356",
-          "mimeType": "video/mp4",
-          "fileHash": "hash-friends-demo-cn-gang",
-          "album": "VIDEO",
+          "filePath": "/uploads/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1786545413859-deceased-avatar-1786545413754-5f87b724-6dba-4f3c-9a29-2c26b33fcf43.jpeg",
+          "thumbnailPath": null,
+          "fileName": "deceased-avatar-1786545413754-5f87b724-6dba-4f3c-9a29-2c26b33fcf43.jpeg",
+          "fileSize": "195336",
+          "mimeType": "image/jpeg",
+          "fileHash": "hash-t2qmwe",
+          "album": "PROFILE",
           "isDeleted": false,
-          "sortOrder": 1,
-          "createdAt": "2026-08-07T04:54:46.909Z"
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T14:36:53.860Z"
         }
       ],
       "condolences": [
@@ -2219,9 +2653,244 @@
           "createdAt": "2026-08-07T04:54:46.950Z"
         }
       ],
-      "familyMembers": [],
-      "ebooks": [],
-      "donations": []
+      "familyMembers": [
+        {
+          "id": "a3527d0e-2096-4db1-b08f-7934c068ba1c",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "name": "เบนซ์",
+          "nickname": "สายเทค",
+          "relationship": "SIBLING",
+          "birthYear": "2536",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784993607104-gallery-1784993606994-b7b93478-45b9-40c1-8162-3349be8b5174.jpg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "639064b3-ade0-4095-a627-c1d1bfedf890",
+          "createdAt": "2026-08-12T14:42:10.819Z"
+        },
+        {
+          "id": "639064b3-ade0-4095-a627-c1d1bfedf890",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "name": "ป้าแจ๊ส",
+          "nickname": "หัวหน้ากลุ่ม",
+          "relationship": "PARENT_1",
+          "birthYear": "2520",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/defaults/friends/avatar/1.png",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-12T14:42:10.813Z"
+        },
+        {
+          "id": "1c0344cc-9729-46f3-8bf6-1469ab86e7e9",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "name": "พี่ต้อม",
+          "nickname": "สายทริป",
+          "relationship": "SIBLING",
+          "birthYear": "2532",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/defaults/friends/avatar/2.png",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "639064b3-ade0-4095-a627-c1d1bfedf890",
+          "createdAt": "2026-08-12T14:42:10.815Z"
+        },
+        {
+          "id": "5bd37a88-f168-48fc-9a74-f4cb0e54a598",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "name": "น้องมิ้นท์",
+          "nickname": "สายภาพ",
+          "relationship": "SIBLING",
+          "birthYear": "2535",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/defaults/friends/avatar/3.png",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "639064b3-ade0-4095-a627-c1d1bfedf890",
+          "createdAt": "2026-08-12T14:42:10.816Z"
+        },
+        {
+          "id": "2c41d902-2e63-4c26-928a-ef0d480424bc",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "name": "แอนนา",
+          "nickname": "สายดีไซน์",
+          "relationship": "SIBLING",
+          "birthYear": "2533",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/defaults/friends/avatar/4.png",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "639064b3-ade0-4095-a627-c1d1bfedf890",
+          "createdAt": "2026-08-12T14:42:10.817Z"
+        },
+        {
+          "id": "581dfec0-b72f-42f5-bd4f-9b97c971d4d2",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "name": "โอ๋",
+          "nickname": "สายกิน",
+          "relationship": "SIBLING",
+          "birthYear": "2534",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784993640439-gallery-1784993640385-5f87b724-6dba-4f3c-9a29-2c26b33fcf43.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": "639064b3-ade0-4095-a627-c1d1bfedf890",
+          "createdAt": "2026-08-12T14:42:10.818Z"
+        }
+      ],
+      "ebooks": [
+        {
+          "id": "0bc94c6e-89f5-488c-961e-9e6f11b58d32",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "title": "หนังสือรุ่นและบันทึกมิตรสหายเฟรนด์ชิป",
+          "author": "แก๊ง CN the Gang",
+          "pdfUrl": "",
+          "totalPages": 4,
+          "pages": [
+            "บันทึกมิตรภาพของพวกเรา\n\nยินดีต้อนรับเพื่อน ๆ ทุกคนเข้าสู่ทำเนียบความทรงจำ สมุดหนังสือรุ่นออนไลน์นี้ทำขึ้นเพื่อรวบรวมรูปภาพ มิตรภาพ และความรู้สึกดี ๆ ของ CN the Gang",
+            "หน้า 2: วันวานวัยหวาน\n\nจำได้ไหมตอนที่เราต้องอดนอนอ่านหนังสือสอบด้วยกัน การไปตั้งแคมป์ฤดูร้อน และการแอบตื่นสายไปเรียนไม่ทัน",
+            "หน้า 3: สายใยที่ไม่มีวันขาด\n\nแม้วันนี้แต่ละคนจะแยกย้ายไปมีเส้นทางชีวิตของตัวเอง แต่เมื่อไหร่ที่กลับมาเจอกัน ความรู้สึกอบอุ่นใจก็หวนกลับมาเสมอ",
+            "บทส่งท้าย\n\nขอให้มิตรภาพของพวกเรายั่งยืนนานตลอดไป\n\nด้วยความรักและคิดถึง\nแก๊งเพื่อนซี้"
+          ],
+          "createdAt": "2026-08-12T14:42:10.824Z"
+        },
+        {
+          "id": "83d51844-9241-4957-81dc-cb19402f2902",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "title": "บันทึกวีรกรรมความทรงจำแสนเกรียน",
+          "author": "กลุ่มเพื่อนสนิท",
+          "pdfUrl": "",
+          "totalPages": 3,
+          "pages": [
+            "รวมเรื่องเล่าสุดขำ\n\nสมุดบันทึกที่รวบรวมวีรกรรมแสนตลกและภาพหลุดในตำนานของกลุ่มเพื่อนสนิท",
+            "หน้า 2: วีรกรรมในห้องเรียน\n\nการแอบกินขนมหลังห้องครู การโดนทำโทษให้ยืนหน้าห้องร่วมกัน และทริปที่รถเสียกลางทางแต่หัวเราะกันทั้งคัน",
+            "หน้า 3: คำอธิษฐานถึงเพื่อน\n\n\"ขอให้เพื่อนทุกคนมีความสุขและประสบความสำเร็จในชีวิต — แล้วเจอกันบ่อย ๆ นะ\""
+          ],
+          "createdAt": "2026-08-12T14:42:10.824Z"
+        }
+      ],
+      "donations": [
+        {
+          "id": "3d2c0714-df52-4db0-97c4-3793e268017e",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "donorName": "มิ้นท์ & ต้อม",
+          "amount": 800,
+          "message": "สมทบกองทุนรวมตัวเดือนสิงหา — ขอให้ได้นั่งกินข้าวพร้อมหน้ากันนะ",
+          "isAnonymous": false,
+          "hideAmount": false,
+          "slipUrl": null,
+          "isVerified": true,
+          "createdAt": "2026-07-20T04:00:00.000Z"
+        },
+        {
+          "id": "c114aeb5-9a47-4146-af4a-7511d0251f9a",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "donorName": "ผู้ไม่ประสงค์ออกนาม",
+          "amount": 500,
+          "message": "ร่วมสมทบทริปปีหน้า ขอบคุณที่ยังมีกลุ่มนี้เสมอ",
+          "isAnonymous": true,
+          "hideAmount": true,
+          "slipUrl": null,
+          "isVerified": true,
+          "createdAt": "2026-07-25T09:00:00.000Z"
+        },
+        {
+          "id": "c2748b19-9e06-4cdd-a21f-bd046bc1760e",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "donorName": "แอนนา",
+          "amount": 1200,
+          "message": "ส่งต่อกำลังใจให้งานรวมตัวสำเร็จ — รอเจอกันนะเพื่อน ๆ",
+          "isAnonymous": false,
+          "hideAmount": false,
+          "slipUrl": null,
+          "isVerified": true,
+          "createdAt": "2026-08-01T03:30:00.000Z"
+        }
+      ],
+      "activities": [
+        {
+          "id": "fbbcee8a-e7a5-416b-ab5a-704a9d07856f",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "title": "นัดรวมตัวเดือนสิงหา 2569",
+          "description": "เช็กใจก่อนลงมือจองร้าน — เป้าหมายคืองานรวมตัวแบบไม่เร่งรีบ มีเวลานั่งเล่าเรื่องเก่า กินของอร่อย และถ่ายรูปให้ครบทุกคน ที่ The Local Table, Ari",
+          "images": [
+            "/defaults/friends/cover/1.jpg",
+            "/defaults/friends/cover/2.jpg",
+            "/defaults/friends/cover/3.jpg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-08-14T17:00:00.000Z",
+          "isRecurring": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T14:42:10.830Z",
+          "updatedAt": "2026-08-12T14:42:10.830Z"
+        },
+        {
+          "id": "f4ea0189-dd5c-4409-b273-3b70f3bee3cd",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "title": "ทริปหัวหิน — Flashback 2568",
+          "description": "จำได้ไหมวันที่ฝนตกแรงแต่เรายังยืนหยิบขนมตลาดน้ำอยู่ ทริปนี้สรุปว่า “แพลนไม่สำคัญ ขอแค่มาครบก็พอ”",
+          "images": [
+            "/defaults/friends/cover/1.jpg",
+            "/defaults/friends/cover/2.jpg",
+            "/defaults/friends/cover/3.jpg",
+            "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784993640439-gallery-1784993640385-5f87b724-6dba-4f3c-9a29-2c26b33fcf43.jpeg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2025-11-19T17:00:00.000Z",
+          "isRecurring": true,
+          "sortOrder": 1,
+          "createdAt": "2026-08-12T14:42:10.830Z",
+          "updatedAt": "2026-08-12T14:42:10.830Z"
+        },
+        {
+          "id": "59f0d7a9-8cfe-4f70-a4d2-c3a891f302d9",
+          "websiteId": "edd45dd0-39bf-4e0d-9b5a-d43562f1e044",
+          "title": "คอนเสิร์ตวงโปรดของกลุ่ม",
+          "description": "รวมตัวดูคอนเสิร์ตด้วยกันอีกครั้ง — ใครว่างฝากชื่อในกลุ่มไลน์นะ อยากให้มีโมเมนต์แบบปีที่แล้วอีก",
+          "images": [
+            "/defaults/friends/cover/3.jpg",
+            "/demo-media/edd45dd0-39bf-4e0d-9b5a-d43562f1e044/1784993620283-gallery-1784993620224-674abea3-a01d-46f8-a4ff-562c275121b1.jpg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-10-09T17:00:00.000Z",
+          "isRecurring": false,
+          "sortOrder": 2,
+          "createdAt": "2026-08-12T14:42:10.830Z",
+          "updatedAt": "2026-08-12T14:42:10.830Z"
+        }
+      ]
     },
     {
       "slug": "kittiemeaw",
@@ -2243,13 +2912,14 @@
           "features": {
             "feed": false,
             "ebooks": false,
-            "family": false,
+            "family": true,
             "memory": true,
             "videos": true,
             "gallery": true,
             "donation": true,
+            "activities": true,
             "condolence": true,
-            "announcement": false
+            "announcement": true
           },
           "subjects": [
             {
@@ -2260,7 +2930,7 @@
               "dislike": "ไม่ชอบอาบน้ำ และกินยา",
               "isAlive": false,
               "favorite": "เปียก และจุ้งต้ม",
-              "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108759796-pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png",
+              "avatarUrl": "/uploads/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108759796-pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png",
               "birthDate": "2008-12-31T17:00:00.000Z",
               "birthYear": 2009,
               "deathDate": "2023-12-31T17:00:00.000Z",
@@ -2280,7 +2950,7 @@
               "dislike": "กลัวผะ ผะ ผี ",
               "isAlive": true,
               "favorite": "คานิว่า รสแซลม่อน ม่อน ม่อน",
-              "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108786322-pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
+              "avatarUrl": "/uploads/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108786322-pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
               "birthDate": "2018-12-31T17:00:00.000Z",
               "birthYear": 2019,
               "deathDate": null,
@@ -2296,8 +2966,36 @@
           "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398783773-deceased-avatar-1785398783710-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg",
           "biography": "เหมียวคิตตี้ขนแตกจอมวุ่น ขี้อ้อน ชอบแอบเล็งนก คนสวยของพรี่\n\nเว็บนี้เก็บเรื่องราวของคิตตี้และเพื่อนแมวในบ้าน ทั้งช่วงเวลาที่อยู่ด้วยกันและความทรงจำที่ยังอบอุ่นอยู่เสมอ",
           "heroStyle": "Classic",
+          "lifeStory": {
+            "honors": "",
+            "legacy": "ชอบนอนตากแดดตรงหน้าต่างทุกเช้า / วิ่งมาต้อนรับทุกครั้งที่กลับบ้าน / ชอบกินไก่ย่างและขนมสุนัขรสเนย / นอนตักเวลาดูทีวีทุกคืน",
+            "timeline": [
+              {
+                "id": "kitty-tl-1",
+                "year": "2563",
+                "title": "วันแรกที่รับน้องมาเลี้ยง",
+                "description": "น้องตัวจิ๋ววิ่งมากอดขา ตั้งแต่นั้นมาบ้านก็ไม่เคยเงียบอีกเลย"
+              },
+              {
+                "id": "kitty-tl-2",
+                "year": "2565",
+                "title": "ทริปแรกไปทะเล",
+                "description": "น้องชอบวิ่งเล่นบนชายหาดมาก แต่กลับมาบ้านแล้วนอนหลับยาวสามวัน"
+              },
+              {
+                "id": "kitty-tl-3",
+                "year": "2568",
+                "title": "วันสุดท้ายที่อยู่ด้วยกัน",
+                "description": "เราจะจำรอยยิ้มและความรักของน้องไว้ตลอดไป"
+              }
+            ],
+            "biography": "เหมียวคิตตี้ขนแตกจอมวุ่น ขี้อ้อน ชอบแอบเล็งนก คนสวยของพรี่\n\nเว็บนี้เก็บเรื่องราวของคิตตี้และเพื่อนแมวในบ้าน ทั้งช่วงเวลาที่อยู่ด้วยกันและความทรงจำที่ยังอบอุ่นอยู่เสมอ",
+            "teachings": ""
+          },
           "coverScale": 1,
           "fontFamily": "LINE Seed Sans TH",
+          "heroBgMode": "image",
+          "heroLayout": "center-classic",
           "avatarScale": 1.45,
           "coverRotate": 0,
           "mediaAlbums": {
@@ -2320,23 +3018,23 @@
           },
           "announcement": {
             "mode": "template",
-            "text": "",
+            "text": "เรียนเชิญร่วมส่งน้องคิตตี้ด้วยความรักและความคิดถึง",
             "style": "ELEGANT_WHITE",
-            "active": false,
-            "mapLink": "",
-            "pavilion": "",
-            "dressCode": "",
-            "waterDate": "",
-            "waterTime": "",
+            "active": true,
+            "mapLink": "https://maps.app.goo.gl/example-pet-home",
+            "pavilion": "มุมสวนหน้าบ้าน",
+            "dressCode": "แต่งตัวสบาย ๆ — พกของที่อยากฝากถึงน้องได้",
+            "waterDate": "12 ธ.ค. 2567",
+            "waterTime": "10:00 น.",
             "fontFamily": "LINE Seed Sans TH",
-            "templeName": "",
-            "contactPhone": "",
-            "wreathPolicy": "NORMAL",
-            "cremationDate": "",
-            "cremationTime": "",
+            "templeName": "บ้านคิตตี้เหมียว อ.เมือง",
+            "contactPhone": "089-123-4567",
+            "wreathPolicy": "NO_FLOWERS",
+            "cremationDate": "13 ธ.ค. 2567",
+            "cremationTime": "09:00 น.",
             "customCardUrl": "",
-            "abhidhammaTime": "",
-            "abhidhammaDateRange": ""
+            "abhidhammaTime": "14:00 น.",
+            "abhidhammaDateRange": "12 ธ.ค. 2567"
           },
           "avatarRotate": 0,
           "featureOrder": [
@@ -2344,11 +3042,15 @@
             "videos",
             "condolence",
             "memory",
-            "donation"
+            "donation",
+            "announcement",
+            "family",
+            "activities",
+            "ebooks"
           ],
-          "primaryColor": "#e09f9f",
+          "primaryColor": "#a49cb5",
           "demoCustomized": true,
-          "secondaryColor": "#f59e0b",
+          "secondaryColor": "#c8bfcb",
           "defaultFontSize": "NORMAL",
           "imageCoordSpace": "relative"
         },
@@ -2356,10 +3058,10 @@
         "status": "ACTIVE",
         "expiredAt": "2036-08-04T04:54:46.959Z",
         "donationPromptPay": "0891234567",
-        "donationAccountName": "กองทุนช่วยเหลือสัตว์จรจัด (ตัวอย่าง)",
+        "donationAccountName": "กองทุนช่วยเหลือสัตว์จร (Demo)",
         "donationActive": true,
         "createdAt": "2026-07-14T03:37:50.590Z",
-        "updatedAt": "2026-08-07T13:20:12.905Z"
+        "updatedAt": "2026-08-12T15:41:05.581Z"
       },
       "menus": [
         {
@@ -2397,7 +3099,7 @@
         {
           "id": "08b1f9f7-4999-4648-9ed5-c0ea248f266d",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
-          "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108759796-pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png",
+          "filePath": "/uploads/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108759796-pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png",
           "thumbnailPath": null,
           "fileName": "pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png",
           "fileSize": "1984590",
@@ -2411,7 +3113,7 @@
         {
           "id": "6fdb69dd-d593-434e-ba2f-a33052490942",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
-          "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108786322-pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
+          "filePath": "/uploads/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108786322-pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
           "thumbnailPath": null,
           "fileName": "pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
           "fileSize": "194937",
@@ -2675,20 +3377,6 @@
           "createdAt": "2026-08-07T04:54:47.062Z"
         },
         {
-          "id": "6d13aeb5-d53a-4a7a-9a9e-33428393a5f6",
-          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
-          "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/pet-demo-kittiemeaw2.mp4",
-          "thumbnailPath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/pet-demo-kittiemeaw2-thumb.jpg",
-          "fileName": "ช่วงเวลาน่ารักของคิตตี้เหมียว",
-          "fileSize": "2644991",
-          "mimeType": "video/mp4",
-          "fileHash": "hash-pet-demo-kittiemeaw2",
-          "album": "VIDEO",
-          "isDeleted": false,
-          "sortOrder": 2,
-          "createdAt": "2026-08-07T04:54:47.062Z"
-        },
-        {
           "id": "9303b05d-096a-4905-b2a9-6f0d8782972e",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1784363585861-pet-avatar-1-1784363585710-731218.jpg",
@@ -2728,6 +3416,20 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
+          "createdAt": "2026-08-07T04:54:47.062Z"
+        },
+        {
+          "id": "6d13aeb5-d53a-4a7a-9a9e-33428393a5f6",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "filePath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/pet-demo-kittiemeaw2.mp4",
+          "thumbnailPath": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/pet-demo-kittiemeaw2-thumb.jpg",
+          "fileName": "ช่วงเวลาน่ารักของคิตตี้เหมียว",
+          "fileSize": "2644991",
+          "mimeType": "video/mp4",
+          "fileHash": "hash-pet-demo-kittiemeaw2",
+          "album": "VIDEO",
+          "isDeleted": false,
+          "sortOrder": 2,
           "createdAt": "2026-08-07T04:54:47.062Z"
         }
       ],
@@ -2816,17 +3518,6 @@
           "createdAt": "2026-08-07T04:54:47.104Z"
         },
         {
-          "id": "1c6dcbfb-39a3-4b1b-b78d-6589be9e3064",
-          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
-          "title": "คู่หูแมววัวกับแมวสามสี",
-          "content": "แชปชอบแกล้งคิตตี้ แต่พอคิตตี้ไม่อยู่ แชปก็นั่งมองประตูนานมาก น้องสองตัวรักกันมากกว่าที่แสดงออกนะ",
-          "mediaUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636190-gallery-1785398636177-be1d970a-2094-4771-b7f8-6e9208ce7e16.jpeg",
-          "mediaType": "IMAGE",
-          "senderName": "แชป & คิตตี้",
-          "isApproved": true,
-          "createdAt": "2026-08-07T04:54:47.104Z"
-        },
-        {
           "id": "ea5c2486-c5e0-4b04-8c2d-201bce9754de",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "title": "โมเมนต์เปียกกับจุ้งต้ม",
@@ -2858,13 +3549,101 @@
           "senderName": "น้องชาย",
           "isApproved": false,
           "createdAt": "2026-08-07T04:54:47.104Z"
+        },
+        {
+          "id": "1c6dcbfb-39a3-4b1b-b78d-6589be9e3064",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "title": "คู่หูแมววัวกับแมวสามสี",
+          "content": "แชปชอบแกล้งคิตตี้ แต่พอคิตตี้ไม่อยู่ แชปก็นั่งมองประตูนานมาก น้องสองตัวรักกันมากกว่าที่แสดงออกนะ",
+          "mediaUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636190-gallery-1785398636177-be1d970a-2094-4771-b7f8-6e9208ce7e16.jpeg",
+          "mediaType": "IMAGE",
+          "senderName": "แชป & คิตตี้",
+          "isApproved": true,
+          "createdAt": "2026-08-07T04:54:47.104Z"
         }
       ],
-      "familyMembers": [],
+      "familyMembers": [
+        {
+          "id": "c2f4ee91-ba50-4ea0-8a3d-4c0f24bc0226",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "name": "แชปแมวหัวแปะ",
+          "nickname": "แมววัว",
+          "relationship": "SIBLING",
+          "birthYear": "2562",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/uploads/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108786322-pet-avatar-2-1786108786284-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-12T15:33:09.759Z"
+        },
+        {
+          "id": "4f550dd6-085d-4be4-b7cc-16a16fb3a375",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "name": "ม็อกกี้",
+          "nickname": "จอมซน",
+          "relationship": "SIBLING",
+          "birthYear": "2560",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636282-gallery-1785398636262-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-12T15:33:09.762Z"
+        },
+        {
+          "id": "f984471c-3c2e-4f13-8903-feea4a931908",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "name": "น้องอุ่นใจ",
+          "nickname": "ขนฟู",
+          "relationship": "SIBLING",
+          "birthYear": "2563",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636358-gallery-1785398636345-1ca184df-4cf0-47f4-b9d2-34e78b9d674c.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-12T15:33:09.764Z"
+        },
+        {
+          "id": "2c8bffbb-7ace-4393-8e00-cfe8d41f93c4",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "name": "ปุยฝ้าย",
+          "nickname": "พี่ใหญ่",
+          "relationship": "SIBLING",
+          "birthYear": "2558",
+          "deathYear": "2566",
+          "isDeceased": true,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636232-gallery-1785398636217-d1a27035-77a0-4531-9f31-36dc77574e81.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-12T15:33:09.765Z"
+        }
+      ],
       "ebooks": [],
       "donations": [
         {
-          "id": "bc40876a-ded3-4d7c-9dd3-41e63e015244",
+          "id": "8bb43633-042b-4eca-a3d6-164462811c03",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "donorName": "คุณมิ้นท์",
           "amount": 500,
@@ -2873,10 +3652,10 @@
           "hideAmount": false,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-08-07T04:54:47.121Z"
+          "createdAt": "2026-02-08T04:00:00.000Z"
         },
         {
-          "id": "55216a5a-8681-45a1-8b2a-08d6341b8a55",
+          "id": "0c74fce5-dcdf-4c4b-bd49-8d0a32200843",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "donorName": "ผู้ไม่ประสงค์ออกนาม",
           "amount": 200,
@@ -2885,10 +3664,10 @@
           "hideAmount": true,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-08-07T04:54:47.121Z"
+          "createdAt": "2026-02-09T08:30:00.000Z"
         },
         {
-          "id": "a53c4770-8a7a-4216-bd42-fd54632f7cef",
+          "id": "25dc8563-3cc7-4084-8ea9-67aefc5a7305",
           "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
           "donorName": "พี่ต้น & ครอบครัว",
           "amount": 1000,
@@ -2897,7 +3676,62 @@
           "hideAmount": false,
           "slipUrl": null,
           "isVerified": true,
-          "createdAt": "2026-08-07T04:54:47.121Z"
+          "createdAt": "2026-02-10T02:45:00.000Z"
+        }
+      ],
+      "activities": [
+        {
+          "id": "f737d4f0-988c-490d-b6c7-cf3d73cb9f78",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "title": "วันเกิดน้องคิตตี้ ครบรอบ",
+          "description": "งานฉลองวันเกิดเล็ก ๆ ที่บ้าน — มีเค้กสุนัข ของเล่นใหม่ และถ่ายรูปกับพี่น้องสี่ขาทุกตัว เชิญเพื่อนบ้านมาร่วมส่งความสุขให้น้อง",
+          "images": [
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398635928-gallery-1785398635709-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg",
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636047-gallery-1785398636035-1ad2aa01-639f-4d2d-840f-3df8cba4b9b3.jpg",
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636099-gallery-1785398636083-695b3d20-4fb0-4c96-afd2-21a121fff880.jpeg",
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636147-gallery-1785398636131-0374c879-75e3-4960-870f-771d215f9d5b.jpeg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2025-12-31T17:00:00.000Z",
+          "isRecurring": true,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T15:33:09.768Z",
+          "updatedAt": "2026-08-12T15:33:09.768Z"
+        },
+        {
+          "id": "c6f08c58-b2f7-4c9d-ba5d-a10dccbeaec7",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "title": "ทริปชายหาดครอบครัว + สี่ขา",
+          "description": "พาน้องไปเดินเล่นริมทะเลครั้งแรกของปี — วิ่งเล่น ถ่ายรูป และพักผ่อนใต้ร่มไม้ อย่าลืมครีมกันแดดและน้ำดื่มสำหรับน้องนะคะ",
+          "images": [
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636147-gallery-1785398636131-0374c879-75e3-4960-870f-771d215f9d5b.jpeg",
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636190-gallery-1785398636177-be1d970a-2094-4771-b7f8-6e9208ce7e16.jpeg",
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636232-gallery-1785398636217-d1a27035-77a0-4531-9f31-36dc77574e81.jpeg",
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636282-gallery-1785398636262-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-03-19T17:00:00.000Z",
+          "isRecurring": false,
+          "sortOrder": 1,
+          "createdAt": "2026-08-12T15:33:09.768Z",
+          "updatedAt": "2026-08-12T15:33:09.768Z"
+        },
+        {
+          "id": "3d9f9e2c-2f03-44b5-bf7a-d2368d24e9f1",
+          "websiteId": "f4d68f77-50a1-4799-b060-cf38af5d210d",
+          "title": "วันรวมแก๊งพี่น้องสี่ขา",
+          "description": "นัดรวมตัวแมวหมาในบ้านและเพื่อนบ้านใกล้เคียง เล่นของเล่นด้วยกัน แลกเปลี่ยนขนม และอัปเดตสุขภาพน้อง ๆ",
+          "images": [
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636282-gallery-1785398636262-0c92f1ef-59e5-421d-8669-c6be8bed1378.jpeg",
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636318-gallery-1785398636305-2159e4f4-a876-4d89-8ec5-2f33430b4744.jpeg",
+            "/demo-media/f4d68f77-50a1-4799-b060-cf38af5d210d/1785398636358-gallery-1785398636345-1ca184df-4cf0-47f4-b9d2-34e78b9d674c.jpeg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-08-14T17:00:00.000Z",
+          "isRecurring": true,
+          "sortOrder": 2,
+          "createdAt": "2026-08-12T15:33:09.768Z",
+          "updatedAt": "2026-08-12T15:33:09.768Z"
         }
       ]
     },
@@ -2915,15 +3749,16 @@
           "isDemo": true,
           "avatarX": 0,
           "avatarY": 0,
-          "coverUrl": "/defaults/wedding/cover/1.jpg",
+          "coverUrl": "/uploads/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1786548187101-deceased-cover-1786548186986-560c7546-bc8d-4835-98ff-64f48b323d3a.jpeg",
           "features": {
             "feed": false,
-            "ebooks": false,
+            "ebooks": true,
             "family": true,
             "memory": true,
             "videos": true,
             "gallery": true,
             "donation": true,
+            "activities": true,
             "condolence": true,
             "announcement": true
           },
@@ -2933,6 +3768,8 @@
               "note": "",
               "role": "",
               "breed": "",
+              "avatarX": 0,
+              "avatarY": 0,
               "dislike": "",
               "isAlive": false,
               "favorite": "",
@@ -2941,7 +3778,9 @@
               "birthYear": null,
               "deathDate": "2026-02-13T17:00:00.000Z",
               "deathYear": null,
+              "avatarScale": 1,
               "personality": "",
+              "avatarRotate": 0,
               "birthYearOnly": false,
               "deathYearOnly": false
             },
@@ -2950,6 +3789,8 @@
               "note": "",
               "role": "",
               "breed": "",
+              "avatarX": 0,
+              "avatarY": 0,
               "dislike": "",
               "isAlive": false,
               "favorite": "",
@@ -2958,7 +3799,9 @@
               "birthYear": null,
               "deathDate": null,
               "deathYear": null,
+              "avatarScale": 1,
               "personality": "",
+              "avatarRotate": 0,
               "birthYearOnly": false,
               "deathYearOnly": false
             }
@@ -2966,8 +3809,10 @@
           "avatarUrl": "/defaults/wedding/avatar/4.png",
           "biography": "เรื่องราวของเราเริ่มจากการเป็นเพื่อนร่วมงานที่คอยสนับสนุนกันทุกวัน จนกลายเป็นคู่รักที่ตัดสินใจเดินทางต่อไปด้วยกันตลอดชีวิต งานครั้งนี้จึงเป็นการเปิดบทใหม่ที่เราอยากแบ่งปันความสุขกับญาติมิตรและเพื่อนฝูงที่ร่วมเป็นส่วนหนึ่งของความทรงจำมาตลอดทาง",
           "heroStyle": "Classic",
-          "coverScale": 1,
+          "coverScale": 1.15,
           "fontFamily": "Inter",
+          "heroBgMode": "image",
+          "heroLayout": "bottom-band",
           "avatarScale": 1,
           "coverRotate": 0,
           "mediaAlbums": {},
@@ -2981,7 +3826,7 @@
             "dressCode": "ชุดสุภาพ โทนสีพาสเทล ครีม หรือชมพูอ่อน — ขอความกรุณางดสีดำและสีขาวล้วน",
             "waterDate": "วันอาทิตย์ที่ 14 ก.พ. 69",
             "waterTime": "09:09 น.",
-            "fontFamily": "",
+            "fontFamily": "Inter",
             "templeName": "โรงแรมสุขุมวิท แกรนด์",
             "contactPhone": "081-683-0368",
             "wreathPolicy": "NORMAL",
@@ -2992,8 +3837,20 @@
             "abhidhammaDateRange": "วันอาทิตย์ที่ 14 ก.พ. 69"
           },
           "avatarRotate": 0,
-          "primaryColor": "#96a288",
-          "secondaryColor": "#f59e0b",
+          "featureOrder": [
+            "announcement",
+            "gallery",
+            "videos",
+            "condolence",
+            "memory",
+            "family",
+            "ebooks",
+            "activities",
+            "donation"
+          ],
+          "primaryColor": "#e09f9f",
+          "demoCustomized": true,
+          "secondaryColor": "#e6c1a8",
           "defaultFontSize": "NORMAL",
           "imageCoordSpace": "relative"
         },
@@ -3004,7 +3861,7 @@
         "donationAccountName": "กิ๊ฟ & มิยา (คู่บ่าวสาว)",
         "donationActive": true,
         "createdAt": "2026-07-20T13:47:25.384Z",
-        "updatedAt": "2026-08-07T04:54:47.154Z"
+        "updatedAt": "2026-08-12T15:26:28.611Z"
       },
       "menus": [
         {
@@ -3093,20 +3950,6 @@
           "album": "PROFILE",
           "isDeleted": false,
           "sortOrder": 0,
-          "createdAt": "2026-08-07T04:54:47.243Z"
-        },
-        {
-          "id": "9c4554c1-a7aa-4ab1-9c7c-9315cdb7efad",
-          "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
-          "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/wedding-demo-kukimiya.mp4",
-          "thumbnailPath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/wedding-demo-kukimiya-thumb.jpg",
-          "fileName": "Highlight วันแต่งงาน",
-          "fileSize": "2482378",
-          "mimeType": "video/mp4",
-          "fileHash": "hash-wedding-demo-kukimiya",
-          "album": "VIDEO",
-          "isDeleted": false,
-          "sortOrder": 1,
           "createdAt": "2026-08-07T04:54:47.243Z"
         },
         {
@@ -3220,6 +4063,34 @@
           "isDeleted": false,
           "sortOrder": 0,
           "createdAt": "2026-08-07T04:54:47.243Z"
+        },
+        {
+          "id": "9c4554c1-a7aa-4ab1-9c7c-9315cdb7efad",
+          "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
+          "filePath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/wedding-demo-kukimiya.mp4",
+          "thumbnailPath": "/demo-media/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/wedding-demo-kukimiya-thumb.jpg",
+          "fileName": "Highlight วันแต่งงาน",
+          "fileSize": "2482378",
+          "mimeType": "video/mp4",
+          "fileHash": "hash-wedding-demo-kukimiya",
+          "album": "VIDEO",
+          "isDeleted": false,
+          "sortOrder": 1,
+          "createdAt": "2026-08-07T04:54:47.243Z"
+        },
+        {
+          "id": "4131c37b-2f8d-483d-8dc8-5ccb3acaf90a",
+          "websiteId": "88a6311e-21a0-49f9-a0d6-6a63a5d2f566",
+          "filePath": "/uploads/88a6311e-21a0-49f9-a0d6-6a63a5d2f566/1786548187101-deceased-cover-1786548186986-560c7546-bc8d-4835-98ff-64f48b323d3a.jpeg",
+          "thumbnailPath": null,
+          "fileName": "deceased-cover-1786548186986-560c7546-bc8d-4835-98ff-64f48b323d3a.jpeg",
+          "fileSize": "209649",
+          "mimeType": "image/jpeg",
+          "fileHash": "hash-sas97j",
+          "album": "PROFILE",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T15:23:07.103Z"
         }
       ],
       "condolences": [
@@ -3505,7 +4376,8 @@
           "isVerified": true,
           "createdAt": "2026-08-07T04:54:47.276Z"
         }
-      ]
+      ],
+      "activities": []
     },
     {
       "slug": "pluemploy",
@@ -3515,85 +4387,93 @@
         "category": "Couple",
         "ownerPhone": "0816830368",
         "themeConfig": {
-          "albums": [],
+          "albums": [
+            "วันเดทของเรา",
+            "ทริปด้วยกัน",
+            "คลิปความทรงจำ"
+          ],
           "coverX": 0,
           "coverY": 0,
           "isDemo": true,
-          "avatarX": 0,
+          "avatarX": 0.109375,
           "avatarY": 0,
-          "coverUrl": "/defaults/couple/cover/1.png",
+          "coverUrl": "/uploads/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1786549395116-deceased-cover-1786549395024-CleanShot 2569-07-25 at 15.23.09@2x.png",
           "features": {
             "feed": false,
-            "ebooks": false,
-            "family": false,
+            "ebooks": true,
+            "family": true,
             "memory": true,
             "videos": true,
             "gallery": true,
             "donation": false,
-            "condolence": false,
+            "activities": true,
+            "condolence": true,
             "announcement": true
           },
           "subjects": [
             {
               "name": "ธนกฤต (ปลื้ม)",
-              "note": "",
-              "role": "",
-              "breed": "",
-              "dislike": "",
+              "note": "สายแพลนทริปและของหวาน",
+              "role": "ฝ่ายชาย",
+              "avatarX": 0,
+              "avatarY": 0,
               "isAlive": true,
-              "favorite": "",
-              "avatarUrl": "",
-              "birthDate": "2023-01-15T00:00:00.000Z",
+              "avatarUrl": "/uploads/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1786549374765-deceased-avatar-1786549374681-30ead0c5-6672-4994-acaa-ee67f1536ec5.jpeg",
               "birthYear": 1996,
-              "deathDate": "2026-07-20T00:00:00.000Z",
-              "deathYear": null,
-              "personality": "",
-              "birthYearOnly": false,
-              "deathYearOnly": false
+              "avatarScale": 1,
+              "avatarRotate": 0,
+              "birthYearOnly": true
             },
             {
               "name": "พลอยไพลิน (พลอย)",
-              "note": "",
-              "role": "",
-              "breed": "",
-              "dislike": "",
+              "note": "สายถ่ายรูปและแพลนวันเดท",
+              "role": "ฝ่ายหญิง",
+              "avatarX": 0,
+              "avatarY": 0,
               "isAlive": true,
-              "favorite": "",
-              "avatarUrl": "",
-              "birthDate": "2023-01-15T00:00:00.000Z",
+              "avatarUrl": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971721991-gallery-1784971721951-30ead0c5-6672-4994-acaa-ee67f1536ec5.jpeg",
               "birthYear": 1997,
-              "deathDate": "2026-07-20T00:00:00.000Z",
-              "deathYear": null,
-              "personality": "",
-              "birthYearOnly": false,
-              "deathYearOnly": false
+              "avatarScale": 1,
+              "avatarRotate": 0,
+              "birthYearOnly": true
             }
           ],
-          "avatarUrl": "/defaults/couple/avatar/2.svg",
-          "biography": "ปลื้มกับพลอยเริ่มจากการเจอกันแบบไม่ได้ตั้งใจ แต่กลายเป็นคนที่อยากแชร์ทุกวันให้กัน\n\nเว็บนี้เก็บเส้นทางความรักของเรา — ตั้งแต่วันแรกที่พบกัน ทริปครั้งแรก วันย้ายเข้าบ้านเดียวกัน ไปจนถึงทุกครบรอบที่อยากจำไว้",
+          "avatarUrl": "/uploads/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1786549374765-deceased-avatar-1786549374681-30ead0c5-6672-4994-acaa-ee67f1536ec5.jpeg",
+          "biography": "ปลื้มกับพลอยเริ่มจากการเจอกันแบบไม่ได้ตั้งใจ แต่กลายเป็นคนที่อยากแชร์ทุกวันให้กัน\n\nเว็บนี้เก็บเส้นทางความรักของเรา — ตั้งแต่วันแรกที่คุยกันไม่รู้จบ ทริปแรกที่ไม่ต้องรีบ และวันที่เริ่มมี “บ้าน” ร่วมกัน",
           "heroStyle": "Classic",
-          "coverScale": 1,
+          "coverScale": 1.15,
           "fontFamily": "LINE Seed Sans TH",
-          "avatarScale": 1,
+          "heroBgMode": "image-and-wash",
+          "heroLayout": "framed-on-cover",
+          "avatarScale": 1.25,
           "coverRotate": 0,
-          "mediaAlbums": {},
+          "mediaAlbums": {
+            "0e111605-7aef-4f1e-9eea-02f1b052f4eb": "คลิปความทรงจำ",
+            "4b303b68-1894-424f-924a-9aac8f527ad2": "วันเดทของเรา",
+            "4dbb03ca-9fb6-43e4-b8d0-527c36ea7450": "วันเดทของเรา",
+            "75d718ca-5d61-41b4-afc7-a7389df332ae": "ทริปด้วยกัน",
+            "9ee90c24-0a40-4781-9dab-6e6e73d5c0ab": "วันเดทของเรา",
+            "d73d6ed7-7ae9-4339-8e49-db14d020d8a0": "ทริปด้วยกัน",
+            "dd8f9cf1-e66a-4287-969f-b78770ed4a05": "วันเดทของเรา",
+            "f87b4337-26ea-448d-9ea3-3549a2d1984c": "ทริปด้วยกัน"
+          },
           "announcement": {
             "mode": "template",
             "text": "บันทึกวันสำคัญและเส้นทางความรักของเรา",
             "style": "WARM_CREAM",
             "active": true,
-            "mapLink": "",
-            "pavilion": "",
+            "mapLink": "https://maps.app.goo.gl/example-couple-dinner",
+            "pavilion": "มุมโต๊ะริมหน้าต่าง",
             "dressCode": "ทุกวันสำคัญคือจุดเริ่มต้นของบทต่อไป — ปลื้ม & พลอย",
-            "waterDate": "",
-            "waterTime": "",
+            "waterDate": "20 ก.ค. 69",
+            "waterTime": "19:00 น.",
             "fontFamily": "LINE Seed Sans TH",
             "milestones": [
               {
                 "id": "56caeac4-7a86-4ce6-9f8c-f632daee3d28",
-                "date": "15 ม.ค. 66",
-                "note": "วันที่เริ่มต้นทุกอย่าง",
-                "time": "18:30 น.",
+                "date": "ประมาณปี 66",
+                "note": "วันที่เริ่มต้นทุกอย่าง — จำวันเป๊ะไม่ได้ แต่จำความรู้สึกได้",
+                "time": "ช่วงเย็น",
                 "place": "คาเฟ่ Ari, กรุงเทพฯ",
                 "title": "วันแรกที่เจอกัน"
               },
@@ -3622,8 +4502,8 @@
                 "title": "ครบรอบ 3 ปี"
               }
             ],
-            "templeName": "",
-            "contactPhone": "",
+            "templeName": "ร้านอาหารโปรดของเรา",
+            "contactPhone": "081-234-5678",
             "wreathPolicy": "",
             "cremationDate": "",
             "cremationTime": "",
@@ -3632,19 +4512,31 @@
             "abhidhammaDateRange": ""
           },
           "avatarRotate": 0,
-          "primaryColor": "#c29a7c",
-          "secondaryColor": "#dcc6a8",
+          "featureOrder": [
+            "announcement",
+            "gallery",
+            "videos",
+            "memory",
+            "activities",
+            "ebooks",
+            "family",
+            "condolence",
+            "donation"
+          ],
+          "primaryColor": "#8ba8bd",
+          "demoCustomized": true,
+          "secondaryColor": "#ded2af",
           "defaultFontSize": "NORMAL",
           "imageCoordSpace": "relative"
         },
         "visibility": "PUBLIC",
         "status": "ACTIVE",
         "expiredAt": "2036-08-04T04:54:47.317Z",
-        "donationPromptPay": "",
-        "donationAccountName": "",
+        "donationPromptPay": "0812345678",
+        "donationAccountName": "กองทุนแห่งความรัก ปลื้ม & พลอย (Demo)",
         "donationActive": false,
         "createdAt": "2026-07-25T07:45:14.134Z",
-        "updatedAt": "2026-08-07T04:54:47.325Z"
+        "updatedAt": "2026-08-13T02:38:07.963Z"
       },
       "menus": [
         {
@@ -3669,20 +4561,6 @@
         }
       ],
       "medias": [
-        {
-          "id": "0e111605-7aef-4f1e-9eea-02f1b052f4eb",
-          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
-          "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/couple-demo-pluemploy.mp4",
-          "thumbnailPath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/couple-demo-pluemploy-thumb.jpg",
-          "fileName": "Highlight ทริปเชียงใหม่",
-          "fileSize": "2429837",
-          "mimeType": "video/mp4",
-          "fileHash": "hash-couple-demo-pluemploy",
-          "album": "VIDEO",
-          "isDeleted": false,
-          "sortOrder": 1,
-          "createdAt": "2026-08-07T04:54:47.367Z"
-        },
         {
           "id": "4dbb03ca-9fb6-43e4-b8d0-527c36ea7450",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
@@ -3740,6 +4618,20 @@
           "createdAt": "2026-08-07T04:54:47.367Z"
         },
         {
+          "id": "0e111605-7aef-4f1e-9eea-02f1b052f4eb",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/couple-demo-pluemploy.mp4",
+          "thumbnailPath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/couple-demo-pluemploy-thumb.jpg",
+          "fileName": "Highlight ทริปเชียงใหม่",
+          "fileSize": "2429837",
+          "mimeType": "video/mp4",
+          "fileHash": "hash-couple-demo-pluemploy",
+          "album": "VIDEO",
+          "isDeleted": false,
+          "sortOrder": 1,
+          "createdAt": "2026-08-07T04:54:47.367Z"
+        },
+        {
           "id": "75d718ca-5d61-41b4-afc7-a7389df332ae",
           "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
           "filePath": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969261567-gallery-1784969261514-CleanShot 2569-07-25 at 15.23.29@2x.jpg",
@@ -3780,9 +4672,92 @@
           "isDeleted": false,
           "sortOrder": 0,
           "createdAt": "2026-08-07T04:54:47.367Z"
+        },
+        {
+          "id": "0da58f80-21fa-4393-ba9a-7f6d783396b9",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "filePath": "/uploads/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1786549374765-deceased-avatar-1786549374681-30ead0c5-6672-4994-acaa-ee67f1536ec5.jpeg",
+          "thumbnailPath": null,
+          "fileName": "deceased-avatar-1786549374681-30ead0c5-6672-4994-acaa-ee67f1536ec5.jpeg",
+          "fileSize": "165960",
+          "mimeType": "image/jpeg",
+          "fileHash": "hash-0qptsl",
+          "album": "PROFILE",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T15:42:54.766Z"
+        },
+        {
+          "id": "1f0a71d9-b0f9-49ec-ae03-2ce593aab818",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "filePath": "/uploads/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1786549395116-deceased-cover-1786549395024-CleanShot 2569-07-25 at 15.23.09@2x.png",
+          "thumbnailPath": null,
+          "fileName": "deceased-cover-1786549395024-CleanShot 2569-07-25 at 15.23.09@2x.png",
+          "fileSize": "768287",
+          "mimeType": "image/png",
+          "fileHash": "hash-2f3tqv",
+          "album": "PROFILE",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T15:43:15.117Z"
+        },
+        {
+          "id": "424c4829-1902-4755-a25e-00c20433ec13",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "filePath": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+          "thumbnailPath": null,
+          "fileName": "Highlight ความรักของเรา (YouTube Demo)",
+          "fileSize": "0",
+          "mimeType": "video/youtube",
+          "fileHash": "youtube-pluemploy-demo",
+          "album": "VIDEO",
+          "isDeleted": false,
+          "sortOrder": 0,
+          "createdAt": "2026-08-12T15:47:06.354Z"
         }
       ],
-      "condolences": [],
+      "condolences": [
+        {
+          "id": "4e99dcf7-2447-498a-a727-15fa5dfa6ccf",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "senderName": "มิ้นท์",
+          "relationship": "เพื่อน",
+          "message": "ชอบโมเมนต์ของพวกเธอมาก ขอให้มีความสุขและดูแลกันดี ๆ นะ",
+          "type": "GENERAL",
+          "isApproved": true,
+          "createdAt": "2026-07-10T03:00:00.000Z"
+        },
+        {
+          "id": "531adf09-0bc9-4b2e-8396-a3ef0b880afe",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "senderName": "ต้น & บี",
+          "relationship": "เพื่อนคู่",
+          "message": "ยินดีกับครบรอบด้วยนะ อยากไปดินเนอร์ด้วยกันอีกรอบ!",
+          "type": "GENERAL",
+          "isApproved": true,
+          "createdAt": "2026-07-12T07:00:00.000Z"
+        },
+        {
+          "id": "644576fa-847b-4f88-939d-15a53904298c",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "senderName": "คุณแม่ปลื้ม",
+          "relationship": "ครอบครัว",
+          "message": "ลูกทั้งสองคนน่ารักมาก ขอให้ดูแลกันและเติบโตไปด้วยกันอย่างอบอุ่น",
+          "type": "FAMILY",
+          "isApproved": true,
+          "createdAt": "2026-07-15T02:30:00.000Z"
+        },
+        {
+          "id": "df2ea89e-45e0-4111-baa1-2d8b7c3baa8b",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "senderName": "เพื่อนใหม่จากงาน",
+          "relationship": "คนรู้จัก",
+          "message": "ขอร่วมส่งคำอวยพรให้นะคะ รักกันนาน ๆ (รอกลั่นกรอง)",
+          "type": "GENERAL",
+          "isApproved": false,
+          "createdAt": "2026-08-12T15:47:06.390Z"
+        }
+      ],
       "memoryPosts": [
         {
           "id": "32226788-34eb-4017-a861-351600ea0b78",
@@ -3851,9 +4826,188 @@
           "createdAt": "2026-08-07T04:54:47.382Z"
         }
       ],
-      "familyMembers": [],
-      "ebooks": [],
-      "donations": []
+      "familyMembers": [
+        {
+          "id": "4c09f28f-0bba-43f6-a207-67dcef01202d",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "name": "คุณแม่ปลื้ม",
+          "nickname": "แม่ปลื้ม",
+          "relationship": "PARENT_1",
+          "birthYear": "2510",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971702290-gallery-1784971702194-6a7ed7c6-b5a9-4119-9b4c-b5d22879ffbb.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-13T02:38:08.008Z"
+        },
+        {
+          "id": "2a93e7f7-f667-4d81-9cf9-f140f83e770b",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "name": "คุณพ่อพลอย",
+          "nickname": "พ่อพลอย",
+          "relationship": "PARENT_2",
+          "birthYear": "2508",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971710951-gallery-1784971710896-dddd8cfc-9135-415b-8b50-c9716f879f31.jpeg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-13T02:38:08.016Z"
+        },
+        {
+          "id": "00dd467c-348c-4330-a9cf-54b16134c804",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "name": "น้องทราย",
+          "nickname": "น้องพลอย",
+          "relationship": "SIBLING",
+          "birthYear": "2543",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969245414-gallery-1784969245203-CleanShot 2569-07-25 at 15.23.09@2x.jpg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-13T02:38:08.023Z"
+        },
+        {
+          "id": "ea5f68e3-543b-4947-b22a-ea4d4b6c8eab",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "name": "พี่ต้น",
+          "nickname": "พี่ปลื้ม",
+          "relationship": "SIBLING",
+          "birthYear": "2535",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969254875-gallery-1784969254813-CleanShot 2569-07-25 at 15.23.19@2x.jpg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-13T02:38:08.026Z"
+        },
+        {
+          "id": "8bb7f75a-39fd-4a27-b9c2-349d0b0f2b97",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "name": "ป้าแจ๋ว",
+          "nickname": "ป้าที่รัก",
+          "relationship": "CHILD",
+          "birthYear": "2505",
+          "deathYear": null,
+          "isDeceased": false,
+          "hideAge": false,
+          "avatarUrl": "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969261567-gallery-1784969261514-CleanShot 2569-07-25 at 15.23.29@2x.jpg",
+          "avatarScale": 1,
+          "avatarX": 0,
+          "avatarY": 0,
+          "avatarRotate": 0,
+          "spouseOfId": null,
+          "parentId": null,
+          "createdAt": "2026-08-13T02:38:08.030Z"
+        }
+      ],
+      "ebooks": [
+        {
+          "id": "5ba437d2-f4bc-420d-8bee-5581f43e52f0",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "สมุดภาพเส้นทางความรัก ปลื้ม & พลอย",
+          "author": "ปลื้ม & พลอย",
+          "pdfUrl": "",
+          "totalPages": 4,
+          "pages": [
+            "บทนำ\n\nสมุดภาพเล่มนี้เก็บโมเมนต์สั้น ๆ จากเส้นทางความรักของเรา ตั้งแต่วันแรกที่เจอกันจนถึงวันที่เริ่มมีบ้านร่วมกัน",
+            "หน้า 2: วันแรกที่ Ari\n\nคุยกันจนลืมดูนาฬิกา คาเฟ่เล็ก ๆ กลายเป็นจุดเริ่มต้นของทุกอย่างที่ตามมา",
+            "หน้า 3: ทริปเชียงใหม่\n\nทริปแรกที่ไม่ต้องรีบไปไหน — แค่ได้อยู่ด้วยกันก็พอ",
+            "บทส่งท้าย\n\nขอให้เราเก็บความทรงจำดี ๆ ไว้ด้วยกันต่อไป และสร้างวันสำคัญใหม่ ๆ อีกมากมาย\n\nด้วยรัก\nปลื้ม & พลอย"
+          ],
+          "createdAt": "2026-08-13T02:38:08.057Z"
+        },
+        {
+          "id": "8e9f6685-acf6-4056-9b10-608dce5b81eb",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "100 สิ่งที่อยากทำด้วยกัน",
+          "author": "ปลื้ม & พลอย",
+          "pdfUrl": "",
+          "totalPages": 3,
+          "pages": [
+            "รายการความฝันเล็ก ๆ\n\nรวมสิ่งที่อยากทำด้วยกัน ทั้งใกล้และไกล ทั้งจริงจังและขำ ๆ",
+            "หน้า 2: ใกล้บ้าน\n\nดูหนังกลางแจ้ง / ทำอาหารด้วยกัน / ขี่จักรยานรอบสวน / ไปตลาดนัดวันหยุด",
+            "หน้า 3: ไกลบ้าน\n\nทริปทะเล / เดินป่าเบา ๆ / เที่ยวเมืองที่ยังไม่เคยไป / ปีใหม่ด้วยกันทุกปี"
+          ],
+          "createdAt": "2026-08-13T02:38:08.057Z"
+        }
+      ],
+      "donations": [],
+      "activities": [
+        {
+          "id": "d2dca27f-f44e-4b7f-813a-f08a984fd618",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "ครบรอบ 3 ปี — ดินเนอร์ร้านโปรด",
+          "description": "จองโต๊ะมุมเงียบ ๆ สั่งเมนูที่เคยกินวันแรกที่คบกัน และเขียนการ์ดสั้น ๆ ให้กันอีกครั้ง",
+          "images": [
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971702290-gallery-1784971702194-6a7ed7c6-b5a9-4119-9b4c-b5d22879ffbb.jpeg",
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971710951-gallery-1784971710896-dddd8cfc-9135-415b-8b50-c9716f879f31.jpeg",
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969245414-gallery-1784969245203-CleanShot 2569-07-25 at 15.23.09@2x.jpg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-07-19T17:00:00.000Z",
+          "isRecurring": true,
+          "sortOrder": 0,
+          "createdAt": "2026-08-13T02:38:08.039Z",
+          "updatedAt": "2026-08-13T02:38:08.039Z"
+        },
+        {
+          "id": "481a1586-44c7-4fc5-a473-0fd6fad26606",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "แพลนเดทดูหนังกลางแจ้ง",
+          "description": "หาหนังที่ทั้งคู่ยังไม่เคยดู เตรียมผ้าห่มและของว่าง แล้วถ่ายรูปคู่ก่อนหนังเริ่ม",
+          "images": [
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969245414-gallery-1784969245203-CleanShot 2569-07-25 at 15.23.09@2x.jpg",
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969254875-gallery-1784969254813-CleanShot 2569-07-25 at 15.23.19@2x.jpg",
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969261567-gallery-1784969261514-CleanShot 2569-07-25 at 15.23.29@2x.jpg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-09-04T17:00:00.000Z",
+          "isRecurring": false,
+          "sortOrder": 1,
+          "createdAt": "2026-08-13T02:38:08.039Z",
+          "updatedAt": "2026-08-13T02:38:08.039Z"
+        },
+        {
+          "id": "55f796ab-926c-400d-b78b-8de6bcb749bf",
+          "websiteId": "350b0b44-5a07-4173-aa75-0ce6e78ab71c",
+          "title": "ทริปหัวหินแบบชิล ๆ",
+          "description": "ขับรถไปด้วยกัน ไม่ต้องแพลนแน่น — เช้ากินซีฟู้ด บ่ายเดินชายหาด เย็นดูพระอาทิตย์ตก",
+          "images": [
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969261567-gallery-1784969261514-CleanShot 2569-07-25 at 15.23.29@2x.jpg",
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784969266780-gallery-1784969266742-CleanShot 2569-07-25 at 15.27.45@2x.jpg",
+            "/demo-media/350b0b44-5a07-4173-aa75-0ce6e78ab71c/1784971721991-gallery-1784971721951-30ead0c5-6672-4994-acaa-ee67f1536ec5.jpeg"
+          ],
+          "pdfUrl": null,
+          "eventDate": "2026-11-13T17:00:00.000Z",
+          "isRecurring": false,
+          "sortOrder": 2,
+          "createdAt": "2026-08-13T02:38:08.039Z",
+          "updatedAt": "2026-08-13T02:38:08.039Z"
+        }
+      ]
     }
   ]
 }

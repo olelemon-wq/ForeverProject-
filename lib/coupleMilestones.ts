@@ -105,31 +105,38 @@ export function getCoupleMilestonesFromAnnouncement(
 }
 
 /** Split common Thai date strings into a compact day + month/year block for timeline cards. */
+export type MilestoneDateDisplay =
+  | { mode: 'exact'; day: string; monthYear: string }
+  | { mode: 'fuzzy'; label: string };
+
 export function parseMilestoneDateDisplay(
-  date: string
-): { day: string; monthYear: string } | null {
+  date: string,
+): MilestoneDateDisplay | null {
   const trimmed = date.trim();
   if (!trimmed) return null;
 
-  const shortMatch = trimmed.match(/(\d{1,2})\s+([ก-๙a-zA-Z\.]+)\s*\.?\s*(\d{2,4})/);
+  const shortMatch = trimmed.match(/^(\d{1,2})\s+([ก-๙a-zA-Z\.]+)\s*\.?\s*(\d{2,4})$/);
   if (shortMatch) {
     return {
+      mode: 'exact',
       day: shortMatch[1],
       monthYear: `${shortMatch[2].replace(/\.$/, '')} ${shortMatch[3]}`,
     };
   }
 
   const longMatch = trimmed.match(
-    /(?:วัน\S*\s+)?(?:ที่\s+)?(\d{1,2})\s+([ก-๙a-zA-Z\.]+)\s*\.?\s*(\d{2,4})/
+    /^(?:วัน\S*\s+)?(?:ที่\s+)?(\d{1,2})\s+([ก-๙a-zA-Z\.]+)\s*\.?\s*(\d{2,4})$/,
   );
   if (longMatch) {
     return {
+      mode: 'exact',
       day: longMatch[1],
       monthYear: `${longMatch[2].replace(/\.$/, '')} ${longMatch[3]}`,
     };
   }
 
-  return { day: '•', monthYear: trimmed };
+  // Fuzzy / approximate dates — show as a single text label
+  return { mode: 'fuzzy', label: trimmed };
 }
 
 export function formatMilestoneTime(time?: string): string | null {

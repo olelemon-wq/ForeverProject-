@@ -235,21 +235,38 @@ const getScheduleLabels = (category: string) => {
       invitePlaceholder: 'เชิญชวนมาร่วมพบปะและสร้างความทรงจำด้วยกัน',
     };
   }
+  if (category === 'Family Legacy') {
+    return {
+      subtitle: 'กำหนดการและวันรวมใจสายใยครอบครัว',
+      item1: '1. กิจกรรมและงานสำคัญของครอบครัว',
+      item1Placeholder: 'เช่น วันเสาร์ที่ 20 ก.ค. 68',
+      item2: '2. งานเลี้ยงพบปะสังสรรค์ครอบครัวใหญ่',
+      item2Placeholder: 'เช่น วันอาทิตย์ที่ 21 ก.ค. 68',
+      item2TimePlaceholder: 'เช่น 10:00 น.',
+      item3: '3. พิธีร่วมใจและกิจกรรมรำลึก (ถ้ามี)',
+      item3Placeholder: 'เช่น วันศุกร์ที่ 19 ก.ค. 68',
+      venueLabel: 'สถานที่จัดงาน (VENUE)',
+      venuePlaceholder: 'เช่น บ้านคุณย่า / สวนสาธารณะ / รีสอร์ท',
+      pavilionLabel: 'ห้องประชุม / โซนจัดงาน (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น ห้องรับรอง / ลานสนามหญ้า',
+      invitePlaceholder: 'เชิญร่วมพบปะและสืบสานสายใยครอบครัว',
+    };
+  }
   if (category === 'Pet Memorial') {
     return {
-      subtitle: 'กำหนดการอำลาและการเดินทางกลับดาว',
-      item1: '1. พิธีอำลา / กล่าวคำอาลัย',
+      subtitle: 'กำหนดการอำลาและวันสำคัญของน้อง',
+      item1: '1. พิธีอำลา / ส่งความคิดถึง',
       item1Placeholder: 'เช่น วันเสาร์ที่ 12 ธ.ค. 67',
-      item2: '2. พิธีฌาปนกิจสัตว์เลี้ยง',
+      item2: '2. พิธีส่งน้องกลับดาว',
       item2Placeholder: 'เช่น วันเสาร์ที่ 12 ธ.ค. 67',
       item2TimePlaceholder: 'เช่น 14:00 น.',
-      item3: '3. พิธีลอยอังคารอัฐิ / โปรยเเถ้ากระดูก',
+      item3: '3. พิธีรำลึก / โปรยเถ้า (ถ้ามี)',
       item3Placeholder: 'เช่น วันอาทิตย์ที่ 13 ธ.ค. 67',
-      venueLabel: 'สถานที่จัดพิธี (VENUE)',
-      venuePlaceholder: 'เช่น วัดคลองเตยใน (แผนกสัตว์เลี้ยง)',
-      pavilionLabel: 'ศาลา / โซนจัดพิธี (ถ้ามี)',
-      pavilionPlaceholder: 'เช่น ศาลาน้ำตาแสงไต้ หรือ โซน B',
-      invitePlaceholder: 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาวเสร็จสมบูรณ์',
+      venueLabel: 'สถานที่จัดพิธี',
+      venuePlaceholder: 'เช่น คลินิกสัตว์เลี้ยง / บ้าน / สวนที่รัก',
+      pavilionLabel: 'โซนจัดพิธี / มุมรวมตัว (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น มุมสวนหน้าบ้าน / ห้องรับรอง',
+      invitePlaceholder: 'เรียนเชิญร่วมส่งน้องด้วยความรักและความคิดถึง',
     };
   }
   return {
@@ -789,7 +806,7 @@ function EditorWorkspace() {
                     <span className="text-xs font-bold text-stone-600">
                       {siteCategory === 'Couple' || siteCategory === 'Wedding' ? 'รายชื่อคู่รัก' :
                        siteCategory === 'Pet Memorial' ? 'รายชื่อสัตว์เลี้ยง' :
-                       siteCategory === 'Family Legacy' ? 'รายชื่อผู้ดูแล/บรรพบุรุษ' :
+                       siteCategory === 'Family Legacy' ? 'บุคคลสำคัญในครอบครัว' :
                        'รายชื่อผู้ล่วงลับ'}
                     </span>
                     {!(siteCategory === 'Couple' || siteCategory === 'Wedding') && (

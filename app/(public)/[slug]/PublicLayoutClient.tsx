@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ChevronUp, Flame, Menu as MenuIcon, X, Type } from 'lucide-react';
+import { ArrowLeft, ChevronUp, Menu as MenuIcon, X, Type } from 'lucide-react';
 import { getEnabledFeatures, buildPublicNavItems, getFeatureOrderFromThemeConfig } from '@/lib/features';
 import { getFeatureLabel } from '@/lib/categories';
-import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
+import { toRelativeOffset } from '@/lib/imagePosition';
 import { resolveDefaultMediaSrc } from '@/lib/defaultMedia';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 import PublicOverflowNav from '@/components/public/PublicOverflowNav';
@@ -121,66 +121,15 @@ export default function PublicLayoutClient({
     >
 
       {/* Header */}
-      {tenant.category === 'Memorial' ? (
-        <MemorialHero
-          name={tenant.name}
-          coverUrl={coverUrl || null}
-          avatarUrl={config.avatarUrl || null}
-          coverTransform={{ x: coverX, y: coverY, scale: coverScale, rotate: coverRotate }}
-          avatarTransform={{ x: avatarX, y: avatarY, scale: avatarScale, rotate: avatarRotate }}
-          layout={config.heroLayout}
-          bgMode={config.heroBgMode}
-        />
-      ) : (
-      <header className={`relative py-16 text-center border-b border-stone-200/60 overflow-hidden transition-all duration-500 ${
-        coverUrl ? 'bg-stone-955 text-white py-20 sm:py-24' : 'bg-white'
-      }`}>
-        {coverUrl ? (
-          <div className="absolute inset-0 w-full h-full pointer-events-none">
-            <img 
-              src={coverUrl} 
-              alt="Cover Image" 
-              className="w-full h-full object-cover" 
-              style={imageTransformStyle({
-                x: coverX,
-                y: coverY,
-                scale: coverScale,
-                rotate: coverRotate,
-              })}
-            />
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-[0.5px]" />
-          </div>
-        ) : (
-          <div 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full blur-[100px] pointer-events-none opacity-10"
-            style={{ backgroundColor: 'var(--theme-primary)' }}
-          />
-        )}
-        <div className="max-w-5xl mx-auto px-4 relative z-10">
-          <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 bg-stone-50 mx-auto shadow-md overflow-hidden flex items-center justify-center mb-4 sm:mb-5 animate-fade-in relative"
-               style={{ borderColor: 'var(--theme-primary)' }}>
-            {config.avatarUrl ? (
-              <img 
-                src={resolveMediaSrc(config.avatarUrl)} 
-                alt="Avatar"
-                className="w-full h-full object-cover"
-                style={imageTransformStyle({
-                  x: avatarX,
-                  y: avatarY,
-                  scale: avatarScale,
-                  rotate: avatarRotate,
-                })}
-              />
-            ) : (
-              <Flame className="w-12 h-12 sm:w-14 sm:h-14 animate-pulse" style={{ color: 'var(--theme-primary)' }} />
-            )}
-          </div>
-          <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight mb-2 ${coverUrl ? 'text-white drop-shadow-md' : 'text-stone-900'}`}>
-            {tenant.name}
-          </h1>
-        </div>
-      </header>
-      )}
+      <MemorialHero
+        name={tenant.name}
+        coverUrl={coverUrl || null}
+        avatarUrl={resolveMediaSrc(resolveDefaultMediaSrc(config.avatarUrl || '')) || null}
+        coverTransform={{ x: coverX, y: coverY, scale: coverScale, rotate: coverRotate }}
+        avatarTransform={{ x: avatarX, y: avatarY, scale: avatarScale, rotate: avatarRotate }}
+        layout={config.heroLayout}
+        bgMode={config.heroBgMode}
+      />
 
       {/* Dynamic Navigation Menu */}
       <nav className="border-b border-stone-200/60 bg-white/85 backdrop-blur-sm sticky top-0 z-40 shadow-xs">

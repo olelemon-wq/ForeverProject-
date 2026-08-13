@@ -53,7 +53,7 @@ export default function DonationClientForm({
   const [success, setSuccess] = useState('');
 
   const copy = getDonationFormCopy(category);
-  const { label: featureLabel, description: featureDescription } = getFeatureLabel(
+  const { label: featureLabel, pageDescription: featureDescription } = getFeatureLabel(
     category || 'Memorial',
     'donation',
   );
@@ -216,7 +216,9 @@ export default function DonationClientForm({
 
             <div className="space-y-3 text-center">
               <div>
-                <p className="text-xs font-semibold text-stone-400">ชื่อบัญชีรับเงิน</p>
+                <p className="text-xs font-semibold text-stone-400">
+                  {category === 'Couple' ? 'ชื่อเป้าหมาย' : 'ชื่อบัญชีรับเงิน'}
+                </p>
                 <p className="mt-0.5 text-sm font-bold text-stone-900">{donationAccountName}</p>
               </div>
               <div>

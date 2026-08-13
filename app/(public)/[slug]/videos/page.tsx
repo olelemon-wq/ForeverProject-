@@ -62,7 +62,7 @@ export default async function PublicVideosPage(props: { params: Promise<{ slug: 
   return (
     <div className="animate-fade-in">
       {(() => {
-        const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'videos');
+        const { label: fLabel, pageDescription: fDesc } = getFeatureLabel(tenant.category, 'videos');
         return (
           <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-8 sm:p-12 shadow-[0_4px_20px_rgba(0,0,0,0.015)] space-y-8 relative overflow-hidden`}>
             {/* Page Header with CategoryOrnament and Wing lines */}

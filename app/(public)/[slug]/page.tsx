@@ -12,7 +12,11 @@ import MemorialScheduleCard from '@/components/announcement/MemorialScheduleCard
 import LifeStorySection from '@/components/public/LifeStorySection';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { getCategoryEbookMocks, toEbookSummaries } from '@/lib/ebookMocks';
-import { lifeStoryHasContent, normalizeLifeStory } from '@/lib/lifeStory';
+import {
+  categoryUsesLifeStory,
+  lifeStoryHasContent,
+  normalizeLifeStory,
+} from '@/lib/lifeStory';
 import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { getCategoryJourney } from '@/lib/categories';
 import { filterGalleryMedia } from '@/lib/galleryMedia';
@@ -94,24 +98,24 @@ const getScheduleLabels = (category: string) => {
   }
   if (category === 'Pet Memorial') {
     return {
-      title: 'กำหนดการอำลาและการเดินทางกลับดาว',
-      item1: '1. พิธีอำลา / กล่าวคำอาลัย',
-      item2: '2. พิธีฌาปนกิจสัตว์เลี้ยง',
-      item3: '3. พิธีลอยอังคารอัฐิ / โปรยเถ้ากระดูก',
-      venueTitle: 'สถานที่จัดพิธี (VENUE)',
-      venueLabel: 'วัดจัดพิธี / สถานที่จัดงาน',
+      title: 'กำหนดการอำลาและวันสำคัญของน้อง',
+      item1: '1. พิธีอำลา / ส่งความคิดถึง',
+      item2: '2. พิธีส่งน้องกลับดาว',
+      item3: '3. พิธีรำลึก / โปรยเถ้า (ถ้ามี)',
+      venueTitle: 'สถานที่จัดพิธี',
+      venueLabel: 'สถานที่จัดพิธี',
       venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
-      footerText: 'ขอขอบคุณทุกท่านที่มาร่วมส่งน้องกลับดาวและแบ่งปันความรัก — ครอบครัว',
-      guidelinesTitle: 'ข้อแนะนำการร่วมส่งน้องกลับดาว',
+      footerText: 'ขอบคุณทุกคนที่มาร่วมส่งความรักและความคิดถึงให้น้อง — ครอบครัว',
+      guidelinesTitle: 'ข้อมูลเพิ่มเติมสำหรับผู้มาร่วม',
       contactLabel: 'ติดต่อประสานงาน:',
     };
   }
   if (category === 'Family' || category === 'Family Legacy') {
     return {
       title: 'กำหนดการและวันรวมใจสายใยครอบครัว',
-      item1: '1. กิจกรรมสืบสานประวัติศาสตร์ตระกูล',
+      item1: '1. กิจกรรมและงานสำคัญของครอบครัว',
       item2: '2. งานเลี้ยงพบปะสังสรรค์ครอบครัวใหญ่',
-      item3: '3. พิธีการเคารพและรำลึกบรรพบุรุษ',
+      item3: '3. พิธีร่วมใจและกิจกรรมรำลึก (ถ้ามี)',
       venueTitle: 'สถานที่จัดงาน (VENUE)',
       venueLabel: 'สถานที่นัดหมาย / บ้านครอบครัว',
       venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
@@ -153,8 +157,8 @@ const getInviteFallback = (category: string) => {
   if (category === 'Couple') return 'บันทึกวันสำคัญและเส้นทางความรักของเรา';
   if (category === 'Wedding') return 'กราบเรียนเชิญญาติสนิทและมิตรสหายมาร่วมยินดี';
   if (category === 'Friends') return 'เชิญชวนมาร่วมพบปะและสร้างความทรงจำด้วยกัน';
-  if (category === 'Pet Memorial') return 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาว';
-  if (category === 'Family' || category === 'Family Legacy') return 'เชิญชวนร่วมพบปะและสืบสานสายใยครอบครัว';
+  if (category === 'Pet Memorial') return 'เรียนเชิญร่วมส่งน้องด้วยความรักและความคิดถึง';
+  if (category === 'Family' || category === 'Family Legacy') return 'เชิญร่วมพบปะและสืบสานสายใยครอบครัว';
   return 'กราบเรียนเชิญด้วยความเคารพอย่างสูง';
 };
 
@@ -227,7 +231,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
       return "เรื่องราวของสัตว์เลี้ยงแสนรักผู้เป็นสมาชิกคนสำคัญของบ้าน น้องคอยมอบพลังบวก รอยยิ้ม และความรักที่ไม่มีเงื่อนไขให้กับเราในทุกช่วงเวลา...";
     }
     if (tenant.category === 'Family Legacy') {
-      return "บันทึกเรื่องราวประวัติวงศ์ตระกูล บรรพบุรุษผู้บุกเบิก และมรดกทางคำสอนอันทรงคุณค่าที่สืบทอดสายใยความผูกพันจากรุ่นสู่รุ่น...";
+      return "เก็บเรื่องราวของครอบครัว ภาพความทรงจำ และคำสอนที่ส่งต่อจากรุ่นสู่รุ่นไว้ด้วยกัน...";
     }
     if (tenant.category === 'Friends') {
       return "บันทึกเรื่องราวการเดินทางของมิตรภาพและเพื่อนฝูง รวบรวมทุกวีรกรรม เสียงหัวเราะ และความทรงจำวันวานที่ไม่มีวันจางหาย...";
@@ -289,7 +293,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
     if (tenant.category === 'Couple') return 'สมุดภาพความรักแนะนำ';
     if (tenant.category === 'Pet Memorial') return 'บันทึกการเดินทางของน้องและสมุดภาพแนะนำ';
     if (tenant.category === 'Friends') return 'หนังสือรุ่นและบันทึกความทรงจำแนะนำ';
-    if (tenant.category === 'Family Legacy') return 'หนังสือประวัติตระกูลและบันทึกแนะนำ';
+    if (tenant.category === 'Family Legacy') return 'หนังสือครอบครัวและบันทึกแนะนำ';
     return 'หนังสือที่ระลึกและธรรมทานแนะนำ';
   })();
   const ebooksCtaText = (() => {
@@ -584,9 +588,12 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
       )}
 
       {(() => {
-        const memorialLife = normalizeLifeStory(config?.lifeStory, config?.biography || '');
-        if (tenant.category === 'Memorial' && lifeStoryHasContent(memorialLife)) {
-          return <LifeStorySection data={memorialLife} />;
+        const lifeData = normalizeLifeStory(config?.lifeStory, config?.biography || '');
+        if (
+          categoryUsesLifeStory(tenant.category) &&
+          lifeStoryHasContent(lifeData, tenant.category)
+        ) {
+          return <LifeStorySection data={lifeData} category={tenant.category} />;
         }
         return (
           <div className={`${FEATURE_CARD_CLASS} rounded-3xl border border-stone-200/80 bg-white p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] text-left`}>

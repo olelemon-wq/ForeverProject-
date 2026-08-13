@@ -6,22 +6,31 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  LIFE_STORY_SECTIONS,
   createTimelineItem,
+  getLifeStoryCategoryBadge,
+  getLifeStoryMenuHint,
+  getLifeStoryMenuTitle,
+  getLifeStorySections,
+  getTimelineAddLabel,
+  getTimelineEmptyHint,
+  getLifeStoryFieldValue,
   type LifeStoryData,
   type LifeStorySectionId,
 } from '@/lib/lifeStory';
 
 export default function LifeStoryEditor({
+  category,
   section,
   value,
   onChange,
 }: {
+  category: string;
   section: LifeStorySectionId;
   value: LifeStoryData;
   onChange: (next: LifeStoryData) => void;
 }) {
-  const active = LIFE_STORY_SECTIONS.find((s) => s.id === section)!;
+  const sections = getLifeStorySections(category);
+  const active = sections.find((s) => s.id === section) ?? sections[0]!;
 
   const patch = (partial: Partial<LifeStoryData>) => {
     onChange({ ...value, ...partial });
@@ -36,11 +45,13 @@ export default function LifeStoryEditor({
           </span>
           <div className="min-w-0 space-y-1">
             <p className="text-xs font-bold uppercase tracking-widest text-stone-400">
-              Memorial
+              {getLifeStoryCategoryBadge(category)}
             </p>
-            <h4 className="text-base font-bold text-stone-900">เรื่องราวชีวิต</h4>
+            <h4 className="text-base font-bold text-stone-900">
+              {getLifeStoryMenuTitle(category)}
+            </h4>
             <p className="text-xs leading-relaxed text-stone-500">
-              เลือกหัวข้อจากเมนูด้านซ้ายเพื่อกรอกชีวประวัติ เกียรติประวัติ มรดก และคำสอน
+              {getLifeStoryMenuHint(category)}
             </p>
           </div>
         </div>
@@ -53,7 +64,7 @@ export default function LifeStoryEditor({
 
       {section !== 'timeline' ? (
         <Textarea
-          value={value[section]}
+          value={getLifeStoryFieldValue(value, section)}
           onChange={(e) => patch({ [section]: e.target.value })}
           rows={10}
           placeholder={active.placeholder}
@@ -63,7 +74,7 @@ export default function LifeStoryEditor({
         <div className="space-y-3">
           {value.timeline.length === 0 ? (
             <p className="rounded-xl border border-dashed border-stone-200 bg-stone-50/60 px-4 py-6 text-center text-xs text-stone-500">
-              ยังไม่มีจุดบนเส้นทางชีวิต — กดเพิ่มด้านล่าง
+              {getTimelineEmptyHint(category)}
             </p>
           ) : (
             value.timeline.map((item, index) => (
@@ -152,7 +163,7 @@ export default function LifeStoryEditor({
             }
           >
             <Plus className="size-4" />
-            เพิ่มจุดบนเส้นทางชีวิต
+            {getTimelineAddLabel(category)}
           </Button>
         </div>
       )}

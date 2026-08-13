@@ -159,7 +159,7 @@ export default function CoupleJourneyCard({
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-              {latestDate && (
+              {latestDate?.mode === 'exact' && (
                 <div
                   className="flex shrink-0 items-center gap-3 sm:w-[5rem] sm:flex-col sm:items-center sm:gap-0"
                 >
@@ -185,6 +185,15 @@ export default function CoupleJourneyCard({
                 >
                   {latest.title || 'วันสำคัญล่าสุด'}
                 </h3>
+
+                {latestDate?.mode === 'fuzzy' && (
+                  <p
+                    className="text-sm font-semibold"
+                    style={{ color: 'var(--milestone-secondary)' }}
+                  >
+                    {latestDate.label}
+                  </p>
+                )}
 
                 {(latestTime || latest.place) && (
                   <div

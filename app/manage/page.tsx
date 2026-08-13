@@ -10,6 +10,7 @@ import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categ
 import {
   DEFAULT_FEATURE_ORDER,
   getFeatureOrderFromThemeConfig,
+  normalizeFeatureOrder,
   type FeatureKey,
 } from '@/lib/features';
 import { clampImagePan, imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
@@ -27,14 +28,18 @@ import LifeStoryEditor from '@/components/manage/LifeStoryEditor';
 import ActivitiesEditor from '@/components/manage/ActivitiesEditor';
 import MemorialHero from '@/components/public/MemorialHero';
 import {
+  categoryHidesGeneralBiography,
+  categoryUsesLifeStory,
   emptyLifeStory,
+  getDefaultLifeStorySection,
+  getLifeStoryMenuTitle,
+  getLifeStorySections,
   normalizeLifeStory,
-  LIFE_STORY_SECTIONS,
   type LifeStoryData,
   type LifeStorySectionId,
 } from '@/lib/lifeStory';
 import {
-  MEMORIAL_HERO_LAYOUTS,
+  HERO_LAYOUTS,
   normalizeHeroBgMode,
   normalizeHeroLayout,
   type HeroBgMode,
@@ -268,9 +273,9 @@ function getSubjectEditorCopy(category: string) {
   }
   if (category === 'Family Legacy') {
     return {
-      sectionTitle: 'รายชื่อต้นตระกูล / ผู้ได้รับการรำลึก',
-      sectionHint: 'เพิ่มหรือแก้ไขรายชื่อที่เกี่ยวข้องกับหน้านี้ แล้วกดบันทึกการตั้งค่าด้านล่าง',
-      cardTitle: (i: number) => `ข้อมูลท่านที่ ${i + 1}`,
+      sectionTitle: 'บุคคลสำคัญในครอบครัว',
+      sectionHint: 'เพิ่มหรือแก้ไขรายชื่อสมาชิกที่แสดงบนหน้านี้ แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      cardTitle: (i: number) => `สมาชิกคนที่ ${i + 1}`,
       nameLabel: 'ชื่อ-นามสกุล',
       namePlaceholder: 'เช่น คุณปู่บุญส่ง รักดี',
       aliveLabel: 'ท่านยังมีชีวิตอยู่',
@@ -425,9 +430,9 @@ const getScheduleLabels = (category: string) => {
       venuePlaceholder: 'เช่น ร้านอาหาร / ทริปท่องเที่ยว / บ้าน',
       pavilionLabel: 'รายละเอียดเพิ่มเติม (ถ้ามี)',
       pavilionPlaceholder: 'เช่น โซนสวน / ห้อง VIP',
-      invitePlaceholder: 'บันทึกวันสำคัญและเส้นทางความรักของเรา',
+      invitePlaceholder: 'บันทึกเส้นทางความรักของเรา — จำวันไม่ได้ก็เล่าโมเมนต์ได้',
       guidelinesTitle: 'โน้ตเพิ่มเติม',
-      dateLabel: 'วันสำคัญ',
+      dateLabel: 'วันที่ (ไม่บังคับ)',
       timeLabel: 'เวลา (ไม่บังคับ)',
       notesLabel: 'โน้ต / รายละเอียด',
       notesPlaceholder: 'เช่น ธีมสี, สิ่งที่อยากบันทึก, รายละเอียดเพิ่มเติม',
@@ -475,22 +480,44 @@ const getScheduleLabels = (category: string) => {
       meetupTitle: 'นัดพบปะกลุ่ม',
     };
   }
+  if (category === 'Family Legacy') {
+    return {
+      subtitle: 'กำหนดการและวันรวมใจสายใยครอบครัว',
+      item1: '1. กิจกรรมและงานสำคัญของครอบครัว',
+      item1Placeholder: 'เช่น วันเสาร์ที่ 20 ก.ค. 68',
+      item2: '2. งานเลี้ยงพบปะสังสรรค์ครอบครัวใหญ่',
+      item2Placeholder: 'เช่น วันอาทิตย์ที่ 21 ก.ค. 68',
+      item2TimePlaceholder: 'เช่น 10:00 น.',
+      item3: '3. พิธีร่วมใจและกิจกรรมรำลึก (ถ้ามี)',
+      item3Placeholder: 'เช่น วันศุกร์ที่ 19 ก.ค. 68',
+      venueLabel: 'สถานที่จัดงาน (VENUE)',
+      venuePlaceholder: 'เช่น บ้านคุณย่า / สวนสาธารณะ / รีสอร์ท',
+      pavilionLabel: 'ห้องประชุม / โซนจัดงาน (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น ห้องรับรอง / ลานสนามหญ้า',
+      invitePlaceholder: 'เชิญร่วมพบปะและสืบสานสายใยครอบครัว',
+      guidelinesTitle: 'ข้อมูลเพิ่มเติมสำหรับครอบครัว',
+      notesLabel: 'โน้ต / รายละเอียด',
+      notesPlaceholder: 'เช่น แต่งกายสบาย ๆ, ของฝาก (ถ้ามี), สิ่งที่ควรเตรียม',
+    };
+  }
   if (category === 'Pet Memorial') {
     return {
-      subtitle: 'กำหนดการอำลาและการเดินทางกลับดาว',
-      item1: '1. พิธีอำลา / กล่าวคำอาลัย',
+      subtitle: 'กำหนดการอำลาและวันสำคัญของน้อง',
+      item1: '1. พิธีอำลา / ส่งความคิดถึง',
       item1Placeholder: 'เช่น วันเสาร์ที่ 12 ธ.ค. 67',
-      item2: '2. พิธีฌาปนกิจสัตว์เลี้ยง',
+      item2: '2. พิธีส่งน้องกลับดาว',
       item2Placeholder: 'เช่น วันเสาร์ที่ 12 ธ.ค. 67',
       item2TimePlaceholder: 'เช่น 14:00 น.',
-      item3: '3. พิธีลอยอังคารอัฐิ / โปรยเเถ้ากระดูก',
+      item3: '3. พิธีรำลึก / โปรยเถ้า (ถ้ามี)',
       item3Placeholder: 'เช่น วันอาทิตย์ที่ 13 ธ.ค. 67',
-      venueLabel: 'สถานที่จัดพิธี (VENUE)',
-      venuePlaceholder: 'เช่น วัดคลองเตยใน (แผนกสัตว์เลี้ยง)',
-      pavilionLabel: 'ศาลา / โซนจัดพิธี (ถ้ามี)',
-      pavilionPlaceholder: 'เช่น ศาลาน้ำตาแสงไต้ หรือ โซน B',
-      invitePlaceholder: 'เรียนเชิญร่วมส่งน้องเดินทางกลับดาวเสร็จสมบูรณ์',
-      guidelinesTitle: 'ข้อแนะนำการร่วมส่งน้องกลับดาว',
+      venueLabel: 'สถานที่จัดพิธี',
+      venuePlaceholder: 'เช่น คลินิกสัตว์เลี้ยง / บ้าน / สวนที่รัก',
+      pavilionLabel: 'โซนจัดพิธี / มุมรวมตัว (ถ้ามี)',
+      pavilionPlaceholder: 'เช่น มุมสวนหน้าบ้าน / ห้องรับรอง',
+      invitePlaceholder: 'เรียนเชิญร่วมส่งน้องด้วยความรักและความคิดถึง',
+      guidelinesTitle: 'ข้อมูลเพิ่มเติมสำหรับผู้มาร่วม',
+      notesLabel: 'โน้ต / รายละเอียด',
+      notesPlaceholder: 'เช่น แต่งกายสบาย ๆ ของที่อยากฝาก หรือรายละเอียดเพิ่มเติม',
     };
   }
   return {
@@ -1332,14 +1359,20 @@ export default function WebmasterDashboard() {
             coverY: deceasedCoverY,
             coverRotate: deceasedCoverRotate,
             imageCoordSpace: 'relative',
-            biography:
-              activeSite.category === 'Memorial' ? lifeStory.biography : biography,
-            lifeStory: activeSite.category === 'Memorial' ? lifeStory : undefined,
+            biography: categoryUsesLifeStory(activeSite.category)
+              ? lifeStory.biography
+              : biography,
+            lifeStory: categoryUsesLifeStory(activeSite.category)
+              ? lifeStory
+              : undefined,
             subjects: serializeManageSubjects(subjects, activeSite.category),
             albums: updatedAlbums,
             mediaAlbums: updatedMediaAlbums,
             features,
-            featureOrder,
+            featureOrder: normalizeFeatureOrder(
+              featureOrder,
+              getVisibleKeys(activeSite.category),
+            ),
             announcement: buildAnnouncementPayload(activeSite.category),
           },
         }),
@@ -1573,6 +1606,7 @@ export default function WebmasterDashboard() {
       setFontFamily(scriptFonts.includes(loadedFont) ? 'LINE Seed Sans TH' : loadedFont);
       setBiography(config.biography || '');
       setLifeStory(normalizeLifeStory(config.lifeStory, config.biography || ''));
+      setLifeStorySection(getDefaultLifeStorySection(site.category));
       setHeroLayout(normalizeHeroLayout(config.heroLayout));
       setHeroBgMode(normalizeHeroBgMode(config.heroBgMode, normalizeHeroLayout(config.heroLayout)));
       setSubjects(normalizeManageSubjects(config.subjects || [], site.category));
@@ -1650,6 +1684,7 @@ export default function WebmasterDashboard() {
       setFontFamily('Inter');
       setBiography('');
       setLifeStory(emptyLifeStory());
+      setLifeStorySection(getDefaultLifeStorySection(site.category));
       setHeroLayout('center-classic');
       setHeroBgMode('image');
       setSubjects([]);
@@ -1724,6 +1759,9 @@ export default function WebmasterDashboard() {
     const layoutToSave = options?.hero?.layout ?? heroLayout;
     const bgModeToSave = options?.hero?.bgMode ?? heroBgMode;
 
+    const visibleKeys = getVisibleKeys(activeSite.category);
+    const normalizedFeatureOrder = normalizeFeatureOrder(featureOrder, visibleKeys);
+
     try {
       const res = await fetch('/api/tenant/update-config', {
         method: 'POST',
@@ -1755,14 +1793,17 @@ export default function WebmasterDashboard() {
             coverY: media?.coverY ?? deceasedCoverY,
             coverRotate: media?.coverRotate ?? deceasedCoverRotate,
             imageCoordSpace: 'relative',
-            biography:
-              activeSite.category === 'Memorial' ? lifeStory.biography : biography,
-            lifeStory: activeSite.category === 'Memorial' ? lifeStory : undefined,
+            biography: categoryUsesLifeStory(activeSite.category)
+              ? lifeStory.biography
+              : biography,
+            lifeStory: categoryUsesLifeStory(activeSite.category)
+              ? lifeStory
+              : undefined,
             subjects: serializeManageSubjects(subjectsToSave, activeSite.category),
             albums,
             mediaAlbums,
             features,
-            featureOrder,
+            featureOrder: normalizedFeatureOrder,
             announcement: buildAnnouncementPayload(activeSite.category),
           },
         }),
@@ -1783,6 +1824,9 @@ export default function WebmasterDashboard() {
         themeConfig: data.tenant.themeConfig,
       } : w));
       setActiveSite(data.tenant);
+      setFeatureOrder(
+        getFeatureOrderFromThemeConfig(data.tenant.themeConfig, visibleKeys),
+      );
       const savedConfig = data.tenant.themeConfig as { subjects?: unknown[] } | null;
       if (savedConfig?.subjects && Array.isArray(savedConfig.subjects)) {
         setSubjects(normalizeManageSubjects(savedConfig.subjects, activeSite.category));
@@ -2831,7 +2875,7 @@ export default function WebmasterDashboard() {
                 <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'general')}><Globe className="size-4" /></span>
                 <span className="flex-1 min-w-0 truncate">ข้อมูลทั่วไป</span>
               </Button>
-              {selectedSite.category === 'Memorial' && (
+              {categoryUsesLifeStory(selectedSite.category) && (
                 <div className="space-y-1">
                   <button
                     type="button"
@@ -2857,7 +2901,9 @@ export default function WebmasterDashboard() {
                       >
                         <BookMarked className="size-4" />
                       </span>
-                      <span className="truncate">เรื่องราวชีวิต</span>
+                      <span className="truncate">
+                        {getLifeStoryMenuTitle(selectedSite.category)}
+                      </span>
                     </span>
                     <ChevronDown
                       className={`size-3.5 shrink-0 transition ${sidebarGroupOpen.lifeStory ? 'rotate-180' : ''}`}
@@ -2865,7 +2911,7 @@ export default function WebmasterDashboard() {
                   </button>
                   {sidebarGroupOpen.lifeStory && (
                     <div className="space-y-0.5">
-                      {LIFE_STORY_SECTIONS.map((item) => (
+                      {getLifeStorySections(selectedSite.category).map((item) => (
                         <Button
                           key={item.id}
                           variant="ghost"
@@ -3041,59 +3087,7 @@ export default function WebmasterDashboard() {
 
           if (!isExpiringSoon) return null;
 
-          const handleTabClick = (tab: any) => {
-    setActiveTab(tab);
-    setIsMobileMenuOpen(false);
-  };
-
-  const handleSaveYoutubeLink = async () => {
-    if (!activeSite || !youtubeUrl) return;
-    setYoutubeSaving(true);
-    setError('');
-    setSuccess('');
-    try {
-      const res = await fetch('/api/media/video-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          websiteId: activeSite.id,
-          videoUrl: youtubeUrl,
-          title: '',
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-
-      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
-      setYoutubeUrl('');
-
-      // Refresh list
-      const listRes = await fetch(`/api/media/list?websiteId=${activeSite.id}`);
-      const listData = await listRes.json();
-      if (listRes.ok) {
-        setGalleryMedias(listData.mediaList || []);
-      }
-    } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
-    } finally {
-      setYoutubeSaving(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/login';
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  };
-
-  const photoMedias = galleryMedias.filter(m => !m.mimeType?.startsWith('video/') && m.mimeType !== 'video/youtube');
-  const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
-
-  return (
+          return (
             <div className="p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs font-semibold text-amber-800">
               <div className="space-y-1">
                 <p className="font-bold text-sm text-amber-900">⚠️ บริการใกล้หมดอายุ (Subscription Expiring Soon)</p>
@@ -3236,8 +3230,10 @@ export default function WebmasterDashboard() {
               {/* 1. ข้อมูลทั่วไป & ประกาศ Tab */}
               {(activeSubTab === 'general' || activeSubTab === 'announcement' || activeSubTab === 'life-story') && (
                 <div className="space-y-6 animate-fade-in text-left">
-                  {activeSubTab === 'life-story' && selectedSite.category === 'Memorial' ? (
+                  {activeSubTab === 'life-story' &&
+                  categoryUsesLifeStory(selectedSite.category) ? (
                     <LifeStoryEditor
+                      category={selectedSite.category}
                       section={lifeStorySection}
                       value={lifeStory}
                       onChange={(next) => {
@@ -3261,7 +3257,7 @@ export default function WebmasterDashboard() {
                         : selectedSite.category === 'Friends'
                         ? 'ชื่อเว็บไซต์ / ชื่อกลุ่ม'
                         : selectedSite.category === 'Family Legacy'
-                        ? 'ชื่อตระกูล / หน้าความทรงจำ'
+                        ? 'ชื่อครอบครัว / ชื่อเว็บไซต์'
                         : 'ชื่อหน้ารำลึก'}
                     </label>
                     <Input 
@@ -3273,17 +3269,13 @@ export default function WebmasterDashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    {selectedSite.category !== 'Memorial' ? (
+                    {!categoryHidesGeneralBiography(selectedSite.category) ? (
                     <>
                     <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">
                       {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                         ? 'เรื่องราวความรัก (ประวัติคู่รักโดยย่อ)'
-                        : selectedSite.category === 'Pet Memorial'
-                        ? 'คำอำลาและประวัติสัตว์เลี้ยงโดยย่อ'
                         : selectedSite.category === 'Friends'
                         ? 'เรื่องราวของพวกเรา (แนะนำกลุ่มโดยย่อ)'
-                        : selectedSite.category === 'Family Legacy'
-                        ? 'เรื่องราวตระกูล (ประวัติโดยย่อ)'
                         : 'คำอาลัยและคำรำลึก (ประวัติโดยย่อ)'}
                     </label>
                     <Textarea 
@@ -3295,21 +3287,36 @@ export default function WebmasterDashboard() {
                           ? 'เช่น เรื่องราวความรักของเราสองคน เริ่มต้นจากการพบกันครั้งแรกในที่ทำงาน และร่วมทุกข์ร่วมสุขด้วยกันมา...'
                           : selectedSite.category === 'Couple'
                           ? 'เช่น บันทึกเส้นทางความรักของเรา ตั้งแต่วันแรกที่พบกันจนถึงทุกวันสำคัญที่เราเดินมาด้วยกัน...'
-                          : selectedSite.category === 'Pet Memorial'
-                          ? 'เช่น น้องเป็นหมาที่ร่าเริงและแสนรู้ที่สุด นำความสุขและรอยยิ้มมาให้ครอบครัวเราตลอดเวลาที่อยู่ด้วยกัน...'
                           : selectedSite.category === 'Friends'
                           ? 'เช่น พวกเราเจอกันตั้งแต่สมัยเรียน ไปทริปด้วยกันทุกปี และยังคอยเชียร์กันในทุกก้าวของชีวิต...'
-                          : selectedSite.category === 'Family Legacy'
-                          ? 'เช่น ตระกูลของเราเริ่มต้นจากคุณปู่คุณย่าที่สร้างบ้านและส่งต่อคุณค่าดี ๆ ให้ลูกหลาน...'
                           : 'เช่น คุณพ่อสมศักดิ์เป็นคนดี มีความเสียสละ...'
                       }
                       className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                     />
                     </>
                     ) : (
-                      <p className="rounded-xl border border-stone-200 bg-stone-50/70 px-4 py-3 text-xs text-stone-500">
-                        ชีวประวัติฉบับเต็มอยู่ที่เมนู <span className="font-semibold text-stone-700">เรื่องราวชีวิต</span> ด้านซ้าย
-                      </p>
+                      <div className="rounded-xl border border-stone-200 bg-stone-50/70 px-4 py-3 space-y-3">
+                        <p className="text-xs text-stone-500">
+                          เรื่องราวฉบับเต็มอยู่ที่เมนู{' '}
+                          <span className="font-semibold text-stone-700">
+                            {getLifeStoryMenuTitle(selectedSite.category)}
+                          </span>{' '}
+                          ด้านซ้าย หรือกดปุ่มด้านล่างเพื่อแก้ไข
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="rounded-xl"
+                          onClick={() =>
+                            openLifeStorySection(
+                              getDefaultLifeStorySection(selectedSite.category),
+                            )
+                          }
+                        >
+                          <BookMarked className="size-4" />
+                          แก้ไข{getLifeStoryMenuTitle(selectedSite.category)}
+                        </Button>
+                      </div>
                     )}
                   </div>
 
@@ -4238,6 +4245,8 @@ export default function WebmasterDashboard() {
                                     ? 'โน้ตเพิ่มเติม (แสดงท้ายการ์ด)'
                                   : usesSingleMilestoneSchedule(selectedSite.category)
                                     ? (sLabels.guidelinesTitle || 'ข้อมูลเพิ่มเติม')
+                                    : selectedSite.category === 'Family Legacy'
+                                      ? (sLabels.guidelinesTitle || 'ข้อมูลเพิ่มเติมสำหรับครอบครัว')
                                     : 'คำแนะนำการร่วมงาน'}
                               </p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -4247,6 +4256,8 @@ export default function WebmasterDashboard() {
                                       ? 'โน้ตทั่วไป'
                                       : usesSingleMilestoneSchedule(selectedSite.category)
                                       ? (sLabels.notesLabel || 'โน้ต / รายละเอียด')
+                                      : selectedSite.category === 'Family Legacy'
+                                        ? (sLabels.notesLabel || 'โน้ต / รายละเอียด')
                                       : 'การแต่งกาย'}
                                   </label>
                                   <Input
@@ -4260,6 +4271,8 @@ export default function WebmasterDashboard() {
                                           ? 'เช่น ข้อความท้ายการ์ด หรือคำอธิษฐานถึงกัน'
                                         : usesSingleMilestoneSchedule(selectedSite.category)
                                           ? (sLabels.notesPlaceholder || 'เช่น แต่งตามสบาย, ธีมสีกลุ่ม')
+                                          : selectedSite.category === 'Family Legacy'
+                                            ? (sLabels.notesPlaceholder || 'เช่น แต่งกายสบาย ๆ, ของฝาก (ถ้ามี)')
                                           : 'เช่น ชุดสุภาพสีขาว/ดำ'
                                     }
                                     className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
@@ -4276,7 +4289,8 @@ export default function WebmasterDashboard() {
                                   />
                                 </div>
                               </div>
-                              {!usesSingleMilestoneSchedule(selectedSite.category) && (
+                              {!usesSingleMilestoneSchedule(selectedSite.category) &&
+                                selectedSite.category !== 'Family Legacy' && (
                               <div className="space-y-1">
                                 <label className="text-stone-600 font-semibold">
                                   {selectedSite.category === 'Wedding'
@@ -4410,8 +4424,10 @@ export default function WebmasterDashboard() {
                                 selectedSite.category === 'Wedding'
                                   ? 'ขอขอบคุณแขกผู้มีเกียรติทุกท่านที่มาร่วมแสดงความยินดี — เจ้าภาพ'
                                   : selectedSite.category === 'Pet Memorial'
-                                    ? 'ขอขอบคุณทุกท่านที่มาร่วมส่งน้องกลับดาวและแบ่งปันความรัก — ครอบครัว'
-                                    : 'กราบขอบพระคุณทุกท่านที่มาร่วมไว้อาลัย — คณะเจ้าภาพ',
+                                    ? 'ขอบคุณทุกคนที่มาร่วมส่งความรักและความคิดถึงให้น้อง — ครอบครัว'
+                                    : selectedSite.category === 'Family Legacy'
+                                      ? 'กราบขอบพระคุณทุกท่านที่ร่วมสืบสานสายสัมพันธ์และส่งต่อความรัก — ครอบครัว'
+                                      : 'กราบขอบพระคุณทุกท่านที่มาร่วมไว้อาลัย — คณะเจ้าภาพ',
                             }}
                             theme={resolveAnnouncementCardTheme(selectedSite.category, annStyle)}
                             fontFamily={annFontFamily}
@@ -4469,11 +4485,11 @@ export default function WebmasterDashboard() {
                               : selectedSite.category === 'Pet Memorial'
                               ? 'เปิดใช้สมทบกองทุนช่วยเหลือสัตว์ (Donation QR)'
                               : selectedSite.category === 'Couple'
-                              ? 'เปิดใช้กองทุนแห่งความรัก (Donation QR)'
+                              ? 'เปิดใช้เป้าหมายของเรา (Donation QR)'
                               : selectedSite.category === 'Wedding'
                               ? 'เปิดใช้ร่วมใส่ซองออนไลน์ (Donation QR)'
                               : selectedSite.category === 'Family Legacy'
-                              ? 'เปิดใช้สมทบกองทุนตระกูล (Donation QR)'
+                              ? 'เปิดใช้สมทบกองทุนครอบครัว (Donation QR)'
                               : 'เปิดใช้บริการรับเงินทำบุญ (Donation QR)'}
                           </span>
                         </h4>
@@ -4501,14 +4517,27 @@ export default function WebmasterDashboard() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-sm font-bold text-stone-600 tracking-wide">ชื่อบัญชีผู้รับเงิน</label>
+                          <label className="text-sm font-bold text-stone-600 tracking-wide">
+                            {selectedSite.category === 'Couple'
+                              ? 'ชื่อเป้าหมาย / ชื่อที่แสดง'
+                              : 'ชื่อบัญชีผู้รับเงิน'}
+                          </label>
                           <Input 
                             type="text" 
                             value={donationAccountName} 
                             onChange={(e) => setDonationAccountName(e.target.value)} 
-                            placeholder="ชื่อ-นามสกุล เจ้าของบัญชี"
+                            placeholder={
+                              selectedSite.category === 'Couple'
+                                ? 'เช่น ทริปญี่ปุ่นด้วยกัน / บ้านหลังแรก'
+                                : 'ชื่อ-นามสกุล เจ้าของบัญชี'
+                            }
                             className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                           />
+                          {selectedSite.category === 'Couple' ? (
+                            <p className="text-[11px] text-stone-400 leading-relaxed">
+                              ตั้งชื่อแพลนที่อยากให้เพื่อนร่วมสมทบ เช่น ทริป บ้าน หรือของขวัญครบรอบ
+                            </p>
+                          ) : null}
                         </div>
                       </div>
                     )}
@@ -4939,11 +4968,10 @@ export default function WebmasterDashboard() {
                     </div>
                   )}
 
-                  {siteCategory === 'Memorial' && (
-                    <div className="mx-auto w-full max-w-2xl space-y-4 rounded-3xl border border-stone-200/80 bg-white p-4 shadow-sm sm:p-5">
+                  <div className="mx-auto w-full max-w-2xl space-y-4 rounded-3xl border border-stone-200/80 bg-white p-4 shadow-sm sm:p-5">
                       <div className="space-y-1">
-                        <p className="text-xs font-bold uppercase tracking-widest text-stone-400">หัวข้อ Memorial</p>
-                        <h4 className="text-base font-bold text-stone-900">รูปแบบหัวข้อหน้าแรก</h4>
+                        <p className="text-xs font-bold uppercase tracking-widest text-stone-400">หัวข้อหน้าแรก</p>
+                        <h4 className="text-base font-bold text-stone-900">รูปแบบการแสดงผล</h4>
                         <p className="text-xs leading-relaxed text-stone-500">
                           เลือกเลย์เอาต์ — กดแล้วบันทึกไปหน้าเว็บจริงทันที
                         </p>
@@ -4981,7 +5009,7 @@ export default function WebmasterDashboard() {
                       </div>
 
                       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                        {MEMORIAL_HERO_LAYOUTS.map((opt) => {
+                        {HERO_LAYOUTS.map((opt) => {
                           const selected = heroLayout === opt.id;
                           return (
                             <button
@@ -5051,7 +5079,6 @@ export default function WebmasterDashboard() {
                         </div>
                       </div>
                     </div>
-                  )}
                 </div>
               )}
 
@@ -5401,7 +5428,8 @@ export default function WebmasterDashboard() {
               {/* Conditionally display Save Button only on configuration sub-tabs */}
               {activeSubTab !== 'billing' && (
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => void persistSiteConfig()}
                   disabled={saveLoading}
                   className="inline-flex h-auto cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#0071e3] px-6 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-[#0071e3]/90 hover:text-white active:scale-95 disabled:pointer-events-none disabled:opacity-50"
                 >
@@ -5974,59 +6002,8 @@ export default function WebmasterDashboard() {
                   m.relationship === 'PARENT_2' ? 'มารดา' : 
                   m.relationship === 'SPOUSE' ? 'คู่สมรส' : 
                   m.relationship === 'SIBLING' ? 'พี่น้อง' : 'บุตร/ธิดา';
-                const handleTabClick = (tab: any) => {
-    setActiveTab(tab);
-    setIsMobileMenuOpen(false);
-  };
 
-  const handleSaveYoutubeLink = async () => {
-    if (!activeSite || !youtubeUrl) return;
-    setYoutubeSaving(true);
-    setError('');
-    setSuccess('');
-    try {
-      const res = await fetch('/api/media/video-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          websiteId: activeSite.id,
-          videoUrl: youtubeUrl,
-          title: '',
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-
-      setSuccess(`แนบลิงก์วิดีโอสำเร็จ`);
-      setYoutubeUrl('');
-
-      // Refresh list
-      const listRes = await fetch(`/api/media/list?websiteId=${activeSite.id}`);
-      const listData = await listRes.json();
-      if (listRes.ok) {
-        setGalleryMedias(listData.mediaList || []);
-      }
-    } catch (err: any) {
-      setError(err.message || 'การบันทึกลิงก์วิดีโอล้มเหลว');
-    } finally {
-      setYoutubeSaving(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/login';
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  };
-
-  const photoMedias = galleryMedias.filter(m => !m.mimeType?.startsWith('video/') && m.mimeType !== 'video/youtube');
-  const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
-
-  return (
+                return (
                   <div key={m.id} className="group p-4 rounded-2xl border border-stone-200 bg-white flex justify-between items-center hover:border-stone-300 hover:shadow-sm transition-all duration-200 gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       {m.avatarUrl ? (
@@ -6135,7 +6112,7 @@ export default function WebmasterDashboard() {
                           : selectedSite.category === 'Couple'
                             ? 'เช่น สมุดภาพความรักของเรา'
                             : selectedSite.category === 'Family Legacy'
-                              ? 'เช่น ประวัติตระกูล'
+                              ? 'เช่น หนังสือครอบครัว'
                               : 'เช่น หนังสืออนุสรณ์'
                     }
                     className="w-full px-3 py-2 bg-white border border-stone-250 rounded-xl text-stone-900 text-sm sm:text-base focus:outline-none focus:border-emerald-500/80 transition"

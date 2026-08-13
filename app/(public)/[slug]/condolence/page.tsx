@@ -110,7 +110,7 @@ export default async function PublicCondolencePage(props: {
   return (
     <div className="space-y-8 animate-fade-in">
       {(() => {
-        const { label: fLabel, description: fDesc } = getFeatureLabel(tenant.category, 'condolence');
+        const { label: fLabel, pageDescription: fDesc } = getFeatureLabel(tenant.category, 'condolence');
         const displayLabel =
           tenant.category === 'Friends'
             ? fLabel
