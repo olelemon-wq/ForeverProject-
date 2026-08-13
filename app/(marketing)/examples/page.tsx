@@ -58,10 +58,14 @@ function DemoCard({
 }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-[22px] bg-white border border-stone-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)]">
-      <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
+      <Link
+        href={`/${site.slug}`}
+        aria-label={`${openLabel}: ${site.title}`}
+        className="relative block aspect-[16/10] overflow-hidden bg-stone-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3] focus-visible:ring-offset-2"
+      >
         <img
           src={site.coverUrl}
-          alt={site.title}
+          alt=""
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
@@ -71,7 +75,7 @@ function DemoCard({
           {CATEGORY_ICONS[site.category]}
           <span>{site.categoryLabel}</span>
         </span>
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-col gap-4 p-5 sm:p-6 text-left">
         <div className="space-y-2">

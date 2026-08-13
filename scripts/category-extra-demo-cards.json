@@ -1,0 +1,142 @@
+[
+  {
+    "slug": "napat-mintra",
+    "category": "Couple",
+    "categoryLabel": "คู่รัก",
+    "title": "ณภัทร & มินตรา",
+    "description": "ไดอารี่คู่รัก วันครบรอบ และแกลเลอรีทริปด้วยกัน",
+    "coverUrl": "/demo-media/c0a01e01-napat-4min-tra0-couple000001/napat-mintra-01.jpg",
+    "primaryColor": "#C4787A",
+    "highlights": [
+      "ไดอารี่คู่รัก",
+      "วันครบรอบ",
+      "แกลเลอรี"
+    ]
+  },
+  {
+    "slug": "beam-fah",
+    "category": "Couple",
+    "categoryLabel": "คู่รัก",
+    "title": "บีม & ฟ้า",
+    "description": "บอร์ดทริปคู่ กิจกรรมด้วยกัน และข้อความถึงกัน",
+    "coverUrl": "/demo-media/c0a01e02-beam0-4fah-couple00000002/beam-fah-01.jpg",
+    "primaryColor": "#6B8E9F",
+    "highlights": [
+      "บอร์ดทริป",
+      "กิจกรรมคู่",
+      "ข้อความถึงกัน"
+    ]
+  },
+  {
+    "slug": "porjai-nicha",
+    "category": "Wedding",
+    "categoryLabel": "งานแต่งงาน",
+    "title": "ปอใจ & ณิชา",
+    "description": "การ์ดเชิญ สมุดอวยพร และใส่ซองออนไลน์",
+    "coverUrl": "/demo-media/c0a02e01-porja-4nic-ha0-wedding00001/porjai-nicha-01.jpg",
+    "primaryColor": "#D4A5A5",
+    "highlights": [
+      "การ์ดเชิญ",
+      "สมุดอวยพร",
+      "ใส่ซองออนไลน์"
+    ]
+  },
+  {
+    "slug": "win-praew",
+    "category": "Wedding",
+    "categoryLabel": "งานแต่งงาน",
+    "title": "วิน & แพรว",
+    "description": "กำหนดการ แกลเลอรีพรีเวด และผังสองครอบครัว",
+    "coverUrl": "/demo-media/c0a02e02-winpr-4aew-wedding00002/win-praew-01.jpg",
+    "primaryColor": "#9AAE8C",
+    "highlights": [
+      "กำหนดการ",
+      "พรีเวดดิ้ง",
+      "ผังครอบครัว"
+    ]
+  },
+  {
+    "slug": "saengdao-lineage",
+    "category": "Family Legacy",
+    "categoryLabel": "เรื่องราวครอบครัว",
+    "title": "ตระกูลแสงดาว",
+    "description": "ผังตระกูล หนังสือครอบครัว และคลังภาพรุ่นสู่รุ่น",
+    "coverUrl": "/demo-media/c0a03e01-saeng-4dao-family000001/saengdao-lineage-01.jpg",
+    "primaryColor": "#7A8F6E",
+    "highlights": [
+      "ผังตระกูล",
+      "หนังสือครอบครัว",
+      "คลังภาพ"
+    ]
+  },
+  {
+    "slug": "rungarun-house",
+    "category": "Family Legacy",
+    "categoryLabel": "เรื่องราวครอบครัว",
+    "title": "บ้านรุ่งอรุณ",
+    "description": "งานรวมญาติ ความทรงจำร่วม และแกลเลอรีบ้านเกิด",
+    "coverUrl": "/demo-media/c0a03e02-runga-4run-family000002/rungarun-house-01.jpg",
+    "primaryColor": "#B08968",
+    "highlights": [
+      "งานรวมญาติ",
+      "ความทรงจำ",
+      "แกลเลอรีบ้านเกิด"
+    ]
+  },
+  {
+    "slug": "campus-crew",
+    "category": "Friends",
+    "categoryLabel": "กลุ่มเพื่อน",
+    "title": "เพื่อนมหาลัย รุ่น 58",
+    "description": "ทริปรุ่น ความทรงจำมหาลัย และข้อความถึงกัน",
+    "coverUrl": "/demo-media/c0a04e01-campu-4scr-ew0-friends0001/campus-crew-01.jpg",
+    "primaryColor": "#5B7C99",
+    "highlights": [
+      "ทริปรุ่น",
+      "ข้อความถึงกัน",
+      "แกลเลอรี"
+    ]
+  },
+  {
+    "slug": "office-buddies",
+    "category": "Friends",
+    "categoryLabel": "กลุ่มเพื่อน",
+    "title": "เพื่อนที่ทำงาน Team Sunrise",
+    "description": "นัดหมายทีม แกลเลอรีออฟฟิศ และข้อความให้กำลังใจ",
+    "coverUrl": "/demo-media/c0a04e02-offic-4ebu-ddi-friends0002/office-buddies-01.jpg",
+    "primaryColor": "#8C7AA9",
+    "highlights": [
+      "นัดหมายทีม",
+      "แกลเลอรีออฟฟิศ",
+      "ให้กำลังใจ"
+    ]
+  },
+  {
+    "slug": "nong-mango",
+    "category": "Pet Memorial",
+    "categoryLabel": "สัตว์เลี้ยง",
+    "title": "น้องมะม่วงจอมซน",
+    "description": "สมุดส่งความคิดถึง ไดอารี่ และแกลเลอรีน้องแมว",
+    "coverUrl": "/demo-media/c0a05e01-mango-4cat-pet0-memorial01/nong-mango-01.jpg",
+    "primaryColor": "#D4A574",
+    "highlights": [
+      "สมุดส่งความคิดถึง",
+      "ไดอารี่",
+      "แกลเลอรี"
+    ]
+  },
+  {
+    "slug": "nong-bao",
+    "category": "Pet Memorial",
+    "categoryLabel": "สัตว์เลี้ยง",
+    "title": "น้องเบาผู้ซื่อสัตย์",
+    "description": "กิจกรรมรำลึก กองทุนช่วยเหลือสัตว์ และแกลเลอรีน้องหมา",
+    "coverUrl": "/demo-media/c0a05e02-baodg-4pet-memorial0002/nong-bao-01.jpg",
+    "primaryColor": "#8B9A7D",
+    "highlights": [
+      "กิจกรรมรำลึก",
+      "กองทุนสัตว์",
+      "แกลเลอรี"
+    ]
+  }
+]
