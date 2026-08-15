@@ -7,12 +7,12 @@ import { getInitialFeatureMapForCategory } from '@/lib/categories';
 import { getSeedDefaultMedia } from '@/lib/defaultMedia';
 
 const CATEGORY_PLACEHOLDER_NAME: Record<string, string> = {
-  Memorial: 'เว็บไซต์รำลึกบุคคล',
-  'Family Legacy': 'เว็บไซต์เรื่องราวครอบครัว',
-  Couple: 'เว็บไซต์คู่รัก',
-  Wedding: 'เว็บไซต์งานแต่งงาน',
-  Friends: 'เว็บไซต์กลุ่มเพื่อน',
-  'Pet Memorial': 'เว็บไซต์สัตว์เลี้ยง',
+  Memorial: 'เว็บไซต์รำลึกถึงผู้ล่วงลับ',
+  'Family Legacy': 'เว็บไซต์เรื่องเล่าครอบครัว',
+  Couple: 'เว็บไซต์เรื่องราวเธอกับฉัน',
+  Wedding: 'เว็บไซต์งานวิวาห์',
+  Friends: 'เว็บไซต์แก๊งเพื่อน',
+  'Pet Memorial': 'เว็บไซต์น้องที่รัก',
 };
 
 export async function POST(request: Request) {
@@ -35,6 +35,51 @@ export async function POST(request: Request) {
 
     if (!category) {
       return NextResponse.json({ error: 'กรุณาเลือกหมวดความทรงจำ' }, { status: 400 });
+    }
+
+    const existingPending = await db.tenant.findFirst({
+      where: {
+        ownerPhone: userPhone,
+        status: 'PENDING_PAYMENT',
+        category,
+      },
+      include: {
+        payments: {
+          where: { status: 'PENDING', type: 'NEW_WEBSITE' },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (existingPending) {
+      let payment = existingPending.payments[0];
+      if (!payment) {
+        const paymentRef = `QR-${existingPending.slug}-${Math.floor(10000 + Math.random() * 90000)}`;
+        payment = await db.payment.create({
+          data: {
+            websiteId: existingPending.id,
+            refId: paymentRef,
+            type: 'NEW_WEBSITE',
+            amount: 2000.0,
+            status: 'PENDING',
+          },
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'มีร่างเว็บไซต์รอชำระเงินอยู่แล้ว',
+        id: existingPending.id,
+        slug: existingPending.slug,
+        status: existingPending.status,
+        payment: {
+          id: payment.id,
+          refId: payment.refId,
+          amount: payment.amount,
+        },
+      });
     }
 
     // Draft flow: category only → temporary slug + PENDING_PAYMENT

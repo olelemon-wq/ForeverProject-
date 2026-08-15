@@ -11,12 +11,12 @@ import {
 } from '@/components/ui/input-otp';
 
 const CATEGORY_THAI_LABELS: Record<string, string> = {
-  'Memorial': 'รำลึกผู้จากไป (Memorial)',
-  'Family Legacy': 'เรื่องราวครอบครัว (Family Legacy)',
-  'Couple': 'ความรักคู่รัก (Couple)',
-  'Wedding': 'ความทรงจำแต่งงาน (Wedding)',
-  'Friends': 'กลุ่มรุ่น (Friends)',
-  'Pet Memorial': 'สัตว์เลี้ยงแสนรัก (Pet Memorial)',
+  'Memorial': 'รำลึกถึงผู้ล่วงลับ (Memorial)',
+  'Family Legacy': 'เรื่องเล่าครอบครัว (Family Legacy)',
+  'Couple': 'เรื่องราวเธอกับฉัน (Couple)',
+  'Wedding': 'งานวิวาห์ (Wedding)',
+  'Friends': 'แก๊งเพื่อน (Friends)',
+  'Pet Memorial': 'น้องที่รัก (Pet Memorial)',
 };
 
 const otpSlotClassName =
@@ -27,10 +27,22 @@ function formatPhoneDisplay(phone: string) {
   return `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6)}`;
 }
 
+function categoryFromSearchParams(searchParams: URLSearchParams) {
+  const direct = searchParams.get('category');
+  if (direct) return direct;
+  const next = searchParams.get('next');
+  if (!next || !next.startsWith('/')) return null;
+  try {
+    return new URL(next, 'https://forever.local').searchParams.get('category');
+  } catch {
+    return null;
+  }
+}
+
 function MobileLoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const category = searchParams.get('category');
+  const category = categoryFromSearchParams(searchParams);
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otpCode, setOtpCode] = useState('');
@@ -85,14 +97,17 @@ function MobileLoginInner() {
         throw new Error(data.error || 'รหัส OTP ไม่ถูกต้อง');
       }
 
-      // Registration with category -> unified 5-step create wizard
+      const next = searchParams.get('next');
+      if (next && next.startsWith('/')) {
+        router.push(next);
+        return;
+      }
       if (category) {
         router.push(`/manage/create?category=${encodeURIComponent(category)}`);
         return;
       }
 
-      const next = searchParams.get('next');
-      router.push(next && next.startsWith('/') ? next : '/manage');
+      router.push('/manage');
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการยืนยันตัวตน');
     } finally {
@@ -105,7 +120,7 @@ function MobileLoginInner() {
       
       {category && (
         <div className="max-w-xs mx-auto pb-4 border-b border-stone-200/60 text-xs font-medium text-stone-500 leading-relaxed">
-          หลังยืนยัน OTP ระบบจะพาไปเลือกหมวด → ชำระเงิน → ตั้งชื่อลิงก์ URL แล้วเข้าหน้าจัดการ
+          หลังยืนยัน OTP ระบบจะพาไปชำระเงินทันที ไม่ต้องเลือกหมวดอีก
         </div>
       )}
 

@@ -67,7 +67,7 @@ const MEMORIAL_SECTIONS: LifeStorySectionConfig[] = [
 const FAMILY_LEGACY_SECTIONS: LifeStorySectionConfig[] = [
   {
     id: 'biography',
-    label: 'เรื่องราวครอบครัว',
+    label: 'เรื่องเล่าครอบครัว',
     description: 'จุดเริ่มต้น รากเหง้า และเรื่องเล่าที่อยากให้ลูกหลานรู้จัก',
     placeholder:
       'เช่น ครอบครัวเราเริ่มจากคุณปู่คุณย่าที่ … ลูกหลานเติบโตมาด้วย … หน้าเว็บนี้เก็บเรื่องราวไว้เพื่อ …',
@@ -128,7 +128,7 @@ export function getLifeStorySections(
 }
 
 export function getLifeStoryMenuTitle(category: string | null | undefined): string {
-  if (category === 'Family Legacy') return 'เรื่องราวครอบครัว';
+  if (category === 'Family Legacy') return 'เรื่องเล่าครอบครัว';
   if (category === 'Pet Memorial') return 'เรื่องราวของน้อง';
   return 'เรื่องราวชีวิต';
 }

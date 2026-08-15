@@ -41,11 +41,11 @@ export default function MarketingNav() {
   const currentLang = mounted ? lang : 'th';
 
   const menuItems = [
-    { href: '/examples', label: currentLang === 'th' ? 'ตัวอย่าง' : 'Examples' },
     ...MARKETING_CATEGORIES.map((category) => ({
       href: `/${category.slug}`,
       label: currentLang === 'th' ? category.th.title : category.en.title,
     })),
+    { href: '/examples', label: currentLang === 'th' ? 'ตัวอย่าง' : 'Examples' },
   ];
 
   return (

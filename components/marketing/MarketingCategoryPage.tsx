@@ -21,6 +21,7 @@ import type { FeatureKey } from '@/lib/features';
 import { getMarketingCategory, type MarketingCategorySlug } from '@/lib/marketingCategories';
 import { getDemoSiteCards } from '@/lib/demoSites';
 import { useLanguageStore } from '@/stores/useLanguageStore';
+import { MarketingBuyBlock } from '@/components/marketing/MarketingBuyBlock';
 
 const FEATURE_ICONS: Record<string, LucideIcon> = {
   Megaphone,
@@ -48,7 +49,6 @@ const MEMORIAL_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   donation: '/marketing/memorial-features/donation.jpg',
 };
 
-/** Family Legacy marketing feature visuals. */
 const FAMILY_LEGACY_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   gallery: '/marketing/family-story-features/gallery.jpg',
   videos: '/marketing/family-story-features/videos.jpg',
@@ -61,7 +61,6 @@ const FAMILY_LEGACY_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   donation: '/marketing/family-story-features/donation.jpg',
 };
 
-/** Couple marketing feature visuals. */
 const COUPLE_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   gallery: '/marketing/couple-features/gallery-full.jpg',
   videos: '/marketing/couple-features/videos.jpg',
@@ -74,7 +73,6 @@ const COUPLE_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   donation: '/marketing/couple-features/donation.jpg',
 };
 
-/** Wedding marketing feature visuals. */
 const WEDDING_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   gallery: '/marketing/wedding-features/gallery.jpg',
   videos: '/marketing/wedding-features/videos.jpg',
@@ -87,7 +85,6 @@ const WEDDING_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   donation: '/marketing/wedding-features/donation.jpg',
 };
 
-/** Friends marketing feature visuals. */
 const FRIENDS_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   gallery: '/marketing/friends-features/gallery.jpg',
   videos: '/marketing/friends-features/videos.jpg',
@@ -100,7 +97,6 @@ const FRIENDS_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   donation: '/marketing/friends-features/donation.jpg',
 };
 
-/** Pet Memorial marketing feature visuals. */
 const PET_MEMORIAL_FEATURE_IMAGES: Partial<Record<FeatureKey, string>> = {
   gallery: '/marketing/pet-memorial-features/gallery.jpg',
   videos: '/marketing/pet-memorial-features/videos.jpg',
@@ -141,30 +137,25 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
 
   return (
     <main className="bg-[#F5F5F7] text-[#1D1D1F] min-h-screen">
-      <section className="relative overflow-hidden border-b border-[#E8E8ED] bg-white">
-        <div className="mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-6 py-14 md:py-20 lg:grid-cols-2">
-          <div className="space-y-5 text-left">
-            <div
-              className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5F5F7]"
-              style={{ color: category.accent }}
-            >
-              <Icon className="h-6 w-6" aria-hidden />
-            </div>
-            <h1 className="text-4xl font-bold leading-[1.1] tracking-tight md:text-5xl">
-              {copy.title}
-            </h1>
-            <p className="max-w-xl text-lg font-medium leading-relaxed text-[#6E6E73] md:text-xl">
-              {copy.tagline}
-            </p>
-            <p className="max-w-xl text-base leading-relaxed text-[#86868B]">{copy.pageIntro}</p>
-            <Link
-              href={`/manage/create?category=${encodeURIComponent(category.createCategory)}`}
-              className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-8 py-3 text-base font-medium text-white transition-colors hover:bg-[#0077ED]"
-            >
-              {isEn ? 'Create your site' : 'สร้างเว็บหมวดนี้'}
-            </Link>
+      <section className="border-b border-[#E8E8ED] bg-white">
+        <div className="mx-auto max-w-2xl px-6 py-12 md:py-16">
+          <div
+            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5F5F7]"
+            style={{ color: category.accent }}
+          >
+            <Icon className="h-5 w-5" aria-hidden />
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
+          <h1 className="mt-5 text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+            {copy.title}
+          </h1>
+          <p className="mt-3 text-lg font-medium leading-relaxed text-[#6E6E73] md:text-xl">
+            {copy.tagline}
+          </p>
+          <p className="mt-4 max-w-prose text-base leading-relaxed text-[#6E6E73]">{copy.pageIntro}</p>
+          <div className="mt-8">
+            <MarketingBuyBlock createCategory={category.createCategory} isEn={isEn} />
+          </div>
+          <div className="relative mt-10 aspect-[16/10] overflow-hidden rounded-[28px] shadow-[0_8px_28px_rgba(0,0,0,0.08)]">
             <img
               src={category.image}
               alt={copy.title}
@@ -176,97 +167,70 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
 
       {features.length > 0 && (
         <section className="border-b border-[#E8E8ED] bg-[#F5F5F7]">
-          <div className="mx-auto max-w-[1080px] px-6 py-14 sm:py-16">
-            <div className="mb-8 flex items-end justify-between gap-4 border-b border-[#E8E8ED] pb-5">
-              <div className="min-w-0 text-left">
-                <h2 className="text-3xl font-semibold tracking-[-0.02em] text-[#1D1D1F]">
-                  {isEn ? 'Sections you can enable' : 'ส่วนที่เลือกใช้ได้'}
-                </h2>
-                <p className="mt-1.5 text-sm text-[#86868B]">
-                  {isEn
-                    ? 'Turn each section on or off when you set up the site.'
-                    : 'เปิดหรือปิดทีหลังได้ตอนตั้งค่าเว็บ'}
-                </p>
-              </div>
-              <p className="hidden shrink-0 text-sm text-[#86868B] sm:block">
-                {isEn ? `${features.length} sections` : `${features.length} ส่วน`}
-              </p>
-            </div>
+          <div className="mx-auto max-w-2xl px-6 py-14 sm:py-16">
+            <h2 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] md:text-3xl">
+              {isEn ? 'What’s on the site' : 'มีอะไรบ้างในเว็บนี้'}
+            </h2>
+            <p className="mt-2 text-base leading-relaxed text-[#6E6E73]">
+              {isEn
+                ? 'Each section can be turned on or off later when you set up the site.'
+                : 'เปิดหรือปิดทีหลังได้ตอนตั้งค่าเว็บ อ่านไล่ลงมาได้ทีละส่วน'}
+            </p>
 
-            <ul className="grid grid-cols-1 gap-2.5 sm:gap-4 md:grid-cols-2">
-              {features.map((feature, index) => {
+            <ul className="mt-10 space-y-12">
+              {features.map((feature) => {
                 const FeatureIcon = FEATURE_ICONS[feature.icon] ?? Flame;
                 const image =
                   FEATURE_IMAGES_BY_CATEGORY[category.createCategory]?.[
                     feature.key as FeatureKey
                   ];
-                const mediaLeft = index % 2 === 0;
                 const isVideo = feature.key === 'videos';
-
-                const media = image ? (
-                  <div className="relative h-full min-h-[10rem] overflow-hidden bg-[#F5F5F7]">
-                    <img
-                      src={`${image}?v=8`}
-                      alt=""
-                      loading="lazy"
-                      className="absolute left-1/2 top-1/2 h-[112%] w-[112%] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                    {isVideo && (
-                      <>
-                        <span className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-full bg-[#0071e3] px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:left-3 sm:top-3 sm:text-xs">
-                          <Video className="size-3" aria-hidden />
-                          {isEn ? 'Video' : 'ไฟล์วิดีโอ'}
-                        </span>
-                        <span className="absolute inset-0 z-10 flex items-center justify-center">
-                          <span className="flex size-11 items-center justify-center rounded-full bg-[#0071e3] text-white shadow-[0_6px_20px_rgba(0,113,227,0.45)] sm:size-12">
-                            <Play className="size-5 fill-white translate-x-px" aria-hidden />
-                          </span>
-                        </span>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex min-h-[10rem] items-center justify-center bg-[#F5F5F7]">
-                    <div
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white ring-1 ring-[#E8E8ED]"
-                      style={{ color: category.accent }}
-                    >
-                      <FeatureIcon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-                    </div>
-                  </div>
-                );
-
-                const copyBlock = (
-                  <div className="flex min-w-0 flex-col justify-center p-4 text-left sm:p-5 md:px-6 md:py-5">
-                    <h3 className="text-sm font-semibold leading-snug text-[#1D1D1F] sm:text-base">
-                      {feature.label}
-                    </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-[#6E6E73]">
-                      {feature.pageDescription}
-                    </p>
-                  </div>
-                );
+                const detail =
+                  feature.pageDescription && feature.pageDescription !== feature.description
+                    ? `${feature.pageDescription} ${feature.description}`
+                    : feature.pageDescription || feature.description;
 
                 return (
                   <li key={feature.key}>
-                    <article
-                      className={`group relative grid h-full min-h-[10rem] overflow-hidden rounded-[24px] border border-[#E8E8ED] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition duration-300 hover:-translate-y-0.5 hover:border-[#d8d8de] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] sm:min-h-[11rem] sm:rounded-[28px] ${
-                        mediaLeft
-                          ? 'grid-cols-[minmax(9rem,0.95fr)_1.05fr]'
-                          : 'grid-cols-[1.05fr_minmax(9rem,0.95fr)]'
-                      }`}
-                    >
-                      {mediaLeft ? (
-                        <>
-                          {media}
-                          {copyBlock}
-                        </>
+                    <article>
+                      {image ? (
+                        <div className="relative aspect-[16/10] overflow-hidden rounded-[24px] bg-[#E8E8ED]">
+                          <img
+                            src={`${image}?v=8`}
+                            alt=""
+                            loading="lazy"
+                            className="h-full w-full object-cover object-center"
+                          />
+                          {isVideo && (
+                            <>
+                              <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-[#0071e3] px-2.5 py-1 text-xs font-semibold text-white">
+                                <Video className="size-3" aria-hidden />
+                                {isEn ? 'Video' : 'ไฟล์วิดีโอ'}
+                              </span>
+                              <span className="absolute inset-0 z-10 flex items-center justify-center">
+                                <span className="flex size-12 items-center justify-center rounded-full bg-[#0071e3] text-white shadow-[0_6px_20px_rgba(0,113,227,0.45)]">
+                                  <Play className="size-5 fill-white translate-x-px" aria-hidden />
+                                </span>
+                              </span>
+                            </>
+                          )}
+                        </div>
                       ) : (
-                        <>
-                          {copyBlock}
-                          {media}
-                        </>
+                        <div className="flex aspect-[16/10] items-center justify-center rounded-[24px] bg-white">
+                          <div
+                            className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5F5F7]"
+                            style={{ color: category.accent }}
+                          >
+                            <FeatureIcon className="h-6 w-6" strokeWidth={1.75} aria-hidden />
+                          </div>
+                        </div>
                       )}
+                      <h3 className="mt-5 text-xl font-semibold leading-snug text-[#1D1D1F]">
+                        {feature.label}
+                      </h3>
+                      <p className="mt-2 max-w-prose text-base leading-relaxed text-[#6E6E73]">
+                        {detail}
+                      </p>
                     </article>
                   </li>
                 );
@@ -276,32 +240,23 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
         </section>
       )}
 
-      <section className="mx-auto max-w-[1080px] px-6 py-14 sm:py-16">
-        <div className="mb-8 flex items-end justify-between gap-4 border-b border-[#E8E8ED] pb-5">
-          <div className="min-w-0 text-left">
-            <h2 className="text-3xl font-semibold tracking-[-0.02em] text-[#1D1D1F]">
-              {isEn ? 'Example sites' : 'ตัวอย่างเว็บไซต์'}
-            </h2>
-            <p className="mt-1.5 text-sm text-[#86868B]">
-              {isEn ? 'See how others use this category' : 'ดูตัวอย่างการใช้งานจริงในหมวดนี้'}
-            </p>
-          </div>
-          <Link
-            href="/examples"
-            className="hidden items-center gap-1 text-sm font-semibold text-[#0071e3] transition-all hover:gap-2 sm:inline-flex"
-          >
-            {isEn ? 'All examples' : 'ดูตัวอย่างทั้งหมด'}
-            <ChevronRight className="h-4 w-4" />
-          </Link>
+      <section className="mx-auto max-w-2xl px-6 py-14 sm:py-16 lg:max-w-[1080px]">
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] md:text-3xl">
+            {isEn ? 'Example sites' : 'ตัวอย่างเว็บไซต์'}
+          </h2>
+          <p className="mt-2 text-base leading-relaxed text-[#6E6E73]">
+            {isEn ? 'See how this category looks in use.' : 'ดูตัวอย่างการใช้งานจริงในหมวดนี้'}
+          </p>
         </div>
 
         {demos.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {demos.map((demo) => (
               <Link
                 key={demo.slug}
                 href={`/${demo.slug}`}
-                className="group overflow-hidden rounded-[24px] border border-[#E8E8ED] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition duration-300 hover:-translate-y-0.5 hover:border-[#d8d8de] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] sm:rounded-[28px]"
+                className="group overflow-hidden rounded-[24px] border border-[#E8E8ED] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition duration-300 hover:-translate-y-0.5 hover:border-[#d8d8de] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)]"
               >
                 <div className="aspect-[16/10] overflow-hidden bg-[#F5F5F7]">
                   <img
@@ -321,10 +276,34 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
             ))}
           </div>
         ) : (
-          <div className="rounded-[24px] border border-dashed border-[#E8E8ED] bg-white p-10 text-center text-[#86868B] sm:rounded-[28px]">
+          <div className="rounded-[24px] border border-dashed border-[#E8E8ED] bg-white p-10 text-center text-[#86868B]">
             {isEn ? 'More examples coming soon.' : 'ตัวอย่างเพิ่มเติมกำลังจัดทำ'}
           </div>
         )}
+
+        <Link
+          href="/examples"
+          className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[#0071e3] transition-all hover:gap-2"
+        >
+          {isEn ? 'All examples' : 'ดูตัวอย่างทั้งหมด'}
+          <ChevronRight className="h-4 w-4" />
+        </Link>
+      </section>
+
+      <section className="border-t border-[#E8E8ED] bg-white">
+        <div className="mx-auto max-w-2xl px-6 py-14 sm:py-16">
+          <h2 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] md:text-3xl">
+            {isEn ? 'Ready to create this site?' : 'พร้อมสร้างเว็บนี้แล้วหรือยัง'}
+          </h2>
+          <p className="mt-3 max-w-prose text-base leading-relaxed text-[#6E6E73]">
+            {isEn
+              ? 'One yearly plan. Create this category, then pay when you are ready.'
+              : 'แผนรายปี เริ่มสร้างหมวดนี้แล้วชำระเงินเมื่อพร้อม'}
+          </p>
+          <div className="mt-8">
+            <MarketingBuyBlock createCategory={category.createCategory} isEn={isEn} />
+          </div>
+        </div>
       </section>
     </main>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -13,8 +13,8 @@ import {
   Users,
   PawPrint,
   ArrowLeft,
-  QrCode,
   RotateCw,
+  Copy,
   type LucideIcon,
 } from 'lucide-react';
 import { MARKETING_CATEGORIES } from '@/lib/marketingCategories';
@@ -31,7 +31,7 @@ const CATEGORY_OPTIONS: {
   {
     key: 'Memorial',
     thaiLabel: 'Memorial',
-    subLabel: 'รำลึกบุคคลทั่วไป',
+    subLabel: 'รำลึกถึงผู้ล่วงลับ',
     desc: 'พื้นที่ส่งต่อความรักและความระลึกถึงผู้ล่วงลับ รวบรวมคำไว้อาลัยและภาพความอบอุ่น',
     icon: Flame,
     image: '',
@@ -39,7 +39,7 @@ const CATEGORY_OPTIONS: {
   {
     key: 'Family Legacy',
     thaiLabel: 'Family Legacy',
-    subLabel: 'เรื่องราวครอบครัว',
+    subLabel: 'เรื่องเล่าครอบครัว',
     desc: 'เก็บเรื่องราว ภาพ และความทรงจำของครอบครัว — พร้อมผังเครือญาติและบันทึกออนไลน์',
     icon: GitBranch,
     image: '',
@@ -47,7 +47,7 @@ const CATEGORY_OPTIONS: {
   {
     key: 'Couple',
     thaiLabel: 'Couple',
-    subLabel: 'ความรักคู่รัก',
+    subLabel: 'เรื่องราวเธอกับฉัน',
     desc: 'บันทึกการเดินทางของความรัก ไทม์ไลน์ภาพถ่ายและวิดีโอแห่งความประทับใจคู่ชีวิต',
     icon: Heart,
     image: '',
@@ -55,7 +55,7 @@ const CATEGORY_OPTIONS: {
   {
     key: 'Wedding',
     thaiLabel: 'Wedding',
-    subLabel: 'ความทรงจำแต่งงาน',
+    subLabel: 'งานวิวาห์',
     desc: 'กำหนดการงานมงคลสมรส สมุดลงนามแสดงความยินดีดิจิทัล และฟีดภาพวันสำคัญ',
     icon: Sparkles,
     image: '',
@@ -63,7 +63,7 @@ const CATEGORY_OPTIONS: {
   {
     key: 'Friends',
     thaiLabel: 'Friends',
-    subLabel: 'กลุ่มรุ่น',
+    subLabel: 'แก๊งเพื่อน',
     desc: 'พื้นที่รวบรวมเรื่องราวความผูกพัน มิตรภาพที่ไม่มีวันจางหาย และความทรงจำร่วมกับแก๊ง',
     icon: Users,
     image: '',
@@ -71,7 +71,7 @@ const CATEGORY_OPTIONS: {
   {
     key: 'Pet Memorial',
     thaiLabel: 'Pet',
-    subLabel: 'พื้นที่ของน้อง',
+    subLabel: 'น้องที่รัก',
     desc: 'เก็บภาพและเรื่องราวของน้อง ทั้งวันที่อยู่ด้วยกันและในความทรงจำ',
     icon: PawPrint,
     image: '',
@@ -83,7 +83,7 @@ const CATEGORY_OPTIONS: {
     'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80',
 }));
 
-type WizardStep = 1 | 2 | 3;
+type WizardStep = 1 | 2 | 3 | 4;
 
 function formatPhoneDisplay(phone: string) {
   if (phone.length !== 10) return phone;
@@ -116,6 +116,7 @@ function WebsiteCreationWizard() {
   const [slug, setSlug] = useState('');
   const [slugValid, setSlugValid] = useState<boolean | null>(null);
   const [slugChecking, setSlugChecking] = useState(false);
+  const [urlCopied, setUrlCopied] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -123,6 +124,12 @@ function WebsiteCreationWizard() {
   const [paymentRef, setPaymentRef] = useState('');
   const [paymentAmount, setPaymentAmount] = useState(2000);
   const [createdTenantId, setCreatedTenantId] = useState('');
+  const autoStarted = useRef(false);
+
+  const presetCategory = searchParams.get('category');
+  const hasPresetCategory = Boolean(
+    presetCategory && CATEGORY_OPTIONS.some((c) => c.key === presetCategory),
+  );
 
   // Resume from query: ?step=url&site=...
   useEffect(() => {
@@ -134,7 +141,12 @@ function WebsiteCreationWizard() {
       setCategory(cat);
     }
 
-    if (step === 'url' && site) {
+    if (step === 'ready' && site) {
+      setCreatedTenantId(site);
+      const readySlug = searchParams.get('slug');
+      if (readySlug) setSlug(readySlug);
+      setWizardStep(4);
+    } else if (step === 'url' && site) {
       setCreatedTenantId(site);
       setWizardStep(3);
     } else if (step === 'payment' && site) {
@@ -209,13 +221,26 @@ function WebsiteCreationWizard() {
       setPaymentRef(data.payment.refId);
       setPaymentAmount(data.payment.amount);
       setWizardStep(2);
-      router.replace(`/manage/create?step=payment&site=${data.id}`);
+      router.replace(
+        `/manage/create?step=payment&site=${data.id}&category=${encodeURIComponent(selectedCategory)}`,
+      );
     } catch (err: any) {
+      autoStarted.current = false;
       setError(err.message || 'สร้างร่างเว็บไซต์ไม่สำเร็จ');
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated !== true) return;
+    if (autoStarted.current) return;
+    const step = searchParams.get('step');
+    if (step === 'url' || step === 'payment' || step === 'ready') return;
+    if (!hasPresetCategory || !presetCategory) return;
+    autoStarted.current = true;
+    void createDraftAndPay(presetCategory);
+  }, [hasPresetCategory, isAuthenticated, presetCategory, searchParams]);
 
   const checkSlug = async () => {
     if (slug.length < 3) {
@@ -260,7 +285,9 @@ function WebsiteCreationWizard() {
       if (!res.ok) throw new Error(data.error);
 
       setWizardStep(3);
-      router.replace(`/manage/create?step=url&site=${createdTenantId}`);
+      router.replace(
+        `/manage/create?step=url&site=${createdTenantId}&category=${encodeURIComponent(category)}`,
+      );
     } catch (err: any) {
       setError(err.message || 'เกิดข้อผิดพลาดในการตรวจสอบยอดเงิน');
     } finally {
@@ -284,10 +311,30 @@ function WebsiteCreationWizard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      router.push(`/manage?site=${encodeURIComponent(slug.trim().toLowerCase())}`);
+      const savedSlug = slug.trim().toLowerCase();
+      setSlug(savedSlug);
+      setWizardStep(4);
+      router.replace(
+        `/manage/create?step=ready&site=${createdTenantId}&slug=${encodeURIComponent(savedSlug)}&category=${encodeURIComponent(category)}`,
+      );
     } catch (err: any) {
       setError(err.message || 'ตั้งชื่อลิงก์ไม่สำเร็จ');
+    } finally {
       setIsLoading(false);
+    }
+  };
+
+  const selectedCategory = CATEGORY_OPTIONS.find((c) => c.key === category);
+  const siteUrl = slug ? `forever.co.th/${slug}` : '';
+
+  const copySiteUrl = async () => {
+    if (!siteUrl) return;
+    try {
+      await navigator.clipboard.writeText(`https://${siteUrl}`);
+      setUrlCopied(true);
+      window.setTimeout(() => setUrlCopied(false), 2000);
+    } catch {
+      setError('คัดลอกลิงก์ไม่สำเร็จ ลองเลือกข้อความแล้วคัดลอกเองได้ค่ะ');
     }
   };
 
@@ -301,14 +348,16 @@ function WebsiteCreationWizard() {
   }
 
   const steps = [
-    { n: 1 as const, label: 'เลือกหมวดหมู่' },
+    { n: 1 as const, label: hasPresetCategory ? 'หมวดที่เลือก' : 'เลือกหมวดหมู่' },
     { n: 2 as const, label: 'ชำระเงิน' },
     { n: 3 as const, label: 'ชื่อลิงก์ URL' },
   ];
 
+  const isReady = wizardStep === 4;
+
   return (
     <main className="flex min-h-screen flex-col items-center bg-[#F5F5F7] px-4 py-8 text-[#1D1D1F] md:py-12">
-      <div className="mb-6 w-full max-w-3xl md:mb-8">
+      <div className={`mb-6 w-full md:mb-8 ${isReady ? 'max-w-md' : 'max-w-3xl'}`}>
         <Link
           href="/manage"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-[#86868B] transition-colors hover:text-[#1D1D1F]"
@@ -318,6 +367,7 @@ function WebsiteCreationWizard() {
         </Link>
       </div>
 
+      {!isReady && (
       <div className="mb-8 flex w-full max-w-3xl select-none items-center justify-between text-xs text-[#86868B] md:mb-10 md:text-sm">
         {steps.map((step, idx) => (
           <React.Fragment key={step.n}>
@@ -353,7 +403,85 @@ function WebsiteCreationWizard() {
           </React.Fragment>
         ))}
       </div>
+      )}
 
+      {isReady ? (
+      <article
+        className="w-full max-w-md overflow-hidden rounded-[28px] bg-white shadow-[0_8px_40px_rgba(0,0,0,0.08)] motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 motion-safe:duration-700"
+      >
+        {error && (
+          <div className="mx-6 mt-6 flex items-center gap-2 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-700">
+            <AlertCircle className="size-4 shrink-0 text-red-600" />
+            <span>{error}</span>
+          </div>
+        )}
+        {selectedCategory?.image && (
+          <div className="relative h-44 overflow-hidden md:h-52">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={selectedCategory.image}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-white from-0% via-white/55 via-45% to-transparent to-75%" />
+          </div>
+        )}
+        <div className="relative px-6 pb-8 pt-0 text-center md:px-8 md:pb-10">
+          <div className={`${selectedCategory?.image ? '-mt-7' : 'mt-8'} mb-5 flex justify-center`}>
+            <span className="flex size-14 items-center justify-center rounded-full bg-white shadow-[0_6px_20px_rgba(0,0,0,0.12)]">
+              <span className="flex size-11 items-center justify-center rounded-full bg-[#0071e3]">
+                <Check className="size-5 text-white" strokeWidth={2.75} />
+              </span>
+            </span>
+          </div>
+          <h2 className="text-3xl font-semibold tracking-tight text-[#1D1D1F]">ยินดีด้วย</h2>
+          <p className="mt-2 text-base font-medium leading-relaxed text-[#6E6E73]">
+            เว็บของคุณพร้อมแล้ว
+          </p>
+          {selectedCategory?.subLabel && (
+            <p className="mt-1.5 text-sm text-[#86868B]">
+              หมวด {selectedCategory.subLabel}
+            </p>
+          )}
+
+          <div className="mt-7 rounded-2xl bg-[#F5F5F7] px-4 py-4 text-left">
+            <p className="text-xs font-medium text-[#86868B]">ลิงก์ของคุณ</p>
+            <div className="mt-2 flex items-start gap-3">
+              <p className="min-w-0 flex-1 break-all text-lg font-semibold leading-snug tracking-tight text-[#1D1D1F]">
+                <span className="font-medium text-[#86868B]">forever.co.th/</span>
+                {slug || '…'}
+              </p>
+              <button
+                type="button"
+                onClick={copySiteUrl}
+                disabled={!siteUrl}
+                aria-label={urlCopied ? 'คัดลอกแล้ว' : 'คัดลอกลิงก์'}
+                className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-white px-3.5 text-xs font-semibold text-[#1D1D1F] shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition hover:bg-[#EFEFF2] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#0071e3]/20 disabled:opacity-50"
+              >
+                {urlCopied ? <Check className="size-3.5 text-[#0071e3]" /> : <Copy className="size-3.5" />}
+                {urlCopied ? 'คัดลอกแล้ว' : 'คัดลอก'}
+              </button>
+            </div>
+            <p className="sr-only" aria-live="polite">
+              {urlCopied ? 'คัดลอกลิงก์แล้ว' : ''}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              router.push(`/manage?site=${encodeURIComponent(slug)}`)
+            }
+            className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[#0071e3] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(0,113,227,0.28)] transition hover:bg-[#0077ED] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#0071e3]/30"
+          >
+            เข้าสู่หน้าจัดการ
+          </button>
+          <p className="mt-4 text-sm leading-relaxed text-[#86868B]">
+            เก็บลิงก์นี้ไว้ แล้วเข้าไปแต่งเรื่องราวได้เลย
+          </p>
+        </div>
+      </article>
+      ) : (
       <div className="w-full max-w-3xl space-y-6 overflow-visible rounded-[22px] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.08)] md:rounded-[28px] md:p-8">
         {error && (
           <div className="flex items-center gap-2 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-700">
@@ -363,7 +491,14 @@ function WebsiteCreationWizard() {
         )}
 
         {/* STEP 1: Category — click advances */}
-        {wizardStep === 1 && (
+        {wizardStep === 1 && hasPresetCategory && (
+          <div className="flex flex-col items-center gap-3 py-12 text-[#6E6E73]">
+            <RotateCw className="size-6 animate-spin text-[#0071e3]" />
+            <p className="text-sm font-medium">กำลังเปิดหน้าชำระเงิน...</p>
+          </div>
+        )}
+
+        {wizardStep === 1 && !hasPresetCategory && (
           <div className="animate-fade-in space-y-6">
             <header className="space-y-2 text-center">
               <p className="text-sm font-medium text-[#86868B]">
@@ -375,7 +510,9 @@ function WebsiteCreationWizard() {
                 สร้างเว็บไซต์ใหม่
               </h2>
               <p className="mx-auto max-w-xl text-sm font-medium leading-relaxed text-[#86868B] sm:text-base md:text-lg">
-                กดเลือกหมวดด้านล่าง — ระบบจะพาไปชำระเงินทันที
+                {hasPresetCategory
+                  ? 'กำลังเปิดหน้าชำระเงินของหมวดที่เลือกไว้'
+                  : 'กดเลือกหมวดด้านล่าง ระบบจะพาไปชำระเงินทันที'}
               </p>
             </header>
 
@@ -458,14 +595,14 @@ function WebsiteCreationWizard() {
         {wizardStep === 2 && (
           <div className="animate-fade-in mx-auto max-w-md space-y-6 text-center">
             <header className="space-y-2">
-              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-[#F5F5F7] ring-1 ring-[#E8E8ED]">
-                <QrCode className="size-6 text-[#0071e3]" strokeWidth={1.75} />
+              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-[#0071e3]/10">
+                <Sparkles className="size-6 text-[#0071e3]" strokeWidth={1.75} />
               </div>
-              <h2 className="text-2xl font-semibold tracking-tight">ชำระค่าบริการ</h2>
-              <p className="text-sm leading-relaxed text-[#6E6E73]">
-                สแกน PromptPay เพื่อเปิดใช้งานเว็บไซต์ 1 ปี
+              <h2 className="text-2xl font-semibold tracking-tight">เหลือแค่สแกน QR</h2>
+              <p className="text-sm font-medium leading-relaxed text-[#6E6E73]">
+                เปิดเว็บได้ทั้งปี
                 <br />
-                พื้นที่จัดเก็บ 1 GB · ฿{paymentAmount.toLocaleString('th-TH')}
+                ฿{paymentAmount.toLocaleString('th-TH')} · พื้นที่ 1 GB
               </p>
             </header>
 
@@ -489,8 +626,8 @@ function WebsiteCreationWizard() {
                   จำลอง
                 </span>
               </div>
-              <p className="mt-3 text-xs text-[#86868B]">
-                QR นี้ใช้สำหรับทดสอบเท่านั้น — สแกนแล้วไม่ตัดเงินจริง
+              <p className="mt-3 text-xs font-medium text-[#86868B]">
+                QR ทดสอบ สแกนแล้วไม่ตัดเงินจริง
               </p>
               <p className="mt-2 font-mono text-xs text-[#6E6E73]">
                 รหัสอ้างอิง: {paymentRef || 'กำลังโหลด...'}
@@ -504,7 +641,7 @@ function WebsiteCreationWizard() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0071e3] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(0,113,227,0.28)] transition hover:bg-[#0077ED] disabled:opacity-60"
             >
               {isLoading && <RotateCw className="size-4 animate-spin" />}
-              {isLoading ? 'กำลังตรวจเช็กยอดเงิน...' : 'จำลองการชำระเงินสำเร็จ'}
+              {isLoading ? 'กำลังตรวจให้นิดนึง...' : 'ชำระแล้ว ไปต่อเลย'}
             </button>
           </div>
         )}
@@ -515,7 +652,7 @@ function WebsiteCreationWizard() {
             <header className="space-y-2 text-center">
               <h2 className="text-2xl font-semibold tracking-tight">ตั้งชื่อลิงก์ URL</h2>
               <p className="text-sm leading-relaxed text-[#6E6E73]">
-                เลือกชื่อที่ไม่ซ้ำ — จะเป็นที่อยู่ถาวรของเว็บไซต์คุณ
+                เลือกชื่อที่ไม่ซ้ำ จะเป็นที่อยู่ถาวรของเว็บคุณ
               </p>
             </header>
 
@@ -559,15 +696,16 @@ function WebsiteCreationWizard() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0071e3] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(0,113,227,0.28)] transition hover:bg-[#0077ED] disabled:opacity-60"
             >
               {isLoading && <RotateCw className="size-4 animate-spin" />}
-              {isLoading ? 'กำลังบันทึก...' : 'เข้าสู่หน้าจัดการ'}
+              {isLoading ? 'กำลังบันทึก...' : 'ยืนยันชื่อลิงก์'}
             </button>
 
             <p className="text-center text-sm text-[#86868B]">
-              ปรับธีม สี และข้อมูลเนื้อหาได้ในหน้าจัดการหลังจากนี้
+              ปรับธีม สี และเรื่องราวได้ในหน้าจัดการหลังจากนี้
             </p>
           </div>
         )}
       </div>
+      )}
     </main>
   );
 }

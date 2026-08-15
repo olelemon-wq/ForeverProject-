@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CreditCard, AlertCircle, CheckCircle2, RotateCw } from 'lucide-react';
+import { AlertCircle, CheckCircle2, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { buildPromptPayQrImageUrl } from '@/lib/promptpayPayload';
 
@@ -113,12 +113,12 @@ function PaymentPageInner() {
     <main className="min-h-screen bg-stone-50 text-stone-850 flex items-center justify-center p-4">
       <div className="w-full max-w-md p-8 rounded-3xl border border-stone-200 bg-white shadow-xl space-y-8 animate-fade-in text-center">
         <header className="space-y-2">
-          <span className="text-xs uppercase font-black text-blue-850 tracking-widest bg-blue-50 px-3.5 py-1 rounded-full border border-blue-100 inline-flex items-center gap-1">
-            <CreditCard className="w-3 h-3 text-blue-600" /> THAI PROMPTPAY
+          <span className="inline-flex items-center gap-1 rounded-full bg-[#0071e3]/10 px-3.5 py-1 text-xs font-semibold text-[#0071e3]">
+            PromptPay
           </span>
-          <h1 className="text-2xl font-black text-stone-900 pt-2">ชำระค่าบริการสร้างเว็บไซต์</h1>
-          <p className="text-stone-500 text-xs leading-relaxed max-w-xs mx-auto">
-            สแกนเพื่อเปิดใช้งานเว็บไซต์ความทรงจำของคุณเป็นระยะเวลา 1 ปี (ความจุ 1 GB)
+          <h1 className="pt-2 text-2xl font-semibold tracking-tight text-[#1D1D1F]">เหลือแค่สแกน QR</h1>
+          <p className="mx-auto max-w-xs text-sm font-medium leading-relaxed text-[#6E6E73]">
+            เปิดเว็บได้ทั้งปี พื้นที่ 1 GB
           </p>
         </header>
 
@@ -142,8 +142,10 @@ function PaymentPageInner() {
                 <span className="text-stone-800 font-mono text-xs truncate max-w-[200px]">{siteDetails.name}</span>
               </div>
               <div className="border-t border-stone-200/60 my-2 pt-2 flex justify-between items-baseline">
-                <span className="text-xs text-stone-500 font-bold">ยอดที่ต้องชำระ:</span>
-                <span className="text-2xl font-black text-[#0071e3]">฿2,000 <span className="text-xs font-normal text-stone-400">/ ปี</span></span>
+                <span className="text-sm font-medium text-[#6E6E73]">ยอดชำระ</span>
+                <span className="text-2xl font-semibold tracking-tight text-[#0071e3]">
+                  ฿1,800 <span className="text-sm font-medium text-[#86868B]">/ ปี</span>
+                </span>
               </div>
               <div className="flex justify-between items-center pt-1 border-t border-stone-200/40">
                 <span className="text-xs text-stone-400 font-bold uppercase">รหัสอ้างอิง:</span>
@@ -172,8 +174,8 @@ function PaymentPageInner() {
               <span className="mt-4 flex select-none items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-800">
                 รอการชำระเงิน (PENDING)
               </span>
-              <p className="mt-2 text-xs text-stone-500">
-                QR นี้ใช้สำหรับทดสอบเท่านั้น — สแกนแล้วไม่ตัดเงินจริง
+              <p className="mt-2 text-xs font-medium text-[#86868B]">
+                QR ทดสอบ สแกนแล้วไม่ตัดเงินจริง
               </p>
             </div>
 
@@ -188,17 +190,17 @@ function PaymentPageInner() {
                 {isVerifying ? (
                   <>
                     <RotateCw className="w-4 h-4 animate-spin" />
-                    <span>กำลังตรวจสอบยอดเงิน...</span>
+                    <span>กำลังตรวจให้นิดนึง...</span>
                   </>
                 ) : (
                   <>
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>จำลองการจ่ายเงินผ่านแอปธนาคาร</span>
+                    <span>ชำระแล้ว ไปต่อเลย</span>
                   </>
                 )}
               </Button>
               <p className="text-xs text-stone-400">
-                * หลังชำระเงินสำเร็จ ระบบจะพาไปตั้งชื่อลิงก์ URL แล้วเข้าหน้าจัดการเว็บไซต์
+                หลังชำระแล้ว จะไปตั้งชื่อลิงก์ แล้วเข้าหน้าจัดการเว็บ
               </p>
             </div>
           </div>

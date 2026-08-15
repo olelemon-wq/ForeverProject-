@@ -34,7 +34,7 @@ export interface CategoryJourney {
 
 export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
   'Memorial': {
-    label: 'Memorial (รำลึกบุคคลทั่วไป)',
+    label: 'Memorial (รำลึกถึงผู้ล่วงลับ)',
     tagline: 'เว็บไซต์อนุสรณ์และคำรำลึกถึงผู้ล่วงลับ',
     optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'activities', 'donation'],
     defaultOn: ['condolence', 'memory'],
@@ -104,7 +104,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     },
   },
   'Family Legacy': {
-    label: 'Family Legacy (เรื่องราวครอบครัว)',
+    label: 'Family Legacy (เรื่องเล่าครอบครัว)',
     tagline: 'เก็บเรื่องราว ภาพ และความทรงจำของครอบครัวไว้ด้วยกัน',
     optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'activities', 'donation'],
     defaultOn: ['memory', 'family', 'ebooks'],
@@ -129,7 +129,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     },
   },
   'Couple': {
-    label: 'Couple (ความรักคู่รัก)',
+    label: 'Couple (เรื่องราวเธอกับฉัน)',
     tagline: 'บันทึกการเดินทางความรักและเรื่องราวคู่ชีวิต',
     optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'activities', 'donation'],
     defaultOn: ['announcement', 'memory'],
@@ -154,7 +154,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     },
   },
   'Wedding': {
-    label: 'Wedding (ความทรงจำแต่งงาน)',
+    label: 'Wedding (งานวิวาห์)',
     tagline: 'บันทึกความสุขในวันสำคัญและแชร์ภาพความประทับใจ',
     optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'activities', 'donation'],
     defaultOn: ['announcement'],
@@ -181,7 +181,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     },
   },
   'Friends': {
-    label: 'Friends (กลุ่มรุ่น)',
+    label: 'Friends (แก๊งเพื่อน)',
     tagline: 'พื้นที่เก็บความทรงจำร่วม ทริป และเรื่องราวของกลุ่มที่เติบโตไปด้วยกัน',
     optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'ebooks', 'activities', 'donation'],
     defaultOn: ['memory', 'condolence'],
@@ -208,7 +208,7 @@ export const CATEGORY_JOURNEYS: Record<CategoryKey, CategoryJourney> = {
     },
   },
   'Pet Memorial': {
-    label: 'Pet (พื้นที่ของน้อง)',
+    label: 'Pet (น้องที่รัก)',
     tagline: 'พื้นที่เก็บความทรงจำและเรื่องราวของน้อง ทั้งวันที่อยู่ด้วยกันและในความทรงจำ',
     optional: ['announcement', 'condolence', 'memory', 'feed', 'family', 'activities', 'donation'],
     defaultOn: ['memory'],

@@ -42,7 +42,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'boonkrua-family',
     category: 'Memorial',
-    categoryLabel: 'อนุสรณ์บุคคล',
+    categoryLabel: 'รำลึกถึงผู้ล่วงลับ',
     title: 'ด้วยรักและคิดถึง คุณพ่อบุญเครือ',
     description: 'เว็บรำลึกพร้อมการ์ดพิธี สมุดไว้อาลัย แกลเลอรี และผังครอบครัว',
     coverUrl:
@@ -53,7 +53,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'mae-somsri',
     category: 'Memorial',
-    categoryLabel: 'อนุสรณ์บุคคล',
+    categoryLabel: 'รำลึกถึงผู้ล่วงลับ',
     title: 'ด้วยรักและคิดถึง คุณแม่สมศรี',
     description: 'สมุดไว้อาลัย ความทรงจำจากลูกหลาน แกลเลอรี และผังครอบครัว',
     coverUrl: '/demo-media/a1b2c3d4-mae1-4f01-9e11-somsri000001/mae-05.jpg',
@@ -63,7 +63,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'ajarn-somchai',
     category: 'Memorial',
-    categoryLabel: 'อนุสรณ์บุคคล',
+    categoryLabel: 'รำลึกถึงผู้ล่วงลับ',
     title: 'รำลึกอาจารย์สมชาย พิทักษ์ธรรม',
     description: 'ประวัติ แกลเลอรี กิจกรรมรำลึก และกองทุนบริจาคเพื่อการศึกษา',
     coverUrl: '/demo-media/a1b2c3d4-aja1-4f01-9e11-somchai00001/ajarn-03.jpg',
@@ -73,7 +73,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'pluemploy',
     category: 'Couple',
-    categoryLabel: 'คู่รัก',
+    categoryLabel: 'เรื่องราวเธอกับฉัน',
     title: 'ปลื้ม & พลอย',
     description: 'บันทึกวันสำคัญ ไดอารี่ความทรงจำ และแกลเลอรีคู่รัก',
     coverUrl:
@@ -84,7 +84,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'napat-mintra',
     category: 'Couple',
-    categoryLabel: 'คู่รัก',
+    categoryLabel: 'เรื่องราวเธอกับฉัน',
     title: 'ณภัทร & มินตรา',
     description: 'ไดอารี่คู่รัก วันครบรอบ และแกลเลอรีทริปด้วยกัน',
     coverUrl: '/demo-media/c0a01e01-napat-4min-tra0-couple000001/napat-mintra-01.jpg',
@@ -94,7 +94,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'beam-fah',
     category: 'Couple',
-    categoryLabel: 'คู่รัก',
+    categoryLabel: 'เรื่องราวเธอกับฉัน',
     title: 'บีม & ฟ้า',
     description: 'บอร์ดทริปคู่ กิจกรรมด้วยกัน และข้อความถึงกัน',
     coverUrl: '/demo-media/c0a01e02-beam0-4fah-couple00000002/beam-fah-01.jpg',
@@ -104,7 +104,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'kukimiyafamily',
     category: 'Wedding',
-    categoryLabel: 'งานแต่งงาน',
+    categoryLabel: 'งานวิวาห์',
     title: 'กิ๊ฟ & มิยา',
     description: 'การ์ดเชิญ กำหนดการ สมุดอวยพร ใส่ซองออนไลน์ และผังสองครอบครัว',
     coverUrl:
@@ -115,7 +115,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'porjai-nicha',
     category: 'Wedding',
-    categoryLabel: 'งานแต่งงาน',
+    categoryLabel: 'งานวิวาห์',
     title: 'ปอใจ & ณิชา',
     description: 'การ์ดเชิญ สมุดอวยพร และใส่ซองออนไลน์',
     coverUrl: '/demo-media/c0a02e01-porja-4nic-ha0-wedding00001/porjai-nicha-01.jpg',
@@ -125,7 +125,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'win-praew',
     category: 'Wedding',
-    categoryLabel: 'งานแต่งงาน',
+    categoryLabel: 'งานวิวาห์',
     title: 'วิน & แพรว',
     description: 'กำหนดการ แกลเลอรีพรีเวด และผังสองครอบครัว',
     coverUrl: '/demo-media/c0a02e02-winpr-4aew-wedding00002/win-praew-01.jpg',
@@ -135,7 +135,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'bts-family',
     category: 'Family Legacy',
-    categoryLabel: 'เรื่องราวครอบครัว',
+    categoryLabel: 'เรื่องเล่าครอบครัว',
     title: 'Jitjaidee-Family',
     description: 'Jitjaidee family legacy — genealogy, history books, gallery, and memory board.',
     coverUrl:
@@ -146,7 +146,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'saengdao-lineage',
     category: 'Family Legacy',
-    categoryLabel: 'เรื่องราวครอบครัว',
+    categoryLabel: 'เรื่องเล่าครอบครัว',
     title: 'ตระกูลแสงดาว',
     description: 'ผังตระกูล หนังสือครอบครัว และคลังภาพรุ่นสู่รุ่น',
     coverUrl: '/demo-media/c0a03e01-saeng-4dao-family000001/saengdao-lineage-01.jpg',
@@ -156,7 +156,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'rungarun-house',
     category: 'Family Legacy',
-    categoryLabel: 'เรื่องราวครอบครัว',
+    categoryLabel: 'เรื่องเล่าครอบครัว',
     title: 'บ้านรุ่งอรุณ',
     description: 'งานรวมญาติ ความทรงจำร่วม และแกลเลอรีบ้านเกิด',
     coverUrl: '/demo-media/c0a03e02-runga-4run-family000002/rungarun-house-01.jpg',
@@ -166,7 +166,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'friendforever',
     category: 'Friends',
-    categoryLabel: 'กลุ่มเพื่อน',
+    categoryLabel: 'แก๊งเพื่อน',
     title: 'เพื่อนรัก CN the Gang',
     description: 'พื้นที่รวมความทรงจำทริป ข้อความถึงกัน และแกลเลอรีกลุ่มเพื่อน',
     coverUrl:
@@ -177,7 +177,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'campus-crew',
     category: 'Friends',
-    categoryLabel: 'กลุ่มเพื่อน',
+    categoryLabel: 'แก๊งเพื่อน',
     title: 'เพื่อนมหาลัย รุ่น 58',
     description: 'ทริปรุ่น ความทรงจำมหาลัย และข้อความถึงกัน',
     coverUrl: '/demo-media/c0a04e01-campu-4scr-ew0-friends0001/campus-crew-01.jpg',
@@ -187,7 +187,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'office-buddies',
     category: 'Friends',
-    categoryLabel: 'กลุ่มเพื่อน',
+    categoryLabel: 'แก๊งเพื่อน',
     title: 'เพื่อนที่ทำงาน Team Sunrise',
     description: 'นัดหมายทีม แกลเลอรีออฟฟิศ และข้อความให้กำลังใจ',
     coverUrl: '/demo-media/c0a04e02-offic-4ebu-ddi-friends0002/office-buddies-01.jpg',
@@ -197,7 +197,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'kittiemeaw',
     category: 'Pet Memorial',
-    categoryLabel: 'สัตว์เลี้ยง',
+    categoryLabel: 'น้องที่รัก',
     title: 'คิตตี้เหมียวจอมซน',
     description: 'พื้นที่รำลึกน้องสัตว์เลี้ยง พร้อมสมุดส่งความคิดถึงและแกลเลอรี',
     coverUrl: '/defaults/pet-memorial/cover/3.png',
@@ -207,7 +207,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'nong-mango',
     category: 'Pet Memorial',
-    categoryLabel: 'สัตว์เลี้ยง',
+    categoryLabel: 'น้องที่รัก',
     title: 'น้องมะม่วงจอมซน',
     description: 'สมุดส่งความคิดถึง ไดอารี่ และแกลเลอรีน้องแมว',
     coverUrl: '/demo-media/c0a05e01-mango-4cat-pet0-memorial01/nong-mango-01.jpg',
@@ -217,7 +217,7 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   {
     slug: 'nong-bao',
     category: 'Pet Memorial',
-    categoryLabel: 'สัตว์เลี้ยง',
+    categoryLabel: 'น้องที่รัก',
     title: 'น้องเบาผู้ซื่อสัตย์',
     description: 'กิจกรรมรำลึก กองทุนช่วยเหลือสัตว์ และแกลเลอรีน้องหมา',
     coverUrl: '/demo-media/c0a05e02-baodg-4pet-memorial0002/nong-bao-01.jpg',

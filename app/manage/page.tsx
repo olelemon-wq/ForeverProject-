@@ -2517,36 +2517,54 @@ export default function WebmasterDashboard() {
   }
 
   if (websites.length === 0) {
+    const phoneLabel = userPhone
+      ? userPhone.length === 10
+        ? `${userPhone.slice(0, 3)}-${userPhone.slice(3, 6)}-${userPhone.slice(6)}`
+        : userPhone
+      : '';
+
     return (
-      <main className="min-h-screen bg-stone-50 text-stone-850 flex flex-col items-center justify-center p-6 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
-          <Flame className="w-8 h-8 text-[#0071e3] animate-pulse" />
-        </div>
-        <div className="space-y-2">
-          <h1 className="text-2xl font-black text-stone-900">ยินดีต้อนรับสู่ FOREVER</h1>
-          <p className="text-stone-500 text-sm max-w-sm mx-auto">
-            {userPhone
-              ? `เข้าสู่ระบบด้วย ${userPhone} แล้ว แต่ยังไม่มีเว็บไซต์ในบัญชีนี้`
-              : 'คุณยังไม่มีเว็บไซต์ความทรงจำในระบบบัญชีของคุณในขณะนี้'}
-          </p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-3 items-center">
-          <Link
-            href="/manage/create"
-            className="px-6 py-3.5 rounded-2xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-sm transition active:scale-95 shadow-sm"
-          >
-            สร้างเว็บไซต์แรกของคุณ
-          </Link>
-          <button
-            type="button"
-            onClick={async () => {
-              await fetch('/api/auth/logout', { method: 'POST' });
-              window.location.href = '/login';
-            }}
-            className="px-6 py-3.5 rounded-2xl border border-stone-200 bg-white text-stone-700 font-bold text-sm hover:bg-stone-50 transition cursor-pointer"
-          >
-            ออกจากระบบ / เปลี่ยนเบอร์
-          </button>
+      <main className="flex min-h-screen items-center justify-center bg-[#F5F5F7] px-6 py-12 text-[#1D1D1F]">
+        <div className="w-full max-w-md overflow-hidden rounded-[28px] border border-[#E8E8ED] bg-white shadow-[0_8px_32px_rgba(0,0,0,0.06)]">
+          <div className="relative aspect-[16/7] overflow-hidden bg-[#F5F5F7]">
+            <img
+              src="/marketing/family-story-features/gallery.jpg"
+              alt=""
+              className="h-full w-full object-cover object-center"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-white" />
+          </div>
+          <div className="space-y-6 px-6 pb-8 pt-2 text-center sm:px-8">
+            <p className="text-xs font-semibold tracking-[0.18em] text-[#86868B]">FOREVER</p>
+            <div className="space-y-2">
+              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">ยินดีต้อนรับ</h1>
+              <p className="text-sm font-medium leading-relaxed text-[#6E6E73] sm:text-base">
+                {phoneLabel
+                  ? `เข้าสู่ระบบด้วย ${phoneLabel} แล้ว ยังไม่มีเว็บในบัญชีนี้`
+                  : 'ยังไม่มีเว็บในบัญชีนี้ กดสร้างเพื่อเริ่มต้น'}
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Button
+                asChild
+                className="h-12 rounded-full bg-[#0071e3] text-base font-medium text-white hover:bg-[#0077ED]"
+              >
+                <Link href="/manage/create">สร้างเว็บไซต์แรกของคุณ</Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 rounded-full border-[#E8E8ED] bg-white text-sm font-medium text-[#6E6E73] hover:bg-[#F5F5F7] hover:text-[#1D1D1F]"
+                onClick={async () => {
+                  await fetch('/api/auth/logout', { method: 'POST' });
+                  window.location.href = '/login';
+                }}
+              >
+                <LogOut className="size-4" />
+                ออกจากระบบ / เปลี่ยนเบอร์
+              </Button>
+            </div>
+          </div>
         </div>
       </main>
     );

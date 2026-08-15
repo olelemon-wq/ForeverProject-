@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronRight, Cloud, QrCode, Sparkles } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useLanguageStore } from '@/stores/useLanguageStore';
-import { AuroraBackground } from '@/components/ui/aurora-background';
-import { MARKETING_CATEGORIES } from '@/lib/marketingCategories';
+import { MARKETING_CATEGORIES, MARKETING_DISPLAY_PRICE } from '@/lib/marketingCategories';
+import { MarketingSkyHero } from '@/components/marketing/MarketingSkyHero';
+import { Button } from '@/components/ui/button';
+import { categoryCreateHref } from '@/components/marketing/MarketingBuyBlock';
 
 function LineBreakText({ lines, className }: { lines: readonly string[]; className?: string }) {
   const blocks: string[][] = [];
@@ -39,16 +41,17 @@ function LineBreakText({ lines, className }: { lines: readonly string[]; classNa
 
 const COPY = {
   th: {
-    heroTitleLine1: 'สลักความทรงจำไว้',
-    heroTitleLine2: 'ชั่วนิรันดร์',
+    heroTitleLine1: 'ให้ความทรงจำ',
+    heroTitleLine2: 'มีที่อยู่ของตัวเอง',
     heroDescLines: [
-      'FOREVER คือพื้นที่ออนไลน์ส่วนตัวสำหรับเก็บเรื่องราว',
-      'ภาพถ่าย และคำรำลึก',
-      'บ้านดิจิทัลที่คุณสร้างขึ้น เพื่อคนที่คุณรัก และคนที่จะมาหลังจากนี้',
+      'FOREVER คือพื้นที่ออนไลน์ส่วนตัว',
+      'สำหรับเก็บเรื่องราว ภาพถ่าย และความคิดถึง',
+      'บ้านดิจิทัลที่คุณสร้างขึ้น',
+      'เพื่อคนที่คุณรักได้กลับมาเปิดดู',
     ],
     heroDescLinesDesktop: [
-      'FOREVER คือพื้นที่ออนไลน์ส่วนตัวสำหรับเก็บเรื่องราว ภาพถ่าย และคำรำลึก',
-      'บ้านดิจิทัลที่คุณสร้างขึ้น เพื่อคนที่คุณรัก และคนที่จะมาหลังจากนี้',
+      'FOREVER คือพื้นที่ออนไลน์ส่วนตัว สำหรับเก็บเรื่องราว ภาพถ่าย และความคิดถึง',
+      'บ้านดิจิทัลที่คุณสร้างขึ้น เพื่อคนที่คุณรักได้กลับมาเปิดดู',
     ],
     startCta: 'เริ่มสร้างพื้นที่ของคุณ',
     startCtaShort: 'เริ่มสร้าง',
@@ -57,7 +60,7 @@ const COPY = {
     whyTitleLine1: 'เพราะความทรงจำ...',
     whyTitleLine2: 'ไม่ควรหายไป พร้อมกับเวลา',
     whyP1Lines: [
-      'วันนี้เราเก็บความทรงจำกระจายอยู่ทุกที่',
+      'วันนี้เราเก็บเรื่องราวกระจายอยู่ทุกที่',
       'รูปใน Instagram, คลิปสั้นใน TikTok, วิดีโอใน YouTube',
       'โพสต์ใน X, ข้อความใน LINE',
       'หรือแม้แต่ Facebook ที่คนรุ่นใหม่อาจไม่เคยเปิดดูเลย',
@@ -67,7 +70,7 @@ const COPY = {
       'หรือหายไปพร้อมกับบัญชี แอป หรือเครื่องที่เปลี่ยน',
     ],
     whyP1LinesDesktop: [
-      'วันนี้เราเก็บความทรงจำกระจายอยู่ทุกที่ รูปใน Instagram, คลิปสั้นใน TikTok',
+      'วันนี้เราเก็บเรื่องราวกระจายอยู่ทุกที่ รูปใน Instagram, คลิปสั้นใน TikTok',
       'วิดีโอใน YouTube, โพสต์ใน X, ข้อความใน LINE',
       'หรือแม้แต่ Facebook ที่คนรุ่นใหม่อาจไม่เคยเปิดดูเลย',
       '',
@@ -76,53 +79,46 @@ const COPY = {
     ],
     whyP1SupplementLines: [
       'โซเชียลมีไว้แชร์ช่วงเวลา',
-      'แต่ความทรงจำที่สำคัญ ควรมีที่อยู่ที่เราเลือกเอง',
+      'แต่เรื่องสำคัญ ควรมีที่อยู่ที่เราเลือกเอง',
       'และอยู่ได้นานกว่าฟีดหนึ่งวัน',
     ],
     whyP2Lines: [
-      'FOREVER เกิดขึ้นเพื่อให้ทุกคนมี “บ้านดิจิทัล” ของความทรงจำ',
-      'ลิงก์เดียวที่ครอบครัว เพื่อน หรือคนรักเปิดดูได้ทุกที่ ทุกเวลา',
-      'ไม่มีโฆษณา ไม่มีฟีดรบกวน คุณเลือกว่าจะเปิดเผยอะไร',
-      'ใครเขียนข้อความได้ และรูปไหนควรอยู่ตรงนี้',
+      'FOREVER คือบ้านดิจิทัล',
+      'ลิงก์เดียวที่ครอบครัวเปิดได้ทุกเมื่อ ไม่มีโฆษณา หรือฟีดรบกวน',
+      'คุณเลือกว่าใครเห็นอะไร และรูปไหนอยู่ตรงนี้',
+    ],
+    whyP2LinesDesktop: [
+      'FOREVER คือบ้านดิจิทัล ลิงก์เดียวที่ครอบครัวเปิดได้ทุกเมื่อ',
+      'ไม่มีโฆษณา หรือฟีดรบกวน คุณเลือกว่าใครเห็นอะไร และรูปไหนอยู่ตรงนี้',
     ],
     whyP3Lines: [
-      'คุณจัดการทุกอย่างเอง อัปโหลดรูป เขียนเรื่องราว',
-      'อนุมัติข้อความจากคนรอบข้าง พิมพ์ QR Code',
-      'ติดไว้ในสมุดครอบครัว หรือแชร์ลิงก์ในงานพิธี',
-      'ความทรงจำไม่ได้มีวันหมดอายุ และ FOREVER ออกแบบมา',
-      'ให้เป็นที่เก็บถาวร ไม่ใช่โพสต์ชั่วคราว',
+      'อัปโหลดรูป เขียนเรื่อง อนุมัติข้อความ พิมพ์ QR',
+      'ติดสมุดครอบครัว หรือแชร์ลิงก์ในงานพิธี',
+      'เก็บถาวร ไม่ใช่โพสต์ชั่วคราว',
     ],
     whyP3LinesDesktop: [
-      'คุณจัดการทุกอย่างเอง อัปโหลดรูป เขียนเรื่องราว อนุมัติข้อความจากคนรอบข้าง',
-      'พิมพ์ QR Code ติดไว้ในสมุดครอบครัว หรือแชร์ลิงก์ในงานพิธี',
-      'ความทรงจำไม่ได้มีวันหมดอายุ และ FOREVER ออกแบบมา',
-      'ให้เป็นที่เก็บถาวร ไม่ใช่โพสต์ชั่วคราว',
+      'อัปโหลดรูป เขียนเรื่อง อนุมัติข้อความ พิมพ์ QR ติดสมุดหรือแชร์ในงาน',
+      'เรื่องราวไม่ได้มีวันหมดอายุ FOREVER เก็บถาวร ไม่ใช่โพสต์ชั่วคราว',
     ],
     categoriesTitle: 'ทุกเรื่องราวสำคัญ มีรูปแบบของตัวเอง',
     categoriesDescLines: [
       'FOREVER รองรับหลายบริบท',
       'แต่ละหัวข้อมีฟีเจอร์ที่เหมาะกับเรื่องนั้นโดยเฉพาะ',
     ],
-    pricingTitle: 'แผนสมาชิกรายปี',
-    priceAmount: '฿2,000',
-    pricePeriod: '/ ปี',
-    storage: 'พื้นที่ 1 GB',
-    allFeatures: 'ครบทุกฟีเจอร์',
-    permanentQr: 'QR Code ถาวรสำหรับพิมพ์',
-    readyTitleLine1: 'พร้อมให้ความทรงจำของคุณ...',
-    readyTitleLine2: 'มีที่อยู่ของตัวเองหรือยัง',
+    readyTitleLine1: 'พร้อมแล้วก็เริ่มได้เลย',
   },
   en: {
-    heroTitleLine1: 'Timeless digital',
-    heroTitleLine2: 'memories',
+    heroTitleLine1: 'Give memories',
+    heroTitleLine2: 'a home of their own',
     heroDescLines: [
-      'FOREVER is your private online space for stories,',
-      'photos, and tributes',
-      'a digital home you build for the people you love, and those who come after.',
+      'FOREVER is a private online space',
+      'for stories, photos, and the people you miss',
+      'a digital home you build',
+      'so the people you love can come back to look',
     ],
     heroDescLinesDesktop: [
-      'FOREVER is your private online space for stories, photos, and tributes',
-      'a digital home you build for the people you love, and those who come after.',
+      'FOREVER is a private online space for stories, photos, and the people you miss',
+      'a digital home you build so the people you love can come back to look',
     ],
     startCta: 'Start your space',
     startCtaShort: 'Start',
@@ -131,7 +127,7 @@ const COPY = {
     whyTitleLine1: 'Because memories...',
     whyTitleLine2: 'should not fade with time',
     whyP1Lines: [
-      'Today our memories scatter everywhere',
+      'Today our stories scatter everywhere',
       'photos on Instagram, short clips on TikTok, videos on YouTube',
       'posts on X, messages in LINE',
       'or even Facebook that younger generations may never open.',
@@ -141,7 +137,7 @@ const COPY = {
       'or gone with an account, an app, or a new phone.',
     ],
     whyP1LinesDesktop: [
-      'Today our memories scatter everywhere, photos on Instagram, short clips on TikTok',
+      'Today our stories scatter everywhere, photos on Instagram, short clips on TikTok',
       'videos on YouTube, posts on X, messages in LINE',
       'or even Facebook that younger generations may never open.',
       '',
@@ -150,41 +146,33 @@ const COPY = {
     ],
     whyP1SupplementLines: [
       'Social media is for sharing the moment',
-      'but memories that matter deserve a place you choose yourself',
+      'but what matters deserves a place you choose yourself',
       'one that lasts longer than a single day’s feed.',
     ],
     whyP2Lines: [
-      'FOREVER gives every story a digital home',
-      'one respectful link your family, friends, or loved ones can open anytime, anywhere',
-      'no ads, no noisy feeds, you decide what to share',
-      'who can write messages, and which photos belong here.',
+      'FOREVER is a digital home',
+      'one link family can open anytime',
+      'no ads, no noisy feed, you choose who sees what, and which photos belong here',
+    ],
+    whyP2LinesDesktop: [
+      'FOREVER is a digital home, one link family can open anytime',
+      'no ads, no noisy feed, you choose who sees what, and which photos belong here',
     ],
     whyP3Lines: [
-      'You stay in full control, upload photos, write stories',
-      'approve messages from others, print a QR code',
-      'stick it in the family album, or share a link at a ceremony',
-      'memories do not expire, and FOREVER is designed',
-      'to be a lasting archive, not a fleeting post.',
+      'Upload photos, write stories, approve messages, print a QR',
+      'keep it in the family book or share at a ceremony',
+      'an archive, not a fleeting post',
     ],
     whyP3LinesDesktop: [
-      'You stay in full control, upload photos, write stories, approve messages from others',
-      'print a QR code, stick it in the family album, or share a link at a ceremony',
-      'memories do not expire, and FOREVER is designed',
-      'to be a lasting archive, not a fleeting post.',
+      'Upload photos, write stories, approve messages, print a QR for the album or a ceremony',
+      'stories do not expire FOREVER is a lasting archive, not a fleeting post',
     ],
     categoriesTitle: 'Every important story has its own shape',
     categoriesDescLines: [
       'FOREVER supports many contexts',
       'each category has features tailored to that kind of story.',
     ],
-    pricingTitle: 'Annual membership',
-    priceAmount: '฿2,000',
-    pricePeriod: '/ year',
-    storage: '1 GB storage',
-    allFeatures: 'All features included',
-    permanentQr: 'Permanent QR for printing',
-    readyTitleLine1: 'Ready to give your memories',
-    readyTitleLine2: 'a home of their own?',
+    readyTitleLine1: 'Start when you’re ready',
   },
 } as const;
 
@@ -236,31 +224,51 @@ export default function MarketingHome() {
 
   return (
     <main className="marketing-light-surface bg-[#F5F5F7] text-[#1D1D1F] antialiased selection:bg-[#0071e3] selection:text-[#FFFFFF] min-h-screen [color-scheme:light]">
-      <AuroraBackground className="h-auto min-h-[42vh] py-14 md:py-20 bg-[#F5F5F7]" showRadialGradient>
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 w-full">
-          <div className="flex flex-col items-center text-center max-w-3xl mx-auto space-y-5 md:space-y-6">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-[-0.03em] text-[#1D1D1F] text-balance flex flex-col items-center gap-3 sm:gap-4 md:gap-5">
-              <span className="block leading-none">{t.heroTitleLine1}</span>
-              <span className="block leading-none">{t.heroTitleLine2}</span>
-            </h1>
-            <LineBreakText lines={t.heroDescLines} className={`${bodyText} max-w-2xl text-pretty md:hidden`} />
-            <LineBreakText lines={t.heroDescLinesDesktop} className={`${bodyText} max-w-2xl text-pretty hidden md:block`} />
-          </div>
+      <MarketingSkyHero>
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto space-y-5 md:space-y-6">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-[-0.03em] text-[#1D1D1F] text-balance flex flex-col items-center gap-3 sm:gap-4 md:gap-5">
+            <span className="block leading-none">{t.heroTitleLine1}</span>
+            <span className="block leading-none">{t.heroTitleLine2}</span>
+          </h1>
+          <LineBreakText lines={t.heroDescLines} className="max-w-2xl text-pretty text-lg font-medium leading-[1.75] text-[#3D3D3F] md:hidden" />
+          <LineBreakText lines={t.heroDescLinesDesktop} className="hidden max-w-2xl text-pretty text-xl font-medium leading-[1.75] text-[#3D3D3F] md:block" />
         </div>
-      </AuroraBackground>
+      </MarketingSkyHero>
 
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-[720px] mx-auto px-6 space-y-6 md:space-y-7 text-center">
-          <h2 className="text-2xl md:text-4xl font-semibold tracking-tight text-[#1D1D1F] leading-snug flex flex-col items-center gap-1 md:gap-2">
+      <section className="bg-white py-12 md:py-16">
+        <div className="mx-auto max-w-[720px] px-6 text-center">
+          <h2 className="flex flex-col items-center gap-1 text-2xl font-semibold leading-snug tracking-tight text-[#1D1D1F] md:gap-2 md:text-4xl">
             <span className="block">{t.whyTitleLine1}</span>
             <span className="block">{t.whyTitleLine2}</span>
           </h2>
-          <LineBreakText lines={t.whyP1Lines} className={`${bodyText} md:hidden`} />
-          <LineBreakText lines={t.whyP1LinesDesktop} className={`${bodyText} hidden md:block`} />
-          <LineBreakText lines={t.whyP1SupplementLines} className={bodyTextEmphasis} />
-          <LineBreakText lines={t.whyP2Lines} className={bodyText} />
-          <LineBreakText lines={t.whyP3Lines} className={`${bodyText} md:hidden`} />
-          <LineBreakText lines={t.whyP3LinesDesktop} className={`${bodyText} hidden md:block`} />
+          <div className="mt-6 md:mt-8">
+            <LineBreakText lines={t.whyP1Lines} className={`${bodyText} md:hidden`} />
+            <LineBreakText lines={t.whyP1LinesDesktop} className={`${bodyText} hidden md:block`} />
+          </div>
+          <div className="mx-auto mt-10 grid grid-cols-3 gap-2 md:mt-12 md:gap-3">
+            {[
+              '/marketing/family-story-features/gallery.jpg',
+              '/marketing/couple-features/memory-full.jpg',
+              '/marketing/memorial-features/memory.jpg',
+            ].map((src) => (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                className="aspect-[4/3] w-full rounded-2xl object-cover"
+                loading="lazy"
+              />
+            ))}
+          </div>
+          <div className="mt-10 md:mt-12">
+            <LineBreakText lines={t.whyP1SupplementLines} className={bodyTextEmphasis} />
+          </div>
+          <div className="mt-6 space-y-6 md:mt-8 md:space-y-7">
+            <LineBreakText lines={t.whyP2Lines} className={`${bodyText} md:hidden`} />
+            <LineBreakText lines={t.whyP2LinesDesktop} className={`${bodyText} hidden md:block`} />
+            <LineBreakText lines={t.whyP3Lines} className={`${bodyText} md:hidden`} />
+            <LineBreakText lines={t.whyP3LinesDesktop} className={`${bodyText} hidden md:block`} />
+          </div>
         </div>
       </section>
 
@@ -273,32 +281,51 @@ export default function MarketingHome() {
             <LineBreakText lines={t.categoriesDescLines} className={`${bodyText} text-sm md:text-lg`} />
           </div>
 
-          <ul className="space-y-3 sm:space-y-4 text-left list-none">
+          <ul className="space-y-4 text-left list-none">
             {MARKETING_CATEGORIES.map((category) => {
               const copy = isEn ? category.en : category.th;
+              const price = isEn ? MARKETING_DISPLAY_PRICE.en : MARKETING_DISPLAY_PRICE.th;
               return (
                 <li key={category.slug}>
-                  <Link
-                    href={`/${category.slug}`}
-                    className="flex items-start gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E8E8ED] hover:border-[#0071e3]/25 hover:bg-[#F5F5F7] hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all group"
-                  >
-                    <div className="shrink-0 w-[144px] sm:w-[160px] aspect-[4/3] rounded-xl overflow-hidden bg-white border border-[#E8E8ED]">
+                  <article className="flex overflow-hidden rounded-2xl border border-[#E8E8ED] bg-white">
+                    <Link
+                      href={`/${category.slug}`}
+                      className="relative w-[30%] min-h-[8.5rem] min-w-[6.5rem] max-w-[11rem] shrink-0 self-stretch bg-[#F5F5F7]"
+                    >
                       <img
                         src={category.image}
                         alt=""
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                        className="absolute inset-0 h-full w-full object-cover"
                         loading="lazy"
                       />
+                    </Link>
+                    <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 p-3.5 sm:p-5">
+                      <div>
+                        <h3 className="text-lg font-semibold leading-snug tracking-tight text-[#1D1D1F] md:text-xl">
+                          <Link href={`/${category.slug}`} className="hover:text-[#0071e3]">
+                            {copy.title}
+                          </Link>
+                        </h3>
+                        <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-[#6E6E73]">
+                          {copy.cardDesc}
+                        </p>
+                      </div>
+                      <div className="flex items-end justify-between gap-3">
+                        <p className="leading-none">
+                          <span className="text-lg font-semibold tracking-tight text-[#1D1D1F] sm:text-xl">
+                            {price.amount}
+                          </span>
+                          <span className="ml-1 text-sm font-medium text-[#6E6E73]">{price.period}</span>
+                        </p>
+                        <Button
+                          asChild
+                          className="h-9 shrink-0 rounded-full bg-[#0071e3] px-4 text-sm font-medium text-white hover:bg-[#0077ED] sm:h-10 sm:px-5"
+                        >
+                          <Link href={categoryCreateHref(category.createCategory)}>{price.cta}</Link>
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0 pt-0.5">
-                      <p className="text-sm sm:text-base font-semibold text-[#1D1D1F] group-hover:text-[#0071e3] transition-colors leading-snug">
-                        {copy.title}
-                      </p>
-                      <p className="mt-1 text-sm text-[#86868B] font-medium leading-relaxed">
-                        {copy.tagline}
-                      </p>
-                    </div>
-                  </Link>
+                  </article>
                 </li>
               );
             })}
@@ -307,44 +334,16 @@ export default function MarketingHome() {
       </section>
 
       <section className="py-14 md:py-20">
-        <div className="max-w-[1280px] mx-auto px-6">
-          <div className="max-w-2xl mx-auto bg-white rounded-[28px] md:rounded-[32px] p-8 md:p-12 text-center shadow-[0_1px_2px_rgba(0,0,0,0.03),0_16px_48px_rgba(0,0,0,0.08)]">
-            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight leading-tight">
-              {t.pricingTitle}
-            </h2>
-            <p className="text-4xl md:text-5xl font-bold tracking-tight leading-none mt-4">
-              {t.priceAmount}
-              <span className="text-base md:text-xl font-medium text-[#6E6E73] ml-1">{t.pricePeriod}</span>
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-8 border-t border-[#E8E8ED] mt-8">
-              {[
-                { icon: Cloud, label: t.storage },
-                { icon: Sparkles, label: t.allFeatures },
-                { icon: QrCode, label: t.permanentQr },
-              ].map((item) => (
-                <div key={item.label} className="flex sm:flex-col items-center sm:justify-center gap-2 text-center">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F5F7] shrink-0">
-                    <item.icon className="w-4 h-4 text-[#0071e3]" />
-                  </div>
-                  <span className="text-sm font-medium text-[#6E6E73] sm:whitespace-nowrap">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="max-w-xl mx-auto space-y-6 pt-14 md:pt-16 text-center">
-            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight leading-tight text-balance">
-              {t.readyTitleLine1}
-              <br />
-              {t.readyTitleLine2}
-            </h2>
-            <HomeCtaButtons
-              startCta={t.startCta}
-              startCtaShort={t.startCtaShort}
-              exploreExamples={t.exploreExamples}
-              exploreExamplesShort={t.exploreExamplesShort}
-            />
-          </div>
+        <div className="mx-auto max-w-xl space-y-6 px-6 text-center">
+          <h2 className="text-balance text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+            {t.readyTitleLine1}
+          </h2>
+          <HomeCtaButtons
+            startCta={t.startCta}
+            startCtaShort={t.startCtaShort}
+            exploreExamples={t.exploreExamples}
+            exploreExamplesShort={t.exploreExamplesShort}
+          />
         </div>
       </section>
     </main>
