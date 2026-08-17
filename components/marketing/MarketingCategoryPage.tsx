@@ -22,6 +22,7 @@ import { getMarketingCategory, type MarketingCategorySlug } from '@/lib/marketin
 import { getDemoSiteCards } from '@/lib/demoSites';
 import { useLanguageStore } from '@/stores/useLanguageStore';
 import { MarketingBuyBlock } from '@/components/marketing/MarketingBuyBlock';
+import { MarketingDemoSiteCard } from '@/components/marketing/MarketingDemoSiteCard';
 
 const FEATURE_ICONS: Record<string, LucideIcon> = {
   Megaphone,
@@ -167,17 +168,17 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
 
       {features.length > 0 && (
         <section className="border-b border-[#E8E8ED] bg-[#F5F5F7]">
-          <div className="mx-auto max-w-2xl px-6 py-14 sm:py-16">
+          <div className="mx-auto max-w-2xl px-6 py-14 sm:py-16 lg:max-w-5xl">
             <h2 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] md:text-3xl">
-              {isEn ? 'What’s on the site' : 'มีอะไรบ้างในเว็บนี้'}
+              {isEn ? 'Make it yours' : 'ปรับได้ตามใจคุณ'}
             </h2>
-            <p className="mt-2 text-base leading-relaxed text-[#6E6E73]">
+            <p className="mt-3 max-w-3xl text-base leading-relaxed text-[#6E6E73]">
               {isEn
-                ? 'Each section can be turned on or off later when you set up the site.'
-                : 'เปิดหรือปิดทีหลังได้ตอนตั้งค่าเว็บ อ่านไล่ลงมาได้ทีละส่วน'}
+                ? 'There are many features to choose from. Pick what feels right, and arrange the order yourself.'
+                : 'มีฟีเจอร์ให้เลือกมากมาย เลือกให้ตรงใจ จัดลำดับก่อนหลังได้ง่ายๆ ด้วยตัวเอง'}
             </p>
 
-            <ul className="mt-10 space-y-12">
+            <ul className="mt-10 divide-y divide-[#E8E8ED]">
               {features.map((feature) => {
                 const FeatureIcon = FEATURE_ICONS[feature.icon] ?? Flame;
                 const image =
@@ -185,16 +186,17 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
                     feature.key as FeatureKey
                   ];
                 const isVideo = feature.key === 'videos';
-                const detail =
-                  feature.pageDescription && feature.pageDescription !== feature.description
-                    ? `${feature.pageDescription} ${feature.description}`
-                    : feature.pageDescription || feature.description;
+                const paragraphs =
+                  !isEn && feature.salesParagraphs?.length
+                    ? feature.salesParagraphs
+                    : [feature.pageDescription || feature.description];
+                const body = paragraphs.filter(Boolean).join(' ');
 
                 return (
-                  <li key={feature.key}>
-                    <article>
+                  <li key={feature.key} className="py-8 first:pt-0 last:pb-0">
+                    <article className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
                       {image ? (
-                        <div className="relative aspect-[16/10] overflow-hidden rounded-[24px] bg-[#E8E8ED]">
+                        <div className="relative h-36 w-full shrink-0 overflow-hidden rounded-2xl bg-[#E8E8ED] sm:h-auto sm:w-40 sm:aspect-[4/3] md:w-44 lg:w-48">
                           <img
                             src={`${image}?v=8`}
                             alt=""
@@ -203,34 +205,36 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
                           />
                           {isVideo && (
                             <>
-                              <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-[#0071e3] px-2.5 py-1 text-xs font-semibold text-white">
+                              <span className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-full bg-[#0071e3] px-2 py-0.5 text-xs font-semibold text-white">
                                 <Video className="size-3" aria-hidden />
-                                {isEn ? 'Video' : 'ไฟล์วิดีโอ'}
+                                {isEn ? 'Video' : 'วิดีโอ'}
                               </span>
                               <span className="absolute inset-0 z-10 flex items-center justify-center">
-                                <span className="flex size-12 items-center justify-center rounded-full bg-[#0071e3] text-white shadow-[0_6px_20px_rgba(0,113,227,0.45)]">
-                                  <Play className="size-5 fill-white translate-x-px" aria-hidden />
+                                <span className="flex size-9 items-center justify-center rounded-full bg-[#0071e3] text-white shadow-[0_4px_14px_rgba(0,113,227,0.4)]">
+                                  <Play className="size-4 fill-white translate-x-px" aria-hidden />
                                 </span>
                               </span>
                             </>
                           )}
                         </div>
                       ) : (
-                        <div className="flex aspect-[16/10] items-center justify-center rounded-[24px] bg-white">
+                        <div className="flex h-36 w-full shrink-0 items-center justify-center rounded-2xl bg-white sm:h-auto sm:w-40 sm:aspect-[4/3] md:w-44 lg:w-48">
                           <div
-                            className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5F5F7]"
+                            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F5F5F7]"
                             style={{ color: category.accent }}
                           >
-                            <FeatureIcon className="h-6 w-6" strokeWidth={1.75} aria-hidden />
+                            <FeatureIcon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
                           </div>
                         </div>
                       )}
-                      <h3 className="mt-5 text-xl font-semibold leading-snug text-[#1D1D1F]">
-                        {feature.label}
-                      </h3>
-                      <p className="mt-2 max-w-prose text-base leading-relaxed text-[#6E6E73]">
-                        {detail}
-                      </p>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-xl font-semibold leading-snug text-[#1D1D1F]">
+                          {feature.label}
+                        </h3>
+                        <p className="mt-2 break-keep text-sm leading-relaxed text-[#6E6E73] sm:text-base">
+                          {body}
+                        </p>
+                      </div>
                     </article>
                   </li>
                 );
@@ -243,36 +247,14 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
       <section className="mx-auto max-w-2xl px-6 py-14 sm:py-16 lg:max-w-[1080px]">
         <div className="mb-8">
           <h2 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] md:text-3xl">
-            {isEn ? 'Example sites' : 'ตัวอย่างเว็บไซต์'}
+            {isEn ? `Example sites in ${copy.title}` : `ตัวอย่างเว็บไซต์หมวด ${copy.title}`}
           </h2>
-          <p className="mt-2 text-base leading-relaxed text-[#6E6E73]">
-            {isEn ? 'See how this category looks in use.' : 'ดูตัวอย่างการใช้งานจริงในหมวดนี้'}
-          </p>
         </div>
 
         {demos.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-5">
             {demos.map((demo) => (
-              <Link
-                key={demo.slug}
-                href={`/${demo.slug}`}
-                className="group overflow-hidden rounded-[24px] border border-[#E8E8ED] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition duration-300 hover:-translate-y-0.5 hover:border-[#d8d8de] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)]"
-              >
-                <div className="aspect-[16/10] overflow-hidden bg-[#F5F5F7]">
-                  <img
-                    src={demo.coverUrl}
-                    alt={demo.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                </div>
-                <div className="p-5 text-left">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[#86868B]">
-                    {demo.categoryLabel}
-                  </p>
-                  <h3 className="mt-1 text-lg font-semibold text-[#1D1D1F]">{demo.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-[#6E6E73]">{demo.description}</p>
-                </div>
-              </Link>
+              <MarketingDemoSiteCard key={demo.slug} demo={demo} isEn={isEn} />
             ))}
           </div>
         ) : (
@@ -291,18 +273,16 @@ export default function MarketingCategoryPage({ slug }: { slug: MarketingCategor
       </section>
 
       <section className="border-t border-[#E8E8ED] bg-white">
-        <div className="mx-auto max-w-2xl px-6 py-14 sm:py-16">
+        <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-center gap-x-5 gap-y-3 px-6 py-14 sm:py-16">
           <h2 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] md:text-3xl">
-            {isEn ? 'Ready to create this site?' : 'พร้อมสร้างเว็บนี้แล้วหรือยัง'}
+            {isEn ? 'Ready to create this site?' : 'พร้อมสร้างเว็บนี้แล้ว'}
           </h2>
-          <p className="mt-3 max-w-prose text-base leading-relaxed text-[#6E6E73]">
-            {isEn
-              ? 'One yearly plan. Create this category, then pay when you are ready.'
-              : 'แผนรายปี เริ่มสร้างหมวดนี้แล้วชำระเงินเมื่อพร้อม'}
-          </p>
-          <div className="mt-8">
-            <MarketingBuyBlock createCategory={category.createCategory} isEn={isEn} />
-          </div>
+          <MarketingBuyBlock
+            createCategory={category.createCategory}
+            isEn={isEn}
+            showPrice={false}
+            compact
+          />
         </div>
       </section>
     </main>

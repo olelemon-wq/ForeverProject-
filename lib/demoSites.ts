@@ -12,6 +12,8 @@ export interface DemoSiteCard {
   coverUrl: string;
   primaryColor: string;
   highlights: string[];
+  /** Display-only yearly price in THB. Mock tiers until meeting prices are locked. */
+  price: number;
 }
 
 /** Public showcase demos — keep in sync with `prisma/data/demo-sites.json`. */
@@ -38,7 +40,7 @@ export const DEMO_SITE_SLUGS = [
 
 export type DemoSiteSlug = (typeof DEMO_SITE_SLUGS)[number];
 
-const DEMO_SITE_CARDS: DemoSiteCard[] = [
+const DEMO_SITE_CARDS: Omit<DemoSiteCard, 'price'>[] = [
   {
     slug: 'boonkrua-family',
     category: 'Memorial',
@@ -226,12 +228,43 @@ const DEMO_SITE_CARDS: DemoSiteCard[] = [
   },
 ];
 
+/** Mock cheap / mid / high per category trio. Not the checkout amount. */
+const DEMO_DISPLAY_PRICES: Record<DemoSiteSlug, number> = {
+  'mae-somsri': 1480,
+  'boonkrua-family': 1800,
+  'ajarn-somchai': 2200,
+  'napat-mintra': 1480,
+  pluemploy: 1800,
+  'beam-fah': 2200,
+  'porjai-nicha': 1480,
+  'win-praew': 1800,
+  kukimiyafamily: 2200,
+  'rungarun-house': 1480,
+  'saengdao-lineage': 1800,
+  'bts-family': 2200,
+  'campus-crew': 1480,
+  'office-buddies': 1800,
+  friendforever: 2200,
+  'nong-mango': 1480,
+  kittiemeaw: 1800,
+  'nong-bao': 2200,
+};
+
+export function formatDemoPrice(amount: number, isEn: boolean) {
+  const formatted = amount.toLocaleString(isEn ? 'en-US' : 'th-TH');
+  return {
+    amount: `฿${formatted}`,
+    period: isEn ? '/ year' : '/ ปี',
+  };
+}
+
 export function getDemoSiteCards(): DemoSiteCard[] {
   return DEMO_SITE_CARDS.map((site) => ({
     ...site,
     coverUrl: resolveMediaSrc(resolveDefaultMediaSrc(site.coverUrl)),
     categoryLabel:
       site.categoryLabel || getCategoryJourney(site.category).label.split('(')[0].trim(),
+    price: DEMO_DISPLAY_PRICES[site.slug],
   }));
 }
 

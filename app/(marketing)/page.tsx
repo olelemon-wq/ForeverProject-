@@ -281,12 +281,12 @@ export default function MarketingHome() {
             <LineBreakText lines={t.categoriesDescLines} className={`${bodyText} text-sm md:text-lg`} />
           </div>
 
-          <ul className="space-y-4 text-left list-none">
+          <ul className="divide-y divide-[#E8E8ED] text-left list-none">
             {MARKETING_CATEGORIES.map((category) => {
               const copy = isEn ? category.en : category.th;
               const price = isEn ? MARKETING_DISPLAY_PRICE.en : MARKETING_DISPLAY_PRICE.th;
               return (
-                <li key={category.slug}>
+                <li key={category.slug} className="py-6 first:pt-0 last:pb-0 md:py-8 md:first:pt-0">
                   <article className="flex overflow-hidden rounded-2xl border border-[#E8E8ED] bg-white">
                     <Link
                       href={`/${category.slug}`}

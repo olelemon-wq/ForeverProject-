@@ -2,120 +2,31 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  ArrowRight,
-  ExternalLink,
-  Flame,
-  Heart,
-  HeartHandshake,
-  PawPrint,
-  Sparkles,
-  Users,
-  UserRound,
-} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useLanguageStore } from '@/stores/useLanguageStore';
-import { getDemoSiteCards, type DemoSiteCard } from '@/lib/demoSites';
-import type { CategoryKey } from '@/lib/categories';
-
-const CATEGORY_ICONS: Record<CategoryKey, React.ReactNode> = {
-  Memorial: <Flame className="w-4 h-4" />,
-  'Family Legacy': <Sparkles className="w-4 h-4" />,
-  Couple: <Heart className="w-4 h-4" />,
-  Wedding: <HeartHandshake className="w-4 h-4" />,
-  Friends: <Users className="w-4 h-4" />,
-  'Pet Memorial': <PawPrint className="w-4 h-4" />,
-};
+import { getDemoSiteCards } from '@/lib/demoSites';
+import { MARKETING_CATEGORIES } from '@/lib/marketingCategories';
+import { MarketingDemoSiteCard } from '@/components/marketing/MarketingDemoSiteCard';
 
 const COPY = {
   th: {
-    eyebrow: 'ตัวอย่างจริง',
     title: 'สำรวจเว็บตัวอย่างทุกหมวด',
-    subtitle:
-      'เปิดดูเว็บที่จัดเตรียมไว้แล้วครบทุกประเภท — การ์ดพิธี แกลเลอรี สมุดข้อความ และฟีเจอร์อื่น ๆ ตามหมวดที่คุณสนใจ',
-    open: 'เปิดดูตัวอย่าง',
+    subtitleLead: 'เปิดดูเว็บที่จัดเตรียมไว้แล้วครบทุกประเภท การ์ดพิธี แกลเลอรี',
+    subtitleMid: 'สมุดข้อความ',
+    subtitleRest: 'และฟีเจอร์อื่น ๆ ตามหมวดที่คุณสนใจ',
     create: 'สร้างเว็บของคุณ',
-    note: 'เว็บตัวอย่างเป็นข้อมูลสาธิต — เปิดดูได้โดยไม่ต้องล็อกอิน',
+    note: 'เว็บตัวอย่างเป็นข้อมูลสาธิต เปิดดูได้โดยไม่ต้องล็อกอิน',
   },
   en: {
-    eyebrow: 'Live demos',
     title: 'Explore every category',
-    subtitle:
-      'Browse fully prepared example sites for every journey — invitations, galleries, guestbooks, and more.',
-    open: 'View demo',
+    subtitle: [
+      'Browse fully prepared example sites for every journey: invitations, galleries, guestbooks',
+      'and other features in the category you care about.',
+    ],
     create: 'Create your site',
-    note: 'Demo sites are public showcases — no login required to browse.',
+    note: 'Demo sites are public showcases. No login required to browse.',
   },
 };
-
-function DemoCard({
-  site,
-  openLabel,
-  createLabel,
-}: {
-  site: DemoSiteCard;
-  openLabel: string;
-  createLabel: string;
-}) {
-  return (
-    <article className="group flex flex-col overflow-hidden rounded-[22px] bg-white border border-stone-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)]">
-      <Link
-        href={`/${site.slug}`}
-        aria-label={`${openLabel}: ${site.title}`}
-        className="relative block aspect-[16/10] overflow-hidden bg-stone-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3] focus-visible:ring-offset-2"
-      >
-        <img
-          src={site.coverUrl}
-          alt=""
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-        <span
-          className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/90 px-3 py-1 text-xs font-bold text-stone-700 backdrop-blur-sm"
-        >
-          {CATEGORY_ICONS[site.category]}
-          <span>{site.categoryLabel}</span>
-        </span>
-      </Link>
-
-      <div className="flex flex-1 flex-col gap-4 p-5 sm:p-6 text-left">
-        <div className="space-y-2">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-[#1D1D1F] leading-snug">
-            {site.title}
-          </h2>
-          <p className="text-sm text-[#86868B] leading-relaxed">{site.description}</p>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {site.highlights.map((item) => (
-            <span
-              key={item}
-              className="rounded-full bg-stone-100 px-2.5 py-1 text-xs font-semibold text-stone-600"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-auto flex flex-row flex-wrap items-center gap-2 pt-2">
-          <Link
-            href={`/${site.slug}`}
-            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#0071e3] px-3.5 py-2 text-sm font-medium text-white transition hover:bg-[#0071e3]/90 sm:px-5 sm:py-2.5 sm:text-sm"
-          >
-            <span>{openLabel}</span>
-            <ExternalLink className="size-3.5 sm:size-4" />
-          </Link>
-          <Link
-            href={`/manage/create?category=${encodeURIComponent(site.category)}`}
-            className="inline-flex shrink-0 items-center justify-center gap-1 rounded-full border border-stone-300 px-3.5 py-2 text-sm font-medium text-[#1D1D1F] transition hover:bg-stone-50 sm:px-5 sm:py-2.5 sm:text-sm"
-          >
-            <UserRound className="size-3.5 sm:size-4" />
-            <span>{createLabel}</span>
-          </Link>
-        </div>
-      </div>
-    </article>
-  );
-}
 
 export default function ExamplesPage() {
   const { lang } = useLanguageStore();
@@ -126,41 +37,76 @@ export default function ExamplesPage() {
     setMounted(true);
   }, []);
 
-  const t = mounted && lang === 'en' ? COPY.en : COPY.th;
+  const isEn = mounted && lang === 'en';
+  const t = isEn ? COPY.en : COPY.th;
 
   return (
     <main className="marketing-light-surface min-h-screen bg-[#F5F5F7] text-[#1D1D1F] antialiased [color-scheme:light]">
-      <section className="border-b border-[#bfc9c3]/20 bg-white/70 backdrop-blur-sm">
-        <div className="max-w-[1280px] mx-auto px-6 py-14 md:py-20 text-center space-y-5">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#0071e3]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0071e3]">
-            <Sparkles className="w-3.5 h-3.5" />
-            {t.eyebrow}
-          </span>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-[1.05]">{t.title}</h1>
-          <p className="mx-auto max-w-2xl text-base md:text-lg text-[#86868B] font-medium leading-relaxed">
-            {t.subtitle}
+      <section className="border-b border-[#E8E8ED] bg-white">
+        <div className="mx-auto max-w-[1080px] space-y-5 px-6 py-14 text-center md:py-20">
+          <h1 className="text-3xl font-bold leading-[1.05] tracking-tight md:text-5xl">{t.title}</h1>
+          <p className="mx-auto max-w-2xl break-keep text-base font-medium leading-relaxed text-[#6E6E73] md:text-lg">
+            {isEn ? (
+              <>
+                {COPY.en.subtitle[0]}
+                <br />
+                {COPY.en.subtitle[1]}
+              </>
+            ) : (
+              <>
+                {COPY.th.subtitleLead}
+                <br className="md:hidden" /> {COPY.th.subtitleMid}
+                <br className="hidden md:block" /> {COPY.th.subtitleRest}
+              </>
+            )}
           </p>
           <div className="pt-2">
             <Link
-              href="/manage/create?category=Memorial"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1D1D1F] px-7 py-3 text-sm font-medium text-white transition hover:bg-[#1D1D1F]/90"
+              href="/manage/create"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0071e3] px-7 py-3 text-sm font-medium text-white transition hover:bg-[#0077ED]"
             >
               {t.create}
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="py-10 md:py-16">
-        <div className="max-w-[1280px] mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-            {sites.map((site) => (
-              <DemoCard key={site.slug} site={site} openLabel={t.open} createLabel={t.create} />
-            ))}
-          </div>
-          <p className="mt-10 text-center text-sm text-[#86868B]">{t.note}</p>
+      <section className="mx-auto max-w-[1080px] px-6">
+        <div className="divide-y divide-[#E8E8ED]">
+          {MARKETING_CATEGORIES.map((category) => {
+            const demos = sites
+              .filter((site) => site.category === category.createCategory)
+              .slice(0, 3);
+            if (demos.length === 0) return null;
+
+            const copy = isEn ? category.en : category.th;
+
+            return (
+              <div key={category.slug} className="py-12 sm:py-14">
+                <h2 className="text-2xl font-semibold tracking-tight text-[#1D1D1F] md:text-3xl">
+                  <Link href={`/${category.slug}`} className="hover:text-[#0071e3]">
+                    {copy.title}
+                  </Link>
+                </h2>
+                <p className="mt-2 max-w-2xl break-keep text-base leading-relaxed text-[#6E6E73]">
+                  {copy.tagline}
+                </p>
+                <div className="mt-8 flex flex-col gap-4">
+                  {demos.map((demo) => (
+                    <MarketingDemoSiteCard
+                      key={demo.slug}
+                      demo={demo}
+                      isEn={isEn}
+                      layout="row"
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
+        <p className="pb-12 text-center text-sm text-[#6E6E73] sm:pb-16">{t.note}</p>
       </section>
     </main>
   );

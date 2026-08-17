@@ -10,6 +10,7 @@ import { resolveDefaultMediaSrc } from '@/lib/defaultMedia';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
 import PublicOverflowNav from '@/components/public/PublicOverflowNav';
 import MemorialHero from '@/components/public/MemorialHero';
+import { isDemoSiteSlug } from '@/lib/demoSites';
 
 interface Menu {
   id: string;
@@ -45,6 +46,7 @@ export default function PublicLayoutClient({
   const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const isDemoSite = isDemoSiteSlug(slug);
 
   const config = (tenant.themeConfig as any) || {};
 
@@ -119,6 +121,19 @@ export default function PublicLayoutClient({
       style={themeStyles} 
       className="flex min-h-screen flex-col bg-[#faf6f0] text-stone-800 transition-all duration-200"
     >
+      {isDemoSite && (
+        <div className="sticky top-0 z-50 border-b border-[#0071e3]/15 bg-[#F0F6FF]/95 backdrop-blur-sm">
+          <div className="mx-auto flex max-w-5xl items-center px-4 py-2.5">
+            <Link
+              href="/examples"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0071e3] transition hover:text-[#0077ED]"
+            >
+              <ArrowLeft className="size-4 shrink-0" aria-hidden />
+              ดูตัวอย่างอื่น
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <MemorialHero
@@ -132,7 +147,13 @@ export default function PublicLayoutClient({
       />
 
       {/* Dynamic Navigation Menu */}
-      <nav className="border-b border-stone-200/60 bg-white/85 backdrop-blur-sm sticky top-0 z-40 shadow-xs">
+      <nav
+        className={
+          isDemoSite
+            ? 'sticky top-11 z-40 border-b border-stone-200/60 bg-white/85 shadow-xs backdrop-blur-sm'
+            : 'sticky top-0 z-40 border-b border-stone-200/60 bg-white/85 shadow-xs backdrop-blur-sm'
+        }
+      >
         {/* Desktop Navigation Links */}
         <div className="relative hidden sm:flex max-w-5xl mx-auto px-4 items-center gap-3 h-14">
           <Link

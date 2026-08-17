@@ -14,11 +14,13 @@ export function MarketingBuyBlock({
   isEn,
   align = 'start',
   compact = false,
+  showPrice = true,
 }: {
   createCategory: string;
   isEn: boolean;
   align?: 'start' | 'center';
   compact?: boolean;
+  showPrice?: boolean;
 }) {
   const price = isEn ? MARKETING_DISPLAY_PRICE.en : MARKETING_DISPLAY_PRICE.th;
 
@@ -29,17 +31,19 @@ export function MarketingBuyBlock({
         align === 'center' ? 'items-center text-center' : 'items-start text-left',
       )}
     >
-      <p className="leading-none">
-        <span
-          className={cn(
-            'font-semibold tracking-tight text-[#1D1D1F]',
-            compact ? 'text-2xl' : 'text-3xl md:text-4xl',
-          )}
-        >
-          {price.amount}
-        </span>
-        <span className="ml-1 text-base font-medium text-[#6E6E73]">{price.period}</span>
-      </p>
+      {showPrice && (
+        <p className="leading-none">
+          <span
+            className={cn(
+              'font-semibold tracking-tight text-[#1D1D1F]',
+              compact ? 'text-2xl' : 'text-3xl md:text-4xl',
+            )}
+          >
+            {price.amount}
+          </span>
+          <span className="ml-1 text-base font-medium text-[#6E6E73]">{price.period}</span>
+        </p>
+      )}
       <Button
         asChild
         className={cn(
