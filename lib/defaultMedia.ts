@@ -45,6 +45,7 @@ const LEGACY_DEFAULT_MEDIA_SRC: Record<string, string> = {
   '/defaults/friends/cover/2.png': '/defaults/friends/cover/2.jpg',
   '/defaults/friends/cover/3.png': '/defaults/friends/cover/3.jpg',
   '/defaults/friends/cover/4.png': '/defaults/friends/cover/4.jpg',
+  '/defaults/pet-memorial/cover/3.png': '/defaults/pet-memorial/cover/3.jpg',
 };
 
 export function resolveDefaultMediaSrc(src: string | null | undefined): string {
@@ -53,7 +54,14 @@ export function resolveDefaultMediaSrc(src: string | null | undefined): string {
 }
 
 const AVATAR_LABELS = ['ชุด 1', 'ชุด 2', 'ชุด 3', 'ชุด 4'];
+const EXTRA_AVATAR_LABELS = Array.from({ length: 5 }, (_, i) => `ชุด ${i + 5}`);
 const COVER_LABELS = ['พื้นหลัง 1', 'พื้นหลัง 2', 'พื้นหลัง 3', 'พื้นหลัง 4'];
+const EXTRA_COVER_LABELS = Array.from({ length: 15 }, (_, i) => `พื้นหลัง ${i + 5}`);
+
+export interface DefaultMediaGroup {
+  title: string;
+  items: DefaultMediaItem[];
+}
 
 function buildItems(category: CategoryKey, kind: DefaultMediaKind): DefaultMediaItem[] {
   const folder = CATEGORY_FOLDER[category] || CATEGORY_FOLDER.Memorial;
@@ -69,6 +77,29 @@ function buildItems(category: CategoryKey, kind: DefaultMediaKind): DefaultMedia
   });
 }
 
+function buildExtraCovers(): DefaultMediaItem[] {
+  return EXTRA_COVER_LABELS.map((label, i) => {
+    const n = i + 5;
+    return {
+      id: `shared-cover-${n}`,
+      label,
+      src: `/defaults/shared/cover/${n}.svg`,
+    };
+  });
+}
+
+function buildExtraAvatars(category: CategoryKey): DefaultMediaItem[] {
+  const folder = CATEGORY_FOLDER[category] || CATEGORY_FOLDER.Memorial;
+  return EXTRA_AVATAR_LABELS.map((label, i) => {
+    const n = i + 1;
+    return {
+      id: `${folder}-avatar-extra-${n}`,
+      label,
+      src: `/defaults/shared/avatar/${folder}/${n}.svg`,
+    };
+  });
+}
+
 export function getDefaultMediaForCategory(
   category: string | null | undefined,
   kind: DefaultMediaKind
@@ -76,7 +107,29 @@ export function getDefaultMediaForCategory(
   const key = (category && category in CATEGORY_FOLDER
     ? category
     : 'Memorial') as CategoryKey;
-  return buildItems(key, kind);
+  const base = buildItems(key, kind);
+  if (kind === 'avatar') return [...base, ...buildExtraAvatars(key)];
+  return [...base, ...buildExtraCovers()];
+}
+
+export function getDefaultMediaGroups(
+  category: string | null | undefined,
+  kind: DefaultMediaKind
+): DefaultMediaGroup[] {
+  const key = (category && category in CATEGORY_FOLDER
+    ? category
+    : 'Memorial') as CategoryKey;
+  const base = buildItems(key, kind);
+  if (kind === 'avatar') {
+    return [
+      { title: 'หมวดนี้', items: base },
+      { title: 'มีลวดลาย', items: buildExtraAvatars(key) },
+    ];
+  }
+  return [
+    { title: 'หมวดนี้', items: base },
+    { title: 'มีลวดลาย', items: buildExtraCovers() },
+  ];
 }
 
 /** First (or random) pair for seeding new sites */

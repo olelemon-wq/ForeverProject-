@@ -152,7 +152,7 @@ export const MARKETING_CATEGORIES: MarketingCategory[] = [
     slug: 'pet-memorial',
     createCategory: 'Pet Memorial',
     icon: PawPrint,
-    image: '/defaults/pet-memorial/cover/3.png',
+    image: '/defaults/pet-memorial/cover/3.jpg',
     accent: '#8b9a7d',
     th: {
       title: 'น้องที่รัก',

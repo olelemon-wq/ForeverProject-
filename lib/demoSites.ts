@@ -202,7 +202,7 @@ const DEMO_SITE_CARDS: Omit<DemoSiteCard, 'price'>[] = [
     categoryLabel: 'น้องที่รัก',
     title: 'คิตตี้เหมียวจอมซน',
     description: 'พื้นที่รำลึกน้องสัตว์เลี้ยง พร้อมสมุดส่งความคิดถึงและแกลเลอรี',
-    coverUrl: '/defaults/pet-memorial/cover/3.png',
+    coverUrl: '/defaults/pet-memorial/cover/3.jpg',
     primaryColor: '#8b9a7d',
     highlights: ['สมุดส่งความคิดถึง', 'ไดอารี่ความสุข', 'แกลเลอรีน้อง'],
   },

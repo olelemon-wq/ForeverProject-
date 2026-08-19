@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280" fill="none">
+  <defs>
+    <radialGradient id="gmemorial-1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(84 78) rotate(38) scale(248)">
+      <stop stop-color="#fffaf4"/>
+      <stop offset="0.58" stop-color="#f4ede4"/>
+      <stop offset="1" stop-color="#d8c1a3"/>
+    </radialGradient>
+  </defs>
+  <rect width="280" height="280" rx="140" fill="url(#gmemorial-1)"/>
+  <circle cx="140" cy="140" r="139" stroke="#b49067" stroke-opacity="0.12" stroke-width="2"/>
+  
+  <circle cx="140" cy="138" r="32" fill="#fffaf4" opacity="0.95"/>
+  <ellipse cx="140" cy="92" rx="24" ry="38" fill="#d8c1a3" fill-opacity="0.18"/>
+  <ellipse cx="184" cy="138" rx="38" ry="24" fill="#d8c1a3" fill-opacity="0.18"/>
+  <ellipse cx="140" cy="184" rx="24" ry="38" fill="#d8c1a3" fill-opacity="0.18"/>
+  <ellipse cx="96" cy="138" rx="38" ry="24" fill="#d8c1a3" fill-opacity="0.18"/>
+  <path d="M92 206c30-16 62-24 96-24 27 0 51 5 72 15" fill="none" stroke="#b49067" stroke-opacity="0.16" stroke-width="8" stroke-linecap="round"/>
+        
+</svg>

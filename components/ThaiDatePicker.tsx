@@ -13,7 +13,7 @@ interface ThaiDatePickerProps {
   onChangeRange?: (start: string, end: string) => void;
   align?: 'left' | 'right';
   placeholder?: string;
-  variant?: 'icon' | 'input';
+  variant?: 'icon' | 'input' | 'inline';
   buttonClassName?: string;
   iconClassName?: string;
   /** Day/month hidden — scroll พ.ศ. only; value still YYYY-01-01 */
@@ -177,7 +177,7 @@ function ScrollDatePanel({
   const days = Array.from({ length: daysInMonth(year, month) }, (_, i) => i + 1);
 
   return (
-    <div className="w-[min(100vw-2rem,320px)] select-none rounded-2xl border border-stone-200 bg-white p-3 shadow-xl">
+    <div className="w-full select-none rounded-2xl border border-stone-200 bg-white p-3 shadow-xl">
       <div className="mb-1.5 flex gap-1 px-1">
         {!yearOnly && (
           <>
@@ -208,18 +208,18 @@ function ScrollDatePanel({
         />
       </div>
 
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-3 grid grid-cols-2 gap-2">
         <button
           type="button"
           onClick={onClear}
-          className="rounded-xl px-3 py-2 text-xs font-semibold text-stone-500 transition hover:bg-stone-100"
+          className="h-9 rounded-xl border border-stone-200 text-sm font-medium text-stone-600 transition hover:bg-stone-50"
         >
           ล้างค่า
         </button>
         <button
           type="button"
           onClick={() => onConfirm(toYmd(year, yearOnly ? 0 : month, yearOnly ? 1 : day))}
-          className="ml-auto flex-1 rounded-full bg-[#0071e3] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#0071e3]/90 hover:text-white"
+          className="h-9 rounded-xl bg-[#0071e3] text-sm font-medium text-white transition hover:bg-[#0071e3]/90 hover:text-white"
         >
           ยืนยัน
         </button>
@@ -228,19 +228,25 @@ function ScrollDatePanel({
   );
 }
 
-/** Legacy month-grid calendar kept for announcement date ranges */
-function RangeCalendarPanel({
+function MonthCalendarPanel({
+  mode = 'range',
+  value,
   rangeStart,
   rangeEnd,
+  onSelect,
   onChangeRange,
   onClose,
 }: {
+  mode?: 'single' | 'range';
+  value?: string;
   rangeStart?: string;
   rangeEnd?: string;
+  onSelect?: (date: string) => void;
   onChangeRange?: (start: string, end: string) => void;
   onClose: () => void;
 }) {
-  const seed = rangeStart ? new Date(rangeStart) : new Date();
+  const seedVal = mode === 'single' ? value : rangeStart;
+  const seed = seedVal ? new Date(seedVal) : new Date();
   const [currentMonth, setCurrentMonth] = useState(isNaN(seed.getTime()) ? new Date().getMonth() : seed.getMonth());
   const [currentYear, setCurrentYear] = useState(isNaN(seed.getTime()) ? new Date().getFullYear() : seed.getFullYear());
   const [tempStart, setTempStart] = useState<string | null>(rangeStart || null);
@@ -270,7 +276,7 @@ function RangeCalendarPanel({
     `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
   return (
-    <div className="w-64 select-none rounded-xl border border-stone-250 bg-white p-3 shadow-xl">
+    <div className="w-full select-none rounded-xl border border-stone-250 bg-white p-3 shadow-xl">
       <div className="mb-2 flex items-center justify-between">
         <button
           type="button"
@@ -313,8 +319,12 @@ function RangeCalendarPanel({
       <div className="grid grid-cols-7 gap-1">
         {cells.map((cell, idx) => {
           const dateStr = toStr(cell.day, cell.month, cell.year);
-          const selected = tempStart === dateStr || tempEnd === dateStr;
+          const selected =
+            mode === 'single'
+              ? value === dateStr
+              : tempStart === dateStr || tempEnd === dateStr;
           const inRange =
+            mode === 'range' &&
             !!tempStart &&
             !!tempEnd &&
             dateStr > tempStart &&
@@ -324,9 +334,14 @@ function RangeCalendarPanel({
               key={`${dateStr}-${idx}`}
               type="button"
               onMouseEnter={() => {
-                if (tempStart && !tempEnd) setHoveredDate(dateStr);
+                if (mode === 'range' && tempStart && !tempEnd) setHoveredDate(dateStr);
               }}
               onClick={() => {
+                if (mode === 'single') {
+                  onSelect?.(dateStr);
+                  onClose();
+                  return;
+                }
                 if (!tempStart || (tempStart && tempEnd)) {
                   setTempStart(dateStr);
                   setTempEnd(null);
@@ -342,9 +357,9 @@ function RangeCalendarPanel({
                 !cell.isCurrentMonth
                   ? 'text-stone-300'
                   : selected
-                    ? 'rounded-lg bg-emerald-600 text-white'
-                    : inRange || (!!tempStart && !tempEnd && !!hoveredDate && dateStr > tempStart && dateStr < hoveredDate)
-                      ? 'bg-emerald-100 text-emerald-900'
+                    ? 'rounded-lg bg-[#0071e3] text-white'
+                    : inRange || (mode === 'range' && !!tempStart && !tempEnd && !!hoveredDate && dateStr > tempStart && dateStr < hoveredDate)
+                      ? 'bg-[#0071e3]/10 text-[#0071e3]'
                       : 'rounded-lg text-stone-700 hover:bg-stone-100'
               }`}
             >
@@ -378,8 +393,15 @@ export default function ThaiDatePicker({
 
   const updatePanelPosition = useCallback(() => {
     if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const panelWidth = Math.min(window.innerWidth - 32, 320);
+    const anchor =
+      variant === 'inline'
+        ? (containerRef.current.closest('[data-date-field]') as HTMLElement | null) ??
+          containerRef.current
+        : containerRef.current;
+    const rect = anchor.getBoundingClientRect();
+    const maxWidth = window.innerWidth - 32;
+    const panelWidth =
+      variant === 'inline' ? Math.min(rect.width, maxWidth) : Math.min(maxWidth, 320);
     const panelHeight = mode === 'range' ? 320 : 280;
     const spaceBelow = window.innerHeight - rect.bottom;
     const spaceAbove = rect.top;
@@ -399,7 +421,7 @@ export default function ThaiDatePicker({
         ? { bottom: window.innerHeight - rect.top + 8 }
         : { top: rect.bottom + 8 }),
     });
-  }, [align, mode]);
+  }, [align, mode, variant]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -436,45 +458,53 @@ export default function ThaiDatePicker({
         ? formatDisplayThaiDate(value, yearOnly)
         : placeholder;
 
+  const trigger =
+    variant === 'input' ? (
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-left text-sm transition hover:bg-stone-50 focus:border-emerald-500 focus:outline-none"
+      >
+        <span className={value || (rangeStart && rangeEnd) ? 'font-medium text-stone-800' : 'text-stone-400'}>
+          {display}
+        </span>
+        <CalendarIcon className="size-4 text-stone-400" />
+      </button>
+    ) : (
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={
+          variant === 'inline'
+            ? 'flex size-7 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-stone-400 transition hover:text-stone-700'
+            : buttonClassName
+        }
+        title={variant === 'inline' ? undefined : 'เลือกวันที่'}
+      >
+        <CalendarIcon className={variant === 'inline' ? 'size-4' : iconClassName} />
+      </button>
+    );
+
   return (
     <div className={`relative inline-block text-left ${variant === 'input' ? 'w-full' : 'shrink-0'}`} ref={containerRef}>
-      {variant === 'icon' ? (
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className={buttonClassName}
-          title="เลือกวันที่"
-        >
-          <CalendarIcon className={iconClassName} />
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-left text-sm transition hover:bg-stone-50 focus:border-emerald-500 focus:outline-none"
-        >
-          <span className={value || (rangeStart && rangeEnd) ? 'font-medium text-stone-800' : 'text-stone-400'}>
-            {display}
-          </span>
-          <CalendarIcon className="size-4 text-stone-400" />
-        </button>
-      )}
+      {trigger}
 
       {isOpen &&
         typeof document !== 'undefined' &&
         createPortal(
           <div ref={panelRef} style={panelStyle}>
             {mode === 'range' ? (
-              <RangeCalendarPanel
+              <MonthCalendarPanel
+                mode="range"
                 rangeStart={rangeStart}
                 rangeEnd={rangeEnd}
                 onChangeRange={onChangeRange}
                 onClose={() => setIsOpen(false)}
               />
-            ) : (
+            ) : yearOnly ? (
               <ScrollDatePanel
                 value={value}
-                yearOnly={yearOnly}
+                yearOnly
                 onConfirm={(ymd) => {
                   onChange?.(ymd);
                   setIsOpen(false);
@@ -483,6 +513,16 @@ export default function ThaiDatePicker({
                   onChange?.('');
                   setIsOpen(false);
                 }}
+              />
+            ) : (
+              <MonthCalendarPanel
+                mode="single"
+                value={value}
+                onSelect={(ymd) => {
+                  onChange?.(ymd);
+                  setIsOpen(false);
+                }}
+                onClose={() => setIsOpen(false)}
               />
             )}
           </div>,

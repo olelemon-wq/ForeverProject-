@@ -100,6 +100,9 @@ export default function PublicLayoutClient({
 
   const enabledFeatures = getEnabledFeatures(config, tenant);
   const featureOrder = getFeatureOrderFromThemeConfig(config);
+  const hasVisibleContent = Boolean(
+    hasContent && Object.values(hasContent as Record<string, boolean>).some(Boolean)
+  );
 
   const getLabel = (key: string, defaultLabel: string) => {
     try {
@@ -136,15 +139,17 @@ export default function PublicLayoutClient({
       )}
 
       {/* Header */}
-      <MemorialHero
-        name={tenant.name}
-        coverUrl={coverUrl || null}
-        avatarUrl={resolveMediaSrc(resolveDefaultMediaSrc(config.avatarUrl || '')) || null}
-        coverTransform={{ x: coverX, y: coverY, scale: coverScale, rotate: coverRotate }}
-        avatarTransform={{ x: avatarX, y: avatarY, scale: avatarScale, rotate: avatarRotate }}
-        layout={config.heroLayout}
-        bgMode={config.heroBgMode}
-      />
+      <div className="px-0 md:px-6">
+        <MemorialHero
+          name={tenant.name}
+          coverUrl={coverUrl || null}
+          avatarUrl={resolveMediaSrc(resolveDefaultMediaSrc(config.avatarUrl || '')) || null}
+          coverTransform={{ x: coverX, y: coverY, scale: coverScale, rotate: coverRotate }}
+          avatarTransform={{ x: avatarX, y: avatarY, scale: avatarScale, rotate: avatarRotate }}
+          layout={config.heroLayout}
+          bgMode={config.heroBgMode}
+        />
+      </div>
 
       {/* Dynamic Navigation Menu */}
       <nav
@@ -218,7 +223,7 @@ export default function PublicLayoutClient({
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-10">
+      <main className={`${hasVisibleContent ? 'flex-1 py-10' : 'py-4'} max-w-5xl mx-auto w-full px-4`}>
         {children}
       </main>
 

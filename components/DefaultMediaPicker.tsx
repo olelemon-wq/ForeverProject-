@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { getDefaultMediaForCategory, type DefaultMediaKind } from '@/lib/defaultMedia';
+import { getDefaultMediaGroups, type DefaultMediaKind } from '@/lib/defaultMedia';
 import { cn } from '@/lib/utils';
 
 interface DefaultMediaPickerProps {
@@ -21,6 +21,59 @@ interface DefaultMediaPickerProps {
   onSelect: (src: string) => void;
 }
 
+function ItemButton({
+  item,
+  kind,
+  isCurrent,
+  isPreviewing,
+  onPreview,
+}: {
+  item: { id: string; label: string; src: string };
+  kind: DefaultMediaKind;
+  isCurrent: boolean;
+  isPreviewing: boolean;
+  onPreview: () => void;
+}) {
+  return (
+    <button
+      key={item.id}
+      type="button"
+      onClick={onPreview}
+      className={cn(
+        'group relative overflow-hidden border text-left transition',
+        kind === 'avatar' ? 'aspect-square rounded-full' : 'aspect-square rounded-2xl',
+        isPreviewing
+          ? 'border-[#0071e3] ring-2 ring-[#0071e3]/35'
+          : isCurrent
+            ? 'border-emerald-500 ring-2 ring-emerald-400/30'
+            : 'border-stone-200 hover:border-stone-300'
+      )}
+      title={item.label}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={item.src}
+        alt={item.label}
+        className="h-full w-full object-cover"
+      />
+      {isCurrent && !isPreviewing && (
+        <span className="absolute inset-0 flex items-center justify-center bg-black/20">
+          <span className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm">
+            <Check className="size-3" strokeWidth={2.5} />
+          </span>
+        </span>
+      )}
+      {isPreviewing && (
+        <span className="absolute inset-0 flex items-center justify-center bg-black/25">
+          <span className="flex size-6 items-center justify-center rounded-full bg-[#0071e3] text-white shadow-sm">
+            <Check className="size-3" strokeWidth={2.5} />
+          </span>
+        </span>
+      )}
+    </button>
+  );
+}
+
 export default function DefaultMediaPicker({
   open,
   onOpenChange,
@@ -29,12 +82,9 @@ export default function DefaultMediaPicker({
   selectedSrc,
   onSelect,
 }: DefaultMediaPickerProps) {
-  const items = getDefaultMediaForCategory(category, kind);
-  const title = kind === 'avatar' ? 'เลือกชุดรูปโปรไฟล์' : 'เลือกภาพพื้นหลัง';
-  const desc =
-    kind === 'avatar'
-      ? 'กดเลือกเพื่อพรีวิว แล้วกดยืนยันเพื่อใช้งาน'
-      : 'กดเลือกเพื่อพรีวิว แล้วกดยืนยันเพื่อใช้งาน';
+  const groups = getDefaultMediaGroups(category, kind);
+  const title = kind === 'avatar' ? 'เลือกชุดรูปโปรไฟล์' : 'เลือกพื้นหลัง';
+  const desc = 'กดเลือกเพื่อพรีวิว แล้วกดยืนยันเพื่อใช้งาน';
 
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
 
@@ -43,9 +93,14 @@ export default function DefaultMediaPicker({
     onOpenChange(v);
   };
 
+  const gridCols =
+    kind === 'avatar'
+      ? 'grid-cols-5 sm:grid-cols-5 md:grid-cols-6'
+      : 'grid-cols-5 sm:grid-cols-5 md:grid-cols-6';
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md gap-4 rounded-2xl border-stone-200 p-5 sm:max-w-lg">
+      <DialogContent className="max-w-[calc(100vw-2rem)] gap-4 rounded-2xl border-stone-200 p-4 sm:max-w-3xl sm:p-5">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base text-stone-900">
             <Images className="size-4 text-[#0071e3]" />
@@ -54,7 +109,6 @@ export default function DefaultMediaPicker({
           <DialogDescription className="text-xs text-stone-500">{desc}</DialogDescription>
         </DialogHeader>
 
-        {/* Large preview */}
         {previewSrc && (
           <div className="space-y-3">
             <div
@@ -91,55 +145,26 @@ export default function DefaultMediaPicker({
           </div>
         )}
 
-        {/* Grid of choices */}
-        <div
-          className={cn(
-            'grid gap-2.5',
-            kind === 'avatar' ? 'grid-cols-4' : 'grid-cols-2'
-          )}
-        >
-          {items.map((item) => {
-            const isCurrent = selectedSrc === item.src;
-            const isPreviewing = previewSrc === item.src;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setPreviewSrc(item.src)}
-                className={cn(
-                  'group relative overflow-hidden border text-left transition',
-                  kind === 'avatar' ? 'aspect-square rounded-full' : 'aspect-[16/9] rounded-xl',
-                  isPreviewing
-                    ? 'border-[#0071e3] ring-2 ring-[#0071e3]/35'
-                    : isCurrent
-                      ? 'border-emerald-500 ring-2 ring-emerald-400/30'
-                      : 'border-stone-200 hover:border-stone-300'
-                )}
-                title={item.label}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={item.src}
-                  alt={item.label}
-                  className="h-full w-full object-cover"
-                />
-                {isCurrent && !isPreviewing && (
-                  <span className="absolute inset-0 flex items-center justify-center bg-black/20">
-                    <span className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm">
-                      <Check className="size-3" strokeWidth={2.5} />
-                    </span>
-                  </span>
-                )}
-                {isPreviewing && (
-                  <span className="absolute inset-0 flex items-center justify-center bg-black/25">
-                    <span className="flex size-6 items-center justify-center rounded-full bg-[#0071e3] text-white shadow-sm">
-                      <Check className="size-3" strokeWidth={2.5} />
-                    </span>
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div className="max-h-[65vh] space-y-4 overflow-y-auto pr-1">
+          {groups.map((group) => (
+            <div key={group.title || 'default'}>
+              {group.title ? (
+                <p className="mb-2 text-sm font-bold text-stone-800">{group.title}</p>
+              ) : null}
+              <div className={cn('grid gap-1.5 sm:gap-2', gridCols)}>
+                {group.items.map((item) => (
+                  <ItemButton
+                    key={item.id}
+                    item={item}
+                    kind={kind}
+                    isCurrent={selectedSrc === item.src}
+                    isPreviewing={previewSrc === item.src}
+                    onPreview={() => setPreviewSrc(item.src)}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </DialogContent>
     </Dialog>

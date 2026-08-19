@@ -117,7 +117,7 @@ export const FEATURE_CATALOG: FeatureDef[] = [
   {
     key: 'activities',
     label: 'กิจกรรม',
-    description: 'กิจกรรมรำลึก งานประจำปี หรืองานพิเศษที่จัดเป็นครั้งคราว',
+    description: 'งานประจำปี งานทำบุญ หรือสิ่งที่ลูกหลานจัดสืบต่อ',
     pathSegment: 'activities',
     icon: 'CalendarDays',
     defaultOn: false,

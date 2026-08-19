@@ -1,15 +1,12 @@
 'use client';
 
 import React from 'react';
-import { BookOpen, Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   createTimelineItem,
-  getLifeStoryCategoryBadge,
-  getLifeStoryMenuHint,
-  getLifeStoryMenuTitle,
   getLifeStorySections,
   getTimelineAddLabel,
   getTimelineEmptyHint,
@@ -38,25 +35,6 @@ export default function LifeStoryEditor({
 
   return (
     <div className="space-y-6 animate-fade-in text-left">
-      <div className="rounded-2xl border border-stone-200/80 bg-stone-50/50 p-4">
-        <div className="flex items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0071e3]/10 text-[#0071e3]">
-            <BookOpen className="size-5" />
-          </span>
-          <div className="min-w-0 space-y-1">
-            <p className="text-xs font-bold uppercase tracking-widest text-stone-400">
-              {getLifeStoryCategoryBadge(category)}
-            </p>
-            <h4 className="text-base font-bold text-stone-900">
-              {getLifeStoryMenuTitle(category)}
-            </h4>
-            <p className="text-xs leading-relaxed text-stone-500">
-              {getLifeStoryMenuHint(category)}
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="space-y-2">
         <h3 className="text-sm font-bold text-stone-900">{active.label}</h3>
         <p className="text-xs text-stone-500">{active.description}</p>

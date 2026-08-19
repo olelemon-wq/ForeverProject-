@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Smartphone, Plus, Trash2, CheckCircle2, AlertCircle, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 
 interface PhoneRecord {
   id: string;
@@ -177,35 +176,33 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
       )}
 
       {/* Verified Phones List */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {phones.map((p) => (
-          <div key={p.id} className="flex items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-stone-50/30 p-3.5 text-left">
-            <div className="flex min-w-0 items-center gap-3">
-              <Smartphone className={`size-4 shrink-0 ${p.isPrimary ? 'text-blue-600' : 'text-stone-400'}`} />
-              <div className="flex min-w-0 flex-wrap items-center gap-2">
-                <p className="font-mono text-xs font-bold text-stone-900">
-                  {formatPhoneNumber(p.phone)}
-                </p>
-                {p.isPrimary ? (
-                  <Badge className="h-auto shrink-0 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-black text-emerald-800 hover:bg-emerald-50">
-                    ● เบอร์หลัก
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="h-auto shrink-0 rounded-full border-stone-200 bg-stone-100 px-2.5 py-0.5 text-xs font-black text-stone-600 hover:bg-stone-100">
-                    ● เบอร์สำรอง
-                  </Badge>
-                )}
-              </div>
+          <div key={p.id} className="flex flex-wrap items-center justify-between gap-2 text-left">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <Smartphone className={`size-4 shrink-0 ${p.isPrimary ? 'text-[#0071e3]' : 'text-[#86868B]'}`} />
+              <p className="font-mono text-sm font-semibold text-[#1D1D1F]">
+                {formatPhoneNumber(p.phone)}
+              </p>
+              {p.isPrimary ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-100">
+                  <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden />
+                  เบอร์หลัก
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F5F5F7] px-2.5 py-0.5 text-xs font-medium text-[#6E6E73] ring-1 ring-inset ring-[#E8E8ED]">
+                  เบอร์สำรอง
+                </span>
+              )}
             </div>
 
-            {/* Actions */}
             {!p.isPrimary && (
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="ml-auto flex shrink-0 items-center gap-2">
                 <Button
                   variant="ghost"
                   type="button"
                   onClick={() => handleSetPrimary(p.id)}
-                  className="cursor-pointer rounded-lg border border-stone-250 bg-white px-2 py-1 text-xs font-bold text-stone-700 transition hover:bg-stone-50 hover:text-stone-950 active:scale-95"
+                  className="h-8 cursor-pointer rounded-full border border-[#E8E8ED] bg-white px-3 text-xs font-medium text-[#6E6E73] hover:bg-[#F5F5F7] hover:text-[#1D1D1F]"
                 >
                   ตั้งเป็นเบอร์หลัก
                 </Button>
@@ -213,7 +210,7 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
                   variant="ghost"
                   type="button"
                   onClick={() => handleDeletePhone(p.id)}
-                  className="cursor-pointer rounded-lg border border-red-200 bg-red-50 p-1.5 text-red-650 transition hover:bg-red-100 active:scale-95"
+                  className="size-8 cursor-pointer rounded-full border border-red-200 bg-red-50 p-0 text-red-650 hover:bg-red-100"
                   title="ลบเบอร์สำรอง"
                 >
                   <Trash2 className="size-3.5" />
@@ -223,15 +220,14 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
           </div>
         ))}
 
-        {/* Same row shell as phone items so Plus aligns with Smartphone */}
         {!isAdding ? (
           <button
             type="button"
             onClick={() => { setIsAdding(true); setStep(1); }}
-            className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-3.5 text-left text-xs font-bold text-stone-600 transition hover:bg-stone-100/60 hover:text-stone-900"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0071e3] transition hover:gap-2"
           >
-            <Plus className="size-4 shrink-0" strokeWidth={2} />
-            <span>เพิ่มเบอร์โทรศัพท์สำรองกู้คืน</span>
+            <Plus className="size-4" />
+            เพิ่มเบอร์สำรอง
           </button>
         ) : null}
       </div>
@@ -251,7 +247,7 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
           </div>
 
           {step === 1 ? (
-            <form onSubmit={handleRequestOtp} className="space-y-3">
+            <form onSubmit={handleRequestOtp} className="flex flex-col gap-3">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-stone-500">เบอร์โทรศัพท์มือถือสำรอง</label>
                 <Input
@@ -269,14 +265,14 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
                 variant="ghost"
                 type="submit"
                 disabled={actionLoading || newPhone.length !== 10}
-                className="flex h-auto w-full cursor-pointer items-center justify-center gap-1 rounded-xl bg-stone-900 py-2 text-xs font-bold text-white transition hover:bg-stone-800 active:scale-95 disabled:opacity-50"
+                className="flex h-9 w-auto cursor-pointer items-center justify-center gap-1 self-end rounded-full bg-[#0071e3] px-4 text-sm font-medium text-white hover:bg-[#0077ED] disabled:opacity-50"
               >
                 {actionLoading && <RotateCw className="size-3 animate-spin" />}
                 <span>ขอรหัส OTP</span>
               </Button>
             </form>
           ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-4">
+            <form onSubmit={handleVerifyOtp} className="flex flex-col gap-4">
               <div className="space-y-1">
                 <label className="block text-center text-xs font-bold text-stone-500">
                   ป้อนรหัส OTP 6 หลักที่ส่งไปยัง {formatPhoneNumber(newPhone)}
@@ -304,7 +300,7 @@ export default function BackupPhoneSection({ userPhone }: { userPhone: string })
                 variant="ghost"
                 type="submit"
                 disabled={actionLoading || otpCode.length !== 6}
-                className="flex h-auto w-full cursor-pointer items-center justify-center gap-1 rounded-xl bg-blue-600 py-2 text-xs font-bold text-white transition hover:bg-blue-700 active:scale-95 disabled:opacity-50"
+                className="flex h-9 w-auto cursor-pointer items-center justify-center gap-1 self-end rounded-full bg-[#0071e3] px-4 text-sm font-medium text-white hover:bg-[#0077ED] disabled:opacity-50"
               >
                 {actionLoading && <RotateCw className="size-3 animate-spin" />}
                 <span>ยืนยันและเชื่อมต่อเบอร์</span>

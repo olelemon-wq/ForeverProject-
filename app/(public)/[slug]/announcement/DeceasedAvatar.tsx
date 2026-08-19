@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Flame } from 'lucide-react';
 import { imageTransformStyle, toRelativeOffset } from '@/lib/imagePosition';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
+import { cn } from '@/lib/utils';
 
 interface DeceasedAvatarProps {
   avatarUrl?: string | null;
@@ -14,6 +15,7 @@ interface DeceasedAvatarProps {
   imageCoordSpace?: string | null;
   tenantName: string;
   primaryColor?: string;
+  size?: 'sm' | 'md';
 }
 
 export default function DeceasedAvatar({
@@ -25,6 +27,7 @@ export default function DeceasedAvatar({
   imageCoordSpace,
   tenantName,
   primaryColor = '#0d9488',
+  size = 'md',
 }: DeceasedAvatarProps) {
   const [imageError, setImageError] = useState(false);
 
@@ -34,7 +37,10 @@ export default function DeceasedAvatar({
 
   return (
     <div 
-      className="w-28 h-28 print-avatar-container rounded-full border-4 mx-auto shadow-md overflow-hidden flex items-center justify-center bg-stone-50"
+      className={cn(
+        'mx-auto flex items-center justify-center overflow-hidden rounded-full bg-stone-50 shadow-md print-avatar-container',
+        size === 'sm' ? 'h-20 w-20 border-[3px]' : 'h-28 w-28 border-4',
+      )}
       style={{ borderColor: primaryColor }}
     >
       {hasValidAvatar ? (
@@ -56,7 +62,7 @@ export default function DeceasedAvatar({
           onError={() => setImageError(true)}
         />
       ) : (
-        <Flame className="w-12 h-12 animate-pulse" style={{ color: primaryColor }} />
+        <Flame className={cn('animate-pulse', size === 'sm' ? 'size-8' : 'size-12')} style={{ color: primaryColor }} />
       )}
     </div>
   );

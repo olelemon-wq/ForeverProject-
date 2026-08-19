@@ -76,6 +76,7 @@ export default function CircularImageCropModal({
           </Button>
         </div>
 
+        <p className="text-center text-xs font-medium text-stone-500">ลากภาพในวงกลมเพื่อจัดตำแหน่ง</p>
         <div className="flex items-center justify-center rounded-2xl border border-stone-200/60 bg-stone-50 p-6">
           <div
             className="relative flex h-48 w-48 cursor-move items-center justify-center overflow-hidden rounded-full border-2 border-emerald-600/80 bg-stone-100 shadow-inner"

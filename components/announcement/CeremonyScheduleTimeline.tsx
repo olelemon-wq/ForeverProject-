@@ -1,6 +1,6 @@
 import { Calendar } from 'lucide-react';
 import type { CeremonyScheduleItem } from '@/lib/announcementSchedule';
-import { formatCeremonyDisplayLine } from '@/lib/announcementSchedule';
+import { formatCeremonyDisplayLine, stripCeremonyItemNumber } from '@/lib/announcementSchedule';
 import { cn } from '@/lib/utils';
 
 const PATTERN_MASK =
@@ -107,7 +107,7 @@ export default function CeremonyScheduleTimeline({
   if (items.length === 0) return null;
 
   return (
-    <div className={cn('space-y-4 text-left', className)}>
+    <div className={cn('space-y-3 text-left', className)}>
       <h3
         className={cn(
           'flex items-center gap-1.5 font-black uppercase tracking-wider',
@@ -128,12 +128,15 @@ export default function CeremonyScheduleTimeline({
           return (
             <li
               key={item.id}
-              className={cn('relative', compact ? 'pb-3.5' : 'pb-4', isLast && 'pb-0')}
+              className={cn('relative', compact ? 'pb-2.5' : 'pb-4', isLast && 'pb-0')}
             >
               {!isLast && (
                 <span
                   aria-hidden
-                  className="absolute top-8 bottom-0 left-[15px] w-px"
+                  className={cn(
+                    'absolute bottom-0 w-px',
+                    compact ? 'top-7 left-[13px]' : 'top-8 left-[15px]',
+                  )}
                   style={{ backgroundColor: 'var(--ceremony-line)' }}
                 />
               )}
@@ -142,7 +145,7 @@ export default function CeremonyScheduleTimeline({
                 <div
                   className={cn(
                     'relative z-10 mt-0.5 flex shrink-0 items-center justify-center rounded-full border',
-                    compact ? 'size-8' : 'size-9',
+                    compact ? 'size-7' : 'size-9',
                   )}
                   style={{
                     color: 'var(--ceremony-primary)',
@@ -159,7 +162,7 @@ export default function CeremonyScheduleTimeline({
                     className={cn('font-bold leading-snug', compact ? 'text-xs' : 'text-sm')}
                     style={{ color: 'var(--ceremony-primary)' }}
                   >
-                    {item.title}
+                    {stripCeremonyItemNumber(item.title)}
                   </h4>
                   <p
                     className={cn(

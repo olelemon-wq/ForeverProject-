@@ -42,6 +42,7 @@ export type CoupleJourneyCardProps = {
   avatarY?: number;
   avatarRotate?: number;
   imageCoordSpace?: string | null;
+  showPhoto?: boolean;
   notes?: string;
   contactPhone?: string;
   className?: string;
@@ -63,6 +64,7 @@ export default function CoupleJourneyCard({
   avatarY,
   avatarRotate,
   imageCoordSpace,
+  showPhoto = true,
   notes,
   contactPhone,
   className,
@@ -70,6 +72,7 @@ export default function CoupleJourneyCard({
   const { cardBgClass, textMutedClass, headingColorClass, innerCardBg } = theme;
   const { latest, earlier } = splitCoupleMilestonesForDisplay(milestones);
   const tagline = inviteText?.trim() || inviteFallback;
+  const showAvatar = showPhoto && Boolean(avatarUrl);
   const resolvedFont = resolveCardFontFamily(fontFamily, siteFontFamily);
 
   const latestDate = latest ? parseMilestoneDateDisplay(latest.date) : null;
@@ -117,16 +120,18 @@ export default function CoupleJourneyCard({
 
       <div className="relative z-10 space-y-5">
         <header className="space-y-3 pr-2 text-center sm:pr-4">
-          <DeceasedAvatar
-            avatarUrl={avatarUrl}
-            avatarScale={avatarScale}
-            avatarX={avatarX}
-            avatarY={avatarY}
-            avatarRotate={avatarRotate}
-            imageCoordSpace={imageCoordSpace}
-            tenantName={tenantName}
-            primaryColor="var(--theme-primary, #c9a0a8)"
-          />
+          {showAvatar ? (
+            <DeceasedAvatar
+              avatarUrl={avatarUrl}
+              avatarScale={avatarScale}
+              avatarX={avatarX}
+              avatarY={avatarY}
+              avatarRotate={avatarRotate}
+              imageCoordSpace={imageCoordSpace}
+              tenantName={tenantName}
+              primaryColor="var(--theme-primary, #c9a0a8)"
+            />
+          ) : null}
           <div className="space-y-1.5">
             <h2
               className="text-2xl font-black tracking-tight sm:text-[1.65rem]"

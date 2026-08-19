@@ -78,3 +78,7 @@ export function buildCeremonyScheduleItems(
 export function formatCeremonyDisplayLine(item: CeremonyScheduleItem): string {
   return formatScheduleLine(item.date, item.time);
 }
+
+export function stripCeremonyItemNumber(title: string) {
+  return title.replace(/^\d+\.\s*/, '').trim();
+}

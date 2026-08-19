@@ -10,7 +10,27 @@ import {
   type HeroBgMode,
   type HeroLayoutId,
 } from '@/lib/heroLayouts';
+import { keepNameTogether, splitMemorialTitle } from '@/lib/memorialName';
 import { cn } from '@/lib/utils';
+
+/** Public site hero: taller on desktop + width aligned with nav (max-w-5xl). */
+const publicHeroFrame = (compact?: boolean) =>
+  compact
+    ? ''
+    : 'md:mx-auto md:w-full md:max-w-5xl md:overflow-hidden md:rounded-2xl md:border md:border-stone-200/60 md:shadow-sm';
+
+/** Shared crop: 1024×420 banner (~2.44:1). Same ratio on mobile so the cover is not full-screen. */
+const HERO_RATIO_BOX = 'aspect-[1024/420] min-h-0 overflow-hidden';
+
+const publicHeroHeight = (compact?: boolean) =>
+  compact
+    ? cn(HERO_RATIO_BOX, 'py-6 sm:py-8')
+    : cn(HERO_RATIO_BOX, 'flex flex-col justify-center py-4 sm:py-6 md:py-16 lg:py-20');
+
+const publicFramedOnCoverHeight = (compact?: boolean) =>
+  compact
+    ? cn(HERO_RATIO_BOX, 'flex flex-col justify-center py-4 sm:py-6')
+    : cn(HERO_RATIO_BOX, 'flex flex-col justify-center py-4 sm:py-6 md:py-16 lg:py-20');
 
 export interface MemorialHeroProps {
   name: string;
@@ -23,6 +43,8 @@ export interface MemorialHeroProps {
   bgMode?: HeroBgMode | string;
   /** Compact preview for manage dashboard */
   compact?: boolean;
+  /** True-size desktop preview; parent should scale a 1024×420 box. */
+  preview?: boolean;
   className?: string;
 }
 
@@ -42,7 +64,7 @@ function SoftWashBackground({ onDark }: { onDark?: boolean }) {
           : {
               background: `
                 radial-gradient(ellipse 85% 65% at 50% 28%, color-mix(in srgb, var(--theme-primary) 26%, transparent), transparent 70%),
-                linear-gradient(165deg, color-mix(in srgb, var(--theme-primary) 10%, #F5F5F7), #FAF8F5 55%, #F5F5F7 100%)
+                linear-gradient(165deg, color-mix(in srgb, var(--theme-primary) 10%, #F5F5F7), #FAF8F5 55%, color-mix(in srgb, var(--theme-secondary) 8%, #F5F5F7) 100%)
               `,
             }
       }
@@ -101,7 +123,7 @@ function AvatarFrame({
     <div
       className={cn(
         'relative overflow-hidden rounded-2xl border-2 border-white bg-stone-50 shadow-[0_8px_28px_rgba(29,29,31,0.14)] ring-1 ring-black/5',
-        compact ? 'h-36 w-28 sm:h-40 sm:w-32' : 'h-52 w-40 sm:h-64 sm:w-48'
+        compact ? 'h-20 w-16 sm:h-36 sm:w-28 md:h-40 md:w-32' : 'h-20 w-16 sm:h-40 sm:w-32 md:h-52 md:w-40 lg:h-64 lg:w-48'
       )}
     >
       {avatarUrl ? (
@@ -141,6 +163,9 @@ function TitleBlock({
   align?: 'center' | 'left' | 'right';
   compact?: boolean;
 }) {
+  const { prefix, name: personName } = splitMemorialTitle(name);
+  const nameTogether = keepNameTogether(personName);
+
   return (
     <div
       className={cn(
@@ -152,11 +177,20 @@ function TitleBlock({
       <h1
         className={cn(
           'font-bold tracking-tight',
-          compact ? 'text-lg sm:text-xl' : 'text-2xl sm:text-3xl',
+          compact ? 'text-lg sm:text-xl' : 'text-lg sm:text-xl md:text-2xl lg:text-3xl',
           onDark ? 'text-white drop-shadow-md' : 'text-stone-900'
         )}
       >
-        {name}
+        {prefix ? (
+          <>
+            <span className="block sm:inline">{prefix}</span>
+            <span className="inline-block max-w-full whitespace-nowrap sm:ml-2">
+              {nameTogether}
+            </span>
+          </>
+        ) : (
+          <span className="inline-block max-w-full whitespace-nowrap">{nameTogether}</span>
+        )}
       </h1>
       {tagline ? (
         <p
@@ -177,13 +211,10 @@ function CoverLayer({
   coverUrl,
   coverTransform,
   dimClass = 'bg-black/40',
-  soft = false,
 }: {
   coverUrl: string;
   coverTransform?: MemorialHeroProps['coverTransform'];
   dimClass?: string;
-  /** Soft-wash: keep cover visible but blurred / muted */
-  soft?: boolean;
 }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -191,10 +222,7 @@ function CoverLayer({
       <img
         src={resolveMediaSrc(coverUrl)}
         alt=""
-        className={cn(
-          'h-full w-full object-cover',
-          soft && 'scale-105 blur-[6px] opacity-80',
-        )}
+        className="h-full w-full object-cover"
         style={imageTransformStyle({
           x: coverTransform?.x || 0,
           y: coverTransform?.y || 0,
@@ -202,22 +230,7 @@ function CoverLayer({
           rotate: coverTransform?.rotate || 0,
         })}
       />
-      <div
-        className={cn('absolute inset-0', !soft && dimClass)}
-        style={
-          soft
-            ? {
-                background: `
-                  linear-gradient(165deg,
-                    color-mix(in srgb, var(--theme-primary) 8%, rgba(245,245,247,0.35)),
-                    color-mix(in srgb, var(--theme-primary) 5%, rgba(250,248,245,0.55)) 45%,
-                    color-mix(in srgb, var(--theme-primary) 6%, rgba(245,245,247,0.72)) 100%
-                  )
-                `,
-              }
-            : undefined
-        }
-      />
+      <div className={cn('absolute inset-0', dimClass)} />
     </div>
   );
 }
@@ -229,10 +242,10 @@ function BottomBandHero({
   avatarUrl,
   coverTransform,
   avatarTransform,
-  showWash,
-  softCover,
-  showGradientWash,
+  useCoverBackground,
+  useThemeBackground,
   compact,
+  fillBox,
   className,
   avatarSide,
 }: {
@@ -242,49 +255,50 @@ function BottomBandHero({
   avatarUrl?: string | null;
   coverTransform?: MemorialHeroProps['coverTransform'];
   avatarTransform?: MemorialHeroProps['avatarTransform'];
-  showWash?: boolean;
-  softCover?: boolean;
-  showGradientWash?: boolean;
+  useCoverBackground: boolean;
+  useThemeBackground: boolean;
   compact?: boolean;
+  fillBox?: boolean;
   className?: string;
   avatarSide: 'left' | 'right';
 }) {
-  const hasCover = !!coverUrl;
   const avatarClass = compact
-    ? 'h-16 w-16 -mt-8 sm:h-20 sm:w-20 sm:-mt-10'
-    : 'h-20 w-20 -mt-10 sm:h-24 sm:w-24 sm:-mt-12';
+    ? 'h-14 w-14 -mt-7 sm:h-16 sm:w-16 sm:-mt-8'
+    : 'h-14 w-14 -mt-7 sm:h-16 sm:w-16 sm:-mt-8 md:h-20 md:w-20 md:-mt-10 lg:h-24 lg:w-24 lg:-mt-12';
 
   return (
     <header
       className={cn(
-        'relative overflow-hidden border-b border-stone-200/60 transition-all duration-500',
-        compact ? 'rounded-2xl border' : '',
-        hasCover && !softCover ? 'bg-stone-900' : 'bg-stone-100',
+        'relative flex flex-col overflow-hidden border-b border-stone-200/60 transition-all duration-500',
+        fillBox
+          ? 'h-full min-h-0 w-full'
+          : compact
+            ? cn('rounded-2xl border', HERO_RATIO_BOX)
+            : cn(publicHeroFrame(), HERO_RATIO_BOX),
+        useCoverBackground ? 'bg-stone-900' : 'bg-stone-100',
         className
       )}
     >
-      <div className={cn('relative', compact ? 'h-36 sm:h-44' : 'h-48 sm:h-64')}>
-        {hasCover ? (
+      <div className="relative min-h-0 flex-1">
+        {useCoverBackground && coverUrl ? (
           <CoverLayer
-            coverUrl={coverUrl!}
+            coverUrl={coverUrl}
             coverTransform={coverTransform}
-            soft={softCover}
             dimClass="bg-gradient-to-t from-black/35 via-black/10 to-black/5"
           />
-        ) : showWash ? (
+        ) : useThemeBackground ? (
           <SoftWashBackground />
         ) : (
           <div className="h-full w-full bg-stone-100" />
         )}
-        {showGradientWash ? <SoftWashBackground onDark={hasCover && !softCover} /> : null}
       </div>
 
-      <div className="relative z-10 border-t border-stone-200/70 bg-[#F5F5F7]">
+      <div className="relative z-10 shrink-0 border-t border-stone-200/70 bg-[#F5F5F7]">
         <div
           className={cn(
-            'mx-auto flex w-full items-center gap-4 px-4',
+            'mx-auto flex w-full items-center gap-3 px-4',
             avatarSide === 'right' && 'flex-row-reverse',
-            compact ? 'max-w-xl py-4' : 'max-w-5xl py-5 sm:gap-5 sm:py-6'
+            compact ? 'max-w-xl py-2.5' : 'max-w-5xl py-2.5 sm:py-4 md:py-5 lg:py-6 sm:gap-5'
           )}
         >
           <AvatarCircle
@@ -316,23 +330,21 @@ export default function MemorialHero({
   layout: layoutProp,
   bgMode: bgModeProp,
   compact = false,
+  preview = false,
   className,
 }: MemorialHeroProps) {
   const layout = normalizeHeroLayout(layoutProp);
   const bgMode = normalizeHeroBgMode(bgModeProp, layout);
   const hasCover = !!coverUrl;
-  const softCover = hasCover && bgMode === 'soft-wash';
-  const showSharpCover = hasCover && (bgMode === 'image' || bgMode === 'image-and-wash');
-  const showSoftCoverLayer = softCover;
-  const showGradientWash =
-    (bgMode === 'soft-wash' && !hasCover) ||
-    (bgMode === 'image-and-wash' && hasCover);
-  const showWash = bgMode === 'soft-wash' || bgMode === 'image-and-wash';
-  const onDark = showSharpCover;
+  const useCoverBackground = bgMode === 'image' && hasCover;
+  const useThemeBackground = bgMode === 'soft-wash';
+  const onDark = useCoverBackground;
+  const useCompact = compact && !preview;
+  const fillBox = preview;
 
-  const avatarSize = compact
+  const avatarSize = useCompact
     ? 'h-20 w-20 sm:h-24 sm:w-24'
-    : 'h-28 w-28 sm:h-36 sm:w-36';
+    : 'h-16 w-16 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-36 lg:w-36';
 
   if (layout === 'bottom-band' || layout === 'bottom-band-right') {
     return (
@@ -343,10 +355,10 @@ export default function MemorialHero({
         avatarUrl={avatarUrl}
         coverTransform={coverTransform}
         avatarTransform={avatarTransform}
-        showWash={showWash}
-        softCover={softCover}
-        showGradientWash={showGradientWash}
-        compact={compact}
+        useCoverBackground={useCoverBackground}
+        useThemeBackground={useThemeBackground}
+        compact={useCompact}
+        fillBox={fillBox}
         className={className}
         avatarSide={layout === 'bottom-band-right' ? 'right' : 'left'}
       />
@@ -358,27 +370,23 @@ export default function MemorialHero({
       <header
         className={cn(
           'relative overflow-hidden border-b border-stone-200/60 bg-[#FAF8F5] transition-all duration-500',
-          compact ? 'rounded-2xl border py-8' : 'py-14 sm:py-20',
+          fillBox
+            ? 'flex h-full min-h-0 w-full flex-col justify-center overflow-hidden py-14 sm:py-20'
+            : useCompact
+              ? cn('flex flex-col justify-center rounded-2xl border', HERO_RATIO_BOX)
+              : cn(publicHeroFrame(), HERO_RATIO_BOX, 'flex flex-col justify-center py-4 sm:py-6 md:py-14 lg:py-20'),
           className
         )}
       >
-        {showSoftCoverLayer ? (
-          <CoverLayer
-            coverUrl={coverUrl!}
-            coverTransform={coverTransform}
-            soft
-            dimClass="bg-[#FAF8F5]/85"
-          />
-        ) : null}
-        {showSharpCover ? (
+        {useCoverBackground ? (
           <CoverLayer
             coverUrl={coverUrl!}
             coverTransform={coverTransform}
             dimClass="bg-[#FAF8F5]/85"
           />
         ) : null}
-        {showGradientWash ? <SoftWashBackground onDark={onDark} /> : null}
-        {!hasCover && !showWash ? (
+        {useThemeBackground ? <SoftWashBackground /> : null}
+        {!useCoverBackground && !useThemeBackground ? (
           <div
             className="pointer-events-none absolute top-1/2 left-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.08] blur-[100px]"
             style={{ backgroundColor: 'var(--theme-primary)' }}
@@ -388,20 +396,20 @@ export default function MemorialHero({
         <div
           className={cn(
             'relative z-10 mx-auto flex w-full flex-col items-center px-4',
-            compact ? 'max-w-xl gap-4' : 'max-w-5xl gap-5'
+            useCompact ? 'max-w-xl gap-2 sm:gap-4' : 'max-w-5xl gap-2 sm:gap-4 md:gap-5'
           )}
         >
           <AvatarFrame
             avatarUrl={avatarUrl}
             avatarTransform={avatarTransform}
-            compact={compact}
+            compact={useCompact}
           />
           <div
             className="h-px w-12 sm:w-16"
             style={{ backgroundColor: 'var(--theme-primary)' }}
             aria-hidden
           />
-          <TitleBlock name={name} tagline={tagline} compact={compact} />
+          <TitleBlock name={name} tagline={tagline} compact={useCompact} />
         </div>
       </header>
     );
@@ -412,41 +420,37 @@ export default function MemorialHero({
       <header
         className={cn(
           'relative overflow-hidden border-b border-stone-200/60 transition-all duration-500',
-          compact ? 'min-h-[240px] rounded-2xl border py-10' : 'min-h-[320px] py-16 sm:min-h-[380px] sm:py-20',
-          hasCover && !softCover ? 'bg-stone-900' : 'bg-stone-100',
+          fillBox
+            ? 'h-full min-h-0 w-full overflow-hidden py-16 md:py-20'
+            : useCompact
+              ? cn('rounded-2xl border', publicFramedOnCoverHeight(true))
+              : cn(publicHeroFrame(), publicFramedOnCoverHeight()),
+          useCoverBackground ? 'bg-stone-900' : 'bg-stone-100',
           className
         )}
       >
-        {showSoftCoverLayer ? (
-          <CoverLayer
-            coverUrl={coverUrl!}
-            coverTransform={coverTransform}
-            soft
-            dimClass="bg-black/45"
-          />
-        ) : showSharpCover ? (
+        {useCoverBackground ? (
           <CoverLayer
             coverUrl={coverUrl!}
             coverTransform={coverTransform}
             dimClass="bg-black/45"
           />
-        ) : showWash ? (
+        ) : useThemeBackground ? (
           <SoftWashBackground />
         ) : (
           <div className="absolute inset-0 bg-stone-100" />
         )}
-        {showGradientWash ? <SoftWashBackground onDark={onDark} /> : null}
 
         <div
           className={cn(
             'relative z-10 mx-auto flex w-full flex-col items-center px-4',
-            compact ? 'max-w-xl gap-4' : 'max-w-5xl gap-5'
+            useCompact ? 'max-w-xl gap-2 sm:gap-4' : 'max-w-5xl gap-2 sm:gap-4 md:gap-5'
           )}
         >
           <AvatarFrame
             avatarUrl={avatarUrl}
             avatarTransform={avatarTransform}
-            compact={compact}
+            compact={useCompact}
           />
           <div
             className={cn('h-px w-12 sm:w-16', onDark ? 'bg-white/80' : '')}
@@ -457,7 +461,7 @@ export default function MemorialHero({
             name={name}
             tagline={tagline}
             onDark={onDark}
-            compact={compact}
+            compact={useCompact}
           />
         </div>
       </header>
@@ -466,27 +470,24 @@ export default function MemorialHero({
 
   const shellClass = cn(
     'relative overflow-hidden border-b border-stone-200/60 transition-all duration-500',
-    compact ? 'rounded-2xl border' : '',
-    onDark ? 'bg-stone-900 text-white' : showWash || softCover ? 'bg-[#F5F5F7]' : 'bg-white',
-    compact ? 'min-h-[220px] py-8' : 'min-h-[280px] py-16 sm:min-h-[320px] sm:py-20',
+    fillBox
+      ? 'h-full min-h-0 w-full overflow-hidden py-16 md:py-20'
+      : useCompact
+        ? 'rounded-2xl border'
+        : publicHeroFrame(),
+    onDark ? 'bg-stone-900 text-white' : useThemeBackground ? 'bg-[#F5F5F7]' : 'bg-white',
+    fillBox ? null : publicHeroHeight(useCompact),
     className
   );
 
   return (
     <header className={shellClass}>
-      {showSoftCoverLayer ? (
-        <CoverLayer
-          coverUrl={coverUrl!}
-          coverTransform={coverTransform}
-          soft
-        />
-      ) : null}
-      {showSharpCover ? (
+      {useCoverBackground ? (
         <CoverLayer coverUrl={coverUrl!} coverTransform={coverTransform} />
       ) : null}
 
-      {showGradientWash ? <SoftWashBackground onDark={onDark} /> : null}
-      {!hasCover && !showWash ? (
+      {useThemeBackground ? <SoftWashBackground onDark={onDark} /> : null}
+      {!useCoverBackground && !useThemeBackground ? (
         <div
           className="pointer-events-none absolute top-1/2 left-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[100px]"
           style={{ backgroundColor: 'var(--theme-primary)' }}
@@ -496,7 +497,7 @@ export default function MemorialHero({
       <div
         className={cn(
           'relative z-10 mx-auto w-full px-4',
-          compact ? 'max-w-xl' : 'max-w-5xl'
+          useCompact ? 'max-w-xl' : 'max-w-5xl'
         )}
       >
         {layout === 'center-classic' ? (
@@ -510,7 +511,7 @@ export default function MemorialHero({
               name={name}
               tagline={tagline}
               onDark={onDark}
-              compact={compact}
+              compact={useCompact}
             />
           </div>
         ) : null}
@@ -527,7 +528,7 @@ export default function MemorialHero({
               tagline={tagline}
               onDark={onDark}
               align="left"
-              compact={compact}
+              compact={useCompact}
             />
           </div>
         ) : null}
@@ -544,7 +545,7 @@ export default function MemorialHero({
               tagline={tagline}
               onDark={onDark}
               align="right"
-              compact={compact}
+              compact={useCompact}
             />
           </div>
         ) : null}
@@ -555,7 +556,7 @@ export default function MemorialHero({
               name={name}
               tagline={tagline}
               onDark={onDark}
-              compact={compact}
+              compact={useCompact}
             />
             <AvatarCircle
               avatarUrl={avatarUrl}

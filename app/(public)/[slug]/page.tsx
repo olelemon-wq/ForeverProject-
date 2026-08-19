@@ -25,7 +25,9 @@ import FeaturedEbooksSnippet from '@/components/public/FeaturedEbooksSnippet';
 import CondolenceSectionShell from '@/components/public/CondolenceSectionShell';
 import PetProfileCard, { type PetProfileCardSubject } from '@/components/public/PetProfileCard';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
-import { ANNOUNCEMENT_CARD_CLASS, FEATURE_CARD_CLASS } from '@/lib/publicLayout';
+import { FEATURE_CARD_CLASS } from '@/lib/publicLayout';
+import { FramedAnnouncementCard } from '@/components/announcement/AnnouncementCardFrame';
+import { announcementShowsPhoto, ANNOUNCEMENT_FRAMED_CARD_CLASS } from '@/lib/announcementCardLayout';
 
 export const dynamic = 'force-dynamic';
 
@@ -312,6 +314,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
   const avatarX = config?.avatarX || 0;
   const avatarY = config?.avatarY || 0;
   const avatarRotate = config?.avatarRotate || 0;
+  const showPhoto = announcementShowsPhoto(ann.showPhoto);
 
   // Wreath/Gift policy — Friends has no wreath/condolence policy
   const isFriends = tenant.category === 'Friends';
@@ -336,19 +339,22 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
       
       {/* 1. Announcement Invitation Card */}
       {isAnnActive && ann.mode === 'custom' && ann.customCardUrl ? (
-        <section
+        <FramedAnnouncementCard
           id="announcement-card"
-          className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white`}
+          category={tenant.category}
+          orientation={ann.orientation}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={resolveMediaSrc(ann.customCardUrl)}
             alt="การ์ดกำหนดการ"
-            className="w-full h-auto object-contain block"
+            className="block h-full w-full bg-white object-contain"
           />
-        </section>
+        </FramedAnnouncementCard>
       ) : isAnnActive && isCouple ? (
+        <FramedAnnouncementCard category={tenant.category} orientation={ann.orientation}>
         <CoupleJourneyCard
+          className={ANNOUNCEMENT_FRAMED_CARD_CLASS}
           tenantName={tenant.name}
           inviteText={ann.text}
           inviteFallback={getInviteFallback(tenant.category)}
@@ -363,12 +369,16 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           avatarX={avatarX}
           avatarY={avatarY}
           avatarRotate={avatarRotate}
+          showPhoto={showPhoto}
           imageCoordSpace={config?.imageCoordSpace}
           notes={ann.dressCode}
           contactPhone={ann.contactPhone}
         />
+        </FramedAnnouncementCard>
       ) : isAnnActive && isFriends ? (
+        <FramedAnnouncementCard category={tenant.category} orientation={ann.orientation}>
         <FriendsMeetupCard
+          className={ANNOUNCEMENT_FRAMED_CARD_CLASS}
           tenantName={tenant.name}
           inviteText={ann.text}
           inviteFallback={getInviteFallback(tenant.category)}
@@ -381,6 +391,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           avatarX={avatarX}
           avatarY={avatarY}
           avatarRotate={avatarRotate}
+          showPhoto={showPhoto}
           imageCoordSpace={config?.imageCoordSpace}
           meetupDate={ann.waterDate}
           meetupTime={ann.waterTime}
@@ -390,8 +401,12 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           notes={ann.dressCode}
           contactPhone={ann.contactPhone}
         />
+        </FramedAnnouncementCard>
       ) : isAnnActive ? (
+        <FramedAnnouncementCard category={tenant.category} orientation={ann.orientation}>
         <MemorialScheduleCard
+          className={ANNOUNCEMENT_FRAMED_CARD_CLASS}
+          compact
           category={tenant.category}
           tenantName={tenant.name}
           inviteText={ann.text}
@@ -405,6 +420,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           avatarX={avatarX}
           avatarY={avatarY}
           avatarRotate={avatarRotate}
+          showPhoto={showPhoto}
           imageCoordSpace={config?.imageCoordSpace}
           waterDate={ann.waterDate}
           waterTime={ann.waterTime}
@@ -422,6 +438,7 @@ export default async function PublicMemorialHome(props: { params: Promise<{ slug
           showWreathPolicy={showWreathPolicy}
           isWedding={isWedding}
         />
+        </FramedAnnouncementCard>
       ) : null}
 
       {/* 2. Recent Gallery Snippet */}

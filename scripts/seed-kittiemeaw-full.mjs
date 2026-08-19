@@ -290,7 +290,7 @@ async function main() {
           favorite: 'เปียก และจุ้งต้ม',
           dislike: 'ไม่ชอบอาบน้ำ และกินยา',
           avatarUrl:
-            '/uploads/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108759796-pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.png',
+            '/uploads/f4d68f77-50a1-4799-b060-cf38af5d210d/1786108759796-pet-avatar-1-1786108759652-a3ee928f-d9e5-42eb-83d6-5b3c49053306.jpg',
           avatarScale: 1.55,
           avatarX: 0,
           avatarY: 0,

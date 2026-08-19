@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import FeatureToggleList from '@/components/FeatureToggleList';
 import ThaiDatePicker from '@/components/ThaiDatePicker';
 import BackupPhoneSection from '@/components/BackupPhoneSection';
-import DefaultMediaPicker from '@/components/DefaultMediaPicker';
 import { getVisibleKeys, getFeatureLabel, MANDATORY_FEATURES } from '@/lib/categories';
 import {
   DEFAULT_FEATURE_ORDER,
@@ -23,10 +22,15 @@ import {
   emptyCoupleMilestone,
   type CoupleMilestone,
 } from '@/lib/coupleMilestones';
-import CoupleMilestonesEditor from '@/components/manage/CoupleMilestonesEditor';
 import LifeStoryEditor from '@/components/manage/LifeStoryEditor';
+import IdentityMediaThemeSections from '@/components/manage/IdentityMediaThemeSections';
+import AnnouncementCardSettings from '@/components/manage/AnnouncementCardSettings';
+import {
+  IdentityConfirmBar,
+  IdentityPreviewSticky,
+  IdentitySectionHeader,
+} from '@/components/manage/IdentitySetupChrome';
 import ActivitiesEditor from '@/components/manage/ActivitiesEditor';
-import MemorialHero from '@/components/public/MemorialHero';
 import {
   categoryHidesGeneralBiography,
   categoryUsesLifeStory,
@@ -39,21 +43,16 @@ import {
   type LifeStorySectionId,
 } from '@/lib/lifeStory';
 import {
-  HERO_LAYOUTS,
   normalizeHeroBgMode,
   normalizeHeroLayout,
   type HeroBgMode,
   type HeroLayoutId,
 } from '@/lib/heroLayouts';
 import CircularImageCropModal, { type CircularImageTransform } from '@/components/manage/CircularImageCropModal';
-import CoupleJourneyCard from '@/components/announcement/CoupleJourneyCard';
-import FriendsMeetupCard from '@/components/announcement/FriendsMeetupCard';
-import MemorialScheduleCard from '@/components/announcement/MemorialScheduleCard';
-import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
-import { resolveCardFontFamily } from '@/lib/themeFont';
-import { getSiteThemeStyle } from '@/lib/siteTheme';
+import { announcementShowsPhoto, normalizeAnnouncementOrientation } from '@/lib/announcementCardLayout';
 import { cn } from '@/lib/utils';
 import { getPhotoGalleryAlbums } from '@/lib/galleryAlbums';
+import { MARKETING_CATEGORIES } from '@/lib/marketingCategories';
 import ManageGalleryGrid from '@/components/manage/ManageGalleryGrid';
 import ModerationPanel from '@/components/manage/ModerationPanel';
 import {
@@ -67,7 +66,7 @@ import {
   Flame, BookOpen, Camera, GitBranch, Settings, Plus, Minus, Trash2, Edit3, 
   CreditCard, Smartphone, Check, AlertCircle, ArrowLeft, ArrowRight, 
   LogOut, Upload, User, Calendar, CalendarDays, Heart, DollarSign, Download, RotateCw
-, X, Lock, Database, Search, Save, Palette, ChevronUp, ChevronDown, LayoutDashboard, AlertTriangle, MapPin, Clock, Phone, Info, Droplets, Image as ImageIcon, Video, Menu as MenuIcon, Copy, ExternalLink, Globe, Grid, History, FileText, PawPrint, Megaphone, BookMarked, ChevronRight } from 'lucide-react';
+, X, Lock, Database, Search, Save, Palette, ChevronUp, ChevronDown, LayoutDashboard, AlertTriangle, MapPin, Clock, Phone, Info, Droplets, Image as ImageIcon, Video, Menu as MenuIcon, Copy, ExternalLink, Globe, Grid, History, FileText, PawPrint, Megaphone, Award, ScrollText, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -274,7 +273,7 @@ function getSubjectEditorCopy(category: string) {
   if (category === 'Family Legacy') {
     return {
       sectionTitle: 'บุคคลสำคัญในครอบครัว',
-      sectionHint: 'เพิ่มหรือแก้ไขรายชื่อสมาชิกที่แสดงบนหน้านี้ แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      sectionHint: 'เพิ่มหรือแก้ไขรายชื่อสมาชิกที่แสดงบนหน้านี้ แล้วกดยืนยันการตั้งค่าด้านล่าง',
       cardTitle: (i: number) => `สมาชิกคนที่ ${i + 1}`,
       nameLabel: 'ชื่อ-นามสกุล',
       namePlaceholder: 'เช่น คุณปู่บุญส่ง รักดี',
@@ -293,7 +292,7 @@ function getSubjectEditorCopy(category: string) {
   if (category === 'Couple' || category === 'Wedding') {
     return {
       sectionTitle: category === 'Wedding' ? 'ข้อมูลคู่บ่าวสาว' : 'ข้อมูลคู่รัก',
-      sectionHint: 'แก้ไขชื่อและวันที่สำคัญของทั้งสองคน แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      sectionHint: 'แก้ไขชื่อและวันที่สำคัญของทั้งสองคน แล้วกดยืนยันการตั้งค่าด้านล่าง',
       cardTitle: (i: number) => `ข้อมูลคนที่ ${i + 1}`,
       nameLabel: 'ชื่อ-นามสกุล',
       namePlaceholder: 'เช่น สมศรี',
@@ -312,7 +311,7 @@ function getSubjectEditorCopy(category: string) {
   if (category === 'Friends') {
     return {
       sectionTitle: 'รายชื่อสมาชิกในกลุ่ม',
-      sectionHint: 'เพิ่มชื่อเล่น บทบาท และโน้ตสั้น ๆ ของสมาชิก แล้วกดบันทึกการตั้งค่าด้านล่าง',
+      sectionHint: 'เพิ่มชื่อเล่น บทบาท และโน้ตสั้น ๆ ของสมาชิก แล้วกดยืนยันการตั้งค่าด้านล่าง',
       cardTitle: (i: number) => `ข้อมูลสมาชิกคนที่ ${i + 1}`,
       nameLabel: 'ชื่อ / ชื่อเล่น',
       namePlaceholder: 'เช่น ตูน, แจ๊ส, บิ๊ก',
@@ -333,8 +332,8 @@ function getSubjectEditorCopy(category: string) {
     };
   }
   return {
-    sectionTitle: 'รายชื่อผู้ล่วงลับ',
-    sectionHint: 'เพิ่มหรือแก้ไขรายชื่อผู้ล่วงลับที่แสดงบนหน้าเว็บ แล้วกดบันทึกการตั้งค่าด้านล่าง',
+    sectionTitle: 'ชื่อ & วันสำคัญ',
+    sectionHint: 'กรอกชื่อและวันเกิด วันเสียชีวิตที่แสดงบนหน้าเว็บ แล้วกดยืนยันการตั้งค่าด้านล่าง',
     cardTitle: (i: number) => `ข้อมูลผู้ล่วงลับท่านที่ ${i + 1}`,
     nameLabel: 'ชื่อ-นามสกุล ผู้ล่วงลับ',
     namePlaceholder: 'เช่น คุณยาย มาลี อบอุ่นยิ่ง',
@@ -542,13 +541,6 @@ const usesSingleMilestoneSchedule = (category: string) => category === 'Friends'
 
 const isCoupleCategory = (category: string) => category === 'Couple';
 
-const sidebarSubNavButtonClass = (active: boolean) =>
-  `h-auto w-full justify-start rounded-lg border-transparent py-2 pl-9 pr-3 text-left text-xs font-medium shadow-none transition cursor-pointer ${
-    active
-      ? 'bg-[#0071e3]/8 text-[#0071e3] ring-1 ring-[#0071e3]/15 hover:bg-[#0071e3]/10 hover:text-[#0071e3]'
-      : 'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900'
-  }`;
-
 const sidebarNavButtonClass = (active: boolean) =>
   `h-auto w-full justify-start gap-3 rounded-xl border-transparent px-3 py-2.5 text-left text-xs font-semibold shadow-none transition cursor-pointer ${
     active
@@ -567,6 +559,14 @@ const sidebarCountBadgeClass = (active: boolean) =>
   `shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold tabular-nums ${
     active ? 'bg-[#0071e3]/12 text-[#0071e3]' : 'bg-stone-100 text-stone-500'
   }`;
+
+function lifeStorySectionIcon(id: LifeStorySectionId) {
+  if (id === 'honors') return Award;
+  if (id === 'legacy') return Heart;
+  if (id === 'teachings') return ScrollText;
+  if (id === 'timeline') return History;
+  return FileText;
+}
 
 const subjectCardClass =
   'relative space-y-4 rounded-2xl border border-stone-200/45 bg-white p-5 shadow-sm';
@@ -725,12 +725,11 @@ export default function WebmasterDashboard() {
   const [isCreatingAlbum, setIsCreatingAlbum] = useState(false);
   const [tempAlbumName, setTempAlbumName] = useState('');
   const [activeTab, setActiveTab] = useState<'settings' | 'card' | 'gallery' | 'videos' | 'family' | 'ebooks' | 'activities' | 'condolences' | 'billing'>('settings');
-  const [activeSubTab, setActiveSubTab] = useState<'general' | 'life-story' | 'announcement' | 'media' | 'theme' | 'features' | 'billing'>('general');
+  const [activeSubTab, setActiveSubTab] = useState<'general' | 'names' | 'life-story' | 'announcement' | 'media' | 'theme' | 'features' | 'billing'>('general');
   const [sidebarGroupOpen, setSidebarGroupOpen] = useState({
-    lifeStory: true,
-    appearance: true,
     system: false,
   });
+  const [identityDirty, setIdentityDirty] = useState(false);
   const [lifeStorySection, setLifeStorySection] = useState<LifeStorySectionId>('biography');
   const [lifeStory, setLifeStory] = useState<LifeStoryData>(emptyLifeStory());
   const [heroLayout, setHeroLayout] = useState<HeroLayoutId>('center-classic');
@@ -743,6 +742,8 @@ export default function WebmasterDashboard() {
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [annActive, setAnnActive] = useState(true);
   const [annCardMode, setAnnCardMode] = useState<'template' | 'custom'>('template');
+  const [annOrientation, setAnnOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [annShowPhoto, setAnnShowPhoto] = useState(true);
   const [annCustomCardUrl, setAnnCustomCardUrl] = useState('');
   const [annCardUploading, setAnnCardUploading] = useState(false);
   const [annCardUploadError, setAnnCardUploadError] = useState('');
@@ -860,6 +861,8 @@ export default function WebmasterDashboard() {
     const base = {
       active: annActive,
       mode: annCardMode,
+      orientation: normalizeAnnouncementOrientation(category, annOrientation),
+      showPhoto: annShowPhoto,
       customCardUrl: annCustomCardUrl.startsWith('blob:') ? '' : annCustomCardUrl,
       text: annText,
       style: annStyle,
@@ -997,7 +1000,8 @@ export default function WebmasterDashboard() {
       setDeceasedAvatarY(0);
       setDeceasedAvatarRotate(0);
       setIsCropModalOpen(true);
-      setSuccess('อัปโหลดรูปโปรไฟล์สำเร็จ — ปรับตำแหน่งแล้วกดเสร็จสิ้นเพื่ออัปเดตหน้าเว็บ');
+      markIdentityDirty();
+      setSuccess('อัปโหลดรูปโปรไฟล์สำเร็จ — ปรับตำแหน่งแล้วกดยืนยันเพื่อเผยแพร่');
     } catch (err: any) {
       setError(err.message || 'การอัปโหลดรูปโปรไฟล์ล้มเหลว');
     } finally {
@@ -1135,8 +1139,10 @@ export default function WebmasterDashboard() {
       setDeceasedCoverX(0);
       setDeceasedCoverY(0);
       setDeceasedCoverRotate(0);
+      setHeroBgMode('image');
       setIsCoverCropModalOpen(true);
-      setSuccess('อัปโหลดรูปภาพหน้าปกสำเร็จ — ปรับตำแหน่งแล้วกดเสร็จสิ้นเพื่ออัปเดตหน้าเว็บ');
+      markIdentityDirty();
+      setSuccess('อัปโหลดรูปภาพหน้าปกสำเร็จ — ปรับตำแหน่งแล้วกดยืนยันเพื่อเผยแพร่');
     } catch (err: any) {
       setError(err.message || 'การอัปโหลดรูปภาพหน้าปกล้มเหลว');
     } finally {
@@ -1631,6 +1637,8 @@ export default function WebmasterDashboard() {
       const ann = config.announcement || {};
       setAnnActive(ann.active !== false);
       setAnnCardMode(ann.mode === 'custom' ? 'custom' : 'template');
+      setAnnOrientation(normalizeAnnouncementOrientation(site.category, ann.orientation));
+      setAnnShowPhoto(announcementShowsPhoto(ann.showPhoto));
       setAnnCustomCardUrl(ann.customCardUrl || '');
       setAnnText(ann.text || '');
       setAnnStyle(
@@ -1702,6 +1710,7 @@ export default function WebmasterDashboard() {
       setDeceasedCoverRotate(0);
     }
     skipThemeAutoSave.current = false;
+    setIdentityDirty(false);
   };
 
   const handleExportZip = async () => {
@@ -1719,6 +1728,18 @@ export default function WebmasterDashboard() {
       setTimeout(() => setExportLoading(false), 4000);
     }
   };
+
+  const markIdentityDirty = useCallback(() => setIdentityDirty(true), []);
+
+  useEffect(() => {
+    if (!identityDirty) return;
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [identityDirty]);
 
   type ThemeOverrides = {
     primaryColor?: string;
@@ -1842,6 +1863,14 @@ export default function WebmasterDashboard() {
   };
   persistSiteConfigRef.current = persistSiteConfig as (options?: unknown) => Promise<boolean>;
 
+  const handleConfirmIdentity = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const ok = await persistSiteConfig({
+      successMessage: 'บันทึกการตั้งค่าสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
+    });
+    if (ok) setIdentityDirty(false);
+  };
+
   const saveProfileMediaSelection = async (kind: 'avatar' | 'cover', src: string) => {
     const reset = { scale: 1, x: 0, y: 0, rotate: 0 };
     if (kind === 'avatar') {
@@ -1850,46 +1879,23 @@ export default function WebmasterDashboard() {
       setDeceasedAvatarX(reset.x);
       setDeceasedAvatarY(reset.y);
       setDeceasedAvatarRotate(reset.rotate);
-      return persistSiteConfig({
-        successMessage: 'บันทึกรูปโปรไฟล์สำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-        media: {
-          avatarUrl: src,
-          avatarScale: reset.scale,
-          avatarX: reset.x,
-          avatarY: reset.y,
-          avatarRotate: reset.rotate,
-        },
-      });
+    } else {
+      setDeceasedCoverUrl(src);
+      setDeceasedCoverScale(reset.scale);
+      setDeceasedCoverX(reset.x);
+      setDeceasedCoverY(reset.y);
+      setDeceasedCoverRotate(reset.rotate);
+      setHeroBgMode('image');
     }
-
-    setDeceasedCoverUrl(src);
-    setDeceasedCoverScale(reset.scale);
-    setDeceasedCoverX(reset.x);
-    setDeceasedCoverY(reset.y);
-    setDeceasedCoverRotate(reset.rotate);
-    return persistSiteConfig({
-      successMessage: 'บันทึกรูปหน้าปกสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-      media: {
-        coverUrl: src,
-        coverScale: reset.scale,
-        coverX: reset.x,
-        coverY: reset.y,
-        coverRotate: reset.rotate,
-      },
-    });
+    markIdentityDirty();
+    return true;
   };
 
   const confirmProfileMediaCrop = async (kind: 'avatar' | 'cover') => {
-    const ok = await persistSiteConfig({
-      successMessage:
-        kind === 'avatar'
-          ? 'บันทึกการปรับรูปโปรไฟล์สำเร็จ — หน้าเว็บจริงอัปเดตแล้ว'
-          : 'บันทึกการปรับรูปหน้าปกสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-    });
-    if (ok) {
-      if (kind === 'avatar') setIsCropModalOpen(false);
-      else setIsCoverCropModalOpen(false);
-    }
+    if (kind === 'avatar') setIsCropModalOpen(false);
+    else setIsCoverCropModalOpen(false);
+    markIdentityDirty();
+    return true;
   };
 
   const removePetAvatar = async (index: number) => {
@@ -1941,37 +1947,21 @@ export default function WebmasterDashboard() {
   };
 
   const queueSubjectsAutoSave = () => {
-    if (skipThemeAutoSave.current) return;
-    if (subjectsAutoSaveTimer.current) clearTimeout(subjectsAutoSaveTimer.current);
-    subjectsAutoSaveTimer.current = setTimeout(() => {
-      subjectsAutoSaveTimer.current = null;
-      const persist = persistSiteConfigRef.current;
-      if (!persist) return;
-      void persist({
-        successMessage: 'บันทึกข้อมูลน้องสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-        subjects: subjectsRef.current,
-      });
-    }, 800);
+    markIdentityDirty();
   };
 
   const queueThemeAutoSave = (partial: ThemeOverrides) => {
-    if (skipThemeAutoSave.current) return;
-    pendingThemeRef.current = { ...pendingThemeRef.current, ...partial };
-    if (themeAutoSaveTimer.current) clearTimeout(themeAutoSaveTimer.current);
-    themeAutoSaveTimer.current = setTimeout(() => {
-      const pendingTheme = pendingThemeRef.current;
-      pendingThemeRef.current = {};
-      void persistSiteConfig({
-        successMessage: 'บันทึกธีมสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-        theme: pendingTheme,
-      });
-    }, 700);
+    if (partial.primaryColor !== undefined) setPrimaryColor(partial.primaryColor);
+    if (partial.secondaryColor !== undefined) setSecondaryColor(partial.secondaryColor);
+    if (partial.fontFamily !== undefined) {
+      setAnnFontFamily((prev) => (prev === fontFamily ? partial.fontFamily! : prev));
+      setFontFamily(partial.fontFamily);
+    }
+    if (partial.defaultFontSize !== undefined) setDefaultFontSize(partial.defaultFontSize);
+    markIdentityDirty();
   };
 
-  const applyThemeSelection = async (
-    theme: ThemeOverrides,
-    successMessage = 'บันทึกธีมสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-  ) => {
+  const applyThemeSelection = (theme: ThemeOverrides) => {
     if (theme.primaryColor !== undefined) setPrimaryColor(theme.primaryColor);
     if (theme.secondaryColor !== undefined) setSecondaryColor(theme.secondaryColor);
     if (theme.fontFamily !== undefined) {
@@ -1979,7 +1969,7 @@ export default function WebmasterDashboard() {
       setFontFamily(theme.fontFamily);
     }
     if (theme.defaultFontSize !== undefined) setDefaultFontSize(theme.defaultFontSize);
-    return persistSiteConfig({ successMessage, theme });
+    markIdentityDirty();
   };
 
   useEffect(() => {
@@ -2508,6 +2498,9 @@ export default function WebmasterDashboard() {
     }
   };
 
+  const identitySiteCategory =
+    activeSite?.category ?? websites[0]?.category ?? 'Memorial';
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center text-stone-600">
@@ -2594,17 +2587,12 @@ export default function WebmasterDashboard() {
   };
 
   const openSettingsSubTab = (
-    sub: 'general' | 'life-story' | 'announcement' | 'media' | 'theme' | 'features' | 'billing',
+    sub: 'general' | 'names' | 'life-story' | 'announcement' | 'media' | 'theme' | 'features' | 'billing',
   ) => {
     setActiveTab('settings');
-    setActiveSubTab(sub);
-    if (sub === 'life-story') {
-      setSidebarGroupOpen((prev) => ({ ...prev, lifeStory: true }));
-    }
-    if (sub === 'media' || sub === 'theme') {
-      setSidebarGroupOpen((prev) => ({ ...prev, appearance: true }));
-    }
-    if (sub === 'features' || sub === 'billing') {
+    const resolved = sub === 'media' || sub === 'theme' ? 'general' : sub;
+    setActiveSubTab(resolved);
+    if (resolved === 'features' || resolved === 'billing') {
       setSidebarGroupOpen((prev) => ({ ...prev, system: true }));
     }
     setIsMobileMenuOpen(false);
@@ -2614,7 +2602,6 @@ export default function WebmasterDashboard() {
     setActiveTab('settings');
     setActiveSubTab('life-story');
     setLifeStorySection(section);
-    setSidebarGroupOpen((prev) => ({ ...prev, lifeStory: true }));
     setIsMobileMenuOpen(false);
   };
 
@@ -2664,6 +2651,7 @@ export default function WebmasterDashboard() {
 
   const photoMedias = galleryMedias.filter(m => !m.mimeType?.startsWith('video/') && m.mimeType !== 'video/youtube');
   const videoMedias = galleryMedias.filter(m => m.mimeType?.startsWith('video/') || m.mimeType === 'video/youtube');
+
   const galleryAlbums = getPhotoGalleryAlbums(
     albums,
     photoMedias.map((m) => m.id),
@@ -2671,175 +2659,187 @@ export default function WebmasterDashboard() {
   );
 
   if (!activeSite) {
-    return (
-      <main className="min-h-screen bg-stone-50 text-stone-850 p-6 md:p-12 font-sans relative flex items-center justify-center">
-        {/* Decorative Glow */}
-        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-rose-500/3 rounded-full blur-[100px] pointer-events-none" />
+    const formatAccountPhone = (ph: string) => {
+      if (ph.length !== 10) return ph;
+      return `${ph.slice(0, 3)}-${ph.slice(3, 6)}-${ph.slice(6)}`;
+    };
+    const categoryTitle = (category: string) =>
+      MARKETING_CATEGORIES.find((c) => c.createCategory === category)?.th.title || category;
 
-        <div className="max-w-5xl w-full mx-auto space-y-8 relative z-10">
-          
-          {/* Header */}
-          <header className="flex flex-col sm:flex-row justify-between items-center bg-gradient-to-r from-white to-blue-50/80 rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-sm gap-5">
-            <div className="flex items-center gap-4">
-              <span className="text-2xl font-black text-stone-900 tracking-wider">
-                FOREVER <span className="text-[#0071e3] font-normal">เว็บของฉัน</span>
-              </span>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-4 justify-center">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#0071e3]/10 flex items-center justify-center ring-2 ring-[#0071e3]/15">
-                  <User className="w-4 h-4 text-[#0071e3]" />
+    const knownCategories = MARKETING_CATEGORIES.map((c) => c.createCategory);
+    const groupedSites = [
+      ...MARKETING_CATEGORIES.map((category) => ({
+        key: category.createCategory,
+        title: category.th.title,
+        sites: websites
+          .filter((site) => site.category === category.createCategory)
+          .slice()
+          .sort((a, b) => a.name.localeCompare(b.name, 'th')),
+      })),
+      ...Array.from(
+        new Set(
+          websites
+            .map((site) => site.category)
+            .filter((category) => !knownCategories.includes(category as (typeof knownCategories)[number])),
+        ),
+      ).map((category) => ({
+        key: category,
+        title: categoryTitle(category),
+        sites: websites
+          .filter((site) => site.category === category)
+          .slice()
+          .sort((a, b) => a.name.localeCompare(b.name, 'th')),
+      })),
+    ].filter((group) => group.sites.length > 0);
+
+    return (
+      <main className="min-h-screen bg-[#F5F5F7] px-4 py-8 text-[#1D1D1F] sm:px-6 sm:py-12">
+        <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-[28px] border border-[#E8E8ED] bg-white shadow-[0_8px_32px_rgba(0,0,0,0.05)]">
+          <header className="border-b border-[#E8E8ED] px-5 py-5 sm:px-7 sm:py-6">
+            <p className="text-xl font-semibold tracking-tight sm:text-2xl">
+              FOREVER <span className="font-medium text-[#0071e3]">เว็บของฉัน</span>
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-[#6E6E73]">
+              เลือกเว็บที่ต้องการจัดการ จากนั้นตั้งค่าบัญชีได้ด้านล่าง
+            </p>
+            <div className="mt-4 flex items-center justify-between gap-4">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0071e3]/10">
+                  <User className="size-3.5 text-[#0071e3]" />
                 </div>
-                <div className="text-left">
-                  <p className="text-[10px] text-stone-400 font-bold uppercase">บัญชีผู้ใช้งาน</p>
-                  <p className="text-xs font-bold text-stone-700">{userPhone || 'กำลังโหลด...'}</p>
+                <div className="min-w-0 text-left">
+                  <p className="text-xs font-medium text-[#86868B]">บัญชี</p>
+                  <p className="truncate text-sm font-semibold text-[#1D1D1F]">
+                    {userPhone ? formatAccountPhone(userPhone) : 'กำลังโหลด...'}
+                  </p>
                 </div>
               </div>
-              <Button variant="ghost" type="button" 
+              <Button
+                variant="outline"
+                type="button"
                 onClick={handleLogout}
-                className="h-auto px-4 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-100 hover:text-stone-900 text-stone-500 text-xs font-bold transition flex items-center gap-1.5 active:scale-[0.97] cursor-pointer"
+                className="h-10 shrink-0 rounded-full border-[#E8E8ED] px-5 text-sm font-medium text-[#6E6E73] hover:bg-[#F5F5F7] hover:text-[#1D1D1F]"
               >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>ออกจากระบบ</span>
+                <LogOut className="size-4" />
+                ออกจากระบบ
               </Button>
             </div>
           </header>
 
-          <p className="text-sm text-stone-500 pl-1 -mt-2">จัดการเว็บไซต์ทั้งหมดของคุณได้จากที่นี่</p>
-
-          {/* Backup Phones Section & Grid layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            {/* Left: Websites Grid */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="flex items-center gap-3 pl-1">
-                <h2 className="text-base font-black text-stone-900 flex items-center gap-2">
-                  <Grid className="w-4.5 h-4.5 text-[#0071e3]" />
-                  <span>เว็บไซต์อนุสรณ์ของฉัน</span>
-                </h2>
-                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-[#0071e3] text-white text-[10px] font-black">
-                  {websites.length}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {websites.map((site) => {
-                  const isActive = site.status === 'ACTIVE';
-                  const accent = {
-                    'Memorial': { strip: 'bg-rose-500', badge: 'border-rose-100 bg-rose-50 text-rose-700 hover:bg-rose-50' },
-                    'Family Legacy': { strip: 'bg-amber-500', badge: 'border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-50' },
-                    'Pet Memorial': { strip: 'bg-teal-500', badge: 'border-teal-100 bg-teal-50 text-teal-700 hover:bg-teal-50' },
-                    'Couple': { strip: 'bg-pink-500', badge: 'border-pink-100 bg-pink-50 text-pink-700 hover:bg-pink-50' },
-                    'Wedding': { strip: 'bg-violet-500', badge: 'border-violet-100 bg-violet-50 text-violet-700 hover:bg-violet-50' },
-                    'Friends': { strip: 'bg-sky-500', badge: 'border-sky-100 bg-sky-50 text-sky-700 hover:bg-sky-50' },
-                  }[site.category] || { strip: 'bg-blue-500', badge: 'border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-50' };
-                  
-                  return (
-                    <div key={site.id} className="bg-white rounded-3xl border border-stone-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between h-52 group text-left animate-fade-in">
-                      <div className="px-6 pt-5 pb-2 space-y-2.5 flex-1">
-                        <div className="flex justify-between items-start">
-                          <Badge className={`h-auto rounded-full border px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ${accent.badge}`}>
-                            {site.category}
-                          </Badge>
-                          <Badge
-                            variant="outline"
-                            className={`h-auto rounded-full px-2.5 py-0.5 text-[9px] font-black ${
-                              isActive
-                                ? 'border-emerald-100 bg-emerald-50 text-emerald-800 hover:bg-emerald-50'
-                                : 'border-amber-100 bg-amber-50 text-amber-800 hover:bg-amber-50'
-                            }`}
-                          >
-                            {isActive ? 'ใช้งานอยู่' : 'รอชำระเงิน'}
-                          </Badge>
-                        </div>
-                        <h3 className="text-base font-bold text-stone-900 line-clamp-1 group-hover:text-[#0071e3] transition">{site.name}</h3>
-                        
-                        {isActive ? (
-                          <a 
-                            href={`/${site.slug}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-[10px] text-stone-400 font-medium hover:underline flex items-center gap-1 mt-1 font-mono"
-                          >
-                            <ExternalLink className="w-3 h-3 text-stone-400" />
-                            <span>forever.co.th/{site.slug}</span>
-                          </a>
-                        ) : (
-                          <p className="text-[10px] text-stone-400 font-mono mt-1">ยังไม่เปิดใช้งาน (ยังไม่มีลิงก์)</p>
-                        )}
-                      </div>
-
-                      <div className="px-6 pb-5 pt-3 border-t border-stone-100 flex gap-2">
-                        {isActive ? (
-                          <Button variant="ghost" type="button"
-                            onClick={() => selectWebsite(site)}
-                            className="w-full py-2.5 rounded-xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white hover:text-white font-bold text-xs transition active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
-                          >
-                            <Settings className="w-3.5 h-3.5" />
-                            <span>จัดการเว็บไซต์</span>
-                          </Button>
-                        ) : (
-                          <Link
-                            href={`/manage/payment?site=${site.id}`}
-                            className="w-full py-2.5 rounded-xl bg-[#0071e3] hover:bg-[#0071e3]/90 text-white font-bold text-xs transition active:scale-95 text-center flex items-center justify-center gap-1.5 animate-pulse"
-                          >
-                            <CreditCard className="w-3.5 h-3.5" />
-                            <span>ชำระเงิน ฿2,000</span>
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Create New Website card button */}
-                <Link 
-                  href="/"
-                  className="bg-gradient-to-br from-blue-50/60 to-stone-50 hover:from-blue-50 hover:to-blue-50/30 border-2 border-dashed border-stone-300 hover:border-[#0071e3]/40 rounded-3xl p-6 flex flex-col items-center justify-center h-52 transition-all duration-200 group text-center space-y-3 select-none"
-                >
-                  <div className="w-14 h-14 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:border-blue-200 transition-all duration-200">
-                    <Plus className="w-7 h-7 text-stone-400 group-hover:text-[#0071e3] transition" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-stone-700 group-hover:text-stone-900 transition">สร้างเว็บไซต์ความทรงจำใหม่</p>
-                    <p className="text-[10px] text-stone-400 mt-1">เลือกหัวข้อและรับรหัสผ่านมือถือ</p>
-                  </div>
-                </Link>
-              </div>
+          <section>
+            <div className="flex items-baseline justify-between gap-3 bg-emerald-50 px-5 py-5 sm:px-7 md:py-6">
+              <h2 className="text-xl font-semibold tracking-tight text-[#1D1D1F] md:text-2xl">เว็บไซต์ของฉัน</h2>
+              <span className="text-sm font-medium text-[#6E6E73]">{websites.length} เว็บ</span>
             </div>
 
-            {/* Right: Phone Numbers Management */}
-            <div className="space-y-6">
-              <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-sm space-y-5">
-                <h2 className="text-sm font-black text-stone-900 flex items-center gap-1.5 border-b border-stone-100 pb-3">
-                  <Smartphone className="w-4.5 h-4.5 text-[#0071e3]" />
-                  <span>การจัดการเบอร์โทรศัพท์</span>
-                </h2>
-                
-                <BackupPhoneSection userPhone={userPhone} />
-              </div>
+            <div className="divide-y divide-[#E8E8ED] border-t border-[#E8E8ED]">
+              {groupedSites.map((group) => (
+                <div key={group.key} className="px-5 py-6 sm:px-7 md:py-8">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h3 className="text-lg font-semibold tracking-tight text-[#1D1D1F] md:text-xl">
+                      หมวด {group.title}
+                    </h3>
+                    <span className="text-xs font-medium text-[#6E6E73] md:text-sm">
+                      {group.sites.length} เว็บ
+                    </span>
+                  </div>
+
+                  <ul className="mt-4 divide-y divide-[#E8E8ED] md:mt-5">
+                    {group.sites.map((site) => {
+                      const isActive = site.status === 'ACTIVE';
+                      return (
+                        <li key={site.id} className="py-5 first:pt-4 last:pb-0 md:py-6 md:first:pt-5">
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                            <div className="min-w-0 flex-1">
+                              {isActive ? (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-100">
+                                  <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden />
+                                  ใช้งานอยู่
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-100">
+                                  <span className="size-1.5 rounded-full bg-amber-500" aria-hidden />
+                                  รอชำระเงิน
+                                </span>
+                              )}
+                              <h4 className="mt-1.5 text-base font-semibold leading-snug text-[#1D1D1F] sm:text-lg">
+                                {site.name}
+                              </h4>
+                              {isActive ? (
+                                <a
+                                  href={`/${site.slug}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="mt-1 inline-flex items-center gap-1 break-all text-sm text-[#6E6E73] hover:text-[#0071e3]"
+                                >
+                                  <ExternalLink className="size-3.5 shrink-0" />
+                                  forever.co.th/{site.slug}
+                                </a>
+                              ) : (
+                                <p className="mt-1 text-sm text-[#86868B]">ยังไม่มีลิงก์สาธารณะ</p>
+                              )}
+                            </div>
+                            {isActive ? (
+                              <Button
+                                type="button"
+                                onClick={() => selectWebsite(site)}
+                                className="h-9 w-auto shrink-0 self-end rounded-full bg-[#0071e3] px-4 text-sm font-medium text-white hover:bg-[#0077ED] sm:h-10 sm:px-5"
+                              >
+                                จัดการเว็บไซต์
+                              </Button>
+                            ) : (
+                              <Button
+                                asChild
+                                className="h-9 w-auto shrink-0 self-end rounded-full bg-[#0071e3] px-4 text-sm font-medium text-white hover:bg-[#0077ED] sm:h-10 sm:px-5"
+                              >
+                                <Link href={`/manage/payment?site=${site.id}`}>ชำระเงิน</Link>
+                              </Button>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
             </div>
 
-          </div>
+            <div className="border-t border-[#E8E8ED] px-5 py-5 sm:px-7">
+              <Link
+                href="/manage/create"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0071e3] transition hover:gap-2"
+              >
+                <Plus className="size-4" />
+                สร้างเว็บไซต์ใหม่
+              </Link>
+            </div>
+          </section>
 
+          <section className="border-t border-[#E8E8ED] bg-[#FAFAFA] px-5 py-6 sm:px-7 sm:py-8">
+            <h2 className="text-lg font-semibold tracking-tight text-[#1D1D1F]">เบอร์โทรศัพท์</h2>
+            <p className="mt-1 text-sm leading-relaxed text-[#6E6E73]">
+              ใช้เข้าสู่ระบบและกู้คืนบัญชี เพิ่มเบอร์สำรองได้เมื่อต้องการ
+            </p>
+            <div className="mt-5">
+              <BackupPhoneSection userPhone={userPhone} />
+            </div>
+          </section>
         </div>
       </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-850 flex flex-col md:flex-row font-sans">
+    <div className="flex h-dvh flex-col overflow-hidden bg-stone-50 font-sans text-stone-850 md:flex-row">
       {/* Mobile Top Bar */}
-      <header className="md:hidden w-full bg-white/90 backdrop-blur-md border-b border-stone-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+      <header className="sticky top-0 z-40 flex w-full shrink-0 items-center justify-between border-b border-stone-200 bg-white px-6 py-4 md:hidden">
         <span className="text-lg font-black tracking-wider text-stone-900">
           FOREVER <span className="text-[#0071e3] font-normal">MANAGE</span>
         </span>
         <Button variant="ghost"
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-1.5 rounded-xl border border-stone-200 text-stone-650 hover:bg-stone-50 transition cursor-pointer active:scale-95"
+          className="size-9 rounded-full border border-stone-200 p-0 text-stone-650 hover:bg-stone-50 transition cursor-pointer active:scale-95"
           aria-label="Toggle Menu"
         >
           {isMobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
@@ -2857,95 +2857,84 @@ export default function WebmasterDashboard() {
       {/* Sidebar */}
       <aside className={`
         fixed inset-y-0 left-0 z-40 w-72 bg-stone-50/80 border-r border-stone-200/80 p-5 flex flex-col justify-between overflow-y-auto shrink-0 transition-transform duration-300 transform
-        md:relative md:translate-x-0 md:h-screen md:sticky md:top-0
+        md:relative md:h-full md:translate-x-0
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div>
-          <div className="mb-5 rounded-2xl border border-stone-200/80 bg-white p-3.5 shadow-sm space-y-3">
-            <Button variant="ghost" type="button"
-              onClick={() => {
-                setActiveSite(null);
-                if (typeof window !== 'undefined') {
-                  const url = new URL(window.location.href);
-                  url.searchParams.delete('site');
-                  window.history.replaceState({}, '', url.toString());
-                }
-              }}
-              className="h-auto w-full justify-start gap-2 rounded-xl px-2 py-1.5 text-[11px] font-semibold text-stone-500 hover:bg-stone-100 hover:text-stone-800 transition cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
-              <span>กลับไปหน้าเว็บของฉัน</span>
-            </Button>
-            <div className="border-t border-stone-100 pt-3 space-y-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">กำลังจัดการ</p>
-              <p className="text-sm font-bold text-stone-900 leading-snug line-clamp-2" title={activeSite?.name}>
-                {activeSite?.name}
-              </p>
-              {activeSite?.slug && (
-                <p className="text-[10px] font-medium text-stone-400 truncate">/{activeSite.slug}</p>
-              )}
-            </div>
-          </div>
           <nav className="space-y-3">
             <div className="space-y-1">
               <p className="px-3 pb-1 text-xs font-bold uppercase tracking-widest text-stone-400">เนื้อหา</p>
               <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('general')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'general')}>
-                <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'general')}><Globe className="size-4" /></span>
-                <span className="flex-1 min-w-0 truncate">ข้อมูลทั่วไป</span>
+                <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'general')}><Palette className="size-4" /></span>
+                <span className="flex-1 min-w-0 truncate">หน้าแรก & ธีม</span>
+              </Button>
+              <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('names')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'names')}>
+                <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'names')}><CalendarDays className="size-4" /></span>
+                <span className="flex-1 min-w-0 truncate">ชื่อ & วันสำคัญ</span>
               </Button>
               {categoryUsesLifeStory(selectedSite.category) && (
-                <div className="space-y-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSidebarGroupOpen((prev) => ({ ...prev, lifeStory: !prev.lifeStory }));
-                      if (activeSubTab !== 'life-story') {
-                        openLifeStorySection(lifeStorySection);
-                      }
-                    }}
-                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition cursor-pointer ${
-                      activeTab === 'settings' && activeSubTab === 'life-story'
-                        ? 'bg-[#0071e3]/8 text-[#0071e3] ring-1 ring-[#0071e3]/15'
-                        : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
-                    }`}
-                  >
-                    <span className="flex min-w-0 items-center gap-3">
-                      <span
-                        className={`flex size-8 shrink-0 items-center justify-center rounded-lg transition ${
-                          activeTab === 'settings' && activeSubTab === 'life-story'
-                            ? 'bg-[#0071e3] text-white shadow-sm shadow-[#0071e3]/20'
-                            : 'bg-stone-100 text-stone-500'
-                        }`}
+                <div className="space-y-1 py-2">
+                  <p className="px-3 pb-1 text-xs font-bold uppercase tracking-widest text-stone-400">
+                    {getLifeStoryMenuTitle(selectedSite.category)}
+                  </p>
+                  {(() => {
+                    const sections = getLifeStorySections(selectedSite.category);
+                    const showActivitiesInStory =
+                      selectedSite.category === 'Memorial' &&
+                      features.activities &&
+                      getVisibleKeys(selectedSite.category).includes('activities');
+                    const insertAt = Math.max(
+                      0,
+                      sections.findIndex((s) => s.id === 'honors') + 1,
+                    );
+                    const activitiesActive = activeTab === 'activities';
+                    const activitiesButton = (
+                      <Button
+                        key="activities-in-story"
+                        variant="ghost"
+                        type="button"
+                        onClick={() => handleTabClick('activities')}
+                        className={sidebarNavButtonClass(activitiesActive)}
                       >
-                        <BookMarked className="size-4" />
-                      </span>
-                      <span className="truncate">
-                        {getLifeStoryMenuTitle(selectedSite.category)}
-                      </span>
-                    </span>
-                    <ChevronDown
-                      className={`size-3.5 shrink-0 transition ${sidebarGroupOpen.lifeStory ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-                  {sidebarGroupOpen.lifeStory && (
-                    <div className="space-y-0.5">
-                      {getLifeStorySections(selectedSite.category).map((item) => (
+                        <span className={sidebarIconWrapClass(activitiesActive)}>
+                          <Calendar className="size-4" />
+                        </span>
+                        <span className="min-w-0 flex-1 text-left leading-snug">
+                          {getFeatureLabel(selectedSite.category, 'activities').label}
+                        </span>
+                        <span className={sidebarCountBadgeClass(activitiesActive)}>
+                          {activitiesCount}
+                        </span>
+                      </Button>
+                    );
+                    return sections.flatMap((item, index) => {
+                      const Icon = lifeStorySectionIcon(item.id);
+                      const active =
+                        activeTab === 'settings' &&
+                        activeSubTab === 'life-story' &&
+                        lifeStorySection === item.id;
+                      const storyButton = (
                         <Button
                           key={item.id}
                           variant="ghost"
                           type="button"
                           onClick={() => openLifeStorySection(item.id)}
-                          className={sidebarSubNavButtonClass(
-                            activeTab === 'settings' &&
-                              activeSubTab === 'life-story' &&
-                              lifeStorySection === item.id,
-                          )}
+                          className={sidebarNavButtonClass(active)}
                         >
-                          {item.label}
+                          <span className={sidebarIconWrapClass(active)}>
+                            <Icon className="size-4" />
+                          </span>
+                          <span className="min-w-0 flex-1 text-left leading-snug">
+                            {item.label}
+                          </span>
                         </Button>
-                      ))}
-                    </div>
-                  )}
+                      );
+                      if (showActivitiesInStory && index === insertAt) {
+                        return [activitiesButton, storyButton];
+                      }
+                      return [storyButton];
+                    });
+                  })()}
                 </div>
               )}
               {features.announcement && (
@@ -2982,7 +2971,9 @@ export default function WebmasterDashboard() {
                   <span className={sidebarCountBadgeClass(activeTab === 'ebooks')}>{ebooks.length}</span>
                 </Button>
               )}
-              {features.activities && getVisibleKeys(selectedSite.category).includes('activities') && (
+              {features.activities &&
+                getVisibleKeys(selectedSite.category).includes('activities') &&
+                selectedSite.category !== 'Memorial' && (
                 <Button variant="ghost" type="button" onClick={() => handleTabClick('activities')} className={sidebarNavButtonClass(activeTab === 'activities')}>
                   <span className={sidebarIconWrapClass(activeTab === 'activities')}><CalendarDays className="size-4" /></span>
                   <span className="flex-1 min-w-0 truncate">{getFeatureLabel(selectedSite.category, 'activities').label}</span>
@@ -3011,25 +3002,6 @@ export default function WebmasterDashboard() {
                     </span>
                   )}
                 </Button>
-              )}
-            </div>
-
-            <div className="space-y-1 border-t border-stone-200/70 pt-3">
-              <button type="button" onClick={() => setSidebarGroupOpen((prev) => ({ ...prev, appearance: !prev.appearance }))} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold uppercase tracking-widest text-stone-400 transition hover:bg-stone-100 hover:text-stone-600">
-                <span>รูปลักษณ์</span>
-                <ChevronDown className={`size-3.5 transition ${sidebarGroupOpen.appearance ? 'rotate-180' : ''}`} />
-              </button>
-              {sidebarGroupOpen.appearance && (
-                <div className="space-y-1">
-                  <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('media')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'media')}>
-                    <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'media')}><ImageIcon className="size-4" /></span>
-                    <span className="flex-1 min-w-0 truncate">รูปโปรไฟล์ & หน้าปก</span>
-                  </Button>
-                  <Button variant="ghost" type="button" onClick={() => openSettingsSubTab('theme')} className={sidebarNavButtonClass(activeTab === 'settings' && activeSubTab === 'theme')}>
-                    <span className={sidebarIconWrapClass(activeTab === 'settings' && activeSubTab === 'theme')}><Palette className="size-4" /></span>
-                    <span className="flex-1 min-w-0 truncate">ธีม & สี & ฟอนต์</span>
-                  </Button>
-                </div>
               )}
             </div>
 
@@ -3086,7 +3058,7 @@ export default function WebmasterDashboard() {
       </aside>
 
       {/* Main dashboard content */}
-      <main className="flex-1 p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full overflow-y-auto">
+      <main className="mx-auto w-full max-w-7xl min-h-0 flex-1 space-y-6 overflow-x-clip overflow-y-auto overscroll-contain p-6 md:p-10">
         
         {success && <div className="p-4 bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 rounded-2xl font-semibold animate-fade-in flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 shrink-0" />{success}</div>}
         {error && <div className="p-4 bg-red-50 border border-red-200 text-xs text-red-700 rounded-2xl font-semibold animate-fade-in flex items-center gap-2"><AlertCircle className="w-4 h-4 text-red-500 shrink-0" />{error}</div>}
@@ -3179,71 +3151,55 @@ export default function WebmasterDashboard() {
           </div>
         )}
 
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-stone-200">
+        <header className="pb-6">
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-stone-900">{selectedSite.name}</h1>
-            <p className="text-xs text-stone-500 flex items-center gap-1.5 mt-1">
-              <span>ลิงก์ความทรงจำ:</span>
-              <a 
-                href={`/${selectedSite.slug}`} 
-                target="_blank" 
-                className="text-[#0071e3] font-semibold hover:text-[#0071e3]/80 underline"
+            <button
+              type="button"
+              onClick={() => {
+                setActiveSite(null);
+                if (typeof window !== 'undefined') {
+                  const url = new URL(window.location.href);
+                  url.searchParams.delete('site');
+                  window.history.replaceState({}, '', url.toString());
+                }
+              }}
+              className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold text-stone-500 transition hover:text-stone-900"
+            >
+              <ArrowLeft className="size-3.5 shrink-0" />
+              เว็บของฉัน
+            </button>
+            <h1 className="text-xl font-black text-stone-900 sm:text-2xl">{selectedSite.name}</h1>
+            <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-stone-500">
+              <span>Preview:</span>
+              <a
+                href={`/${selectedSite.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-lg border border-[#0071e3]/25 bg-[#0071e3]/5 px-2 py-0.5 font-semibold text-[#0071e3] transition hover:bg-[#0071e3]/10"
               >
-                forever.co.th/{selectedSite.slug}
+                <span>forever.co.th/{selectedSite.slug}</span>
+                <ExternalLink className="size-3 shrink-0" />
               </a>
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   navigator.clipboard.writeText(`forever.co.th/${selectedSite.slug}`);
                   setSuccess('คัดลอกลิงก์สำเร็จ!');
                 }}
-                className="p-1 hover:bg-stone-100 rounded-md text-stone-400 hover:text-stone-750 transition cursor-pointer border-0"
+                className="size-7 rounded-md border-0 p-0 text-stone-400 hover:bg-stone-100 hover:text-stone-700"
                 title="คัดลอกลิงก์"
               >
-                <Copy className="w-3.5 h-3.5" />
+                <Copy className="size-3.5" />
               </Button>
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Website Selector Dropdown */}
-            <Select
-              value={selectedSite.id}
-              onValueChange={(value) => {
-                const site = websites.find(w => w.id === value);
-                if (site) selectWebsite(site);
-              }}
-            >
-              <SelectTrigger
-                size="sm"
-                className="h-auto min-h-8 w-auto max-w-[240px] gap-2 rounded-xl border-stone-250 bg-white px-3 py-1.5 text-xs font-bold text-stone-850 shadow-xs"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent align="end" position="popper">
-                {websites.map(w => (
-                  <SelectItem key={w.id} value={w.id}>
-                    /{w.slug} ({w.name.substring(0, 10)})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Live website link */}
-            <a
-              href={`/${selectedSite.slug}`}
-              target="_blank"
-              className="px-3 py-1.5 bg-[#0071e3] hover:bg-[#0071e3]/90 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shadow-xs"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>ดูหน้าเว็บ</span>
-            </a>
+            </div>
           </div>
         </header>
 
         {activeTab === 'settings' && (
           <div className="w-full">
             {/* Settings Customizer */}
-            <form onSubmit={handleSaveConfig} className="w-full p-6 rounded-3xl border border-stone-200 bg-white shadow-sm space-y-6">
+            <form onSubmit={handleSaveConfig} className="w-full space-y-6 rounded-3xl border border-stone-200 bg-white px-6 pb-6 pt-4 shadow-sm">
 
               {/* 1. ข้อมูลทั่วไป & ประกาศ Tab */}
               {(activeSubTab === 'general' || activeSubTab === 'announcement' || activeSubTab === 'life-story') && (
@@ -3262,13 +3218,84 @@ export default function WebmasterDashboard() {
                   ) : null}
                   {activeSubTab === 'general' ? (
                   <>
-                  <div className="mb-1 flex items-center gap-1.5">
-                    <Globe className="size-4 text-emerald-700" />
-                    <h3 className="text-sm font-bold text-stone-900">ข้อมูลทั่วไป</h3>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-bold text-stone-600 tracking-wide">
-                      {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
+                  <IdentityPreviewSticky
+                    siteName={siteName}
+                    coverUrl={deceasedCoverUrl}
+                    avatarUrl={deceasedAvatarUrl}
+                    coverTransform={{
+                      x: deceasedCoverX,
+                      y: deceasedCoverY,
+                      scale: deceasedCoverScale,
+                      rotate: deceasedCoverRotate,
+                    }}
+                    avatarTransform={{
+                      x: deceasedAvatarX,
+                      y: deceasedAvatarY,
+                      scale: deceasedAvatarScale,
+                      rotate: deceasedAvatarRotate,
+                    }}
+                    layout={heroLayout}
+                    bgMode={heroBgMode}
+                    primaryColor={primaryColor}
+                    secondaryColor={secondaryColor}
+                    fontFamily={fontFamily}
+                    dirty={identityDirty}
+                    photoActions={{
+                      avatarUploading,
+                      coverUploading,
+                      onPickAvatarTheme: () => setDefaultMediaPicker('avatar'),
+                      onPickCoverTheme: () => setDefaultMediaPicker('cover'),
+                      onUploadAvatar: () => document.getElementById('deceased-avatar-file-input')?.click(),
+                      onUploadCover: () => document.getElementById('deceased-cover-file-input')?.click(),
+                      onRepositionAvatar: () => setIsCropModalOpen(true),
+                      onRepositionCover: () => setIsCoverCropModalOpen(true),
+                      onClearAvatar: () => {
+                        setDeceasedAvatarUrl('');
+                        setDeceasedAvatarScale(1);
+                        setDeceasedAvatarX(0);
+                        setDeceasedAvatarY(0);
+                        setDeceasedAvatarRotate(0);
+                        markIdentityDirty();
+                      },
+                      onClearCover: () => {
+                        setDeceasedCoverUrl('');
+                        setDeceasedCoverScale(1);
+                        setDeceasedCoverX(0);
+                        setDeceasedCoverY(0);
+                        setDeceasedCoverRotate(0);
+                        setHeroBgMode('soft-wash');
+                        markIdentityDirty();
+                      },
+                    }}
+                  />
+                  <Input
+                    type="file"
+                    id="deceased-avatar-file-input"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) uploadDeceasedAvatar(file);
+                    }}
+                    disabled={avatarUploading}
+                    className="hidden"
+                  />
+                  <Input
+                    type="file"
+                    id="deceased-cover-file-input"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) uploadDeceasedCover(file);
+                    }}
+                    disabled={coverUploading}
+                    className="hidden"
+                  />
+
+                  <IdentityMediaThemeSections
+                    category={activeSite?.category}
+                    siteName={siteName}
+                    siteNameLabel={
+                      selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                         ? 'ชื่อคู่รัก / ชื่อหน้าความรัก'
                         : selectedSite.category === 'Pet Memorial'
                         ? 'ชื่อสัตว์เลี้ยง / หน้าความทรงจำ'
@@ -3276,19 +3303,130 @@ export default function WebmasterDashboard() {
                         ? 'ชื่อเว็บไซต์ / ชื่อกลุ่ม'
                         : selectedSite.category === 'Family Legacy'
                         ? 'ชื่อครอบครัว / ชื่อเว็บไซต์'
-                        : 'ชื่อหน้ารำลึก'}
-                    </label>
-                    <Input 
-                      type="text" 
-                      value={siteName} 
-                      onChange={(e) => setSiteName(e.target.value)} 
-                      className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm sm:text-base focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
-                    />
-                  </div>
+                        : 'ชื่อหน้ารำลึก'
+                    }
+                    onSiteNameChange={(value) => {
+                      setSiteName(value);
+                      markIdentityDirty();
+                    }}
+                    avatarUrl={deceasedAvatarUrl}
+                    coverUrl={deceasedCoverUrl}
+                    primaryColor={primaryColor}
+                    secondaryColor={secondaryColor}
+                    fontFamily={fontFamily}
+                    defaultFontSize={defaultFontSize}
+                    heroLayout={heroLayout}
+                    heroBgMode={heroBgMode}
+                    defaultMediaPicker={defaultMediaPicker}
+                    onDefaultMediaPickerChange={setDefaultMediaPicker}
+                    onPickDefaultMedia={(kind, src) => {
+                      void saveProfileMediaSelection(kind, src);
+                    }}
+                    onThemePreset={(primary, secondary) => {
+                      applyThemeSelection({ primaryColor: primary, secondaryColor: secondary });
+                    }}
+                    onPrimaryColor={(value) => queueThemeAutoSave({ primaryColor: value })}
+                    onSecondaryColor={(value) => queueThemeAutoSave({ secondaryColor: value })}
+                    onFontFamily={(value) => applyThemeSelection({ fontFamily: value })}
+                    onFontSize={(value) => applyThemeSelection({ defaultFontSize: value })}
+                    onHeroLayout={(layout, bgMode) => {
+                      setHeroLayout(layout);
+                      setHeroBgMode(bgMode);
+                      markIdentityDirty();
+                    }}
+                  />
 
+                  <IdentityConfirmBar
+                    dirty={identityDirty}
+                    saveLoading={saveLoading}
+                    onConfirm={() => void handleConfirmIdentity()}
+                  />
+
+                  </>
+                  ) : null}
+
+                  {activeSubTab === 'announcement' && features.announcement ? (
+                    <AnnouncementCardSettings
+                      category={selectedSite.category}
+                      siteName={siteName}
+                      sLabels={sLabels}
+                      themeStyle3Label={getStyle3Label(selectedSite.category)}
+                      formatThaiDate={formatThaiDateWithDay}
+                      formatThaiDateRange={formatThaiDateRange}
+                      active={annActive}
+                      onActiveChange={setAnnActive}
+                      cardMode={annCardMode}
+                      onCardModeChange={setAnnCardMode}
+                      orientation={annOrientation}
+                      onOrientationChange={setAnnOrientation}
+                      showPhoto={annShowPhoto}
+                      onShowPhotoChange={setAnnShowPhoto}
+                      customCardUrl={annCustomCardUrl}
+                      onCustomCardUrlChange={setAnnCustomCardUrl}
+                      uploading={annCardUploading}
+                      uploadError={annCardUploadError}
+                      onUploadErrorChange={setAnnCardUploadError}
+                      onUploadFile={(file) => void uploadAnnouncementCard(file)}
+                      text={annText}
+                      onTextChange={setAnnText}
+                      style={annStyle}
+                      onStyleChange={setAnnStyle}
+                      fontFamily={annFontFamily}
+                      onFontFamilyChange={setAnnFontFamily}
+                      siteFontFamily={fontFamily}
+                      avatarUrl={deceasedAvatarUrl}
+                      avatarScale={deceasedAvatarScale}
+                      avatarX={deceasedAvatarX}
+                      avatarY={deceasedAvatarY}
+                      avatarRotate={deceasedAvatarRotate}
+                      waterDate={annWaterDate}
+                      onWaterDateChange={setAnnWaterDate}
+                      waterTime={annWaterTime}
+                      onWaterTimeChange={setAnnWaterTime}
+                      isCustomWaterTime={isCustomWaterTime}
+                      onCustomWaterTimeChange={setIsCustomWaterTime}
+                      abhidhammaDateRange={annAbhidhammaDateRange}
+                      onAbhidhammaDateRangeChange={setAnnAbhidhammaDateRange}
+                      abhidhammaTime={annAbhidhammaTime}
+                      onAbhidhammaTimeChange={setAnnAbhidhammaTime}
+                      isCustomAbhidhammaTime={isCustomAbhidhammaTime}
+                      onCustomAbhidhammaTimeChange={setIsCustomAbhidhammaTime}
+                      abhidhammaStartDate={abhidhammaStartDate}
+                      abhidhammaEndDate={abhidhammaEndDate}
+                      onAbhidhammaRangeChange={(start, end) => {
+                        setAbhidhammaStartDate(start);
+                        setAbhidhammaEndDate(end);
+                      }}
+                      cremationDate={annCremationDate}
+                      onCremationDateChange={setAnnCremationDate}
+                      cremationTime={annCremationTime}
+                      onCremationTimeChange={setAnnCremationTime}
+                      isCustomCremationTime={isCustomCremationTime}
+                      onCustomCremationTimeChange={setIsCustomCremationTime}
+                      templeName={annTempleName}
+                      onTempleNameChange={setAnnTempleName}
+                      pavilion={annPavilion}
+                      onPavilionChange={setAnnPavilion}
+                      mapLink={annMapLink}
+                      onMapLinkChange={setAnnMapLink}
+                      dressCode={annDressCode}
+                      onDressCodeChange={setAnnDressCode}
+                      contactPhone={annContactPhone}
+                      onContactPhoneChange={setAnnContactPhone}
+                      wreathPolicy={annWreathPolicy}
+                      onWreathPolicyChange={setAnnWreathPolicy}
+                      milestones={annMilestones}
+                      onMilestonesChange={setAnnMilestones}
+                    />
+                  ) : null}
+
+                </div>
+              )}
+
+              {activeSubTab === 'names' && (
+                <div className="animate-fade-in space-y-6 text-left">
+                  {!categoryHidesGeneralBiography(selectedSite.category) ? (
                   <div className="space-y-2">
-                    {!categoryHidesGeneralBiography(selectedSite.category) ? (
-                    <>
                     <label className="text-xs font-bold text-stone-500 uppercase tracking-wide">
                       {selectedSite.category === 'Couple' || selectedSite.category === 'Wedding'
                         ? 'เรื่องราวความรัก (ประวัติคู่รักโดยย่อ)'
@@ -3298,7 +3436,10 @@ export default function WebmasterDashboard() {
                     </label>
                     <Textarea 
                       value={biography} 
-                      onChange={(e) => setBiography(e.target.value)} 
+                      onChange={(e) => {
+                        setBiography(e.target.value);
+                        markIdentityDirty();
+                      }} 
                       rows={4}
                       placeholder={
                         selectedSite.category === 'Wedding'
@@ -3311,32 +3452,8 @@ export default function WebmasterDashboard() {
                       }
                       className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
                     />
-                    </>
-                    ) : (
-                      <div className="rounded-xl border border-stone-200 bg-stone-50/70 px-4 py-3 space-y-3">
-                        <p className="text-xs text-stone-500">
-                          เรื่องราวฉบับเต็มอยู่ที่เมนู{' '}
-                          <span className="font-semibold text-stone-700">
-                            {getLifeStoryMenuTitle(selectedSite.category)}
-                          </span>{' '}
-                          ด้านซ้าย หรือกดปุ่มด้านล่างเพื่อแก้ไข
-                        </p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="rounded-xl"
-                          onClick={() =>
-                            openLifeStorySection(
-                              getDefaultLifeStorySection(selectedSite.category),
-                            )
-                          }
-                        >
-                          <BookMarked className="size-4" />
-                          แก้ไข{getLifeStoryMenuTitle(selectedSite.category)}
-                        </Button>
-                      </div>
-                    )}
                   </div>
+                  ) : null}
 
                   {/* Subjects editor (pets / memorial people / couple, etc.) */}
                   {(() => {
@@ -3348,16 +3465,19 @@ export default function WebmasterDashboard() {
                           subjectIndex === index ? { ...subject, ...patch } : subject
                         );
                         subjectsRef.current = next;
-                        if (cat === 'Pet Memorial') queueSubjectsAutoSave();
+                        markIdentityDirty();
                         return next;
                       });
                     };
 
                     return (
-                      <div className="space-y-4 border-t border-stone-150 pt-6">
+                      <div className={cn(
+                        'space-y-4',
+                        !categoryHidesGeneralBiography(selectedSite.category) && 'border-t border-stone-150 pt-6',
+                      )}>
                         <div className="space-y-1">
                           <h4 className="flex items-center gap-1.5 text-sm font-bold text-stone-900">
-                            <User className="size-4 text-emerald-700" />
+                            <CalendarDays className="size-4 text-[#0071e3]" />
                             <span>{copy.sectionTitle}</span>
                           </h4>
                           <p className="text-xs text-stone-500">{copy.sectionHint}</p>
@@ -3372,7 +3492,12 @@ export default function WebmasterDashboard() {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setSubjects((prev) => prev.filter((_, i) => i !== index));
+                                  setSubjects((prev) => {
+                                    const next = prev.filter((_, i) => i !== index);
+                                    subjectsRef.current = next;
+                                    markIdentityDirty();
+                                    return next;
+                                  });
                                 }}
                                 className="absolute top-4 right-4 cursor-pointer text-xs font-bold text-rose-600 transition hover:text-rose-700"
                               >
@@ -3719,10 +3844,8 @@ export default function WebmasterDashboard() {
                                     ? { ...emptyManageSubject(), isAlive: true }
                                     : emptyManageSubject(),
                                 ];
-                                if (cat === 'Pet Memorial') {
-                                  subjectsRef.current = next;
-                                  queueSubjectsAutoSave();
-                                }
+                                subjectsRef.current = next;
+                                markIdentityDirty();
                                 return next;
                               });
                             }}
@@ -3735,1550 +3858,14 @@ export default function WebmasterDashboard() {
                     );
                   })()}
 
-                  </>
-                  ) : null}
-                  {/* Announcement settings cards */}
-                  {activeSubTab === 'announcement' && features.announcement ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start border-t border-stone-150 pt-6">
-                      {/* Left: Inputs */}
-                      <div className="space-y-6 text-left bg-stone-50/20 p-5 rounded-2xl border border-stone-200">
-                        <div className="flex justify-between items-center border-b border-stone-150 pb-3">
-                          <h4 className="text-sm font-bold text-stone-900 flex items-center gap-1.5 font-sans">
-                            <Calendar className="w-4 h-4 text-emerald-700" />
-                            <span>
-                              {selectedSite.category === 'Couple'
-                                ? 'บันทึกวันสำคัญของเรา'
-                                : selectedSite.category === 'Wedding'
-                                  ? 'การ์ดเชิญ & กำหนดการงาน'
-                                  : 'ข้อมูลการ์ดกำหนดการดิจิทัล'}
-                            </span>
-                          </h4>
-                          <label className="flex items-center gap-2 text-xs font-bold text-stone-600 cursor-pointer">
-                            <Checkbox
-                              checked={annActive}
-                              onCheckedChange={(c) => setAnnActive(!!c)}
-                              className="w-4 h-4 cursor-pointer"
-                            />
-                            <span>เปิดแสดงผลการ์ด</span>
-                          </label>
-                        </div>
-
-                        {annActive && (
-                          <div className="space-y-4 text-xs">
-                            {/* Card mode: template vs custom upload */}
-                            <div className="space-y-2">
-                              <label className="font-bold text-stone-600">รูปแบบการ์ด</label>
-                              <div className="grid grid-cols-2 gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => setAnnCardMode('template')}
-                                  className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition active:scale-95 cursor-pointer ${
-                                    annCardMode === 'template'
-                                      ? 'border-[#0071e3] bg-[#0071e3]/5 text-[#0071e3]'
-                                      : 'border-stone-200 bg-white text-stone-600 hover:bg-stone-50'
-                                  }`}
-                                >
-                                  ใช้เทมเพลตระบบ
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setAnnCardMode('custom');
-                                    setAnnCardUploadError('');
-                                  }}
-                                  className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition active:scale-95 cursor-pointer ${
-                                    annCardMode === 'custom'
-                                      ? 'border-[#0071e3] bg-[#0071e3]/5 text-[#0071e3]'
-                                      : 'border-stone-200 bg-white text-stone-600 hover:bg-stone-50'
-                                  }`}
-                                >
-                                  อัปโหลดการ์ดของฉัน
-                                </button>
-                              </div>
-                            </div>
-
-                            {annCardMode === 'custom' ? (
-                              <div className="space-y-3">
-                                <div className="rounded-xl border border-amber-200/80 bg-amber-50/60 px-3 py-2.5 text-[10px] leading-relaxed text-amber-950/90">
-                                  <p className="font-bold text-amber-900 mb-1">คำแนะนำก่อนอัปโหลด</p>
-                                  <ul className="space-y-1 list-disc pl-3.5 marker:text-amber-600">
-                                    <li>
-                                      แนะนำขนาด <span className="font-semibold">1080 × 1440 px</span> (อัตราส่วน 3:4) หรือ{' '}
-                                      <span className="font-semibold">1080 × 1920 px</span> (9:16) แนวตั้ง
-                                    </li>
-                                    <li>วางข้อความสำคัญไว้กลางการ์ด — หลีกเลี่ยงรูปที่สูงมากเกินไป เพราะจะแสดงเต็มความกว้างบนหน้าเว็บ</li>
-                                    <li>รองรับ JPG, PNG, WEBP ขนาดไม่เกิน 10MB</li>
-                                  </ul>
-                                </div>
-                                <input
-                                  type="file"
-                                  id="announcement-card-file-input"
-                                  accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                                  className="sr-only"
-                                  disabled={annCardUploading}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) void uploadAnnouncementCard(file);
-                                    e.target.value = '';
-                                  }}
-                                />
-                                {annCustomCardUrl ? (
-                                  <div className="relative rounded-2xl border border-stone-200 overflow-hidden bg-stone-50">
-                                    <img
-                                      src={annCustomCardUrl}
-                                      alt="การ์ดที่อัปโหลด"
-                                      className="w-full max-h-64 object-contain bg-stone-100"
-                                    />
-                                    {annCardUploading && (
-                                      <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-xs font-bold text-stone-600">
-                                        กำลังอัปโหลด...
-                                      </div>
-                                    )}
-                                    <div className="flex gap-2 p-3 border-t border-stone-100">
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        onClick={() => document.getElementById('announcement-card-file-input')?.click()}
-                                        disabled={annCardUploading}
-                                        className="flex-1 h-9 text-xs font-bold border border-stone-200 rounded-xl"
-                                      >
-                                        {annCardUploading ? 'กำลังอัปโหลด...' : 'เปลี่ยนรูป'}
-                                      </Button>
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        onClick={() => {
-                                          setAnnCustomCardUrl('');
-                                          setAnnCardUploadError('');
-                                        }}
-                                        disabled={annCardUploading}
-                                        className="h-9 px-3 text-xs font-bold text-rose-500 hover:bg-rose-50 border border-rose-200 rounded-xl"
-                                      >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    disabled={annCardUploading}
-                                    onClick={() => document.getElementById('announcement-card-file-input')?.click()}
-                                    className={`flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-8 text-center transition ${
-                                      annCardUploading
-                                        ? 'border-[#0071e3]/40 bg-blue-50/40 cursor-wait'
-                                        : 'border-stone-300 bg-white hover:border-[#0071e3]/50 hover:bg-blue-50/20 cursor-pointer'
-                                    }`}
-                                  >
-                                    <div className="size-10 rounded-full bg-stone-100 flex items-center justify-center">
-                                      <Upload className="w-4 h-4 text-stone-500" />
-                                    </div>
-                                    <span className="text-xs font-bold text-stone-700">
-                                      {annCardUploading ? 'กำลังอัปโหลด...' : 'คลิกเพื่ออัปโหลดการ์ด'}
-                                    </span>
-                                    <span className="text-[10px] text-stone-400 leading-relaxed max-w-[260px]">
-                                      JPG, PNG หรือ WEBP · ไม่เกิน 10MB
-                                    </span>
-                                  </button>
-                                )}
-                                {annCardUploadError && (
-                                  <p className="text-[11px] font-semibold text-rose-600 flex items-start gap-1.5">
-                                    <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                                    <span>{annCardUploadError}</span>
-                                  </p>
-                                )}
-                                <p className="text-[10px] text-stone-400 leading-relaxed">
-                                  เหมาะกับการ์ดที่ออกแบบเองหรือสร้างจาก AI — การ์ดจะแสดงเป็นรูปเต็มใบบนหน้าเว็บตามสัดส่วนจริงของไฟล์
-                                </p>
-                              </div>
-                            ) : (
-                              <>
-                            {/* Theme and Font selection */}
-                            <div className="space-y-1.5">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                  <label className="block font-bold text-stone-600">รูปแบบธีมการ์ด</label>
-                                  <Select
-                                    value={annStyle}
-                                    onValueChange={(value) => setAnnStyle(value)}
-                                  >
-                                    <SelectTrigger className="h-10 w-full px-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer">
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent position="popper">
-                                      <SelectItem value="ELEGANT_WHITE">Classic White (สีขาวเรียบหรู)</SelectItem>
-                                      <SelectItem value="WARM_CREAM">Warm Cream (สีครีมวินเทจ)</SelectItem>
-                                      <SelectItem value="CHARCOAL_SLATE">{getStyle3Label(selectedSite?.category || 'Memorial')}</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div className="space-y-1">
-                                  <label className="block font-bold text-stone-600">ฟอนต์การ์ดประกาศ</label>
-                                  <Select
-                                    value={annFontFamily}
-                                    onValueChange={(value) => setAnnFontFamily(value)}
-                                  >
-                                    <SelectTrigger className="h-10 w-full px-3 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer">
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent position="popper">
-                                      <SelectItem value="LINE Seed Sans TH">LINE Seed (ตัวหนา ทันสมัย)</SelectItem>
-                                      <SelectItem value="Charmonman">Charmonman (ตัวเขียนทางการ)</SelectItem>
-                                      <SelectItem value="Srisakdi">Srisakdi (ตัวอักษรไทยคลาสสิก)</SelectItem>
-                                      <SelectItem value="Charm">Charm (ตัวเขียนอ่อนช้อย)</SelectItem>
-                                      <SelectItem value="Thasadith">Thasadith (ตัวพิมพ์ทางการ)</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              </div>
-                              <p className="text-[10px] leading-relaxed text-stone-400">
-                                ถ้าเลือกฟอนต์เดียวกับแท็บธีม จะเปลี่ยนตามกันอัตโนมัติ
-                              </p>
-                            </div>
-
-                            {/* Default Font Size selector */}
-                            <div className="space-y-1">
-                              <label className="font-bold text-stone-600">ขนาดตัวอักษรเริ่มต้นของเว็บไซต์</label>
-                              <Select
-                              value={defaultFontSize}
-                              onValueChange={(value) => {
-                                void applyThemeSelection({
-                                  defaultFontSize: value as 'NORMAL' | 'MEDIUM' | 'LARGE',
-                                });
-                              }}
-                            >
-                              <SelectTrigger className={"w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-<SelectItem value="NORMAL">ขนาดปกติ (100% - มาตรฐานทั่วไป)</SelectItem>
-                                <SelectItem value="MEDIUM">ขนาดค่อนข้างใหญ่ (112% - อ่านง่ายสบายตา)</SelectItem>
-                                <SelectItem value="LARGE">ขนาดใหญ่พิเศษ (125% - แนะนำสำหรับผู้สูงอายุ)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            </div>
-
-                            {/* Header Text */}
-                            <div className="space-y-1">
-                              <label className="font-bold text-stone-600">คำเชิญชวนหลักด้านบน</label>
-                              <Input
-                                type="text"
-                                value={annText}
-                                onChange={(e) => setAnnText(e.target.value)}
-                                placeholder={sLabels.invitePlaceholder}
-                                className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-stone-900 text-xs focus:outline-none focus:border-emerald-500 font-semibold"
-                              />
-                            </div>
-
-                            <div className="border-t border-stone-150 pt-3">
-                              {isCoupleCategory(selectedSite.category) ? (
-                                <CoupleMilestonesEditor
-                                  milestones={annMilestones}
-                                  onChange={setAnnMilestones}
-                                  formatThaiDate={formatThaiDateWithDay}
-                                />
-                              ) : (
-                              <>
-                              <p className="font-bold text-stone-700 mb-2">{sLabels.subtitle}</p>
-                              <div className="space-y-3">
-                                {/* Meetup / ceremony slot 1 */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
-                                  {!usesSingleMilestoneSchedule(selectedSite.category) && (
-                                    <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item1}</div>
-                                  )}
-                                  <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">
-                                      {usesSingleMilestoneSchedule(selectedSite.category)
-                                        ? (sLabels.dateLabel || 'วันนัดพบ')
-                                        : 'วันที่จัด'}
-                                    </label>
-                                    <div className="flex gap-1.5 items-center relative">
-                                      <Input
-                                        type="text"
-                                        value={annWaterDate}
-                                        onChange={(e) => setAnnWaterDate(e.target.value)}
-                                        placeholder={sLabels.item1Placeholder}
-                                        className="flex-1 px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 min-w-0"
-                                      />
-                                      <ThaiDatePicker
-                                        align="right"
-                                        buttonClassName="p-2 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer h-[38px] w-[38px] shrink-0"
-                                        iconClassName="w-4 h-4"
-                                        onChange={(val) => {
-                                          if (val) {
-                                            setAnnWaterDate(formatThaiDateWithDay(val));
-                                          }
-                                        }}
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">
-                                      {usesSingleMilestoneSchedule(selectedSite.category)
-                                        ? (sLabels.timeLabel || 'เวลานัด (ไม่บังคับ)')
-                                        : 'เวลาเริ่ม'}
-                                    </label>
-                                    <div className="space-y-1.5">
-                                      <Select
-                              value={(isCustomWaterTime ? 'CUSTOM' : annWaterTime) || '__empty__'}
-                              onValueChange={(raw) => {
-                                const value = raw === '__empty__' ? '' : raw;
-                                const val = value;
-                                          if (val === 'CUSTOM') {
-                                            setIsCustomWaterTime(true);
-                                            if (!annWaterTime || TIME_PRESETS.includes(annWaterTime)) {
-                                              setAnnWaterTime('16:00 น.');
-                                            }
-                                          } else {
-                                            setIsCustomWaterTime(false);
-                                            setAnnWaterTime(val);
-                                          }
-                              }}
-                            >
-                              <SelectTrigger className={"w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-<SelectItem value="__empty__">
-                                          {usesSingleMilestoneSchedule(selectedSite.category) ? 'ไม่ระบุเวลา' : 'เลือกเวลา'}
-                                        </SelectItem>
-                                        {TIME_PRESETS.map((preset) => (
-                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
-                                        ))}
-                                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
-                              </SelectContent>
-                            </Select>
-                                      {isCustomWaterTime && (
-                                        <Input
-                                          type="text"
-                                          value={annWaterTime}
-                                          onChange={(e) => setAnnWaterTime(e.target.value)}
-                                          placeholder="ระบุเวลา เช่น 16:15 น."
-                                          className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 text-sm animate-fade-in"
-                                        />
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {!usesSingleMilestoneSchedule(selectedSite.category) && (
-                                <>
-                                {/* 2. สวดพระอภิธรรม */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
-                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item2}</div>
-                                  <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">ช่วงวันที่จัด</label>
-                                    <div className="flex gap-1.5 items-center relative">
-                                      <Input
-                                        type="text"
-                                        value={annAbhidhammaDateRange}
-                                        onChange={(e) => setAnnAbhidhammaDateRange(e.target.value)}
-                                        placeholder={sLabels.item2Placeholder}
-                                        className="flex-1 px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 min-w-0"
-                                      />
-                                      <ThaiDatePicker
-                                        mode="range"
-                                        align="right"
-                                        buttonClassName="p-2 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer h-[38px] w-[38px] shrink-0"
-                                        iconClassName="w-4 h-4"
-                                        rangeStart={abhidhammaStartDate}
-                                        rangeEnd={abhidhammaEndDate}
-                                        onChangeRange={(start, end) => {
-                                          setAbhidhammaStartDate(start);
-                                          setAbhidhammaEndDate(end);
-                                          if (start) {
-                                            setAnnAbhidhammaDateRange(formatThaiDateRange(start, end));
-                                          }
-                                        }}
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">เวลาเริ่มงาน</label>
-                                    <div className="space-y-1.5">
-                                      <Select
-                              value={(isCustomAbhidhammaTime ? 'CUSTOM' : annAbhidhammaTime) || '__empty__'}
-                              onValueChange={(raw) => {
-                                const value = raw === '__empty__' ? '' : raw;
-                                const val = value;
-                                          if (val === 'CUSTOM') {
-                                            setIsCustomAbhidhammaTime(true);
-                                            if (!annAbhidhammaTime || TIME_PRESETS.includes(annAbhidhammaTime)) {
-                                              setAnnAbhidhammaTime('19:00 น.');
-                                            }
-                                          } else {
-                                            setIsCustomAbhidhammaTime(false);
-                                            setAnnAbhidhammaTime(val);
-                                          }
-                              }}
-                            >
-                              <SelectTrigger className={"w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-<SelectItem value="__empty__">เลือกเวลา</SelectItem>
-                                        {TIME_PRESETS.map((preset) => (
-                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
-                                        ))}
-                                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
-                              </SelectContent>
-                            </Select>
-                                      {isCustomAbhidhammaTime && (
-                                        <Input
-                                          type="text"
-                                          value={annAbhidhammaTime}
-                                          onChange={(e) => setAnnAbhidhammaTime(e.target.value)}
-                                          placeholder="ระบุเวลา เช่น 19:15 น."
-                                          className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 text-sm animate-fade-in"
-                                        />
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* 3. ฌาปนกิจ */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-stone-100/50 rounded-xl border border-stone-200/50">
-                                  <div className="space-y-1 col-span-2 font-bold text-stone-700">{sLabels.item3}</div>
-                                  <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">วันที่จัด</label>
-                                    <div className="flex gap-1.5 items-center relative">
-                                      <Input
-                                        type="text"
-                                        value={annCremationDate}
-                                        onChange={(e) => setAnnCremationDate(e.target.value)}
-                                        placeholder={sLabels.item3Placeholder}
-                                        className="flex-1 px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 min-w-0"
-                                      />
-                                      <ThaiDatePicker
-                                        align="right"
-                                        buttonClassName="p-2 bg-stone-100 hover:bg-stone-200 border border-stone-250 rounded-lg text-stone-600 transition flex items-center justify-center cursor-pointer h-[38px] w-[38px] shrink-0"
-                                        iconClassName="w-4 h-4"
-                                        onChange={(val) => {
-                                          if (val) {
-                                            setAnnCremationDate(formatThaiDateWithDay(val));
-                                          }
-                                        }}
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="space-y-1">
-                                    <label className="text-stone-500 font-medium">เวลาเริ่มพิธี</label>
-                                    <div className="space-y-1.5">
-                                      <Select
-                              value={(isCustomCremationTime ? 'CUSTOM' : annCremationTime) || '__empty__'}
-                              onValueChange={(raw) => {
-                                const value = raw === '__empty__' ? '' : raw;
-                                const val = value;
-                                          if (val === 'CUSTOM') {
-                                            setIsCustomCremationTime(true);
-                                            if (!annCremationTime || TIME_PRESETS.includes(annCremationTime)) {
-                                              setAnnCremationTime('16:00 น.');
-                                            }
-                                          } else {
-                                            setIsCustomCremationTime(false);
-                                            setAnnCremationTime(val);
-                                          }
-                              }}
-                            >
-                              <SelectTrigger className={"w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 cursor-pointer text-sm font-semibold"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-<SelectItem value="__empty__">เลือกเวลา</SelectItem>
-                                        {TIME_PRESETS.map((preset) => (
-                                          <SelectItem key={preset} value={String(preset)}>{preset}</SelectItem>
-                                        ))}
-                                        <SelectItem value="CUSTOM">พิมพ์ระบุเวลาเอง...</SelectItem>
-                              </SelectContent>
-                            </Select>
-                                      {isCustomCremationTime && (
-                                        <Input
-                                          type="text"
-                                          value={annCremationTime}
-                                          onChange={(e) => setAnnCremationTime(e.target.value)}
-                                          placeholder="ระบุเวลา เช่น 16:15 น."
-                                          className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 text-sm animate-fade-in"
-                                        />
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                                </>
-                                )}
-                              </div>
-                              </>
-                              )}
-                            </div>
-
-                            {/* Location Details */}
-                            {!isCoupleCategory(selectedSite.category) && (
-                            <div className="border-t border-stone-150 pt-3 space-y-3">
-                              <p className="font-bold text-stone-700">{sLabels.venueLabel}</p>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <div className="space-y-1">
-                                  <label className="text-stone-600 font-semibold">
-                                    {selectedSite.category === 'Wedding'
-                                      ? 'สถานที่จัดงาน (เช่น โรงแรม/โบสถ์)'
-                                      : usesSingleMilestoneSchedule(selectedSite.category)
-                                        ? 'ชื่อสถานที่นัดพบ'
-                                        : 'ชื่อวัด / สถานที่จัดงาน'}
-                                  </label>
-                                  <Input
-                                    type="text"
-                                    value={annTempleName}
-                                    onChange={(e) => setAnnTempleName(e.target.value)}
-                                    placeholder={sLabels.venuePlaceholder}
-                                    className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                  />
-                                </div>
-                                <div className="space-y-1">
-                                  <label className="text-stone-600 font-semibold">{sLabels.pavilionLabel}</label>
-                                  <Input
-                                    type="text"
-                                    value={annPavilion}
-                                    onChange={(e) => setAnnPavilion(e.target.value)}
-                                    placeholder={sLabels.pavilionPlaceholder}
-                                    className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                  />
-                                </div>
-                              </div>
-                              <div className="space-y-1">
-                                <label className="text-stone-600 font-semibold">ลิงก์ Google Maps สำหรับนำทาง (ถ้ามี)</label>
-                                <Input
-                                  type="text"
-                                  value={annMapLink}
-                                  onChange={(e) => setAnnMapLink(e.target.value)}
-                                  placeholder="เช่น https://goo.gl/maps/..."
-                                  className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                />
-                              </div>
-                            </div>
-                            )}
-
-                            {/* Recommendations */}
-                            <div className="border-t border-stone-150 pt-3 space-y-3">
-                              <p className="font-bold text-stone-700">
-                                {selectedSite.category === 'Wedding'
-                                  ? 'คำแนะนำการร่วมงานแสดงความยินดี'
-                                  : isCoupleCategory(selectedSite.category)
-                                    ? 'โน้ตเพิ่มเติม (แสดงท้ายการ์ด)'
-                                  : usesSingleMilestoneSchedule(selectedSite.category)
-                                    ? (sLabels.guidelinesTitle || 'ข้อมูลเพิ่มเติม')
-                                    : selectedSite.category === 'Family Legacy'
-                                      ? (sLabels.guidelinesTitle || 'ข้อมูลเพิ่มเติมสำหรับครอบครัว')
-                                    : 'คำแนะนำการร่วมงาน'}
-                              </p>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <div className="space-y-1">
-                                  <label className="text-stone-600 font-semibold">
-                                    {isCoupleCategory(selectedSite.category)
-                                      ? 'โน้ตทั่วไป'
-                                      : usesSingleMilestoneSchedule(selectedSite.category)
-                                      ? (sLabels.notesLabel || 'โน้ต / รายละเอียด')
-                                      : selectedSite.category === 'Family Legacy'
-                                        ? (sLabels.notesLabel || 'โน้ต / รายละเอียด')
-                                      : 'การแต่งกาย'}
-                                  </label>
-                                  <Input
-                                    type="text"
-                                    value={annDressCode}
-                                    onChange={(e) => setAnnDressCode(e.target.value)}
-                                    placeholder={
-                                      selectedSite.category === 'Wedding'
-                                        ? 'เช่น ธีมสีชมพู/พาสเทล หรือ ตามความสะดวก'
-                                        : isCoupleCategory(selectedSite.category)
-                                          ? 'เช่น ข้อความท้ายการ์ด หรือคำอธิษฐานถึงกัน'
-                                        : usesSingleMilestoneSchedule(selectedSite.category)
-                                          ? (sLabels.notesPlaceholder || 'เช่น แต่งตามสบาย, ธีมสีกลุ่ม')
-                                          : selectedSite.category === 'Family Legacy'
-                                            ? (sLabels.notesPlaceholder || 'เช่น แต่งกายสบาย ๆ, ของฝาก (ถ้ามี)')
-                                          : 'เช่น ชุดสุภาพสีขาว/ดำ'
-                                    }
-                                    className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                  />
-                                </div>
-                                <div className="space-y-1">
-                                  <label className="text-stone-600 font-semibold">เบอร์โทรติดต่อประสานงาน</label>
-                                  <Input
-                                    type="text"
-                                    value={annContactPhone}
-                                    onChange={(e) => setAnnContactPhone(e.target.value)}
-                                    placeholder="เช่น 081-234-5678"
-                                    className="w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500"
-                                  />
-                                </div>
-                              </div>
-                              {!usesSingleMilestoneSchedule(selectedSite.category) &&
-                                selectedSite.category !== 'Family Legacy' && (
-                              <div className="space-y-1">
-                                <label className="text-stone-600 font-semibold">
-                                  {selectedSite.category === 'Wedding'
-                                    ? 'นโยบายการรับซอง/ของขวัญ'
-                                    : 'นโยบายการรับพวงหรีด'}
-                                </label>
-                                <Select
-                              value={annWreathPolicy}
-                              onValueChange={(value) => setAnnWreathPolicy(value)}
-                            >
-                              <SelectTrigger className={"w-full px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-stone-900 focus:outline-none focus:border-emerald-500 font-semibold cursor-pointer"}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent position="popper">
-{selectedSite.category === 'Wedding' ? (
-                                    <>
-                                      <SelectItem value="NORMAL">ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ</SelectItem>
-                                      <SelectItem value="NO_FLOWERS">ขออภัย งดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)</SelectItem>
-                                      <SelectItem value="DONATION_ONLY">ขออภัย งดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)</SelectItem>
-                                      <SelectItem value="NO_WREATH">ขออภัย งดรับซองและของขวัญทุกประเภท</SelectItem>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <SelectItem value="NORMAL">รับพวงหรีดตามปกติ</SelectItem>
-                                      <SelectItem value="NO_FLOWERS">งดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)</SelectItem>
-                                      <SelectItem value="DONATION_ONLY">งดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)</SelectItem>
-                                      <SelectItem value="NO_WREATH">งดรับพวงหรีดทุกประเภท</SelectItem>
-                                    </>
-                                  )}
-                              </SelectContent>
-                            </Select>
-                              </div>
-                              )}
-                            </div>
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Right: Live Preview Card */}
-                      <div
-                        className="sticky top-6 space-y-4"
-                        style={getSiteThemeStyle({ primaryColor, secondaryColor, fontFamily })}
-                      >
-                        <p className="text-xs font-bold text-stone-500 text-left uppercase tracking-wider">ตัวอย่างแสดงผลการ์ดจริงบนหน้าเว็บ (Live Preview)</p>
-                        
-                        {!annActive ? (
-                          <div className="p-12 text-center border border-dashed border-stone-200 rounded-3xl text-stone-500 text-xs bg-stone-50">
-                            การ์ดปิดการแสดงผลอยู่ จะไม่ถูกแสดงในหน้าแรกของเว็บไซต์สาธารณะ
-                          </div>
-                        ) : annCardMode === 'custom' ? (
-                          <div className="w-full max-w-md mx-auto rounded-3xl border border-stone-200 overflow-hidden shadow-lg bg-stone-50">
-                            {annCustomCardUrl ? (
-                              <img
-                                src={annCustomCardUrl}
-                                alt="พรีวิวการ์ด"
-                                className="w-full object-contain"
-                              />
-                            ) : (
-                              <div className="aspect-[9/16] flex flex-col items-center justify-center gap-2 text-stone-400 p-8">
-                                <Upload className="w-8 h-8 text-stone-300" />
-                                <p className="text-xs font-medium">ยังไม่มีรูปการ์ด</p>
-                                <p className="text-[10px] text-center">อัปโหลดการ์ดด้านซ้ายเพื่อดูตัวอย่าง</p>
-                              </div>
-                            )}
-                          </div>
-                        ) : isCoupleCategory(selectedSite.category) ? (
-                          <CoupleJourneyCard
-                            className="max-w-md"
-                            tenantName={siteName}
-                            inviteText={annText}
-                            inviteFallback={sLabels.invitePlaceholder}
-                            footerText="ขอบคุณที่มาร่วมเป็นส่วนหนึ่งของเส้นทางความรักของเรา"
-                            theme={resolveAnnouncementCardTheme(selectedSite.category, annStyle)}
-                            milestones={coupleMilestonesForSave(annMilestones)}
-                            timelineTitle="เส้นทางที่ผ่านมา"
-                            fontFamily={annFontFamily}
-                            siteFontFamily={fontFamily}
-                            avatarUrl={deceasedAvatarUrl}
-                            avatarScale={deceasedAvatarScale}
-                            avatarX={deceasedAvatarX}
-                            avatarY={deceasedAvatarY}
-                            avatarRotate={deceasedAvatarRotate}
-                            notes={annDressCode}
-                            contactPhone={annContactPhone}
-                          />
-                        ) : selectedSite.category === 'Friends' ? (
-                          <FriendsMeetupCard
-                            className="max-w-md"
-                            tenantName={siteName}
-                            inviteText={annText}
-                            inviteFallback={sLabels.invitePlaceholder}
-                            footerText="ขอขอบคุณทุกคนที่ร่วมแบ่งปันความทรงจำและมิตรภาพ — กลุ่ม"
-                            theme={resolveAnnouncementCardTheme(selectedSite.category, annStyle)}
-                            fontFamily={annFontFamily}
-                            siteFontFamily={fontFamily}
-                            avatarUrl={deceasedAvatarUrl}
-                            avatarScale={deceasedAvatarScale}
-                            avatarX={deceasedAvatarX}
-                            avatarY={deceasedAvatarY}
-                            avatarRotate={deceasedAvatarRotate}
-                            meetupDate={annWaterDate}
-                            meetupTime={annWaterTime}
-                            venueName={annTempleName}
-                            venueDetail={annPavilion}
-                            mapLink={annMapLink}
-                            notes={annDressCode}
-                            contactPhone={annContactPhone}
-                          />
-                        ) : (
-                          <MemorialScheduleCard
-                            className="max-w-md"
-                            compact
-                            category={selectedSite.category}
-                            tenantName={siteName}
-                            inviteText={annText}
-                            inviteFallback={sLabels.invitePlaceholder}
-                            labels={{
-                              title: sLabels.subtitle,
-                              item1: sLabels.item1,
-                              item2: sLabels.item2,
-                              item3: sLabels.item3,
-                              venueTitle: sLabels.venueLabel,
-                              venueLabel: sLabels.venueLabel.replace(' (VENUE)', ''),
-                              venueDesc: 'กรุณาคลิกปุ่มนำทางเพื่อความสะดวกในการเดินทางมายังสถานที่จัดงาน',
-                              guidelinesTitle: sLabels.guidelinesTitle,
-                              contactLabel: 'ติดต่อประสานงาน:',
-                              notesLabel: sLabels.notesLabel,
-                              footerText:
-                                selectedSite.category === 'Wedding'
-                                  ? 'ขอขอบคุณแขกผู้มีเกียรติทุกท่านที่มาร่วมแสดงความยินดี — เจ้าภาพ'
-                                  : selectedSite.category === 'Pet Memorial'
-                                    ? 'ขอบคุณทุกคนที่มาร่วมส่งความรักและความคิดถึงให้น้อง — ครอบครัว'
-                                    : selectedSite.category === 'Family Legacy'
-                                      ? 'กราบขอบพระคุณทุกท่านที่ร่วมสืบสานสายสัมพันธ์และส่งต่อความรัก — ครอบครัว'
-                                      : 'กราบขอบพระคุณทุกท่านที่มาร่วมไว้อาลัย — คณะเจ้าภาพ',
-                            }}
-                            theme={resolveAnnouncementCardTheme(selectedSite.category, annStyle)}
-                            fontFamily={annFontFamily}
-                            siteFontFamily={fontFamily}
-                            avatarUrl={deceasedAvatarUrl}
-                            avatarScale={deceasedAvatarScale}
-                            avatarX={deceasedAvatarX}
-                            avatarY={deceasedAvatarY}
-                            avatarRotate={deceasedAvatarRotate}
-                            waterDate={annWaterDate}
-                            waterTime={annWaterTime}
-                            abhidhammaDateRange={annAbhidhammaDateRange}
-                            abhidhammaTime={annAbhidhammaTime}
-                            cremationDate={annCremationDate}
-                            cremationTime={annCremationTime}
-                            templeName={annTempleName}
-                            pavilion={annPavilion}
-                            mapLink={annMapLink}
-                            dressCode={annDressCode}
-                            contactPhone={annContactPhone}
-                            wreathPolicy={annWreathPolicy}
-                            wreathPolicies={
-                              selectedSite.category === 'Wedding'
-                                ? {
-                                    NORMAL: 'ยินดีรับซองและของขวัญแสดงความยินดีตามปกติ',
-                                    NO_FLOWERS: 'ขออภัย เจ้าภาพงดรับของขวัญ (เน้นการร่วมแสดงความยินดีและอวยพรแทน)',
-                                    DONATION_ONLY: 'ขออภัย เจ้าภาพงดรับของขวัญ (ร่วมสมทบทุนมูลนิธิแทน)',
-                                    NO_WREATH: 'ขออภัย เจ้าภาพงดรับซองและของขวัญทุกประเภท',
-                                  }
-                                : {
-                                    NORMAL: 'เปิดรับพวงหรีดแสดงความอาลัยตามปกติ',
-                                    NO_FLOWERS: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดดอกไม้สด (เพื่อร่วมรักษ์โลก)',
-                                    DONATION_ONLY: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีด (ร่วมทำบุญสมทบทุนแทน)',
-                                    NO_WREATH: 'เจ้าภาพขอความร่วมมืองดรับพวงหรีดทุกประเภท',
-                                  }
-                            }
-                            showWreathPolicy={selectedSite.category === 'Wedding' && !!annWreathPolicy}
-                            isWedding={selectedSite.category === 'Wedding'}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {/* Donation Settings Section */}
-                  {activeSubTab === 'general' ? (
-                  <div className="border-t border-stone-150 pt-6 space-y-4">
-                    <div className="flex justify-between items-center gap-3">
-                      <div className="min-w-0 space-y-0.5">
-                        <h4 className="text-sm font-bold text-stone-900 flex items-center gap-1.5">
-                          <DollarSign className="w-4 h-4 text-emerald-700 shrink-0" />
-                          <span>
-                            {selectedSite.category === 'Friends'
-                              ? 'เปิดใช้กองทุนรวมตัว (Donation QR)'
-                              : selectedSite.category === 'Pet Memorial'
-                              ? 'เปิดใช้สมทบกองทุนช่วยเหลือสัตว์ (Donation QR)'
-                              : selectedSite.category === 'Couple'
-                              ? 'เปิดใช้เป้าหมายของเรา (Donation QR)'
-                              : selectedSite.category === 'Wedding'
-                              ? 'เปิดใช้ร่วมใส่ซองออนไลน์ (Donation QR)'
-                              : selectedSite.category === 'Family Legacy'
-                              ? 'เปิดใช้สมทบกองทุนครอบครัว (Donation QR)'
-                              : 'เปิดใช้บริการรับเงินทำบุญ (Donation QR)'}
-                          </span>
-                        </h4>
-                        <p className="text-[11px] text-stone-400 leading-relaxed">
-                          {getFeatureLabel(selectedSite.category, 'donation').description}
-                        </p>
-                      </div>
-                      <Checkbox 
-                        checked={donationActive}
-                        onCheckedChange={(c) => setDonationActive(!!c)}
-                        className="w-5 h-5 cursor-pointer shrink-0"
-                      />
-                    </div>
-
-                    {donationActive && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
-                        <div className="space-y-1">
-                          <label className="text-sm font-bold text-stone-600 tracking-wide">หมายเลขพร้อมเพย์ (PromptPay)</label>
-                          <Input 
-                            type="text" 
-                            value={donationPromptPay} 
-                            onChange={(e) => setDonationPromptPay(e.target.value)} 
-                            placeholder="เบอร์โทรศัพท์ หรือ เลขบัตรประชาชน"
-                            className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-sm font-bold text-stone-600 tracking-wide">
-                            {selectedSite.category === 'Couple'
-                              ? 'ชื่อเป้าหมาย / ชื่อที่แสดง'
-                              : 'ชื่อบัญชีผู้รับเงิน'}
-                          </label>
-                          <Input 
-                            type="text" 
-                            value={donationAccountName} 
-                            onChange={(e) => setDonationAccountName(e.target.value)} 
-                            placeholder={
-                              selectedSite.category === 'Couple'
-                                ? 'เช่น ทริปญี่ปุ่นด้วยกัน / บ้านหลังแรก'
-                                : 'ชื่อ-นามสกุล เจ้าของบัญชี'
-                            }
-                            className="w-full px-4 py-2.5 bg-stone-50/50 border border-stone-200 rounded-xl text-stone-900 text-sm focus:bg-white focus:outline-none focus:border-emerald-500/80 transition"
-                          />
-                          {selectedSite.category === 'Couple' ? (
-                            <p className="text-[11px] text-stone-400 leading-relaxed">
-                              ตั้งชื่อแพลนที่อยากให้เพื่อนร่วมสมทบ เช่น ทริป บ้าน หรือของขวัญครบรอบ
-                            </p>
-                          ) : null}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  ) : null}
+                  <IdentityConfirmBar
+                    dirty={identityDirty}
+                    saveLoading={saveLoading}
+                    onConfirm={() => void handleConfirmIdentity()}
+                  />
                 </div>
               )}
 
-              {/* 2. รูปโปรไฟล์ & รูปปกเด่น Tab */}
-              {activeSubTab === 'media' && (
-                <div className="space-y-6 animate-fade-in text-left">
-                  <div className="rounded-2xl border border-stone-200/80 bg-stone-50/50 p-4">
-                    <div className="flex items-start gap-3">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0071e3]/10 text-[#0071e3] shadow-sm shadow-[#0071e3]/10">
-                        <ImageIcon className="size-5" />
-                      </span>
-                      <div className="min-w-0 space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">ภาพลักษณ์เว็บไซต์</p>
-                        <h4 className="text-base font-bold text-stone-900">รูปโปรไฟล์ & หน้าปก</h4>
-                        <p className="text-xs leading-relaxed text-stone-500">เลือกจากชุดธีม หรืออัปโหลดรูปของคุณเอง — แสดงตัวอย่างแบบเดียวกับหน้าเว็บจริง</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <DefaultMediaPicker
-                    open={defaultMediaPicker === 'avatar'}
-                    onOpenChange={(open) => setDefaultMediaPicker(open ? 'avatar' : null)}
-                    kind="avatar"
-                    category={activeSite?.category}
-                    selectedSrc={deceasedAvatarUrl}
-                    onSelect={(src) => {
-                      void saveProfileMediaSelection('avatar', src);
-                    }}
-                  />
-                  <DefaultMediaPicker
-                    open={defaultMediaPicker === 'cover'}
-                    onOpenChange={(open) => setDefaultMediaPicker(open ? 'cover' : null)}
-                    kind="cover"
-                    category={activeSite?.category}
-                    selectedSrc={deceasedCoverUrl}
-                    onSelect={(src) => {
-                      void saveProfileMediaSelection('cover', src);
-                    }}
-                  />
-
-                  {/* Hidden input file fields */}
-                  <Input
-                    type="file"
-                    id="deceased-avatar-file-input"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) uploadDeceasedAvatar(file);
-                    }}
-                    disabled={avatarUploading}
-                    className="hidden"
-                  />
-
-                  <Input
-                    type="file"
-                    id="deceased-cover-file-input"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) uploadDeceasedCover(file);
-                    }}
-                    disabled={coverUploading}
-                    className="hidden"
-                  />
-
-                  {/* Live Preview Card */}
-                  <div className="mx-auto w-full max-w-2xl rounded-3xl border border-stone-200/80 bg-white p-3 shadow-sm">
-                    <div className="mb-3 flex items-center justify-between gap-2 px-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">ตัวอย่างบนหน้าเว็บ</p>
-                      <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-[10px] font-bold text-stone-500">Live preview</span>
-                    </div>
-                    <div className="relative h-52 sm:h-64 rounded-2xl border border-stone-200/80 group select-none">
-                    {/* Cover Photo Background — clip image only so menus are not cut off */}
-                    <div className="absolute inset-0 overflow-hidden rounded-2xl bg-stone-100">
-                    {deceasedCoverUrl ? (
-                      <div className="absolute inset-0 w-full h-full">
-                        <img 
-                          src={deceasedCoverUrl} 
-                          alt="Cover Preview" 
-                          className="w-full h-full object-cover" 
-                          style={imageTransformStyle({
-                            x: deceasedCoverX || 0,
-                            y: deceasedCoverY || 0,
-                            scale: deceasedCoverScale || 1,
-                            rotate: deceasedCoverRotate || 0,
-                          })}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/5 to-transparent transition-colors group-hover:from-black/45" />
-                      </div>
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-stone-50 to-stone-100 flex flex-col items-center justify-center gap-2 text-stone-400">
-                        <ImageIcon className="w-10 h-10 text-stone-300" />
-                        <span className="text-xs font-medium text-stone-400">กดปุ่ม &quot;หน้าปก&quot; มุมขวาบนเพื่อเพิ่มรูป</span>
-                      </div>
-                    )}
-                    </div>
-
-                    {/* Circular Avatar (Overlapping in the center) */}
-                    <div className="absolute inset-x-0 bottom-0 flex justify-center pb-5 sm:pb-6 z-10">
-                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-stone-50 shadow-xl ring-1 ring-stone-200/80 flex items-center justify-center overflow-hidden">
-                      {deceasedAvatarUrl ? (
-                        <div className="w-full h-full relative">
-                          <img 
-                            src={deceasedAvatarUrl} 
-                            alt="Avatar Preview" 
-                            className="pointer-events-none w-full h-full object-cover" 
-                            style={imageTransformStyle({
-                              x: deceasedAvatarX || 0,
-                              y: deceasedAvatarY || 0,
-                              scale: deceasedAvatarScale || 1,
-                              rotate: deceasedAvatarRotate || 0,
-                            })}
-                          />
-                        </div>
-                      ) : (
-                        <div className="cursor-pointer w-full h-full flex flex-col items-center justify-center gap-0.5 rounded-full p-2 text-center bg-stone-150 text-stone-400">
-                          <User className="w-8 h-8 opacity-70" />
-                        </div>
-                      )}
-                    </div>
-                    </div>
-
-                    {/* Avatar camera trigger */}
-                    <div className="absolute bottom-5 left-[calc(50%+30px)] sm:bottom-6 sm:left-[calc(50%+36px)] z-20">
-                      <Button variant="ghost"
-                        type="button"
-                        onClick={() => {
-                          setIsAvatarMenuOpen(!isAvatarMenuOpen);
-                          setIsCoverMenuOpen(false);
-                        }}
-                        className="size-9 rounded-full bg-white/95 p-0 text-[#0071e3] shadow-md ring-1 ring-stone-200/80 hover:bg-white transition active:scale-95"
-                        title="จัดการรูปโปรไฟล์"
-                        aria-label="จัดการรูปโปรไฟล์"
-                      >
-                        <Camera className="size-4" />
-                      </Button>
-
-                      {/* Avatar Menu Popover */}
-                      {isAvatarMenuOpen && (
-                        <>
-                          <div className="fixed inset-0 z-10 cursor-default" onClick={() => setIsAvatarMenuOpen(false)} />
-                          <div className="absolute left-[calc(50%-88px)] bottom-full mb-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-48 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
-                            <Button variant="ghost"
-                              type="button"
-                              onClick={() => {
-                                setIsAvatarMenuOpen(false);
-                                setDefaultMediaPicker('avatar');
-                              }}
-                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
-                            >
-                              เลือกจากชุดธีม
-                            </Button>
-                            <Button variant="ghost"
-                              type="button"
-                              onClick={() => {
-                                setIsAvatarMenuOpen(false);
-                                document.getElementById('deceased-avatar-file-input')?.click();
-                              }}
-                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
-                            >
-                              อัปโหลดรูปภาพใหม่
-                            </Button>
-                            {deceasedAvatarUrl && (
-                              <>
-                                <Button variant="ghost"
-                                  type="button"
-                                  onClick={() => {
-                                    setIsAvatarMenuOpen(false);
-                                    setIsCropModalOpen(true);
-                                  }}
-                                  className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
-                                >
-                                  ปรับแต่งรูปโปรไฟล์
-                                </Button>
-                                <Button variant="ghost"
-                                  type="button"
-                                  onClick={() => {
-                                    setIsAvatarMenuOpen(false);
-                                    setDeceasedAvatarUrl('');
-                                    setDeceasedAvatarScale(1);
-                                    setDeceasedAvatarX(0);
-                                    setDeceasedAvatarY(0);
-                                    setDeceasedAvatarRotate(0);
-                                  }}
-                                  className="w-full px-4 py-2 hover:bg-red-50 text-red-650 cursor-pointer block text-left border-t border-stone-100 font-bold"
-                                >
-                                  ลบรูปโปรไฟล์
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Cover camera trigger */}
-                    <div className="absolute top-3 right-3 z-20">
-                      <Button variant="ghost" 
-                        type="button" 
-                        onClick={() => {
-                          setIsCoverMenuOpen(!isCoverMenuOpen);
-                          setIsAvatarMenuOpen(false);
-                        }}
-                        className="h-9 gap-2 rounded-xl bg-white/95 px-3 text-[11px] font-bold text-stone-700 shadow-md ring-1 ring-stone-200/80 hover:bg-white transition active:scale-95"
-                        title="จัดการรูปหน้าปก"
-                      >
-                        <Camera className="size-4 text-[#0071e3]" />
-                        <span className="hidden sm:inline">หน้าปก</span>
-                      </Button>
-
-                      {/* Cover Menu Popover */}
-                      {isCoverMenuOpen && (
-                        <>
-                          <div className="fixed inset-0 z-10 cursor-default" onClick={() => setIsCoverMenuOpen(false)} />
-                          <div className="absolute right-0 top-full mt-2 bg-white border border-stone-200 rounded-2xl shadow-xl py-2 w-48 text-stone-850 text-xs font-bold z-30 animate-fade-in text-left">
-                            <Button variant="ghost"
-                              type="button"
-                              onClick={() => {
-                                setIsCoverMenuOpen(false);
-                                setDefaultMediaPicker('cover');
-                              }}
-                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left"
-                            >
-                              เลือกจากชุดธีม
-                            </Button>
-                            <Button variant="ghost"
-                              type="button"
-                              onClick={() => {
-                                setIsCoverMenuOpen(false);
-                                document.getElementById('deceased-cover-file-input')?.click();
-                              }}
-                              className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
-                            >
-                              อัปโหลดรูปปกใหม่
-                            </Button>
-                            {deceasedCoverUrl && (
-                              <>
-                                <Button variant="ghost"
-                                  type="button"
-                                  onClick={() => {
-                                    setIsCoverMenuOpen(false);
-                                    setIsCoverCropModalOpen(true);
-                                  }}
-                                  className="w-full px-4 py-2 hover:bg-stone-50 cursor-pointer block text-left border-t border-stone-100"
-                                >
-                                  ปรับแต่งหน้าปก
-                                </Button>
-                                <Button variant="ghost"
-                                  type="button"
-                                  onClick={() => {
-                                    setIsCoverMenuOpen(false);
-                                    setDeceasedCoverUrl('');
-                                    setDeceasedCoverScale(1);
-                                    setDeceasedCoverX(0);
-                                    setDeceasedCoverY(0);
-                                    setDeceasedCoverRotate(0);
-                                  }}
-                                  className="w-full px-4 py-2 hover:bg-red-50 text-red-650 cursor-pointer block text-left border-t border-stone-100 font-bold"
-                                >
-                                  ลบรูปหน้าปก
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  </div>
-
-                  {/* Quick default pickers under preview — with preview+confirm */}
-                  <div className="mx-auto w-full max-w-2xl space-y-4">
-                    {/* Preview confirmation bar */}
-                    {quickPreview && (
-                      <div className="flex items-center gap-3 rounded-2xl border border-[#0071e3]/20 bg-blue-50/40 p-4 animate-fade-in">
-                        <div className={quickPreview.kind === 'avatar'
-                          ? 'size-14 shrink-0 overflow-hidden rounded-full border-2 border-[#0071e3]/30 shadow-sm'
-                          : 'h-14 w-24 shrink-0 overflow-hidden rounded-xl border-2 border-[#0071e3]/30 shadow-sm'
-                        }>
-                          <img src={quickPreview.src} alt="พรีวิว" className="h-full w-full object-cover" />
-                        </div>
-                        <div className="flex-1 text-sm text-stone-700 font-medium">
-                          {quickPreview.kind === 'avatar' ? 'ใช้รูปโปรไฟล์นี้?' : 'ใช้พื้นหลังนี้?'}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setQuickPreview(null)}
-                          className="rounded-xl px-4 py-2 text-xs font-medium text-stone-500 transition hover:bg-stone-100 active:scale-95"
-                        >
-                          ยกเลิก
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            void saveProfileMediaSelection(quickPreview.kind, quickPreview.src).then((ok) => {
-                              if (ok) setQuickPreview(null);
-                            });
-                          }}
-                          disabled={saveLoading}
-                          className="rounded-xl bg-[#0071e3] px-5 py-2 text-xs font-bold text-white transition hover:bg-[#0071e3]/90 active:scale-95 disabled:opacity-50"
-                        >
-                          {saveLoading ? 'กำลังบันทึก...' : 'ยืนยัน'}
-                        </button>
-                      </div>
-                    )}
-
-                    <div className="rounded-2xl border border-stone-200/80 bg-white p-4 shadow-sm space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="flex size-8 items-center justify-center rounded-lg bg-stone-100 text-stone-500">
-                          <User className="size-4" />
-                        </span>
-                        <div>
-                          <p className="text-xs font-bold text-stone-800">โปรไฟล์</p>
-                          <p className="text-[10px] text-stone-400">ชุดธีมสำหรับรูปวงกลม</p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setDefaultMediaPicker('avatar')}
-                        className="rounded-full bg-[#0071e3]/8 px-3 py-1.5 text-[11px] font-bold text-[#0071e3] transition hover:bg-[#0071e3]/12 active:scale-95"
-                      >
-                        ดูทั้งหมด
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-4 gap-3">
-                      {getDefaultMediaForCategory(activeSite?.category, 'avatar').map((item) => {
-                        const isCurrent = deceasedAvatarUrl === item.src;
-                        const isPreviewing = quickPreview?.kind === 'avatar' && quickPreview.src === item.src;
-                        return (
-                          <button
-                            key={item.id}
-                            type="button"
-                            onClick={() => setQuickPreview({ kind: 'avatar', src: item.src })}
-                            className={`aspect-square overflow-hidden rounded-full border-2 transition-all duration-200 hover:scale-[1.03] cursor-pointer ${
-                              isPreviewing
-                                ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20 scale-[1.03]'
-                                : isCurrent
-                                  ? 'border-[#0071e3] ring-2 ring-[#0071e3]/15'
-                                  : 'border-stone-200 hover:border-stone-300 hover:shadow-sm'
-                            }`}
-                            title={item.label}
-                          >
-                            <img src={item.src} alt="" className="h-full w-full object-cover" />
-                          </button>
-                        );
-                      })}
-                    </div>
-                    </div>
-
-                    <div className="rounded-2xl border border-stone-200/80 bg-white p-4 shadow-sm space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="flex size-8 items-center justify-center rounded-lg bg-stone-100 text-stone-500">
-                          <ImageIcon className="size-4" />
-                        </span>
-                        <div>
-                          <p className="text-xs font-bold text-stone-800">พื้นหลัง</p>
-                          <p className="text-[10px] text-stone-400">ชุดธีมสำหรับหน้าปก</p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setDefaultMediaPicker('cover')}
-                        className="rounded-full bg-[#0071e3]/8 px-3 py-1.5 text-[11px] font-bold text-[#0071e3] transition hover:bg-[#0071e3]/12 active:scale-95"
-                      >
-                        ดูทั้งหมด
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                      {getDefaultMediaForCategory(activeSite?.category, 'cover').map((item) => {
-                        const isCurrent = deceasedCoverUrl === item.src;
-                        const isPreviewing = quickPreview?.kind === 'cover' && quickPreview.src === item.src;
-                        return (
-                          <button
-                            key={item.id}
-                            type="button"
-                            onClick={() => setQuickPreview({ kind: 'cover', src: item.src })}
-                            className={`aspect-[16/9] overflow-hidden rounded-xl border-2 transition-all duration-200 hover:scale-[1.02] cursor-pointer ${
-                              isPreviewing
-                                ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20 scale-[1.02]'
-                                : isCurrent
-                                  ? 'border-[#0071e3] ring-2 ring-[#0071e3]/15'
-                                  : 'border-stone-200 hover:border-stone-300 hover:shadow-sm'
-                            }`}
-                            title={item.label}
-                          >
-                            <img src={item.src} alt="" className="h-full w-full object-cover" />
-                          </button>
-                        );
-                      })}
-                    </div>
-                    </div>
-                  </div>
-
-                  {/* Image crop adjustment buttons */}
-                  {(deceasedAvatarUrl || deceasedCoverUrl) && (
-                    <div className="mx-auto flex w-full max-w-2xl gap-3">
-                      {deceasedAvatarUrl && (
-                        <Button variant="ghost"
-                          type="button"
-                          onClick={() => setIsCropModalOpen(true)}
-                          className="h-auto flex-1 justify-start gap-3 rounded-xl border border-stone-200/80 bg-white px-4 py-3 text-xs font-semibold text-stone-700 shadow-sm transition hover:bg-stone-50 active:scale-[0.99]"
-                        >
-                          <span className="flex size-8 items-center justify-center rounded-lg bg-stone-100 text-stone-500">
-                            <Settings className="size-4" />
-                          </span>
-                          <span>ปรับรูปโปรไฟล์</span>
-                        </Button>
-                      )}
-                      {deceasedCoverUrl && (
-                        <Button variant="ghost"
-                          type="button"
-                          onClick={() => setIsCoverCropModalOpen(true)}
-                          className="h-auto flex-1 justify-start gap-3 rounded-xl border border-stone-200/80 bg-white px-4 py-3 text-xs font-semibold text-stone-700 shadow-sm transition hover:bg-stone-50 active:scale-[0.99]"
-                        >
-                          <span className="flex size-8 items-center justify-center rounded-lg bg-stone-100 text-stone-500">
-                            <Settings className="size-4" />
-                          </span>
-                          <span>ปรับรูปหน้าปก</span>
-                        </Button>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="mx-auto w-full max-w-2xl space-y-4 rounded-3xl border border-stone-200/80 bg-white p-4 shadow-sm sm:p-5">
-                      <div className="space-y-1">
-                        <p className="text-xs font-bold uppercase tracking-widest text-stone-400">หัวข้อหน้าแรก</p>
-                        <h4 className="text-base font-bold text-stone-900">รูปแบบการแสดงผล</h4>
-                        <p className="text-xs leading-relaxed text-stone-500">
-                          เลือกเลย์เอาต์ — กดแล้วบันทึกไปหน้าเว็บจริงทันที
-                        </p>
-                      </div>
-
-                      <div
-                        className="overflow-hidden rounded-2xl border border-stone-200"
-                        style={getSiteThemeStyle({
-                          primaryColor,
-                          secondaryColor,
-                          fontFamily,
-                        })}
-                      >
-                        <MemorialHero
-                          compact
-                          name={siteName || 'ชื่อเว็บไซต์'}
-                          coverUrl={deceasedCoverUrl || null}
-                          avatarUrl={deceasedAvatarUrl || null}
-                          coverTransform={{
-                            x: deceasedCoverX,
-                            y: deceasedCoverY,
-                            scale: deceasedCoverScale,
-                            rotate: deceasedCoverRotate,
-                          }}
-                          avatarTransform={{
-                            x: deceasedAvatarX,
-                            y: deceasedAvatarY,
-                            scale: deceasedAvatarScale,
-                            rotate: deceasedAvatarRotate,
-                          }}
-                          layout={heroLayout}
-                          bgMode={heroBgMode}
-                          className="border-0"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                        {HERO_LAYOUTS.map((opt) => {
-                          const selected = heroLayout === opt.id;
-                          return (
-                            <button
-                              key={opt.id}
-                              type="button"
-                              onClick={() => {
-                                const nextBg =
-                                  opt.id === 'bottom-band' ||
-                                  opt.id === 'bottom-band-right' ||
-                                  opt.id === 'framed-on-cover'
-                                    ? ('image' as const)
-                                    : heroBgMode;
-                                setHeroLayout(opt.id);
-                                setHeroBgMode(nextBg);
-                                void persistSiteConfig({
-                                  successMessage: `ใช้เลย์เอาต์「${opt.label}」แล้ว`,
-                                  hero: { layout: opt.id, bgMode: nextBg },
-                                });
-                              }}
-                              className={cn(
-                                'rounded-xl border px-3 py-2.5 text-left transition',
-                                selected
-                                  ? 'border-[#0071e3] bg-[#0071e3]/5 ring-2 ring-[#0071e3]/15'
-                                  : 'border-stone-200 bg-stone-50/60 hover:border-stone-300 hover:bg-white',
-                              )}
-                            >
-                              <p className="text-xs font-bold text-stone-900">{opt.label}</p>
-                              <p className="mt-0.5 text-xs leading-snug text-stone-500">{opt.description}</p>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      <div className="space-y-2 border-t border-stone-100 pt-3">
-                        <p className="text-xs font-bold uppercase tracking-wide text-stone-500">พื้นหลังหัวข้อ</p>
-                        <div className="flex flex-wrap gap-2">
-                          {(
-                            [
-                              { id: 'image' as const, label: 'รูปปกอย่างเดียว' },
-                              { id: 'soft-wash' as const, label: 'โทนนุ่ม' },
-                              { id: 'image-and-wash' as const, label: 'รูปปก + โทนนุ่ม' },
-                            ] as const
-                          ).map((mode) => {
-                            const selected = heroBgMode === mode.id;
-                            return (
-                              <button
-                                key={mode.id}
-                                type="button"
-                                onClick={() => {
-                                  setHeroBgMode(mode.id);
-                                  void persistSiteConfig({
-                                    successMessage: `ตั้งพื้นหลังเป็น「${mode.label}」แล้ว`,
-                                    hero: { bgMode: mode.id },
-                                  });
-                                }}
-                                className={cn(
-                                  'rounded-full border px-3 py-1.5 text-xs font-semibold transition',
-                                  selected
-                                    ? 'border-[#0071e3] bg-[#0071e3] text-white'
-                                    : 'border-stone-200 bg-white text-stone-600 hover:border-stone-300',
-                                )}
-                              >
-                                {mode.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                </div>
-              )}
-
-              {/* 3. ธีม & สี & ฟอนต์ Tab */}
-              {activeSubTab === 'theme' && (
-                <div className="space-y-8 animate-fade-in text-left">
-                  <div className="space-y-1">
-                    <h3 className="flex items-center gap-1.5 text-sm font-bold text-stone-900">
-                      <Palette className="size-4 text-[#0071e3]" />
-                      <span>ธีม & สี & ฟอนต์</span>
-                    </h3>
-                    <p className="text-xs text-stone-500">เลือกโทนสีและฟอนต์ — บันทึกอัตโนมัติไปยังหน้าเว็บจริง</p>
-                  </div>
-
-                  {/* Theme Templates */}
-                  <div className="space-y-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs font-bold uppercase tracking-wide text-stone-500">
-                        เลือกธีมสำเร็จรูป
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          void applyThemeSelection(
-                            { primaryColor: '#0d9488', secondaryColor: '#f59e0b' },
-                            'รีเซ็ตธีมสำเร็จ — หน้าเว็บจริงอัปเดตแล้ว',
-                          );
-                        }}
-                        disabled={saveLoading}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-[10px] font-bold text-stone-500 transition hover:bg-stone-50 hover:text-stone-700 active:scale-95"
-                      >
-                        <RotateCw className="size-3" />
-                        <span>รีเซ็ต</span>
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                      {[
-                        { name: 'Peaceful Mint', desc: 'สงบ รำลึก', primary: '#7ea18b', hover: '#668571', secondary: '#d4be95', light: '#f4f6f3' },
-                        { name: 'Sweet Peach', desc: 'อบอุ่น โรแมนติก', primary: '#e09f9f', hover: '#c48282', secondary: '#e6c1a8', light: '#fff7f5' },
-                        { name: 'Warm Caramel', desc: 'อ่อนโยน เป็นธรรมชาติ', primary: '#c29a7c', hover: '#a67f62', secondary: '#dcc6a8', light: '#fbf8f5' },
-                        { name: 'Classic Olive', desc: 'คลาสสิก ครอบครัว', primary: '#96a288', hover: '#7a866d', secondary: '#cfc5b0', light: '#f7f8f5' },
-                        { name: 'Ocean Breeze', desc: 'สดใส มิตรภาพ', primary: '#8ba8bd', hover: '#708d9e', secondary: '#ded2af', light: '#f5f7f9' },
-                        { name: 'Lilac Dream', desc: 'หรูหรา ทางการ', primary: '#a49cb5', hover: '#89819a', secondary: '#c8bfcb', light: '#f7f6f8' }
-                      ].map(t => {
-                        const isActive = primaryColor.toLowerCase() === t.primary.toLowerCase() && secondaryColor.toLowerCase() === t.secondary.toLowerCase();
-                        return (
-                          <button
-                            key={t.name}
-                            type="button"
-                            onClick={() => {
-                              void applyThemeSelection({
-                                primaryColor: t.primary,
-                                secondaryColor: t.secondary,
-                              });
-                            }}
-                            disabled={saveLoading}
-                            className={`relative flex h-auto w-full flex-col rounded-2xl border-2 bg-white overflow-hidden transition-all duration-200 hover:shadow-md ${
-                              isActive
-                                ? 'border-[#0071e3] shadow-sm ring-4 ring-[#0071e3]/10'
-                                : 'border-stone-200 hover:border-stone-300'
-                            }`}
-                          >
-                            {/* Color preview bar */}
-                            <div className="flex h-12 w-full">
-                              <div className="flex-1" style={{ backgroundColor: t.primary }} />
-                              <div className="flex-1" style={{ backgroundColor: t.hover }} />
-                              <div className="flex-1" style={{ backgroundColor: t.secondary }} />
-                              <div className="flex-1" style={{ backgroundColor: t.light }} />
-                            </div>
-                            <div className="p-3 text-left">
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs font-bold text-stone-900">{t.name}</span>
-                                {isActive && (
-                                  <span className="flex size-5 items-center justify-center rounded-full bg-[#0071e3] text-white">
-                                    <Check className="size-3 stroke-[3]" />
-                                  </span>
-                                )}
-                              </div>
-                              <span className="text-[10px] text-stone-400">{t.desc}</span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Custom Colors */}
-                  <div className="space-y-4">
-                    <label className="text-xs font-bold uppercase tracking-wide text-stone-500">
-                      กำหนดสีเอง
-                    </label>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50/50 p-3">
-                        <input
-                          type="color"
-                          value={primaryColor}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            setPrimaryColor(value);
-                            queueThemeAutoSave({ primaryColor: value });
-                          }}
-                          className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-0.5"
-                        />
-                        <div className="flex-1 space-y-0.5">
-                          <p className="text-[10px] font-bold text-stone-400 uppercase">Primary</p>
-                          <Input
-                            type="text"
-                            value={primaryColor}
-                            onChange={(e) => {
-                            const value = e.target.value;
-                            setPrimaryColor(value);
-                            queueThemeAutoSave({ primaryColor: value });
-                          }}
-                            className="h-8 rounded-lg border border-stone-200 bg-white px-2.5 font-mono text-xs text-stone-900 focus-visible:border-[#0071e3]/50 focus-visible:ring-0"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50/50 p-3">
-                        <input
-                          type="color"
-                          value={secondaryColor}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            setSecondaryColor(value);
-                            queueThemeAutoSave({ secondaryColor: value });
-                          }}
-                          className="size-10 shrink-0 cursor-pointer rounded-xl border border-stone-200 bg-white p-0.5"
-                        />
-                        <div className="flex-1 space-y-0.5">
-                          <p className="text-[10px] font-bold text-stone-400 uppercase">Secondary</p>
-                          <Input
-                            type="text"
-                            value={secondaryColor}
-                            onChange={(e) => {
-                            const value = e.target.value;
-                            setSecondaryColor(value);
-                            queueThemeAutoSave({ secondaryColor: value });
-                          }}
-                            className="h-8 rounded-lg border border-stone-200 bg-white px-2.5 font-mono text-xs text-stone-900 focus-visible:border-[#0071e3]/50 focus-visible:ring-0"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Font */}
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold uppercase tracking-wide text-stone-500">ฟอนต์</label>
-                    <p className="text-[11px] leading-relaxed text-stone-500">
-                      ใช้กับเมนู เนื้อหา และส่วนอื่น ๆ ของหน้าเว็บ (ยกเว้นการ์ดประกาศที่ตั้งฟอนต์แยก)
-                    </p>
-                    <Select
-                      value={fontFamily}
-                      onValueChange={(value) => {
-                        void applyThemeSelection({ fontFamily: value });
-                      }}
-                    >
-                      <SelectTrigger
-                        className="h-11 w-full rounded-xl border border-stone-200 bg-stone-50/50 px-4 text-sm font-bold text-stone-900 focus:border-[#0071e3]/50 focus:bg-white focus:outline-none"
-                        style={{ fontFamily }}
-                      >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent position="popper">
-                        <SelectItem value="LINE Seed Sans TH" style={{ fontFamily: 'LINE Seed Sans TH' }}>LINE Seed Sans TH (แนะนำ)</SelectItem>
-                        <SelectItem value="Inter" style={{ fontFamily: 'Inter' }}>Inter (เรียบหรูสากล)</SelectItem>
-                        <SelectItem value="Sarabun" style={{ fontFamily: 'Sarabun' }}>Sarabun (ไทยทางการ)</SelectItem>
-                        <SelectItem value="Niramit" style={{ fontFamily: 'Niramit' }}>Niramit (ไทยร่วมสมัย)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <div
-                      className="rounded-2xl border border-stone-200/80 bg-stone-50/60 px-4 py-3 text-left"
-                      style={{ fontFamily: `${fontFamily}, ui-sans-serif, system-ui, sans-serif` }}
-                    >
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-stone-400">ตัวอย่างฟอนต์เว็บไซต์</p>
-                      <p className="mt-1 text-sm font-bold text-stone-800">{siteName || 'ชื่อเว็บไซต์ของคุณ'}</p>
-                      <p className="mt-0.5 text-xs text-stone-600">เมนู · แกลเลอรี · สมุดข้อความ · เนื้อหาอื่น ๆ บนหน้าเว็บ</p>
-                    </div>
-                  </div>
-                </div>
-              )}
               {/* 4. ฟีเจอร์ที่เปิดใช้งาน Tab */}
               {activeSubTab === 'features' && (
                 <div className="pt-2 space-y-5 text-left animate-fade-in">
@@ -5301,6 +3888,72 @@ export default function WebmasterDashboard() {
                     visibleKeys={getVisibleKeys(selectedSite.category)}
                     labelFor={(k) => getFeatureLabel(selectedSite.category, k)}
                   />
+
+                  <div className="space-y-4 border-t border-stone-100 pt-6">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0 space-y-0.5">
+                        <h4 className="flex items-center gap-1.5 text-sm font-bold text-stone-900">
+                          <DollarSign className="size-4 shrink-0 text-[#0071e3]" />
+                          <span>
+                            {selectedSite.category === 'Friends'
+                              ? 'เปิดใช้กองทุนรวมตัว (Donation QR)'
+                              : selectedSite.category === 'Pet Memorial'
+                                ? 'เปิดใช้สมทบกองทุนช่วยเหลือสัตว์ (Donation QR)'
+                                : selectedSite.category === 'Couple'
+                                  ? 'เปิดใช้เป้าหมายของเรา (Donation QR)'
+                                  : selectedSite.category === 'Wedding'
+                                    ? 'เปิดใช้ร่วมใส่ซองออนไลน์ (Donation QR)'
+                                    : selectedSite.category === 'Family Legacy'
+                                      ? 'เปิดใช้สมทบกองทุนครอบครัว (Donation QR)'
+                                      : 'เปิดใช้บริการรับเงินทำบุญ (Donation QR)'}
+                          </span>
+                        </h4>
+                        <p className="text-xs leading-relaxed text-stone-500">
+                          {getFeatureLabel(selectedSite.category, 'donation').description}
+                        </p>
+                      </div>
+                      <Checkbox
+                        checked={donationActive}
+                        onCheckedChange={(c) => setDonationActive(!!c)}
+                        className="size-5 shrink-0 cursor-pointer"
+                      />
+                    </div>
+
+                    {donationActive ? (
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="space-y-1">
+                          <label className="text-sm font-bold tracking-wide text-stone-600">
+                            หมายเลขพร้อมเพย์ (PromptPay)
+                          </label>
+                          <Input
+                            type="text"
+                            value={donationPromptPay}
+                            onChange={(e) => setDonationPromptPay(e.target.value)}
+                            placeholder="เบอร์โทรศัพท์ หรือ เลขบัตรประชาชน"
+                            className="w-full rounded-xl border border-stone-200 bg-stone-50/50 px-4 py-2.5 text-sm text-stone-900 transition focus:border-[#0071e3]/50 focus:bg-white focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-sm font-bold tracking-wide text-stone-600">
+                            {selectedSite.category === 'Couple'
+                              ? 'ชื่อเป้าหมาย / ชื่อที่แสดง'
+                              : 'ชื่อบัญชีผู้รับเงิน'}
+                          </label>
+                          <Input
+                            type="text"
+                            value={donationAccountName}
+                            onChange={(e) => setDonationAccountName(e.target.value)}
+                            placeholder={
+                              selectedSite.category === 'Couple'
+                                ? 'เช่น ทริปญี่ปุ่นด้วยกัน / บ้านหลังแรก'
+                                : 'ชื่อ-นามสกุล เจ้าของบัญชี'
+                            }
+                            className="w-full rounded-xl border border-stone-200 bg-stone-50/50 px-4 py-2.5 text-sm text-stone-900 transition focus:border-[#0071e3]/50 focus:bg-white focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               )}
 
@@ -5444,7 +4097,7 @@ export default function WebmasterDashboard() {
               )}
 
               {/* Conditionally display Save Button only on configuration sub-tabs */}
-              {activeSubTab !== 'billing' && (
+              {activeSubTab !== 'billing' && activeSubTab !== 'general' && activeSubTab !== 'names' && (
                 <button
                   type="button"
                   onClick={() => void persistSiteConfig()}
@@ -6286,8 +4939,9 @@ export default function WebmasterDashboard() {
             </div>
 
             {/* Repositioning viewport Container */}
+            <p className="text-xs font-medium text-stone-500">ลากภาพในกรอบเพื่อจัดตำแหน่ง</p>
             <div 
-              className="relative w-full aspect-video sm:h-52 bg-stone-100 border border-stone-200 rounded-2xl overflow-hidden cursor-move flex items-center justify-center"
+              className="relative flex aspect-[1024/420] w-full cursor-move items-center justify-center overflow-hidden rounded-2xl border border-stone-200 bg-stone-100"
               onMouseDown={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const viewportWidth = rect.width;

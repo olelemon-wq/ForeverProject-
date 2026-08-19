@@ -11,6 +11,7 @@ const themePrimary = 'var(--theme-primary, #e09f9f)';
 const themeSecondary = 'var(--theme-secondary, #e6c1a8)';
 
 const MEMORIAL_PATTERN = '/patterns/memorial-condolence-floral-right.jpg';
+export const MEMORIAL_VINE_BORDER = '/patterns/memorial-vine-border.png';
 const WEDDING_PATTERN = '/patterns/wedding-condolence-floral-right.jpg';
 const PET_PATTERN = '/patterns/pet-condolence-floral-right.jpg';
 const FRIENDS_PATTERN = '/patterns/friends-condolence-floral-right.jpg';
@@ -64,6 +65,21 @@ export const thaiCeremonyThemeVars = {
   '--ceremony-muted': 'rgba(122, 107, 82, 0.9)',
 } as CSSProperties;
 
+const CLASSIC_WHITE_INK = '#171717';
+
+export const elegantWhiteCeremonyVars = {
+  '--theme-primary': CLASSIC_WHITE_INK,
+  '--theme-secondary': CLASSIC_WHITE_INK,
+  '--ceremony-primary': CLASSIC_WHITE_INK,
+  '--ceremony-secondary': CLASSIC_WHITE_INK,
+  '--ceremony-line': 'rgba(23, 23, 23, 0.2)',
+  '--ceremony-border': 'rgba(23, 23, 23, 0.28)',
+  '--ceremony-soft': 'rgba(23, 23, 23, 0.05)',
+  '--ceremony-muted': CLASSIC_WHITE_INK,
+} as CSSProperties;
+
+const VINE_BORDER_CATEGORIES = new Set(['Memorial', 'Family', 'Family Legacy']);
+
 export function getAnnouncementPatternUrl(category: string): string | undefined {
   if (category === 'Couple' || category === 'Wedding') return WEDDING_PATTERN;
   if (category === 'Pet Memorial') return PET_PATTERN;
@@ -108,6 +124,7 @@ export interface AnnouncementCardTheme {
   /** Top/bottom divider strip (Thai Classic) */
   dividerUrl?: string;
   dividerOpacity?: number;
+  dividerColor?: string;
   /** Charcoal lotus texture tinted gold on cream (Thai Classic) */
   lotusGoldPattern?: boolean;
   lotusGoldImageUrl?: string;
@@ -115,26 +132,26 @@ export interface AnnouncementCardTheme {
 }
 
 const DEFAULT_THEME: AnnouncementCardTheme = {
-  cardBgClass: 'bg-[#faf9f7] border-[#e8e4df] text-stone-900',
-  textMutedClass: 'text-stone-600',
-  headingColorClass: 'text-stone-900',
-  innerCardBg: 'bg-white/72 border-[#e8e4df]/80',
-  borderGoldClass: 'border-[#c9b896]/45',
-  borderAccentClass: 'border-[#e8e4df]',
-  accentBadgeClass: 'bg-[#f3efe8] text-stone-800',
-  mapButtonClass:
-    'border-[#e8e4df] bg-white/80 text-stone-800 hover:bg-white hover:text-stone-950',
-  dotBgClass: 'bg-[#faf9f7]',
-  timelineLineClass: 'bg-[#d6cfc4]/55',
+  cardBgClass: 'bg-white border-neutral-200 text-black',
+  textMutedClass: 'text-black',
+  headingColorClass: 'text-black',
+  innerCardBg: 'bg-white border-neutral-200',
+  borderGoldClass: 'border-black/20',
+  borderAccentClass: 'border-neutral-200',
+  accentBadgeClass: 'bg-neutral-100 text-black',
+  mapButtonClass: 'border-black bg-white text-black hover:bg-neutral-50',
+  dotBgClass: 'bg-white',
+  timelineLineClass: 'bg-black/20',
   hasBackgroundImage: false,
   bgImageUrl: '',
-  patternUrl: MEMORIAL_PATTERN,
-  patternOpacityMobile: 0.24,
-  patternOpacityDesktop: 0.38,
-  cardShadowClass: 'shadow-[0_10px_36px_rgba(120,113,108,0.09)]',
-  footerBorderClass: 'border-[#e8e4df]/70',
-  showCornerOrnaments: true,
-  ceremonyThemeVars: ceremonySiteThemeVars,
+  patternUrl: undefined,
+  cardShadowClass: 'shadow-[0_10px_36px_rgba(0,0,0,0.08)]',
+  footerBorderClass: 'border-black/15',
+  showCornerOrnaments: false,
+  ceremonyThemeVars: elegantWhiteCeremonyVars,
+  dividerUrl: MEMORIAL_VINE_BORDER,
+  dividerOpacity: 0.92,
+  dividerColor: CLASSIC_WHITE_INK,
 };
 
 function withMilestoneAccents(
@@ -151,99 +168,32 @@ function withMilestoneAccents(
 }
 
 function elegantWhiteForCategory(category: string): AnnouncementCardTheme {
-  const patternUrl = getAnnouncementPatternUrl(category);
-
-  if (category === 'Wedding') {
-    return withMilestoneAccents(
-      {
-        cardBgClass:
-          'bg-[#fffcfa] border-[#f0e6e0] text-[#3d2f2a] shadow-[0_10px_36px_rgba(180,150,140,0.08)]',
-        textMutedClass: 'text-[#7a655c]',
-        headingColorClass: 'text-[#3d2f2a]',
-        innerCardBg: 'bg-white/75 border-[#f0e6e0]/75',
-        borderGoldClass: 'border-[#d4b896]/40',
-        hasBackgroundImage: false,
-        bgImageUrl: '',
-        patternUrl,
-        patternOpacityMobile: 0.25,
-        patternOpacityDesktop: 0.4,
-        cardShadowClass: 'shadow-[0_10px_36px_rgba(180,150,140,0.08)]',
-        footerBorderClass: 'border-[#f0e6e0]/65',
-        showCornerOrnaments: true,
-        ceremonyThemeVars: ceremonySiteThemeVars,
-      },
-      {
-        borderAccentClass: 'border-[#f0e6e0]',
-        accentBadgeClass: 'bg-[#faf3ef] text-[#3d2f2a]',
-        mapButtonClass:
-          'border-[#f0e6e0] bg-white/80 text-[#3d2f2a] hover:bg-white hover:text-[#2a201c]',
-        dotBgClass: 'bg-[#fffcfa]',
-        timelineLineClass: 'bg-[#e8d8cc]/55',
-      }
-    );
-  }
-
-  if (category === 'Pet Memorial') {
-    return withMilestoneAccents(
-      {
-        cardBgClass:
-          'bg-[#f7faf8] border-[#d4e4da] text-[#2c4a3e] shadow-[0_10px_36px_rgba(160,190,175,0.1)]',
-        textMutedClass: 'text-[#4e7062]',
-        headingColorClass: 'text-[#2c4a3e]',
-        innerCardBg: 'bg-white/72 border-[#d4e4da]/70',
-        borderGoldClass: 'border-[#b8d4c4]/45',
-        hasBackgroundImage: false,
-        bgImageUrl: '',
-        patternUrl: PET_PATTERN,
-        patternOpacityMobile: 0.24,
-        patternOpacityDesktop: 0.38,
-        cardShadowClass: 'shadow-[0_10px_36px_rgba(160,190,175,0.1)]',
-        footerBorderClass: 'border-[#d4e4da]/55',
-        showCornerOrnaments: true,
-        ceremonyThemeVars: ceremonySiteThemeVars,
-      },
-      {
-        borderAccentClass: 'border-[#d4e4da]/65',
-        accentBadgeClass: 'bg-[#edf5f0] text-[#2c4a3e]',
-        mapButtonClass:
-          'border-[#d4e4da] bg-white/80 text-[#2c4a3e] hover:bg-white hover:text-[#1f332b]',
-        dotBgClass: 'bg-[#f7faf8]',
-        timelineLineClass: 'bg-[#c8d9cd]/50',
-      }
-    );
-  }
-
-  if (category === 'Family' || category === 'Family Legacy') {
-    return withMilestoneAccents(
-      {
-        cardBgClass:
-          'bg-[#f8f7f4] border-[#ddd8ce] text-[#3a342c] shadow-[0_10px_36px_rgba(130,120,100,0.09)]',
-        textMutedClass: 'text-[#6b6358]',
-        headingColorClass: 'text-[#3a342c]',
-        innerCardBg: 'bg-white/72 border-[#ddd8ce]/75',
-        borderGoldClass: 'border-[#c9b896]/42',
-        hasBackgroundImage: false,
-        bgImageUrl: '',
-        patternUrl,
-        patternOpacityMobile: 0.22,
-        patternOpacityDesktop: 0.36,
-        cardShadowClass: 'shadow-[0_10px_36px_rgba(130,120,100,0.09)]',
-        footerBorderClass: 'border-[#ddd8ce]/65',
-        showCornerOrnaments: true,
-        ceremonyThemeVars: ceremonySiteThemeVars,
-      },
-      {
-        borderAccentClass: 'border-[#ddd8ce]',
-        accentBadgeClass: 'bg-[#f3f0ea] text-[#3a342c]',
-        mapButtonClass:
-          'border-[#ddd8ce] bg-white/80 text-[#3a342c] hover:bg-white hover:text-[#2a251f]',
-        dotBgClass: 'bg-[#f8f7f4]',
-        timelineLineClass: 'bg-[#d6cfc4]/50',
-      }
-    );
-  }
-
-  return { ...DEFAULT_THEME, patternUrl };
+  return withMilestoneAccents(
+    {
+      cardBgClass: 'bg-white border-neutral-200 text-black',
+      textMutedClass: 'text-black',
+      headingColorClass: 'text-black',
+      innerCardBg: 'bg-white border-neutral-200',
+      borderGoldClass: 'border-black/20',
+      hasBackgroundImage: false,
+      bgImageUrl: '',
+      patternUrl: undefined,
+      cardShadowClass: 'shadow-[0_10px_36px_rgba(0,0,0,0.08)]',
+      footerBorderClass: 'border-black/15',
+      showCornerOrnaments: false,
+      ceremonyThemeVars: elegantWhiteCeremonyVars,
+      dividerUrl: VINE_BORDER_CATEGORIES.has(category) ? MEMORIAL_VINE_BORDER : undefined,
+      dividerOpacity: 0.92,
+      dividerColor: CLASSIC_WHITE_INK,
+    },
+    {
+      borderAccentClass: 'border-neutral-200',
+      accentBadgeClass: 'bg-neutral-100 text-black',
+      mapButtonClass: 'border-black bg-white text-black hover:bg-neutral-50',
+      dotBgClass: 'bg-white',
+      timelineLineClass: 'bg-black/20',
+    },
+  );
 }
 
 export function resolveAnnouncementCardTheme(

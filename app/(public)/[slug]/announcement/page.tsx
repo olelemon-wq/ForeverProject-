@@ -10,7 +10,8 @@ import { getEnabledFeatures } from '@/lib/features';
 import { getCoupleMilestonesFromAnnouncement } from '@/lib/coupleMilestones';
 import { resolveAnnouncementCardTheme } from '@/lib/announcementCardTheme';
 import { resolveMediaSrc } from '@/lib/mediaUrl';
-import { ANNOUNCEMENT_CARD_CLASS } from '@/lib/publicLayout';
+import { FramedAnnouncementCard } from '@/components/announcement/AnnouncementCardFrame';
+import { announcementShowsPhoto, ANNOUNCEMENT_FRAMED_CARD_CLASS } from '@/lib/announcementCardLayout';
 
 export const dynamic = 'force-dynamic';
 
@@ -155,17 +156,19 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   if (announcement.mode === 'custom' && announcement.customCardUrl) {
     return (
       <div className="space-y-8 animate-fade-in print:p-0 print:m-0 print:bg-white print:shadow-none print-outer-container">
-        <section
+        <FramedAnnouncementCard
           id="announcement-card"
-          className={`${ANNOUNCEMENT_CARD_CLASS} rounded-3xl border border-stone-200 overflow-hidden shadow-md bg-white print-card-section`}
+          category={tenant.category}
+          orientation={announcement.orientation}
+          className="print-card-section"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={resolveMediaSrc(announcement.customCardUrl)}
             alt="การ์ดกำหนดการ"
-            className="w-full h-auto object-contain block"
+            className="block h-full w-full bg-white object-contain"
           />
-        </section>
+        </FramedAnnouncementCard>
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
           <div>
@@ -187,6 +190,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
   const avatarX = themeConfig?.avatarX || 0;
   const avatarY = themeConfig?.avatarY || 0;
   const avatarRotate = themeConfig?.avatarRotate || 0;
+  const showPhoto = announcementShowsPhoto(announcement.showPhoto);
 
   const isFriends = tenant.category === 'Friends';
   const isCouple = tenant.category === 'Couple';
@@ -254,6 +258,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
       />
 
       {isCouple ? (
+        <FramedAnnouncementCard category={tenant.category} orientation={announcement.orientation}>
         <CoupleJourneyCard
           tenantName={tenant.name}
           inviteText={announcement.text}
@@ -270,12 +275,16 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           avatarY={avatarY}
           avatarRotate={avatarRotate}
           imageCoordSpace={themeConfig?.imageCoordSpace}
+          showPhoto={showPhoto}
           notes={announcement.dressCode}
           contactPhone={announcement.contactPhone}
-          className="print-card-section print:shadow-none print:my-0 print:mx-auto print:max-w-3xl"
+          className={`${ANNOUNCEMENT_FRAMED_CARD_CLASS} print-card-section print:shadow-none print:my-0 print:mx-auto`}
         />
+        </FramedAnnouncementCard>
       ) : isFriends ? (
+        <FramedAnnouncementCard category={tenant.category} orientation={announcement.orientation}>
         <FriendsMeetupCard
+          className={`${ANNOUNCEMENT_FRAMED_CARD_CLASS} print-card-section`}
           tenantName={tenant.name}
           inviteText={announcement.text}
           inviteFallback={getInviteFallback(tenant.category)}
@@ -289,6 +298,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           avatarY={avatarY}
           avatarRotate={avatarRotate}
           imageCoordSpace={themeConfig?.imageCoordSpace}
+          showPhoto={showPhoto}
           meetupDate={announcement.waterDate}
           meetupTime={announcement.waterTime}
           venueName={announcement.templeName}
@@ -297,8 +307,12 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           notes={announcement.dressCode}
           contactPhone={announcement.contactPhone}
         />
+        </FramedAnnouncementCard>
       ) : (
+        <FramedAnnouncementCard category={tenant.category} orientation={announcement.orientation}>
         <MemorialScheduleCard
+          className={ANNOUNCEMENT_FRAMED_CARD_CLASS}
+          compact
           category={tenant.category}
           tenantName={tenant.name}
           inviteText={announcement.text}
@@ -313,6 +327,7 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           avatarY={avatarY}
           avatarRotate={avatarRotate}
           imageCoordSpace={themeConfig?.imageCoordSpace}
+          showPhoto={showPhoto}
           waterDate={announcement.waterDate}
           waterTime={announcement.waterTime}
           abhidhammaDateRange={announcement.abhidhammaDateRange}
@@ -328,8 +343,9 @@ export default async function PublicAnnouncementPage(props: { params: Promise<{ 
           wreathPolicies={wreathPolicies}
           showWreathPolicy={showWreathPolicy}
           isWedding={isWedding}
-          sectionClassName="print-card-section print:shadow-none print:my-0 print:mx-auto print:max-w-3xl"
+          sectionClassName="print-card-section print:shadow-none print:my-0 print:mx-auto"
         />
+        </FramedAnnouncementCard>
       )}
 
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white border border-stone-200/85 p-4 rounded-2xl shadow-xs print:hidden">

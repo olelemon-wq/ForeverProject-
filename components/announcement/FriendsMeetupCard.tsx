@@ -31,6 +31,7 @@ export type FriendsMeetupCardProps = {
   avatarY?: number;
   avatarRotate?: number;
   imageCoordSpace?: string | null;
+  showPhoto?: boolean;
   meetupDate?: string;
   meetupTime?: string;
   venueName?: string;
@@ -55,6 +56,7 @@ export default function FriendsMeetupCard({
   avatarY,
   avatarRotate,
   imageCoordSpace,
+  showPhoto = true,
   meetupDate,
   meetupTime,
   venueName,
@@ -65,6 +67,7 @@ export default function FriendsMeetupCard({
   className,
 }: FriendsMeetupCardProps) {
   const { cardBgClass, textMutedClass, headingColorClass, innerCardBg } = theme;
+  const showAvatar = showPhoto && Boolean(avatarUrl);
 
   const scheduleLine = [meetupDate, meetupTime ? `เวลา ${meetupTime}` : '']
     .filter(Boolean)
@@ -126,16 +129,18 @@ export default function FriendsMeetupCard({
 
       <div className="relative z-10 space-y-5">
         <header className="space-y-3 pr-2 text-center sm:pr-4">
-          <DeceasedAvatar
-            avatarUrl={avatarUrl}
-            avatarScale={avatarScale}
-            avatarX={avatarX}
-            avatarY={avatarY}
-            avatarRotate={avatarRotate}
-            imageCoordSpace={imageCoordSpace}
-            tenantName={tenantName}
-            primaryColor="var(--theme-primary, #1E4848)"
-          />
+          {showAvatar ? (
+            <DeceasedAvatar
+              avatarUrl={avatarUrl}
+              avatarScale={avatarScale}
+              avatarX={avatarX}
+              avatarY={avatarY}
+              avatarRotate={avatarRotate}
+              imageCoordSpace={imageCoordSpace}
+              tenantName={tenantName}
+              primaryColor="var(--theme-primary, #1E4848)"
+            />
+          ) : null}
           <div className="space-y-1.5">
             <h2
               className="text-2xl font-black tracking-tight sm:text-[1.65rem]"

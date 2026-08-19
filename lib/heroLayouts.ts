@@ -8,7 +8,27 @@ export type HeroLayoutId =
   | 'framed-portrait'
   | 'framed-on-cover';
 
-export type HeroBgMode = 'image' | 'soft-wash' | 'image-and-wash';
+export type HeroBgMode = 'image' | 'soft-wash';
+
+export interface HeroBgModeOption {
+  id: HeroBgMode;
+  label: string;
+  description: string;
+}
+
+/** Two background modes: cover photo or theme gradient (no cover shown). */
+export const HERO_BG_MODES: HeroBgModeOption[] = [
+  {
+    id: 'image',
+    label: 'รูปปก',
+    description: 'ใช้รูปที่อัปโหลดเป็นพื้นหลัง',
+  },
+  {
+    id: 'soft-wash',
+    label: 'พื้นสีธีม',
+    description: 'ไม่แสดงรูปปก ใช้สีจากธีม',
+  },
+];
 
 export interface HeroLayoutOption {
   id: HeroLayoutId;
@@ -70,7 +90,8 @@ const LEGACY_LAYOUT_MAP: Record<string, HeroLayoutId> = {
 
 const LEGACY_BG_MAP: Record<string, HeroBgMode> = {
   'text-pattern': 'soft-wash',
-  'image-and-text': 'image-and-wash',
+  'image-and-text': 'soft-wash',
+  'image-and-wash': 'soft-wash',
 };
 
 export function normalizeHeroLayout(value: unknown): HeroLayoutId {
@@ -81,9 +102,8 @@ export function normalizeHeroLayout(value: unknown): HeroLayoutId {
 }
 
 export function normalizeHeroBgMode(value: unknown, layout?: HeroLayoutId): HeroBgMode {
-  if (value === 'image' || value === 'soft-wash' || value === 'image-and-wash') {
-    return value;
-  }
+  if (value === 'image') return 'image';
+  if (value === 'soft-wash' || value === 'image-and-wash') return 'soft-wash';
   if (typeof value === 'string' && value in LEGACY_BG_MAP) {
     return LEGACY_BG_MAP[value];
   }
@@ -91,4 +111,8 @@ export function normalizeHeroBgMode(value: unknown, layout?: HeroLayoutId): Hero
     return 'image';
   }
   return 'image';
+}
+
+export function layoutRequiresCoverBg(layout: HeroLayoutId): boolean {
+  return layout === 'bottom-band' || layout === 'bottom-band-right' || layout === 'framed-on-cover';
 }
